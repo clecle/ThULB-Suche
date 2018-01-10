@@ -70,4 +70,4 @@ if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
 
 define('PHPUNIT_FIXTURES_THULB', realpath(__DIR__ . '/tests/fixtures'));
 define('FINDEX_TEST_HOST', 'http://findex.gbv.de');
-define('THULB_CONFIG_FILE', realpath(__DIR__ . '/../../local/config/vufind/config.ini'));
+define('THULB_CONFIG_FILE', realpath(__DIR__ . '/../../local_thulb/config/vufind/config.ini'));

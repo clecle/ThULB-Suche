@@ -1,0 +1,11 @@
+<? $tbcl = $this->driver->tryMethod('getThuBiblioClassification'); ?>
+<? if ($tbcl): ?>
+    <? foreach ($tbcl as $classificationNumber): ?>
+        <? $titles = $this->driver->tryMethod('getConditionalFieldArray', ['983', ['b'], true, ' ', ['a' => $classificationNumber]]); ?>
+        <? if ($titles): ?>
+            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($titles[0])?>%22&amp;type=class_local_iln"><?=$classificationNumber?> <?=htmlspecialchars(implode(' ', $titles))?></a><br />
+        <? else: ?>
+            <?=$classificationNumber?><br />
+        <? endif; ?>
+    <? endforeach; ?>
+<? endif; ?>

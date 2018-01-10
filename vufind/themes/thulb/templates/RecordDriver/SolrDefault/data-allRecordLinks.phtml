@@ -1,0 +1,18 @@
+<?php
+    $lines = [];
+    foreach ($data as $recordLink) {
+      $singleLine = $this->transEsc($recordLink['title']) . ': ';
+      $singleLine .= '<a href="' . $this->recordLink()->related($recordLink['link']) . '">' .
+              $this->escapeHtml($recordLink['value']) . '</a>';
+      $singleLine = ($recordLink['pages']) ? $singleLine . ' ' . $recordLink['pages'] : $singleLine;
+      $lines[] = $singleLine;
+    }
+?>
+<?=implode('<br />', $lines)?>
+<? /* if we have record links, display relevant explanatory notes */
+  $related = $this->driver->getRelationshipNotes();
+  if (!empty($related)): ?>
+    <? foreach ($related as $field): ?>
+      <?=$this->escapeHtml($field)?><br/>
+    <? endforeach; ?>
+<? endif; ?>

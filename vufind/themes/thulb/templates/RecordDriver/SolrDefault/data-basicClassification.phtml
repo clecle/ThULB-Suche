@@ -1,0 +1,13 @@
+<? $bcl = $this->driver->tryMethod('getBasicClassification'); ?>
+<? $i = 0; ?>
+<? if ($bcl): ?>
+    <? foreach ($bcl as $classificationNumber): ?>
+        <?= ($i++ > 0) ? '<br />' : '' ?>
+        <? $titles = $this->driver->tryMethod('getConditionalFieldArray', ['084', ['9'], true, ' ', ['a' => $classificationNumber]]); ?>
+        <? if ($titles): ?>
+            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($titles[0])?>%22&amp;type=bklname"><?=$classificationNumber?> <?=htmlspecialchars(implode(' ', $titles))?></a>
+        <? else: ?>
+            <?=$classificationNumber?>
+        <? endif; ?>
+    <? endforeach; ?>
+<? endif; ?>

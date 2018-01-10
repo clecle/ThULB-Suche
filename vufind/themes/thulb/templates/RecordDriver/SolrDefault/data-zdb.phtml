@@ -1,0 +1,6 @@
+<? $zdb_ids = $this->driver->tryMethod('getZDBID'); ?>
+<? if ($zdb_ids): ?>
+    <? foreach ($zdb_ids as $zdb): ?>
+      <?=$zdb?>
+    <? endforeach; ?>
+<? endif; ?>

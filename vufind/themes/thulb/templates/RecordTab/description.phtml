@@ -1,0 +1,20 @@
+<?
+    // Set page title.
+    $this->headTitle($this->translate('Description') . ': ' . $this->driver->getBreadcrumb());
+
+    $formatter = $this->recordDataFormatter();
+    $mainFields = $formatter->getData($driver, $formatter->getDefaults('description'));
+?>
+<table class="table table-striped" summary="<?=$this->transEsc('Description')?>">
+  <? if (!empty($mainFields)): ?>
+    <? foreach ($mainFields as $key => $value): ?>
+      <? if ($key === 'DOI') : ?>
+        <tr><th><?=$this->transEsc($key)?>:</th><td><a href="http://dx.doi.org/<?=$value?>" target="_blank"><?=$value?></a></td></tr>
+      <? else : ?>
+        <tr><th><?=$this->transEsc($key)?>:</th><td><?=$value?></td></tr>
+      <? endif; ?>
+    <? endforeach; ?>
+  <? else: ?>
+    <tr><td><?=$this->transEsc('no_description')?></td></tr>
+  <? endif; ?>
+</table>

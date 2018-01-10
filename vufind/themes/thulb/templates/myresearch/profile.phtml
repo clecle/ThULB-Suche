@@ -1,0 +1,78 @@
+<?
+    // Set up page title:
+    $this->headTitle($this->translate('My Profile'));
+
+    // Set up breadcrumbs:
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
+
+    // Only display home library form if we have multiple pickup locations:
+    $showHomeLibForm = (isset($this->pickup) && count($this->pickup) > 1);
+
+    // Template for use by the renderArray helper:
+    $arrTemplate = '<tr><th>%%LABEL%%:</th><td> %%VALUE%%</td></tr>';
+    $arrImportantTemplate = '<tr><th>%%LABEL%%:</th><td> <strong class="text-danger">%%VALUE%%</strong></td></tr>';
+?>
+
+<div class="row">
+  <div class="<?=$this->layoutClass('mainbody')?>">
+    <h2><?=$this->transEsc('Your Profile')?></h2>
+    <?=$this->flashmessages();?>
+
+    <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
+
+    <table class="table table-striped">
+      <?
+        echo $this->renderArray(
+          $arrTemplate, $this->profile,
+          [
+            $this->transEsc('Name') => 'name',
+            $this->transEsc('Username') => 'user_id',
+            $this->transEsc('Address') => 'address1',
+            $this->transEsc('Email') => 'email',
+            $this->transEsc('Profile Expiration') => 'expires',
+          ]
+        );
+        
+        $accountinfo = [
+            'group'  => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
+            'status' => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
+            'note'   => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
+          ];
+        echo $this->renderArray(
+          $arrTemplate, $accountinfo,
+          [
+            $this->transEsc('User Group') => 'group',
+            $this->transEsc('User Status') => 'status',
+          ]
+        );
+        echo $this->renderArray(
+          $arrImportantTemplate, $accountinfo,
+          [
+            $this->transEsc('User Note') => 'note',
+          ]
+        );
+        ?>
+      <? if ($showHomeLibForm): ?>
+        <tr><th><?=$this->transEsc('Preferred Library')?>:</th>
+        <?
+          $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
+              ? $this->profile['home_library'] : $this->defaultPickupLocation
+        ?>
+        <td>
+          <form id="profile_form" class="form-inline" method="post">
+            <select id="home_library" name="home_library" class="form-control">
+              <? foreach ($this->pickup as $lib): ?>
+                <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID'])?' selected="selected"':''?>><?=$this->transEsc('location_' . $lib['locationDisplay'], null, $lib['locationDisplay'])?></option>
+              <? endforeach; ?>
+            </select>
+            <input class="btn btn-default" type="submit" value="<?=$this->transEsc('Save')?>" />
+          </form>
+        </td>
+      <? endif; ?>
+    </table>
+  </div>
+
+  <div class="<?=$this->layoutClass('sidebar')?>">
+    <?=$this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profile'])?>
+  </div>
+</div>

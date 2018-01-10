@@ -1,0 +1,34 @@
+<? if($this->driver->isCollection()): ?>
+  <?=implode('<br>', array_map(array($this, 'escapeHtml'), $this->driver->getSummary())); ?>
+<? else: ?>
+  <? $summAuthors = $this->driver->getPrimaryAuthorsWithHighlighting(); if (!empty($summAuthors)): ?>
+    <?=$this->transEsc('by')?>
+    <? $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
+      <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>" class="authorLink"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ',' : ''?>
+    <? endforeach; ?>
+  <? endif; ?>
+
+  <? $journalTitle = $this->driver->getContainerTitle(); $summDate = $this->driver->getPublicationDates(); ?>
+  <? if (!empty($journalTitle)): ?>
+    <?=!empty($summAuthor) ? '<br />' : ''?>
+    <?=$this->transEsc('Published in')?>:
+    <? $containerSource = $this->driver->getSourceIdentifier(); ?>
+    <? $containerID = $this->driver->getContainerRecordID(); ?>
+    <? /* TODO: handle highlighting more elegantly here: */?>
+    <a href="<?=($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('journaltitle', str_replace(array('{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'), '', $journalTitle)))?>"><?=$this->highlight($journalTitle) ?></a>
+    <?=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+  <? elseif (!empty($summDate)): ?>
+    <?=!empty($summAuthor) ? '<br />' : ''?>
+    <?=$this->transEsc('Published') . ' ' . $this->escapeHtml($summDate[0])?>
+  <? endif; ?>
+  <? $summInCollection = $this->driver->getContainingCollections(); if (!empty($summInCollection)): ?>
+    <? foreach ($summInCollection as $collId => $collText): ?>
+      <div>
+        <b><?=$this->transEsc("in_collection_label")?></b>
+        <a class="collectionLinkText" href="<?=$this->url('collection', array('id' => $collId))?>?recordID=<?=urlencode($this->driver->getUniqueID())?>">
+          <?=$this->escapeHtml($collText)?>
+        </a>
+      </div>
+    <? endforeach; ?>
+  <? endif; ?>
+<? endif; ?>

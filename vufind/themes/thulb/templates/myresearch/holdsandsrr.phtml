@@ -126,6 +126,13 @@
           <? elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>
             <p><span class="label label-success"><?=$this->transEsc('request_in_transit') . (is_string($ilsDetails['in_transit']) ? ': ' . $this->transEsc('institution_' . $ilsDetails['in_transit'], [], $ilsDetails['in_transit']) : '') ?></span></p>
           <? endif; ?>
+          
+          <?if (isset($ilsDetails['type']) && $ilsDetails['type'] === 'rejected') : ?>
+            <? $transParams = ['%%location%%' => isset($ilsDetails['location']) ? $ilsDetails['location'] : 'uns'];?>
+            <span class="text-danger"><?=$this->transEsc('Consultation necessary', $transParams)?></span>
+            <br />
+          <? endif; ?>
+          
           <? if (isset($ilsDetails['cancel_link'])): ?>
             <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc("hold_cancel") ?></a></p>
           <? endif; ?>

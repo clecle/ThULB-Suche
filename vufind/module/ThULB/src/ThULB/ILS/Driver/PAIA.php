@@ -318,7 +318,10 @@ class PAIA extends OriginalPAIA
     {
         $status = parent::getItemStatus($item);
         
-        if (!$status['availability'] && !isset($status['duedate'])) {
+        if (!$status['availability'] 
+            && !isset($status['duedate'])
+            && $status['holdtype'] !== 'recall'
+        ) {
             $status['use_unknown_message'] = true;
         }
         

@@ -37,4 +37,14 @@ class Record extends OriginalRecord
         $transEsc = $this->getView()->plugin('transEsc');
         return $transEsc('Title not available');
     }
+
+    /**
+     * Render a list of record formats.
+     *
+     * @return string
+     */
+    public function getCitationReferences()
+    {
+        return $this->renderTemplate('citation-references.phtml');
+    }
 }

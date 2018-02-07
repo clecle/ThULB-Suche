@@ -82,4 +82,28 @@ class Summon extends OriginalSummon
         }
         return $authors;
     }
+    
+    /**
+     * Get the number of citations of this record
+     * 
+     * @return boolean|integer
+     */
+    public function getCitatedReferencesCount()
+    {
+        return (array_key_exists('ISICitedReferencesCount', $this->fields) && $this->fields['ISICitedReferencesCount'])
+                ? $this->fields['ISICitedReferencesCount'][0]
+                : false;
+    }
+    
+    /**
+     * Get a link with information about where this record was cited
+     * 
+     * @return boolean|string
+     */
+    public function getCitatedReferencesLink()
+    {
+        return (array_key_exists('ISICitedReferencesURI', $this->fields) && $this->fields['ISICitedReferencesURI'])
+                ? $this->fields['ISICitedReferencesURI'][0]
+                : false;
+    }
 }

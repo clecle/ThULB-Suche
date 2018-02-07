@@ -477,3 +477,40 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
         text-decoration: none;
     }
 }
+
+.speech-bubble {
+    @extend .label;
+    @extend .label-info;
+    position: relative;
+    background: #FFFFFF;
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+    border: $brand-primary solid 1px;
+}
+
+.speech-bubble:after {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 2px 0 2px 7px;
+    border-color: transparent #FFFFFF;
+    display: block;
+    width: 0;
+    z-index: 1;
+    right: -7px;
+    top: 4px;
+}
+
+.speech-bubble:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    border-width: 2px 0 2px 7px;
+    border-color: transparent $brand-primary;
+    display: block;
+    width: 0;
+    z-index: 0;
+    right: -8px;
+    top: 4px;
+}

@@ -1,6 +1,6 @@
 <?php
-    $citesCount = $this->driver->getCitatedReferencesCount();
-    $citesLink = $this->driver->getCitatedReferencesLink();
+    $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
+    $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
 ?>
 <? if ($citesCount) :?>
     <span class="speech-bubble"><? if ($citesLink):?><a href = "<?=$citesLink?>"><?=$citesCount?></a><? else: ?><?=$citesCount?><? endif; ?></span>

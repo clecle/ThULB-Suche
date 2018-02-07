@@ -165,6 +165,7 @@ class MyResearchController extends OriginalController
 
         // We always want to display a cancel form:
         $view->cancelForm = true;
+        $view->disableCheckboxes = $patron['status'] == 2;
 
         // Get held item details:
         $result = $catalog->getMyHoldsAndSRR($patron);

@@ -842,6 +842,52 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
+     * Support method for getFieldData() -- factor the relationship indicator
+     * into the field number where relevant to generate a note to associate
+     * with a record link.
+     *
+     * @param File_MARC_Data_Field $field Field to examine
+     *
+     * @return string
+     */
+    protected function getRecordLinkNote($field)
+    {
+        // If set, use relationship information from subfield i and n
+        if ($subfieldI = $field->getSubfield('i')) {
+            $data = trim($subfieldI->getData());
+            if (!empty($data)) {
+                if ($subfieldN = $field->getSubfield('n')) {
+                    $data .= ' ' . trim($subfieldN->getData());
+                }
+                return $data;
+            }
+        }
+
+        // Normalize blank relationship indicator to 0:
+        $relationshipIndicator = $field->getIndicator('2');
+        if ($relationshipIndicator == ' ') {
+            $relationshipIndicator = '0';
+        }
+
+        // Assign notes based on the relationship type
+        $value = $field->getTag();
+        switch ($value) {
+        case '780':
+            if (in_array($relationshipIndicator, range('0', '7'))) {
+                $value .= '_' . $relationshipIndicator;
+            }
+            break;
+        case '785':
+            if (in_array($relationshipIndicator, range('0', '8'))) {
+                $value .= '_' . $relationshipIndicator;
+            }
+            break;
+        }
+
+        return 'note_' . $value;
+    }
+
+    /**
      * Get general notes on the record.
      *
      * @return array

@@ -1,0 +1,18 @@
+<?php 
+$count = 0;
+foreach ($data as $field) {
+    echo ($count) ? ', ' : '';
+    echo '<span class="subject-line" property="keywords">';
+        $subject = '';
+        if(count($field) == 1) {
+            $field = explode('--', $field[0]);
+        }
+        $i = 0;
+        foreach ($field as $subfield) {
+            echo ($i++ == 0) ? '' : ' &gt; ';
+            $subject = trim($subject . ' ' . $subfield);
+            echo '<a title="' . $this->escapeHtmlAttr($subject) . '" href="' . $this->record($this->driver)->getLink('subject', $subject) . '" rel="nofollow">' . trim($this->escapeHtml($subfield)) . '</a>';
+        }
+    echo '</span>';
+    $count++;
+}

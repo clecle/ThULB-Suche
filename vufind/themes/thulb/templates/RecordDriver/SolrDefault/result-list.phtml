@@ -83,6 +83,7 @@
         <? endif; ?>
 
         <?=$this->record($this->driver)->getFormatList() ?>
+        <?=$this->record($this->driver)->getCitationReferences() ?>
 
         <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
           <span class="status ajax-availability hidden">

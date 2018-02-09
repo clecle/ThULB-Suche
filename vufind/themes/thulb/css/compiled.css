@@ -239,7 +239,7 @@ th {
   .dropup > .btn > .caret {
     border-top-color: #000 !important; }
 
-  .label, .result .format, .sidebar .format {
+  .label, .result .format, .sidebar .format, .speech-bubble {
     border: 1px solid #000; }
 
   .table {
@@ -4217,7 +4217,7 @@ footer > .navbar-collapse,
     background-color: #fff;
     cursor: not-allowed; }
 
-.label, .result .format, .sidebar .format {
+.label, .result .format, .sidebar .format, .speech-bubble {
   display: inline;
   padding: .2em .6em .3em;
   font-size: 75%;
@@ -4228,13 +4228,13 @@ footer > .navbar-collapse,
   white-space: nowrap;
   vertical-align: baseline;
   border-radius: .25em; }
-  .label:empty, .result .format:empty, .sidebar .format:empty {
+  .label:empty, .result .format:empty, .sidebar .format:empty, .speech-bubble:empty {
     display: none; }
-  .btn .label, .btn .result .format, .result .btn .format, .btn .sidebar .format, .sidebar .btn .format {
+  .btn .label, .btn .result .format, .result .btn .format, .btn .sidebar .format, .sidebar .btn .format, .btn .speech-bubble {
     position: relative;
     top: -1px; }
 
-a.label:hover, .channel .label.channel-record.is-selected, .channel .result .channel-record.is-selected.format, .result .channel .channel-record.is-selected.format, .channel .sidebar .channel-record.is-selected.format, .sidebar .channel .channel-record.is-selected.format, .result a.format:hover, .sidebar a.format:hover, a.label:focus, .result a.format:focus, .sidebar a.format:focus {
+a.label:hover, .channel .label.channel-record.is-selected, .channel .result .channel-record.is-selected.format, .result .channel .channel-record.is-selected.format, .channel .sidebar .channel-record.is-selected.format, .sidebar .channel .channel-record.is-selected.format, .channel .channel-record.is-selected.speech-bubble, .result a.format:hover, .sidebar a.format:hover, a.speech-bubble:hover, a.label:focus, .result a.format:focus, .sidebar a.format:focus, a.speech-bubble:focus {
   color: #fff;
   text-decoration: none;
   cursor: pointer; }
@@ -4254,9 +4254,9 @@ a.label:hover, .channel .label.channel-record.is-selected, .channel .result .cha
   .label-success[href]:hover, .label-success[href]:focus {
     background-color: #449d44; }
 
-.label-info, .result .format, .sidebar .format {
+.label-info, .result .format, .sidebar .format, .speech-bubble {
   background-color: #5bc0de; }
-  .label-info[href]:hover, .result [href].format:hover, .sidebar [href].format:hover, .label-info[href]:focus, .result [href].format:focus, .sidebar [href].format:focus {
+  .label-info[href]:hover, .result [href].format:hover, .sidebar [href].format:hover, [href].speech-bubble:hover, .label-info[href]:focus, .result [href].format:focus, .sidebar [href].format:focus, [href].speech-bubble:focus {
     background-color: #31b0d5; }
 
 .label-warning {
@@ -5857,15 +5857,15 @@ button.close, button.adv-term-remove {
   .hidden-print {
     display: none !important; } }
 /*!
- *  Font Awesome 4.7.0 by @davegandy - http://fontawesome.io - @fontawesome
+ *  Font Awesome 4.6.3 by @davegandy - http://fontawesome.io - @fontawesome
  *  License - http://fontawesome.io/license (Font: SIL OFL 1.1, CSS: MIT License)
  */
 /* FONT PATH
  * -------------------------- */
 @font-face {
   font-family: 'FontAwesome';
-  src: url("../../bootstrap3/css/fonts/fontawesome-webfont.eot?v=4.7.0");
-  src: url("../../bootstrap3/css/fonts/fontawesome-webfont.eot?#iefix&v=4.7.0") format("embedded-opentype"), url("../../bootstrap3/css/fonts/fontawesome-webfont.woff2?v=4.7.0") format("woff2"), url("../../bootstrap3/css/fonts/fontawesome-webfont.woff?v=4.7.0") format("woff"), url("../../bootstrap3/css/fonts/fontawesome-webfont.ttf?v=4.7.0") format("truetype"), url("../../bootstrap3/css/fonts/fontawesome-webfont.svg?v=4.7.0#fontawesomeregular") format("svg");
+  src: url("../../bootstrap3/css/fonts/fontawesome-webfont.eot?v=4.6.3");
+  src: url("../../bootstrap3/css/fonts/fontawesome-webfont.eot?#iefix&v=4.6.3") format("embedded-opentype"), url("../../bootstrap3/css/fonts/fontawesome-webfont.woff2?v=4.6.3") format("woff2"), url("../../bootstrap3/css/fonts/fontawesome-webfont.woff?v=4.6.3") format("woff"), url("../../bootstrap3/css/fonts/fontawesome-webfont.ttf?v=4.6.3") format("truetype"), url("../../bootstrap3/css/fonts/fontawesome-webfont.svg?v=4.6.3#fontawesomeregular") format("svg");
   font-weight: normal;
   font-style: normal; }
 .fa {
@@ -7678,7 +7678,6 @@ button.close, button.adv-term-remove {
   content: ""; }
 
 .fa-battery-4:before,
-.fa-battery:before,
 .fa-battery-full:before {
   content: ""; }
 
@@ -8024,143 +8023,6 @@ button.close, button.adv-term-remove {
 .fa-fa:before,
 .fa-font-awesome:before {
   content: ""; }
-
-.fa-handshake-o:before {
-  content: ""; }
-
-.fa-envelope-open:before {
-  content: ""; }
-
-.fa-envelope-open-o:before {
-  content: ""; }
-
-.fa-linode:before {
-  content: ""; }
-
-.fa-address-book:before {
-  content: ""; }
-
-.fa-address-book-o:before {
-  content: ""; }
-
-.fa-vcard:before,
-.fa-address-card:before {
-  content: ""; }
-
-.fa-vcard-o:before,
-.fa-address-card-o:before {
-  content: ""; }
-
-.fa-user-circle:before {
-  content: ""; }
-
-.fa-user-circle-o:before {
-  content: ""; }
-
-.fa-user-o:before {
-  content: ""; }
-
-.fa-id-badge:before {
-  content: ""; }
-
-.fa-drivers-license:before,
-.fa-id-card:before {
-  content: ""; }
-
-.fa-drivers-license-o:before,
-.fa-id-card-o:before {
-  content: ""; }
-
-.fa-quora:before {
-  content: ""; }
-
-.fa-free-code-camp:before {
-  content: ""; }
-
-.fa-telegram:before {
-  content: ""; }
-
-.fa-thermometer-4:before,
-.fa-thermometer:before,
-.fa-thermometer-full:before {
-  content: ""; }
-
-.fa-thermometer-3:before,
-.fa-thermometer-three-quarters:before {
-  content: ""; }
-
-.fa-thermometer-2:before,
-.fa-thermometer-half:before {
-  content: ""; }
-
-.fa-thermometer-1:before,
-.fa-thermometer-quarter:before {
-  content: ""; }
-
-.fa-thermometer-0:before,
-.fa-thermometer-empty:before {
-  content: ""; }
-
-.fa-shower:before {
-  content: ""; }
-
-.fa-bathtub:before,
-.fa-s15:before,
-.fa-bath:before {
-  content: ""; }
-
-.fa-podcast:before {
-  content: ""; }
-
-.fa-window-maximize:before {
-  content: ""; }
-
-.fa-window-minimize:before {
-  content: ""; }
-
-.fa-window-restore:before {
-  content: ""; }
-
-.fa-times-rectangle:before,
-.fa-window-close:before {
-  content: ""; }
-
-.fa-times-rectangle-o:before,
-.fa-window-close-o:before {
-  content: ""; }
-
-.fa-bandcamp:before {
-  content: ""; }
-
-.fa-grav:before {
-  content: ""; }
-
-.fa-etsy:before {
-  content: ""; }
-
-.fa-imdb:before {
-  content: ""; }
-
-.fa-ravelry:before {
-  content: ""; }
-
-.fa-eercast:before {
-  content: ""; }
-
-.fa-microchip:before {
-  content: ""; }
-
-.fa-snowflake-o:before {
-  content: ""; }
-
-.fa-superpowers:before {
-  content: ""; }
-
-.fa-wpexplorer:before {
-  content: ""; }
-
-.fa-meetup:before {
-  content: ""; }
 
 .sr-only {
   position: absolute;
@@ -9466,7 +9328,7 @@ body.rtl .result .btn-bookbag-toggle .fa {
     min-width: 0; }
   .grid-result .title {
     font-weight: bold; }
-  .grid-result .label, .grid-result .result .format, .result .grid-result .format, .grid-result .sidebar .format, .sidebar .grid-result .format,
+  .grid-result .label, .grid-result .result .format, .result .grid-result .format, .grid-result .sidebar .format, .sidebar .grid-result .format, .grid-result .speech-bubble,
   .grid-result .format {
     display: inline-block;
     white-space: normal; }
@@ -9910,7 +9772,7 @@ img {
   margin-top: .5rem;
   margin-bottom: .5rem; }
 
-.label, .result .format, .sidebar .format {
+.label, .result .format, .sidebar .format, .speech-bubble {
   display: inline-block; }
 
 .popover {
@@ -10166,7 +10028,7 @@ footer {
 .toplevel {
   border: 2px solid #000; }
 
-.node .label, .node .result .format, .result .node .format, .node .sidebar .format, .sidebar .node .format {
+.node .label, .node .result .format, .result .node .format, .node .sidebar .format, .sidebar .node .format, .node .speech-bubble {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -10326,5 +10188,37 @@ span[class*=" services-"] span:first-of-type::before {
 .checkboxFilter a:hover, .checkboxFilter .channel .channel-record.is-selected, .channel .checkboxFilter .channel-record.is-selected {
   color: #333333;
   text-decoration: none; }
+
+.speech-bubble {
+  position: relative;
+  background: #FFFFFF;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border: #568ebe solid 1px; }
+
+.speech-bubble:after {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 2px 0 2px 7px;
+  border-color: transparent #FFFFFF;
+  display: block;
+  width: 0;
+  z-index: 1;
+  right: -7px;
+  top: 8px; }
+
+.speech-bubble:before {
+  content: '';
+  position: absolute;
+  border-style: solid;
+  border-width: 2px 0 2px 7px;
+  border-color: transparent #568ebe;
+  display: block;
+  width: 0;
+  z-index: 0;
+  right: -8px;
+  top: 8px; }
 
 /*# sourceMappingURL=compiled.css.map */

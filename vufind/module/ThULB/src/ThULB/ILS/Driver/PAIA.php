@@ -57,7 +57,8 @@ class PAIA extends OriginalPAIA
         // status = 1 - reserved (the document is not accessible for the patron yet,
         //              but it will be)
         //          2 - ordered (the document is ordered by the patron)
-        $filter = ['status' => [1,2]];
+        //          5 - rejected
+        $filter = ['status' => [1, 2, 5]];
         // get items-docs for given filters
         $items = $this->paiaGetItems($patron, $filter);
 
@@ -317,7 +318,10 @@ class PAIA extends OriginalPAIA
     {
         $status = parent::getItemStatus($item);
         
-        if (!$status['availability'] && !isset($status['duedate'])) {
+        if (!$status['availability'] 
+            && !isset($status['duedate'])
+            && $status['holdtype'] !== 'recall'
+        ) {
             $status['use_unknown_message'] = true;
         }
         

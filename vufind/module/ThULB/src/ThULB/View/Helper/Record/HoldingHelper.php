@@ -42,7 +42,9 @@ class HoldingHelper extends AbstractHelper
         } else {
           /* Begin UNAVAILABLE Items (Recalls) */
           if ((isset($itemRow['returnDate']) && $itemRow['returnDate'])
-            || (isset($itemRow['duedate']) && $itemRow['duedate'])) {
+            || (isset($itemRow['duedate']) && $itemRow['duedate'])
+            || (isset($itemRow['holdtype']) && $itemRow['holdtype'] === 'recall')
+          ) {
             /* is there a duedate? > "ausgeliehen" */
             $availabilityString .= '<span class="text-danger">' . $this->view->transEsc('ils_hold_item_' . $itemRow['status']) . '<link property="availability" href="http://schema.org/OutOfStock" /></span>';
           } else {

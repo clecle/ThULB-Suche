@@ -1142,6 +1142,15 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             continue;
           }
 
+          /* strip url to TopLevelDomain and use it as displayed text */
+          $txt = $url;
+          $txt = str_replace( "http://", "", $txt);
+          $txt = str_replace( "https://", "", $txt);
+          $txt = str_replace( "www.", "", $txt);
+          if ( strlen($txt) > 30 ) {
+            $txt = explode("/", $txt);
+          }
+          
           /* seems that the real LINK is in 981y if 981r or w is empty... */
           if ( empty($txt) ) {
             $txt = $url;
@@ -1184,7 +1193,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
            * 981 |2 31  |1 00  |y Volltext  |w http://mybib.thulb.uni-jena.de/els/browser/open/557127483  
            */
           $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
-          $retVal[$id] = $txt . "|" . $url . "|" . $more . "|" . $tmp;
+          $retVal[$id] = $txt[0] . "|" . $url . "|" . $more . "|" . $tmp;
         }
       } else {
         $retVal = "";

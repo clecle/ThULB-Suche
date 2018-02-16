@@ -1229,8 +1229,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
            * 981 |2 31  |1 00  |w http://kataloge.thulb.uni-jena.de/img_psi/2.0/logos/eLS.gif 
            * 981 |2 31  |1 00  |y Volltext  |w http://mybib.thulb.uni-jena.de/els/browser/open/557127483  
            */
-
-          $txt_sanitized = $this->shortenURL($txt, $url);
+          
+          // we just need to show host as link-text
+          $url_data = parse_url($url);
+          $txt_sanitized = $url_data['host'];
           
           $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
           $retVal[$id] = $txt_sanitized . "|" . $txt . "|" . $url . "|" . $more . "|" . $tmp;
@@ -1239,30 +1241,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         $retVal = "";
       }
       return $retVal;
-    }
-    
-    /**
-      * Return only TLD from url, in order to display Link as more user-readable text
-      * 
-      * @return $txt as String
-      * 
-      */
-    public function shortenURL($txt, $url) {
-      /* strip url to TopLevelDomain and use it as displayed text */
-      if ( preg_match("/http\:\/\//i", $url) ) {
-        $txt = str_replace( "http://", "", $url);
-      }
-      if ( preg_match("/https\:\/\//i", $url) ) {
-        $txt = str_replace( "https://", "", $url);
-      }
-      if ( preg_match("/www\./i", $txt) ) {
-        $txt = str_replace( "www.", "", $txt);
-      }
-      if ( strlen($txt) > 20 ) {
-        $txt_array = explode("/", $txt);
-        $txt = $txt_array[0];
-      }
-      return $txt;
     }
 
     /**

@@ -325,6 +325,14 @@ class PAIA extends OriginalPAIA
             $status['use_unknown_message'] = true;
         }
         
+        // items that are on recall should be shown as unavailable
+        if (
+            $status['holdtype'] === 'recall'
+            && $status['status'] === 'available'
+        ) {
+            $status['available'] = 'unavailable';
+        }
+        
         return $status;
     }
     

@@ -3,5 +3,5 @@
     $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
 ?>
 <? if ($citesCount) :?>
-    <span class="speech-bubble"><? if ($citesLink):?><a href = "<?=$citesLink?>"><?=$citesCount?></a><? else: ?><?=$citesCount?><? endif; ?></span>
+<span class="speech-bubble html-tooltip" title="<?=$this->translate('Web of Science Scites Tooltip')?>"><? if ($citesLink):?><a href="<?=$citesLink?>"><?=$citesCount?></a><? else: ?><?=$citesCount?><? endif; ?></span>
 <? endif;?>

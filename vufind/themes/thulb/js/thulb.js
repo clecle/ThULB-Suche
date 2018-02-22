@@ -112,10 +112,18 @@ function setAsyncResultNum() {
     }
 }
 
+function styleHtmlTooltips()
+{
+    $('.html-tooltip').each(function() {
+        $(this).tooltip({delay: {show: 500, hide: 100}, html: true, placement: 'auto', container: 'body'});
+    });
+}
+
 $(document).ready(function thulbDocReady() {
     setupTruncations();
     setupThulbFacets();
     setAsyncResultNum();
+    styleHtmlTooltips();
     
     $('.checkbox-select-all').change(function unsetDisabledCheckboxes() {
         var $form = this.form ? $(this.form) : $(this).closest('form');

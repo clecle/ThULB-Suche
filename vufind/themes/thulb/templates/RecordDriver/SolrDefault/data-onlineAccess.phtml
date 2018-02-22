@@ -15,5 +15,5 @@
   <? endif; ?>
 <? endif; ?>
 <? if ($citesLink) : ?>
-  <a href="<?=$citesLink?>"><?=$this->transEsc('Web of Science Scites Link')?></a><?if ($citesCount):?> (<?=$citesCount?>)<?endif;?>
+  <?if ($citesCount):?><?=$citesCount?> <?endif;?><a href="<?=$citesLink?>"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
 <? endif; ?>

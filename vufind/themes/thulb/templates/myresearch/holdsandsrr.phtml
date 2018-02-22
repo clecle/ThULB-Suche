@@ -110,6 +110,7 @@
 
           <? if (!empty($ilsDetails['create'])): ?>
             <strong><?=$this->transEsc('Created') ?>:</strong> <?=$this->escapeHtml($ilsDetails['create']) ?>
+            <br />
             <? if (!empty($ilsDetails['expire'])): ?>|<? endif; ?>
           <? endif; ?>
 
@@ -128,7 +129,7 @@
           <? endif; ?>
           
           <?if (isset($ilsDetails['type']) && $ilsDetails['type'] === 'rejected') : ?>
-            <? $transParams = ['%%location%%' => isset($ilsDetails['location']) ? $ilsDetails['location'] : 'uns'];?>
+            <? $transParams = ['%%location%%' => isset($ilsDetails['location']) ? $ilsDetails['location'] : ' Zentrale Ausleihe'];?>
             <span class="text-danger"><?=$this->transEsc('Consultation necessary', $transParams)?></span>
             <br />
           <? endif; ?>

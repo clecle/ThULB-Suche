@@ -668,6 +668,31 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             );
     }
     
+    /**
+     * Get an array with printing places
+     * 
+     * @return array
+     */
+    public function getPrintingPlaces()
+    {
+        $printingPlaces = [];
+        $fields = $this->getMarcRecord()->getFields('260');
+        if (is_array($fields)) {
+            foreach ($fields as $currentField) {
+                $ind1 = $currentField->getIndicator(1);
+                $ind2 = $currentField->getIndicator(2);
+                if (($ind1 && trim($ind1)) || ($ind2 && trim($ind2))) {
+                    continue;
+                }
+                $subfields = $this->getSubfieldArray($currentField, ['a']);
+                if ($subfields) {
+                    $printingPlaces[] = $subfields[0];
+                }
+            }
+        }
+        
+        return $printingPlaces;
+    }
     
     /**
      * Get a formatted string from different MARC fields 

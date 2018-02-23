@@ -330,7 +330,7 @@ class PAIA extends OriginalPAIA
             $status['holdtype'] === 'recall'
             && $status['status'] === 'available'
         ) {
-            $status['available'] = 'unavailable';
+            $status['status'] = 'unavailable';
         }
         
         return $status;

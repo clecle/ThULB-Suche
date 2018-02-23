@@ -128,6 +128,7 @@ class RecordDataFormatterFactory extends OrignalFactory
         );
         $spec->setTemplateLine('Tags', true, 'data-tags.phtml');
         $spec->setLine('Item Description', 'getGeneralNotes');
+        $spec->setLine('Title of work', 'getTitleOfWork');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');
         $spec->setTemplateLine('Fingerprint', 'getFingerprint', 'data-fingerprint.phtml');
         $spec->setLine('Bibliographic Citations', 'getBibliographicCitation');

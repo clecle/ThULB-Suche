@@ -646,6 +646,28 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         return $this->getFieldArray('020', ['z'], false);
     }
     
+    /**
+     * Get an array with the uniform title
+     * 
+     * @return array
+     */
+    public function getTitleOfWork()
+    {
+        $uniformTitle = $this->getFieldArray(
+                '130',
+                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
+                true,
+                ', '
+            );
+        
+        return ($uniformTitle) ?: $this->getFieldArray(
+                '240',
+                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
+                true,
+                ', '
+            );
+    }
+    
     
     /**
      * Get a formatted string from different MARC fields 

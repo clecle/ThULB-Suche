@@ -14,6 +14,6 @@
     <?=$openUrl->renderTemplate()?><br />
   <? endif; ?>
 <? endif; ?>
-<? if ($citesLink) : ?>
-  <?if ($citesCount):?><?=$citesCount?> <?endif;?><a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
+<? if ($citesLink && $citesCount > 0) : ?>
+  <?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
 <? endif; ?>

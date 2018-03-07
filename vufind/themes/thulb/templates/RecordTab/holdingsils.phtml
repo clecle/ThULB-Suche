@@ -114,10 +114,13 @@
                   <dt><?=$this->transEsc("Call Number")?>:</dt>
                   <dd><strong><?=$callno ?></strong></dd>
                 <? endif; ?>
+
+                <? /* ANMERKGUNGEN & BESTAND */ ?>
                 <? $comments = $this->thulb_holdinghelper()->getHoldingComments($row); ?>
+                <? $chron = $this->thulb_holdinghelper()->getHoldingChronology($row); ?>
                 <? if (!empty($comments)) : ?>
                   <dt><?=$this->transEsc("Item Notes")?>:</dt>
-                    <div class="item-notes">
+                  <div class="item-notes">
                     <dd>
                     <? if (is_array($comments) && count($comments) > 0): ?>
                       <ul>
@@ -131,6 +134,24 @@
                     </dd>
                   </div>
                 <? endif; ?>
+                
+                <? if (!empty($chron)) : ?>
+                  <dt><?=$this->transEsc("Item Chronology")?>:</dt>
+                  <div class="item-notes">
+                    <dd>
+                    <? if (is_array($chron) && count($chron) > 0): ?>
+                      <ul>
+                        <? foreach ($chron as $chron): ?>
+                          <? if (!empty($chron)): ?>
+                            <li><?=$chron ?></li>
+                          <? endif; ?>
+                        <? endforeach; ?>
+                      </ul>
+                    <? endif; ?>
+                    </dd>
+                  </div>
+                <? endif; ?>
+
                 <? if ($callno != "Unknown" && $callno != "bestellt" ): ?>
                   <dt><?=$this->transEsc("Availability Status")?>:</dt>
                   <dd><?=$this->thulb_holdinghelper()->getAvailability($row);?></dd>

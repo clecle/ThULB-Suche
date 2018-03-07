@@ -47,4 +47,15 @@ class Record extends OriginalRecord
     {
         return $this->renderTemplate('citation-references.phtml');
     }
+    
+    /**
+     * Is this Record OpenAcess?
+     *
+     * @return string
+     */
+    public function getOpenAccess()
+    {
+        return $this->renderTemplate('isopenaccess.phtml');
+    }
+
 }

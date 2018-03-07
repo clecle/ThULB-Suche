@@ -106,4 +106,16 @@ class Summon extends OriginalSummon
                 ? $this->fields['ISICitedReferencesURI'][0]
                 : false;
     }
+    
+     /**
+     * Get OpenAccess information
+     * 
+     * @return bool
+     */
+    public function isOpenAccess()
+    {
+        return (array_key_exists('IsOpenAccess', $this->fields) && $this->fields['IsOpenAccess'])
+                ? $this->fields['IsOpenAccess'][0]
+                : false;
+    }
 }

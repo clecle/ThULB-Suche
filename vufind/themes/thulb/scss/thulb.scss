@@ -514,3 +514,9 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     right: -8px;
     top: 8px;
 }
+
+.openaccess {
+    @extend .label;
+    @extend .label-info;
+    background-color: $brand-inverted;
+}

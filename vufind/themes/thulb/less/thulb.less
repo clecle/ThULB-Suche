@@ -1,4 +1,4 @@
-@import "../../bootstrap3/less/vendor/bootstrap";
+@import "../../bootstrap3/less/vendor/bootstrap/bootstrap";
 @fa-font-path: "../../bootstrap3/css/fonts";
 @import "../../bootstrap3/less/vendor/font-awesome/font-awesome";
 @import "../../bootstrap3/less/vendor/bootstrap-accessibility/bootstrap-accessibility";
@@ -467,6 +467,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
         background-color: @nav-link-hover-bg;
         text-decoration: none;
     }
+}
 
 .checkboxFilter a {
     &:hover {
@@ -511,4 +512,10 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     z-index: 0;
     right: -8px;
     top: 8px;
+}
+
+.openaccess {
+    &:extend(.label);
+    &:extend(.label-info);
+    background-color: @brand-inverted;
 }

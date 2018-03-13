@@ -472,30 +472,6 @@ class PAIA extends OriginalPAIA
 
         return $result;
     }
-
-    /**
-     * Get Holding
-     *
-     * This is responsible for retrieving the holding information of a certain
-     * record.
-     *
-     * @param string $id     The record id to retrieve the holdings for
-     * @param array  $patron Patron data
-     *
-     * @return array         On success, an associative array with the following
-     * keys: id, availability (boolean), status, location, reserve, callnumber,
-     * duedate, number, barcode.
-     */
-    public function getHolding($id, array $patron = null)
-    {
-        $holding = parent::getHolding($id, $patron);
-        
-        foreach ($holding as $index => $doc) {
-            $holding[$index]['callnumber'] = $this->removeDepIdFromCallNumber($doc['callnumber']);
-        }
-        
-        return $holding;
-    }
     
     /**
      * Patron Login

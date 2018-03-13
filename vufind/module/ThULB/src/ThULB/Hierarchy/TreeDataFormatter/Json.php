@@ -5,6 +5,7 @@
  * PHP version 5
  *
  * Copyright (C) Villanova University 2015.
+ * Copyright (C) Thüringer Universitäts- und Landesbibliothek (ThULB) Jena, 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -19,7 +20,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * @category VuFind
+ * @category ThULB
  * @package  HierarchyTree_DataFormatter
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Richard Großer <richard.grosser@thulb.uni-jena.de>

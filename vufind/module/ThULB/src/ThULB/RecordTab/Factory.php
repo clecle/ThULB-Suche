@@ -1,10 +1,11 @@
 <?php
 /**
- * Record Tab Factory Class
+ * Custom Record Tab Factory Class
  *
  * PHP version 5
  *
  * Copyright (C) Villanova University 2014.
+ * Copyright (C) Thüringer Universitäts- und Landesbibliothek (ThULB) Jena, 2018.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,

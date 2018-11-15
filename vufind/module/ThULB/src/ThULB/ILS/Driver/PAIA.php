@@ -507,7 +507,8 @@ class PAIA extends OriginalPAIA
             }
         }
         try {
-            if ($this->paiaLogin($username, $password)) {
+            /*if ($this->paiaLogin($username, $password)) {*/
+            if ($this->paiaPostRequest($username, $password)) {
                 return $this->enrichUserDetails(
                     $this->paiaGetUserDetails($session->patron),
                     $password
@@ -652,5 +653,52 @@ class PAIA extends OriginalPAIA
             return true;
         }
         return false;
+    }
+    
+    
+    /**
+     * Post something to a foreign host
+     *
+     * @param string $file         POST target URL
+     * @param string $data_to_send POST data
+     * @param string $access_token PAIA access token for current session
+     *
+     * @return string POST response
+     * @throws ILSException
+     */
+    protected function paiaPostRequest($file, $data_to_send, $access_token = null)
+    {
+        // json-encoding
+        $postData = json_encode($data_to_send);
+
+        $http_headers = [
+            'Content-type' => 'application/x-www-form-urlencoded; charset=UTF-8',
+        ];
+
+        if (isset($access_token)) {
+            $http_headers['Authorization'] = 'Bearer ' . $access_token;
+        }
+
+        try {
+            $result = $this->httpService->post(
+                $this->paiaURL . $file,
+                $postData,
+                'application/x-www-form-urlencoded; charset=UTF-8',
+                $this->paiaTimeout,
+                $http_headers
+            );
+        } catch (\Exception $e) {
+            throw new ILSException($e->getMessage());
+        }
+
+        if (!$result->isSuccess()) {
+            // log error for debugging
+            $this->debug(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received'
+            );
+        }
+        // return any result as error-handling is done elsewhere
+        return ($result->getBody());
     }
 }

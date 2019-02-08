@@ -507,8 +507,7 @@ class PAIA extends OriginalPAIA
             }
         }
         try {
-            /*if ($this->paiaLogin($username, $password)) {*/
-            if ($this->paiaPostRequest($username, $password)) {
+            if ($this->paiaLogin($username, $password)) {
                 return $this->enrichUserDetails(
                     $this->paiaGetUserDetails($session->patron),
                     $password
@@ -654,9 +653,110 @@ class PAIA extends OriginalPAIA
         }
         return false;
     }
-    
+
+        /**
+     * PAIA authentication function
+     *
+     * @param string $username Username
+     * @param string $password Password
+     *
+     * @return mixed Associative array of patron info on successful login,
+     * null on unsuccessful login, PEAR_Error on error.
+     * @throws ILSException
+     */
+    protected function paiaLogin($username, $password)
+    {
+        // perform full PAIA auth and get patron info
+        $post_data = [
+            "username"   => $username,
+            "password"   => $password,
+            "grant_type" => "password",
+            "scope"      => "read_patron read_fees read_items write_items " .
+                "change_password"
+        ];
+        $responseJson = $this->paiaLoginPostRequest('auth/login', $post_data);
+
+        try {
+            $responseArray = $this->paiaParseJsonAsArray($responseJson);
+        } catch (ILSException $e) {
+            if ($e->getMessage() === 'access_denied') {
+                return false;
+            }
+            throw new ILSException(
+                $e->getCode() . ':' . $e->getMessage()
+            );
+        }
+
+        if (!isset($responseArray['access_token'])) {
+            throw new ILSException(
+                'Unknown error! Access denied.'
+            );
+        } elseif (!isset($responseArray['patron'])) {
+            throw new ILSException(
+                'Login credentials accepted, but got no patron ID?!?'
+            );
+        } else {
+            // at least access_token and patron got returned which is sufficient for
+            // us, now save all to session
+            $session = $this->getSession();
+
+            $session->patron
+                = isset($responseArray['patron'])
+                ? $responseArray['patron'] : null;
+            $session->access_token
+                = isset($responseArray['access_token'])
+                ? $responseArray['access_token'] : null;
+            $session->scope
+                = isset($responseArray['scope'])
+                ? explode(' ', $responseArray['scope']) : null;
+            $session->expires
+                = isset($responseArray['expires_in'])
+                ? (time() + ($responseArray['expires_in'])) : null;
+
+            return true;
+        }
+    }
     
     /**
+     * Post something to a foreign host
+     *
+     * @param string $file         POST target URL
+     * @param string $data_to_send POST data
+     * @param string $access_token PAIA access token for current session
+     *
+     * @return string POST response
+     * @throws ILSException
+     */
+    protected function paiaLoginPostRequest($file, $data_to_send, $access_token = null)
+    {
+        $postData = http_build_query($data_to_send);
+
+        $http_headers = [];
+        
+        if (isset($access_token)) {
+            $http_headers['Authorization'] = 'Bearer ' . $access_token;
+        }
+
+        try {
+            $result = $this->httpService->post(
+                $this->paiaURL . $file,
+                $postData,
+                'application/x-www-form-urlencoded; charset=UTF-8',
+                $this->paiaTimeout,
+                $http_headers
+            );
+        } catch (\Exception $e) {
+            throw new ILSException($e->getMessage());
+        }
+        if (!$result->isSuccess()) {
+            $this->debug(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received'
+            );
+        }
+        return ($result->getBody());
+    }
+        /**
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
@@ -671,10 +771,7 @@ class PAIA extends OriginalPAIA
         // json-encoding
         $postData = json_encode($data_to_send);
 
-        $http_headers = [
-            'Content-type' => 'application/x-www-form-urlencoded; charset=UTF-8',
-        ];
-
+        $http_headers = [];
         if (isset($access_token)) {
             $http_headers['Authorization'] = 'Bearer ' . $access_token;
         }
@@ -683,7 +780,7 @@ class PAIA extends OriginalPAIA
             $result = $this->httpService->post(
                 $this->paiaURL . $file,
                 $postData,
-                'application/x-www-form-urlencoded; charset=UTF-8',
+                'application/json; charset=UTF-8',
                 $this->paiaTimeout,
                 $http_headers
             );
@@ -700,5 +797,33 @@ class PAIA extends OriginalPAIA
         }
         // return any result as error-handling is done elsewhere
         return ($result->getBody());
+    }
+    
+    /**
+     * Post something at given URL and return it as json_decoded array
+     *
+     * @param string $file POST target URL
+     * @param array  $data POST data
+     *
+     * @return array|mixed
+     * @throws ILSException
+     */
+    protected function paiaPostAsArray($file, $data)
+    {
+        $responseJson = $this->paiaPostRequest(
+            $file,
+            $data,
+            $this->getSession()->access_token
+        );
+
+        try {
+            $responseArray = $this->paiaParseJsonAsArray($responseJson);
+        } catch (ILSException $e) {
+            $this->debug($e->getCode() . ':' . $e->getMessage());
+            /* TODO: do not return empty array, this causes eventually confusion */
+            return [];
+        }
+
+        return $responseArray;
     }
 }

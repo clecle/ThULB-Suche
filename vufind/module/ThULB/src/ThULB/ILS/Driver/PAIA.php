@@ -674,7 +674,7 @@ class PAIA extends OriginalPAIA
             "scope"      => "read_patron read_fees read_items write_items " .
                 "change_password"
         ];
-        $responseJson = $this->paiaLoginPostRequest('auth/login', $post_data);
+        $responseJson = $this->paiaLoginRequest('auth/login', $post_data);
 
         try {
             $responseArray = $this->paiaParseJsonAsArray($responseJson);
@@ -727,7 +727,7 @@ class PAIA extends OriginalPAIA
      * @return string POST response
      * @throws ILSException
      */
-    protected function paiaLoginPostRequest($file, $data_to_send, $access_token = null)
+    protected function paiaLoginRequest($file, $data_to_send, $access_token = null)
     {
         $postData = http_build_query($data_to_send);
 

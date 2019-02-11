@@ -1501,6 +1501,47 @@ class PAIA extends DAIA
         // return any result as error-handling is done elsewhere
         return ($result->getBody());
     }
+    
+    /**
+     * Login via /auth/login
+     * PAIA supports x-www-form-urlencoded header only
+     *
+     * @param string $file         POST target URL
+     * @param string $data_to_send POST data
+     * @param string $access_token PAIA access token for current session
+     *
+     * @return string POST response
+     * @throws ILSException
+     */
+    protected function paiaLoginPostRequest($file, $data_to_send, $access_token = null)
+    {
+        $postData = http_build_query($data_to_send);
+
+        $http_headers = [];
+        
+        if (isset($access_token)) {
+            $http_headers['Authorization'] = 'Bearer ' . $access_token;
+        }
+
+        try {
+            $result = $this->httpService->post(
+                $this->paiaURL . $file,
+                $postData,
+                'application/x-www-form-urlencoded; charset=UTF-8',
+                $this->paiaTimeout,
+                $http_headers
+            );
+        } catch (\Exception $e) {
+            throw new ILSException($e->getMessage());
+        }
+        if (!$result->isSuccess()) {
+            $this->debug(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received'
+            );
+        }
+        return ($result->getBody());
+    }
 
     /**
      * GET data from foreign host
@@ -1633,7 +1674,7 @@ class PAIA extends DAIA
             "scope"      => "read_patron read_fees read_items write_items " .
                 "change_password"
         ];
-        $responseJson = $this->paiaPostRequest('auth/login', $post_data);
+        $responseJson = $this->paiaLoginPostRequest('auth/login', $post_data);
 
         try {
             $responseArray = $this->paiaParseJsonAsArray($responseJson);

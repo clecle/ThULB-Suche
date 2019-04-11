@@ -146,4 +146,23 @@ class Summon extends OriginalSummon
                 ? $this->fields['IsOpenAccess'][0]
                 : false;
     }
+
+    /**
+     * Get information, for libraries with this record
+     *
+     * Return structure:
+     * array[]                  array Information for a specific library
+     *         ['sequence']     string
+     *         ['dbid']         string
+     *         ['name']         string Name of the library
+     *         ['url']          string URL to the homepage of the library
+     *         ['sourceTypes']  array
+     *
+     * @return boolean|array
+     */
+    public function getDatabaseXML() {
+        return (array_key_exists('Database_xml', $this->fields) && $this->fields['Database_xml'] && is_array($this->fields['Database_xml']))
+            ? $this->fields['Database_xml']
+            : false;
+    }
 }

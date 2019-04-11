@@ -1,0 +1,6 @@
+<?php if($data): ?>
+    <? for($i = 0; $i < count($data); $i++): ?>
+        <? if($i > 0): ?><br><? endif; ?>
+        <a href="<?= $this->escapeHtml($data[$i]['url']); ?>"><?= $this->escapeHtml($data[$i]['name']) ?></a>
+    <? endfor; ?>
+<?php endif; ?>

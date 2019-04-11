@@ -163,6 +163,14 @@ class RecordDataFormatterFactory extends OrignalFactory
         $spec->setLine('Bibliography', 'getBibliographyNotes');
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('Invalid ISBN', 'getInvalidISBNs');
+        $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
+            [
+                'useCache' => true,
+                'labelFunction' => function ($data) {
+                    return count($data) > 1 ? 'Sources' : 'Source';
+                }
+            ]
+        );
         $spec->setLine('ISSN', 'getISSNs');
         /* ZDB Id */
         $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');

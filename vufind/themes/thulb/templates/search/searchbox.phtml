@@ -40,7 +40,10 @@
   <form id="searchForm" class="searchForm" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
     <div class="col-lg-12 input-group">
     <? $placeholder = $this->searchbox()->getPlaceholderText(isset($searchTabs['selected']['id']) ? $searchTabs['selected']['id'] : null); ?>
-      <input id="searchForm_lookfor" class="searchForm_lookfor form-control input-lg search-query<? if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><? endif ?>" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>" autofocus <? if ($placeholder): ?> placeholder="<?=$this->transEsc($placeholder) ?>"<? else: ?> placeholder="<?=$this->transEsc("searchform_placeholder")?>"<? endif ?>/>
+      <div class="delete-icon flex-center">
+        <input id="searchForm_lookfor" class="searchForm_lookfor form-control input-lg search-query<? if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete searcher:<?=$this->escapeHtmlAttr($this->searchClassId) ?><? endif ?>" type="text" name="lookfor" value="<?=$this->escapeHtmlAttr($this->lookfor)?>" autofocus <? if ($placeholder): ?> placeholder="<?=$this->transEsc($placeholder) ?>"<? else: ?> placeholder="<?=$this->transEsc("searchform_placeholder")?>"<? endif ?>/>
+        <div class="flex-center"><i id="search-delete-icon" class="fa fa-times-circle"></i></div>
+      </div>
         <? if ($handlerCount > 1): ?>
       <div class="input-group-btn">
         <select id="searchForm_type" class="btn btn-default dropdown input-lg" type="button" name="type" data-native-menu="false">

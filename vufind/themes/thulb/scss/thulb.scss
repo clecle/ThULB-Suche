@@ -525,6 +525,31 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     background-color: $brand-inverted;
 }
 
+.delete-icon {
+  position: relative;
+}
+.delete-icon i {
+  position: relative;
+  z-index: 5;
+  font-size: 15px;
+  cursor: pointer;
+  color: #888888;
+  display: none;
+}
+.delete-icon div {
+  position: absolute;
+  top: 0;
+  right: 20px;
+  height: 45px;
+}
+.delete-icon input {
+  padding-right: 45px;
+}
+
+.delete-icon input::-ms-clear {
+  display: none;
+}
+
 .information {
   margin-top: 10px;
   background-color: #ffc566;
@@ -541,8 +566,4 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .flex-center {
   display: flex;
   align-items: center;
-}
-
-.delete-icon input::-ms-clear {
-  display: none;
 }

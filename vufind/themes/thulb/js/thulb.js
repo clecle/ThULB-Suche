@@ -78,6 +78,25 @@ function setupThulbFacets() {
   $('.facet.list-group .collapse').on('hidden.bs.collapse', facetSessionStorage);
 }
 
+/**
+ * Setup search box and icon to remove the content
+ */
+function setupRemoveSearchText() {
+    var search = $('#searchForm_lookfor');
+    var icon = $('#search-delete-icon');
+
+    if (search.val() !== '') {
+        icon.show();
+    }
+    icon.click(function () {
+        search.val('').focus();
+        icon.hide();
+    });
+    search.on('input', function () {
+        search.val() === '' ? icon.hide() : icon.show();
+    });
+}
+
 function setAsyncResultNum() {
     var lookfor = $('#searchForm_lookfor').val();
     var type = $('#searchForm_type option:checked').val();
@@ -129,7 +148,8 @@ function setCookie(cname, cvalue, exdays) {
 $(document).ready(function thulbDocReady() {
     setupTruncations();
     setupThulbFacets();
-    setAsyncResultNum();
+    setupRemoveSearchText();
+	setAsyncResultNum();
     styleHtmlTooltips();
     
     $('.checkbox-select-all').change(function unsetDisabledCheckboxes() {

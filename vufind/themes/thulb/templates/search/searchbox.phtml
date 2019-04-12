@@ -119,3 +119,7 @@
     ?>
   </form>
 <? endif; ?>
+
+<? if(!$this->permission()->allowDisplay('hide.VpnWarning') && !$this->permission()->allowDisplay('access.SummonExtendedResults')): ?>
+    <?= $this->permission()->getAlternateContent('hide.VpnWarning'); ?>
+<? endif; ?>

@@ -97,12 +97,13 @@ $config = [
             ]
         ]
     ],
-   'view_helpers' => [
-       'invokables' => [
-         'thulb_metadatahelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
-         'thulb_holdinghelper' => 'ThULB\View\Helper\Record\HoldingHelper',
-         'server_type'  => 'ThULB\View\Helper\Root\ServerType',
-       ],
+    'view_helpers' => [
+        'invokables' => [
+            'thulb_metadatahelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
+            'thulb_holdinghelper' => 'ThULB\View\Helper\Record\HoldingHelper',
+            'server_type' => 'ThULB\View\Helper\Root\ServerType',
+            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ'     // Helper to remove zero-width non-joiner characters from a string
+        ],
     ],
     
     // Authorization configuration:

@@ -2,7 +2,7 @@
 /**
  * Head script view helper (extended for VuFind's theme system)
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace VuFindTheme\View\Helper;
+
 use VuFindTheme\ThemeInfo;
 
 /**
@@ -38,10 +39,12 @@ use VuFindTheme\ThemeInfo;
  * @link     https://vufind.org/wiki/development Wiki
  */
 class HeadScript extends \Zend\View\Helper\HeadScript
+    implements \Zend\Log\LoggerAwareInterface
 {
     use ConcatTrait {
         getMinifiedData as getBaseMinifiedData;
     }
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Theme information service

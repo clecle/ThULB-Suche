@@ -1,10 +1,12 @@
 <?php
 
 // Set up modules:
-$modules = array(
-    'ZfcRbac', 'VuFindTheme', 'VuFindSearch', 'VuFind', 'VuFindAdmin', 'VuFindApi'
-);
-if (PHP_SAPI == 'cli' && !defined('VUFIND_PHPUNIT_RUNNING')) {
+$modules = [
+    'Zend\Form', 'Zend\Router', 'ZfcRbac',
+    'VuFindTheme', 'VuFindSearch', 'VuFind', 'VuFindAdmin', 'VuFindApi'
+];
+if (PHP_SAPI == 'cli' && APPLICATION_ENV !== 'testing') {
+    $modules[] = 'Zend\Mvc\Console';
     $modules[] = 'VuFindConsole';
 }
 if (APPLICATION_ENV == 'development') {

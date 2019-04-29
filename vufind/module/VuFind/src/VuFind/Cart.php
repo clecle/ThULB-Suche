@@ -2,7 +2,7 @@
 /**
  * Cart Class
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -26,6 +26,7 @@
  * @link     https://vufind.org/wiki/development Wiki
  */
 namespace VuFind;
+
 use VuFind\Cookie\CookieManager;
 
 /**
@@ -215,7 +216,7 @@ class Cart
      */
     public function isFull()
     {
-        return (count($this->items) >= $this->maxSize);
+        return count($this->items) >= $this->maxSize;
     }
 
     /**
@@ -311,9 +312,9 @@ class Cart
 
         // Save the cookies:
         $cookie = implode(self::CART_COOKIE_DELIM, $ids);
-        $this->cookieManager->set(self::CART_COOKIE, $cookie, 0);
+        $this->cookieManager->set(self::CART_COOKIE, $cookie, 0, false);
         $srcCookie = implode(self::CART_COOKIE_DELIM, $sources);
-        $this->cookieManager->set(self::CART_COOKIE_SOURCES, $srcCookie, 0);
+        $this->cookieManager->set(self::CART_COOKIE_SOURCES, $srcCookie, 0, false);
     }
 
     /**

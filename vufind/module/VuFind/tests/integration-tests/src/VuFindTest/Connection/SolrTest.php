@@ -2,7 +2,7 @@
 /**
  * Solr Connection Test Class
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -26,6 +26,8 @@
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
 namespace VuFindTest\Integration\Connection;
+
+use VuFindSearch\ParamBag;
 
 /**
  * Solr Connection Test Class
@@ -60,11 +62,12 @@ class SolrTest extends \VuFindTest\Unit\TestCase
     {
         $solr = $this->getServiceManager()->get('VuFind\Search\BackendManager')
             ->get('Solr');
-        $result = $solr->alphabeticBrowse('author', 'Dublin Society', 0, 1);
+        $extras = new ParamBag(['extras' => 'id']);
+        $result = $solr->alphabeticBrowse('author', 'Dublin Society', 0, 1, $extras);
         $item = $result['Browse']['items'][0];
-        $this->assertEquals($item['count'], count($item['ids']));
+        $this->assertEquals($item['count'], count($item['extras']['id']));
         $this->assertTrue(empty($item['useInstead']));
-        $this->assertTrue(in_array('vtls000013187', $item['ids']));
+        $this->assertTrue(in_array(['vtls000013187'], $item['extras']['id']));
         $this->assertTrue(in_array('Royal Dublin Society', $item['seeAlso']));
         $this->assertEquals('Dublin Society', $item['heading']);
     }
@@ -78,10 +81,12 @@ class SolrTest extends \VuFindTest\Unit\TestCase
     {
         $solr = $this->getServiceManager()->get('VuFind\Search\BackendManager')
             ->get('Solr');
-        $result = $solr->alphabeticBrowse('author', 'Dublin Society, Royal', 0, 1);
+        $extras = new ParamBag(['extras' => 'id']);
+        $result = $solr
+            ->alphabeticBrowse('author', 'Dublin Society, Royal', 0, 1, $extras);
         $item = $result['Browse']['items'][0];
         $this->assertEquals(0, $item['count']);
-        $this->assertEquals($item['count'], count($item['ids']));
+        $this->assertEquals($item['count'], count($item['extras']['id']));
         $this->assertEquals('Dublin Society, Royal', $item['heading']);
         $this->assertTrue(empty($item['seeAlso']));
         $this->assertTrue(in_array('Royal Dublin Society', $item['useInstead']));
@@ -96,15 +101,16 @@ class SolrTest extends \VuFindTest\Unit\TestCase
     {
         $solr = $this->getServiceManager()->get('VuFind\Search\BackendManager')
             ->get('Solr');
-        $result = $solr->alphabeticBrowse('dewey', '123.45 .I39', 0, 1);
+        $extras = new ParamBag(['extras' => 'id']);
+        $result = $solr->alphabeticBrowse('dewey', '123.45 .I39', 0, 1, $extras);
         $item = $result['Browse']['items'][0];
         $this->assertEquals(1, $item['count']);
-        $this->assertEquals($item['count'], count($item['ids']));
+        $this->assertEquals($item['count'], count($item['extras']['id']));
         $this->assertEquals('123.45 .I39', $item['heading']);
-        $result = $solr->alphabeticBrowse('dewey', '123.46 .Q39', 0, 1);
+        $result = $solr->alphabeticBrowse('dewey', '123.46 .Q39', 0, 1, $extras);
         $item = $result['Browse']['items'][0];
         $this->assertEquals(1, $item['count']);
-        $this->assertEquals($item['count'], count($item['ids']));
+        $this->assertEquals($item['count'], count($item['extras']['id']));
         $this->assertEquals('123.46 .Q39', $item['heading']);
     }
 

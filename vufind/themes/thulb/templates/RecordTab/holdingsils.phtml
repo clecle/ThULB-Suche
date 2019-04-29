@@ -58,7 +58,7 @@
   <table class="table table-striped">
   <? foreach ($online_holdings as $holds): ?>
     <tr vocab="http://schema.org/" typeof="Offer">
-    <? list($txt_sanitized, $txt, $url, $more, $pic) = explode("|", $holds); ?>
+    <? list($txt_sanitized, $txt, $url, $more, $pic) = explode(\ThULB\RecordDriver\SolrVZGRecord::SEPARATOR, $holds); ?>
       <td>
         <dl class="dl-horizontal">
           <dt><?=$this->transEsc('Link')?>:</dt>

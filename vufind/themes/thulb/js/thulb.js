@@ -145,6 +145,19 @@ function setCookie(cname, cvalue, exdays) {
     document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
 }
 
+function hideMessage(message) {
+    console.log(message);
+
+    $.ajax({
+        dataType: 'json',
+        method: 'POST',
+        url: VuFind.path + '/AJAX/JSON?method=hideMessage',
+        data: {'message': message}
+    });
+
+    jQuery('#' + message).effect('blind').dequeue().hide('fade');
+}
+
 $(document).ready(function thulbDocReady() {
     setupTruncations();
     setupThulbFacets();

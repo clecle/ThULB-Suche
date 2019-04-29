@@ -51,7 +51,7 @@ class Factory
         );
         return $helper;
     }
-    
+
     /**
      * Construct the RecordLink helper.
      *
@@ -62,5 +62,17 @@ class Factory
     public static function getRecordLink(ServiceManager $sm)
     {
         return new RecordLink($sm->getServiceLocator()->get('VuFind\RecordRouter'));
+    }
+
+    /**
+     * Construct the Session helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return Session
+     */
+    public static function getSession(ServiceManager $sm)
+    {
+        return new Session($sm->getServiceLocator()->get('VuFind\SessionManager'));
     }
 }

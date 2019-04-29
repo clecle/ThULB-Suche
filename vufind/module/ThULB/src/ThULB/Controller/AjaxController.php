@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 
 use VuFind\Controller\AjaxController as OriginalAjaxController;
+use Zend\Session\SessionManager;
 
 /**
  * This controller handles global AJAX functionality
@@ -48,5 +49,24 @@ class AjaxController extends OriginalAjaxController {
         $numberFormatter = $this->getViewRenderer()->plugin('localizedNumber');
         
         return $this->output(['count' => $numberFormatter($result->getResultTotal())], self::STATUS_OK);
+    }
+
+    /**
+     * Writes a timestamp to the session, when the message should be shown again
+     *
+     * @return \Zend\Stdlib\ResponseInterface
+     */
+    public function hideMessageAjax() {
+        $identifier = $this->params()->fromPost('message', $this->params()->fromQuery('message'));
+
+        if(isset($identifier) && !empty($identifier)) {
+            $identifier = $identifier . '_expires';
+            $expires = time() + 7 * 24 * 60 * 60;       // hide message for 7 days
+
+            $sessionManager = $this->getServiceLocator()->get('VuFind/SessionManager');
+            $sessionManager->getStorage()->offsetSet($identifier, $expires);
+        }
+
+        return $this->response;
     }
 }

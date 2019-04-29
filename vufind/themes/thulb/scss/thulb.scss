@@ -567,3 +567,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   display: flex;
   align-items: center;
 }
+
+.center-text {
+  text-align: center;
+}
+
+.alert-info .btn-primary {
+  margin-left: 10px;
+}

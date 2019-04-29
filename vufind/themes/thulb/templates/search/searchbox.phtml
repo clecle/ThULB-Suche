@@ -123,10 +123,9 @@
   </form>
 <? endif; ?>
 
-<?php $message = $this->thulb_removeZWNJ($this->translate('message_under_search_box')); ?>
-<? if(!empty($message)): ?>
-    <?= $this->partial('Helpers/dynamic_message.phtml', array('message' => $message)); ?>
-<? endif; ?>
+<?php if($this->thulb_session()->isMessageDisplayed('message_under_search_box')): ?>
+    <?= $this->partial('Helpers/dynamic_message.phtml', array('tag' => 'message_under_search_box')); ?>
+<?php endif; ?>
 
 <? if(!$this->permission()->allowDisplay('hide.VpnWarning') && !$this->permission()->allowDisplay('access.SummonExtendedResults')): ?>
     <?= $this->permission()->getAlternateContent('hide.VpnWarning'); ?>

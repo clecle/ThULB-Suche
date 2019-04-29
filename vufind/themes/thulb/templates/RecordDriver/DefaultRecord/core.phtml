@@ -68,8 +68,8 @@
             <col class="col-xs-4 col-sm-3 col-md-3">
             <col class="col-xs-8 col-sm-9 col-md-10">
         </colgroup>
-        <? foreach ($metadataFields as $key => $current): ?>
-          <tr><th><?=$this->transEsc($key)?>:</th><td><?=$current['value']?></td></tr>
+        <? foreach ($metadataFields as $current): ?>
+          <tr><th><?=$this->transEsc($current['label'])?>:</th><td><?=$current['value']?></td></tr>
         <? endforeach; ?>
       </table>
     <? endif; ?>

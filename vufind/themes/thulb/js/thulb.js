@@ -74,8 +74,8 @@ function setupThulbFacets() {
       }
     }
   });
-  $('.facet.list-group .collapse').on('shown.bs.collapse', facetSessionStorage);
-  $('.facet.list-group .collapse').on('hidden.bs.collapse', facetSessionStorage);
+  // $('.facet.list-group .collapse').on('shown.bs.collapse', facetSessionStorage);
+  // $('.facet.list-group .collapse').on('hidden.bs.collapse', facetSessionStorage);
 }
 
 /**
@@ -101,8 +101,7 @@ function setAsyncResultNum() {
     var lookfor = $('#searchForm_lookfor').val();
     var type = $('#searchForm_type option:checked').val();
     var index = '';
-    
-    
+
     if (['AllFields', 'Title', 'Author', 'Subject', 'SubjectTerms'].indexOf(type) < 0) {
         type = 'AllFields';
     } else if (type === 'Subject') {
@@ -124,7 +123,7 @@ function setAsyncResultNum() {
             url: VuFind.path + '/AJAX/JSON?method=getResultCount',
             data: {'lookfor': lookfor, 'index': index, 'type': type}
         }).done(function writeCount (response) {
-            $('span.resultNum' + index).text(response.data['count']);
+            $('span.resultNum' + index).text(response.data.count);
         }).fail(function() {
             $('span.resultNum' + index).addClass('hidden');
         });

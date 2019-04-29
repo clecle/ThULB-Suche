@@ -30,7 +30,9 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
+use Zend\View\Exception\RuntimeException;
 
 /**
  * Description of Record
@@ -88,4 +90,50 @@ class Record extends OriginalRecord
         return $this->renderTemplate('isopenaccess.phtml');
     }
 
+    /**
+     * Recursively locate and render a template that matches the provided class
+     * name (or one of its parent classes); throw an exception if no match is
+     * found.
+     *
+     * @param string $template     Template path (with %s as class name placeholder)
+     * @param string $className    Name of class to apply to template.
+     * @param string $topClassName Top-level parent class of $className (or null
+     * if $className is already the top level; used for recursion only).
+     *
+     * @return string
+     * @throws RuntimeException
+     */
+    protected function resolveClassTemplate($template, $className,
+                                            $topClassName = null
+    ) {
+        // If the template resolves, we can render it!
+        $templateWithClass = sprintf($template, $this->getBriefClass($className));
+        if ($this->getView()->resolver()->resolve($templateWithClass)) {
+            return $this->getView()->render($templateWithClass);
+        }
+
+        // If the template doesn't resolve, let's see if we can inherit a
+        // template from a parent class:
+        $parentClass = get_parent_class($className);
+
+        /*
+         * Skip VuFind\RecordDriver\SolrDefault to use same base template for solr and summon
+         */
+        if($parentClass === SolrDefault::class) {
+            $parentClass = get_parent_class($parentClass);
+        }
+
+        if (empty($parentClass)) {
+            // No more parent classes left to try?  Throw an exception!
+            throw new RuntimeException(
+                'Cannot find ' . $templateWithClass . ' template for class: '
+                . ($topClassName ?? $className)
+            );
+        }
+
+        // Recurse until we find a template or run out of parents...
+        return $this->resolveClassTemplate(
+            $template, $parentClass, $topClassName ?? $className
+        );
+    }
 }

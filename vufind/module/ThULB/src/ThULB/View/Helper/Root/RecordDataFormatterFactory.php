@@ -29,6 +29,7 @@
  */
 namespace ThULB\View\Helper\Root;
 
+use Interop\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
@@ -46,14 +47,15 @@ class RecordDataFormatterFactory extends OrignalFactory
      *
      * @return RecordDataFormatter
      */
-    public function __invoke()
-    {
-        $helper = parent::__invoke();
+    public function __invoke(ContainerInterface $container, $requestedName,
+                             array $options = null
+    ) {
+        $helper = parent::__invoke($container, $requestedName, $options);
         $helper->setDefaults('full', $this->getDefaultFullSpecs());
         
         return $helper;
     }
-    
+
     /**
      * Get default specifications for displaying data in full metadata.
      *
@@ -167,7 +169,8 @@ class RecordDataFormatterFactory extends OrignalFactory
             [
                 'useCache' => true,
                 'labelFunction' => function ($data) {
-                    return count($data) > 1 ? 'Sources' : 'Source';
+                    return count($data) > 1
+                        ? 'Sources' : 'Source';
                 }
             ]
         );

@@ -81,10 +81,10 @@
 
 <? if ( !empty($holdings) ): ?>
   <? foreach ($holdings['holdings'] as $holding): ?>
-    <? $holding_location = $this->thulb_holdinghelper()->getLocation($holding); ?>
+    <? $holding_location = $this->thulb_holdingHelper()->getLocation($holding); ?>
     <? if ($holding_location != "Unknown" ): /* No Callnumber? So we only have Remote-Access. Show nothing from DAIA - its covered via MARC 981 */ ?>
     <h3>
-      <?=$this->thulb_holdinghelper()->getLocation($holding);?>
+      <?=$this->thulb_holdingHelper()->getLocation($holding);?>
     </h3>
     <table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc($holding['location'])?>">
     <? if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
@@ -109,15 +109,15 @@
           <tr vocab="http://schema.org/" typeof="Offer">
             <td>
               <dl class="dl-horizontal">
-                <? $callno = $this->thulb_holdinghelper()->getCallnumber($row); ?>
+                <? $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
                 <? if ($callno): ?>
                   <dt><?=$this->transEsc("Call Number")?>:</dt>
                   <dd><strong><?=$callno ?></strong></dd>
                 <? endif; ?>
 
                 <? /* ANMERKGUNGEN & BESTAND */ ?>
-                <? $comments = $this->thulb_holdinghelper()->getHoldingComments($row); ?>
-                <? $chron = $this->thulb_holdinghelper()->getHoldingChronology($row); ?>
+                <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
+                <? $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
                 <? if (!empty($comments)) : ?>
                   <dt><?=$this->transEsc("Item Notes")?>:</dt>
                   <div class="item-notes">
@@ -154,7 +154,7 @@
 
                 <? if ($callno != "Unknown" && $callno != "bestellt" ): ?>
                   <dt><?=$this->transEsc("Availability Status")?>:</dt>
-                  <dd><?=$this->thulb_holdinghelper()->getAvailability($row);?></dd>
+                  <dd><?=$this->thulb_holdingHelper()->getAvailability($row);?></dd>
                 <? endif; ?>
               </dl>
             </td>

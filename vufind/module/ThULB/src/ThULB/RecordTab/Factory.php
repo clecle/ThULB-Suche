@@ -55,8 +55,8 @@ class Factory extends OriginalFactory
     public static function getArticleCollectionList(ServiceManager $sm)
     {
         return new ArticleCollectionList(
-            $sm->getServiceLocator()->get('VuFind\SearchRunner'),
-            $sm->getServiceLocator()->get('VuFind\RecommendPluginManager')
+            $sm->get('VuFind\SearchRunner'),
+            $sm->get('VuFind\RecommendPluginManager')
         );
     }
     
@@ -70,8 +70,8 @@ class Factory extends OriginalFactory
     public static function getNonArticleCollectionList(ServiceManager $sm)
     {
         return new NonArticleCollectionList(
-            $sm->getServiceLocator()->get('VuFind\SearchRunner'),
-            $sm->getServiceLocator()->get('VuFind\RecommendPluginManager')
+            $sm->get('VuFind\SearchRunner'),
+            $sm->get('VuFind\RecommendPluginManager')
         );
     }
 }

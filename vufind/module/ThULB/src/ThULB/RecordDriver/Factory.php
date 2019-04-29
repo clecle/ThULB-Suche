@@ -38,16 +38,16 @@ class Factory
     public static function getSolrMarc(\Zend\ServiceManager\ServiceManager $sm)
     {
         $driver = new \ThULB\RecordDriver\SolrVZGRecord(
-            $sm->getServiceLocator()->get('VuFind\Config')->get('config'),
+            $sm->get('VuFind\Config')->get('config'),
             null,
-            $sm->getServiceLocator()->get('VuFind\Config')->get('searches')
+            $sm->get('VuFind\Config')->get('searches')
         );
         $driver->attachILS(
-            $sm->getServiceLocator()->get('VuFind\ILSConnection'),
-            $sm->getServiceLocator()->get('VuFind\ILSHoldLogic'),
-            $sm->getServiceLocator()->get('VuFind\ILSTitleHoldLogic')
+            $sm->get('VuFind\ILSConnection'),
+            $sm->get('VuFind\ILSHoldLogic'),
+            $sm->get('VuFind\ILSTitleHoldLogic')
         );
-        $driver->attachSearchService($sm->getServiceLocator()->get('VuFind\Search'));
+        $driver->attachSearchService($sm->get('VuFind\Search'));
         return $driver;
     }
     
@@ -60,14 +60,12 @@ class Factory
      */
     public static function getSummon(\Zend\ServiceManager\ServiceManager $sm)
     {
-        $summon = $sm->getServiceLocator()->get('VuFind\Config')->get('Summon');
+        $summon = $sm->get('VuFind\Config')->get('Summon');
         $driver = new Summon(
-            $sm->getServiceLocator()->get('VuFind\Config')->get('config'),
+            $sm->get('VuFind\Config')->get('config'),
             $summon, $summon
         );
-        $driver->setDateConverter(
-            $sm->getServiceLocator()->get('VuFind\DateConverter')
-        );
+        $driver->setDateConverter($sm->get('VuFind\DateConverter'));
         return $driver;
     }
 }

@@ -1436,4 +1436,32 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightString);
     }
+
+    /**
+     * Get an array of publication detail lines combining information from
+     * getPublicationDates(), getPublicationInfo() and getPlacesOfPublication().
+     *
+     * @return array
+     */
+    public function getPublicationDetails()
+    {
+        $places = $this->getPlacesOfPublication();
+        $names = $this->getPublicationInfo('b');
+        $dates = $this->getHumanReadablePublicationDates();
+
+        $i = 0;
+        $retval = [];
+        while (isset($places[$i]) || isset($names[$i]) || isset($dates[$i])) {
+            // Build objects to represent each set of data; these will
+            // transform seamlessly into strings in the view layer.
+            $retval[] = new PublicationDetails(
+                isset($places[$i]) ? $places[$i] : '',
+                isset($names[$i]) ? $names[$i] : '',
+                isset($dates[$i]) ? $dates[$i] : ''
+            );
+            $i++;
+        }
+
+        return $retval;
+    }
 }

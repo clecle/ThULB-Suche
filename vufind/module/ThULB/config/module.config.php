@@ -9,6 +9,7 @@ $config = [
             'my-research' => 'ThULB\Controller\Factory::getMyResearchController',
             'summon' => 'ThULB\Controller\Factory::getSummonController',
             'summonrecord' => 'ThULB\Controller\Factory::getSummonrecordController',
+            'dynmessages' => 'ThULB\Controller\Factory::getDynMessagesController',
         ]
     ],
     'vufind' => [

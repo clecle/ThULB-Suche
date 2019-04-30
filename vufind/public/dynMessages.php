@@ -112,6 +112,12 @@
     $__iniEnglish = $__basePath . 'dynMessages_en.ini';
     $__languageCache = $__basePath . '../cache/languages';
 
+    // possible text fields
+    $tags = array(
+        'message_under_search_box' => 'Text für eine Hinweisbox, die unter dem Suchfeld angezeigt wird,'
+    );
+    ksort($tags);
+
     // start session and check if user is logged in
     session_start();
     setcookie(session_name(),session_id(),time() + 900);            // Session expires after 15 minutes (900 seconds)
@@ -120,10 +126,10 @@
     }
     $loggedIn = $_SESSION['logged_in_dyn_content'];
 
-    $tags = $_POST['text_key'];
-    if(!empty($tags) && $loggedIn) {
-        $english = array_combine($tags, $_POST['english']);
-        $german = array_combine($tags, $_POST['german']);
+    // check for login and post data
+    if(isset($_POST['english']) && isset($_POST['german']) && $loggedIn) {
+        $english = $_POST['english'];
+        $german = $_POST['german'];
 
         if (writeLanguageFile($__iniGerman, $german)
                 && writeLanguageFile($__iniEnglish, $english)
@@ -135,13 +141,6 @@
     else {
         $german = readLanguageFile($__iniGerman);
         $english = readLanguageFile($__iniEnglish);
-
-        $tagsGerman = array_keys($german);
-        $tagsEnglish = array_keys($english);
-
-        $tags = array_unique(array_merge($tagsEnglish, $tagsGerman));
-
-        sort($tags);
     }
 ?>
 
@@ -158,19 +157,16 @@
 
         form {
             text-align: center;
-            width: 75%;
-            float: left;
         }
 
         table {
-            width:100%;
             border-collapse: collapse;
             border-spacing: 0;
         }
         th {
             text-align: center;
             font-size: large;
-            padding-bottom: 8px;
+            padding: 5px;
             background-color: #8ab5d7;
         }
         tr:nth-child(even) {
@@ -184,29 +180,21 @@
         }
 
         .success {
-            width: 100%;
             background-color: #56d169;
             text-align: center;
             font-size: larger;
             font-weight: bold;
-            margin: 15px 0;
-            padding: 5px;
-        }
-
-        .tag-input, .text-input {
-            width: 100%;
-            min-width: 180px;
-        }
-
-        .tag-input {
-            pointer-events: none;
-            border: none;
-            background-color: #fff0;
+            margin-bottom: 15px;
             padding: 5px;
         }
 
         .text-input {
-            height: 10em;
+            width: 100%;
+            min-width: 180px;
+        }
+
+        .text-input {
+            height: 15em;
             resize: none;
         }
 
@@ -220,10 +208,9 @@
         }
 
         .tag-information {
-            width: 21%;
-            float: right;
-            background-color: #8ab5d74d;
+            background-color: #d9edf7;
             padding: 10px;
+            margin-bottom: 15px;
         }
     </style>
 
@@ -241,26 +228,31 @@
             <div class="success"><?php echo $successMessage; ?></div>
         <?php endif; ?>
 
+        <div class="tag-information">
+            <span>Information:</span> Zeilenumbrüche die durch die Enter-Taste eingefügt wurden werden automatisch in HTML-Zeilenumbrüche umgewandelt.
+                Zudem werden alle HTML-Tags, außer dem &lt;a&gt;-Tag, automatisch aus dem Text entfernt.
+        </div>
+
         <form action="dynMessages.php" method="post">
             <table>
                 <thead>
                     <tr>
-                        <th class="tag-col">Textbezeichner</th>
+                        <th class="tag-col">Information</th>
                         <th class="text-col">Deutsch</th>
                         <th class="text-col">Englisch</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach($tags as $tag): ?>
+                    <?php foreach($tags as $tag => $content): ?>
                     <tr>
                         <td class="tag-col">
-                            <input class="tag-input" type="text" name="text_key[]" value="<?php echo $tag; ?>">
+                            <?php echo $content; ?>
                         </td>
                         <td class="text-col">
-                            <textarea class="text-input" rows=5 name="german[]"><?php echo $german[$tag]; ?></textarea>
+                            <textarea class="text-input" rows=5 name="german[<?php echo $tag; ?>]"><?php echo $german[$tag]; ?></textarea>
                         </td>
                         <td class="text-col">
-                            <textarea class="text-input" rows=5 name="english[]"><?php echo $english[$tag]; ?></textarea>
+                            <textarea class="text-input" rows=5 name="english[<?php echo $tag; ?>]"><?php echo $english[$tag]; ?></textarea>
                         </td>
                     </tr>
                     <?php endforeach; ?>
@@ -268,10 +260,5 @@
             </table>
             <input type="submit" value="Speichern">
         </form>
-    <div class="tag-information">
-        <p><span>Information:</span> Zeilenumbrüche die durch die Enter-Taste eingefügt wurden werden automatisch in HTML-Zeilenumbrüche umgewandelt.
-            Zudem werden alle HTML-Tags, außer dem<a>-Tag, automatisch aus dem Text entfernt.</p>
-        <p><span>message_under_search_box:</span> Text für eine Hinweisbox, die unter dem Suchfeld angezeigt wird,</p>
-    </div>
     <? endif; ?>
 </html>

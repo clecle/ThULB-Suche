@@ -127,6 +127,6 @@
     <?= $this->partial('Helpers/dynamic_message.phtml', array('tag' => 'message_under_search_box')); ?>
 <?php endif; ?>
 
-<? if(!$this->permission()->allowDisplay('hide.VpnWarning') && !$this->permission()->allowDisplay('access.SummonExtendedResults')): ?>
+<? if(!$this->permission()->allowDisplay('hide.VpnWarning')): ?>
     <?= $this->permission()->getAlternateContent('hide.VpnWarning'); ?>
 <? endif; ?>

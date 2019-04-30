@@ -12,11 +12,14 @@ use Zend\View\Model\ViewModel;
 
 class DynMessagesController extends AbstractBase
 {
+    use \VuFind\Log\LoggerAwareTrait;
+
     private $_basePath;
     private $_iniGerman;
     private $_iniEnglish;
     private $_languageCache;
     private $_tags;
+
 
     /**
      * Constructor
@@ -26,6 +29,8 @@ class DynMessagesController extends AbstractBase
     public function __construct(ServiceLocatorInterface $sm)
     {
         parent::__construct($sm);
+
+        $this->setLogger($sm->get('VuFind\Logger'));
 
         $this->accessPermission = 'access.DynamicMessages';
 
@@ -46,7 +51,17 @@ class DynMessagesController extends AbstractBase
         $german = $this->readLanguageFile($this->_iniGerman);
         $english = $this->readLanguageFile($this->_iniEnglish);
 
-        return new ViewModel(array('german' => $german, 'english' => $english, 'tags' => $this->_tags));
+        $debug = array(
+            'REMOTE_ADDR' => $this->getRequest()->getServer()->get('REMOTE_ADDR'),
+            'hideVpnWarning' => $this->serviceLocator->get('VuFind\Role\PermissionManager')->isAuthorized('hide.VpnWarning')
+        );
+        echo '<pre>' . print_r($debug, true) . '</pre>';
+
+        return new ViewModel(array(
+                'german' => $german,
+                'english' => $english,
+                'tags' => $this->_tags,
+            ));
     }
 
     public function saveAction()

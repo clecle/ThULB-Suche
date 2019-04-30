@@ -65,7 +65,7 @@ class DynMessagesController extends AbstractBase
             }
         }
 
-        return $this->forwardTo('dynMessages', 'home');
+        return $this->redirect()->toUrl('/dynMessages');
     }
 
     /**

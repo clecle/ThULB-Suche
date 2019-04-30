@@ -119,5 +119,6 @@ $config = [
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
+$routeGenerator->addStaticRoute($config, 'dynMessages/save');
 
 return $config;

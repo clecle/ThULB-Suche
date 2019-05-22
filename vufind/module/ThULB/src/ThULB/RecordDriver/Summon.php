@@ -30,6 +30,7 @@
 
 namespace ThULB\RecordDriver;
 
+use VuFind\RecordDriver\SolrDefault;
 use VuFind\RecordDriver\Summon as OriginalSummon;
 
 /**
@@ -164,5 +165,39 @@ class Summon extends OriginalSummon
         return (array_key_exists('Database_xml', $this->fields) && $this->fields['Database_xml'] && is_array($this->fields['Database_xml']))
             ? $this->fields['Database_xml']
             : false;
+    }
+
+    /**
+     * Returns one of three things: a full URL to a thumbnail preview of the record
+     * if an image is available in an external system; an array of parameters to
+     * send to VuFind's internal cover generator if no fixed URL exists; or false
+     * if no thumbnail can be generated.
+     *
+     * @param string $size Size of thumbnail (small, medium or large -- small is
+     * default).
+     *
+     * @return string|array|bool
+     */
+    public function getThumbnail($size = 'small')
+    {
+        $params = SolrDefault::getThumbnail($size);
+
+        // Support thumbnails embedded in the Summon record when no unique identifier
+        // is found... (We don't use them in cases where we have an identifier, since
+        // we want to allow these to be passed to configured external services).
+        if (!isset($params['oclc']) && !isset($params['issn'])
+            && !isset($params['isbn']) && !isset($params['upc'])
+            && ($size === 'medium' || $size === 'large')
+        ) {
+            if (isset($this->fields['thumbnail_m'][0])) {
+                return ['proxy' => $this->fields['thumbnail_m'][0]];
+            }
+        }
+
+        $formats = $this->getFormats();
+        if (!empty($formats)) {
+            $params['contenttype'] = $formats[0];
+        }
+        return $params;
     }
 }

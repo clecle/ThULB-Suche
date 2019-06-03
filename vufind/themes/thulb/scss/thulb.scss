@@ -440,6 +440,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     background-color: $brand-primary;
     padding: 20px;
     margin-top: 20px;
+    display: table;
 }
 .tutorial_sub > h1 {
     font-weight: bold;

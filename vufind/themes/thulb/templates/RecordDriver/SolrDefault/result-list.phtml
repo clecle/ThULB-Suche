@@ -93,7 +93,7 @@
         <? endif; ?>
         <?=$this->record($this->driver)->getPreviews()?>
       </div>
-      <div class="col-xs-1 right hidden-print">
+      <div class="col-xs-1 right hidden-print favorite-action">
         <? /* Display qrcode if appropriate: */ ?>
         <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
           <?

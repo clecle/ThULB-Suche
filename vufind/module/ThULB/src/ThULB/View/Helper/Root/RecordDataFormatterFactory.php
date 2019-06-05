@@ -29,9 +29,10 @@
  */
 namespace ThULB\View\Helper\Root;
 
+use Interop\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
-use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
+use VuFind\View\Helper\Root\RecordDataFormatterFactory as OriginalFactory;
 
 /**
  * Factory for record driver data formatting view helper
@@ -39,7 +40,7 @@ use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
  * @author   Clemens Kynast <clemens.kynast@thulb.uni-jena.de>
  * @author   Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class RecordDataFormatterFactory extends OrignalFactory
+class RecordDataFormatterFactory extends OriginalFactory
 {
     /**
      * Create the helper.

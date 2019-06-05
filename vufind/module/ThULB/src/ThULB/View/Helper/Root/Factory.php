@@ -73,6 +73,6 @@ class Factory
      */
     public static function getSession(ServiceManager $sm)
     {
-        return new Session($sm->getServiceLocator()->get('VuFind\SessionManager'));
+        return new Session($sm->get('VuFind\SessionManager'));
     }
 }

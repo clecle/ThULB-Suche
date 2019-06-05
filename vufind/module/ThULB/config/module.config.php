@@ -15,10 +15,12 @@ $config = array(
         'plugin_managers' => array(
             'ajaxhandler' => array(
                 'factories' => array(
-                    'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory'
-                ), 
+                    'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
+                    'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
+                ),
                 'aliases' => array(
-                    'getResultCount' => 'ThULB\AjaxHandler\GetResultCount'
+                    'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
+                    'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
                 )
             ),
             'db_row' => array(

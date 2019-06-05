@@ -30,6 +30,7 @@
 
 namespace ThULB\RecordDriver;
 
+use VuFind\RecordDriver\DefaultRecord;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\RecordDriver\Summon as OriginalSummon;
 
@@ -180,7 +181,7 @@ class Summon extends OriginalSummon
      */
     public function getThumbnail($size = 'small')
     {
-        $params = SolrDefault::getThumbnail($size);
+        $params = DefaultRecord::getThumbnail($size);
 
         // Support thumbnails embedded in the Summon record when no unique identifier
         // is found... (We don't use them in cases where we have an identifier, since

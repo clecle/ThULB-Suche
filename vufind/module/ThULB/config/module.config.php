@@ -8,6 +8,7 @@ $config = array(
             'VuFind\Controller\MyResearchController' => 'ThULB\Controller\Factory::getMyResearchController',
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
+            'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
         )
     ),
     'vufind' => array(

@@ -171,6 +171,9 @@ header .container.navbar { margin-bottom: 0; }
   &:extend(.alert-info);
   display: none;
 }
+.savedLists.loaded {
+  display: block;
+}
 
 @media (min-width: 768px) {
   .result-body {
@@ -182,7 +185,6 @@ header .container.navbar { margin-bottom: 0; }
     width: 25%;
     padding: 0;
   }
-  .savedLists.loaded { display: block; }
 }
 body.rtl {
   .result .btn-bookbag-toggle .fa {
@@ -474,4 +476,12 @@ a.truncate {
 
 .tooltip-inner {
   border-radius: 5px
+}
+
+.favorite-action {
+  padding: 0;
+  width: auto;
+  text-align: right;
+  position: absolute;
+  right: 10px;
 }

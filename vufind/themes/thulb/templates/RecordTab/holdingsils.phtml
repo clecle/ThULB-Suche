@@ -58,7 +58,7 @@
   <table class="table table-striped">
   <? foreach ($online_holdings as $holds): ?>
     <tr vocab="http://schema.org/" typeof="Offer">
-    <? list($txt_sanitized, $txt, $url, $more, $pic) = explode("|", $holds); ?>
+    <? list($txt_sanitized, $txt, $url, $more, $pic) = explode(\ThULB\RecordDriver\SolrVZGRecord::SEPARATOR, $holds); ?>
       <td>
         <dl class="dl-horizontal">
           <dt><?=$this->transEsc('Link')?>:</dt>
@@ -118,6 +118,24 @@
                 <? /* ANMERKGUNGEN & BESTAND */ ?>
                 <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
                 <? $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
+
+                <? if (!empty($chron)) : ?>
+                  <dt><?=$this->transEsc("Item Chronology")?>:</dt>
+                  <div class="item-notes">
+                    <dd>
+                      <? if (is_array($chron) && count($chron) > 0): ?>
+                        <ul>
+                          <? foreach ($chron as $chron): ?>
+                            <? if (!empty($chron)): ?>
+                              <li><?=$chron ?></li>
+                            <? endif; ?>
+                          <? endforeach; ?>
+                        </ul>
+                      <? endif; ?>
+                    </dd>
+                  </div>
+                <? endif; ?>
+
                 <? if (!empty($comments)) : ?>
                   <dt><?=$this->transEsc("Item Notes")?>:</dt>
                   <div class="item-notes">
@@ -127,23 +145,6 @@
                         <? foreach ($comments as $comment): ?>
                           <? if (!empty($comment)): ?>
                             <li><?=$comment ?></li>
-                          <? endif; ?>
-                        <? endforeach; ?>
-                      </ul>
-                    <? endif; ?>
-                    </dd>
-                  </div>
-                <? endif; ?>
-                
-                <? if (!empty($chron)) : ?>
-                  <dt><?=$this->transEsc("Item Chronology")?>:</dt>
-                  <div class="item-notes">
-                    <dd>
-                    <? if (is_array($chron) && count($chron) > 0): ?>
-                      <ul>
-                        <? foreach ($chron as $chron): ?>
-                          <? if (!empty($chron)): ?>
-                            <li><?=$chron ?></li>
                           <? endif; ?>
                         <? endforeach; ?>
                       </ul>

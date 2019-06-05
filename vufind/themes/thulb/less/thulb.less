@@ -434,6 +434,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     background-color: @brand-primary;
     padding: 20px;
     margin-top: 20px;
+    display: table;
 }
 .tutorial_sub > h1 {
     font-weight: bold;
@@ -534,7 +535,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .delete-icon div {
   position: absolute;
   top: 0;
-  right: 20px;
+  right: 15px;
   height: 45px;
 }
 .delete-icon input {
@@ -547,10 +548,9 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .information {
   margin-top: 10px;
-  background-color: #ffc566;
+  background-color: @brand-secondary;
   padding: 15px;
   text-align: center;
-  border: 3px solid #e1a748;
   border-radius: 4px;
 }
 
@@ -561,4 +561,41 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .flex-center {
   display: flex;
   align-items: center;
+}
+
+.center-text {
+  text-align: center;
+}
+
+.alert-info .btn-primary {
+  margin-left: 10px;
+}
+
+.media-body .dropdown-menu {
+  position: relative;
+}
+
+.text-input {
+  width: 100%;
+  min-width: 180px;
+}
+
+.text-input {
+  height: 15em;
+  resize: none;
+}
+
+.tag-col {
+  width: 20%;
+  vertical-align: top;
+}
+
+.text-col {
+  width: 40%;
+}
+
+.tag-information {
+  background-color: #d9edf7;
+  padding: 10px;
+  margin-bottom: 15px;
 }

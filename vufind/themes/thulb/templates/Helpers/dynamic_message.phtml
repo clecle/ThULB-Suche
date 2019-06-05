@@ -1,3 +1,8 @@
-<div class="alert alert-info text-center">
-    <div><?= $this->message; ?></div>
-</div>
+<?php $message = $this->thulb_removeZWNJ($this->translate($this->tag)); ?>
+<? if(!empty($message)): ?>
+    <div id="<?= $this->tag; ?>" class="alert alert-info text-center flex-center">
+        <div><?= $message; ?></div>
+        <button onclick="hideMessage('<?= $this->tag; ?>')" class="btn btn-primary"><?= $this->translate('test_ok')?></button>
+    </div>
+<? endif; ?>
+

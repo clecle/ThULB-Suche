@@ -29,7 +29,6 @@
  */
 namespace ThULB\View\Helper\Root;
 
-use Interop\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
@@ -55,7 +54,7 @@ class RecordDataFormatterFactory extends OrignalFactory
         
         return $helper;
     }
-
+    
     /**
      * Get default specifications for displaying data in full metadata.
      *
@@ -165,15 +164,6 @@ class RecordDataFormatterFactory extends OrignalFactory
         $spec->setLine('Bibliography', 'getBibliographyNotes');
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('Invalid ISBN', 'getInvalidISBNs');
-        $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
-            [
-                'useCache' => true,
-                'labelFunction' => function ($data) {
-                    return count($data) > 1
-                        ? 'Sources' : 'Source';
-                }
-            ]
-        );
         $spec->setLine('ISSN', 'getISSNs');
         /* ZDB Id */
         $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');
@@ -184,6 +174,14 @@ class RecordDataFormatterFactory extends OrignalFactory
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('ThuBiblio Classification', true, 'data-thuBiblioClassification.phtml');
+        $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
+            [
+                'useCache' => true,
+                'labelFunction' => function ($data) {
+                    return count($data) > 1 ? 'Sources' : 'Source';
+                }
+            ]
+        );
         return $spec->getArray();
     }
 }

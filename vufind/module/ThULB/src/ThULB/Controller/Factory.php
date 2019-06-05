@@ -25,7 +25,7 @@
  */
 
 namespace ThULB\Controller;
-use  Zend\ServiceManager\ServiceManager;
+use Zend\ServiceManager\ServiceManager;
 
 /**
  * Factory to load our controllers.
@@ -75,7 +75,7 @@ class Factory
     {
         return new SummonController($sm);
     }
-    
+
     /**
      * Construct the SummonrecordController.
      *
@@ -86,5 +86,17 @@ class Factory
     public function getSummonrecordController(ServiceManager $sm)
     {
         return new SummonrecordController($sm);
+    }
+
+    /**
+     * Construct the SummonrecordController.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return DynMessagesController
+     */
+    public function getDynMessagesController(ServiceManager $sm)
+    {
+        return new DynMessagesController($sm->getServiceLocator());
     }
 }

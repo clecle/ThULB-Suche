@@ -1,0 +1,47 @@
+<?php
+    $german = $this->german;
+    $english = $this->english;
+    $tags = $this->tags;
+
+    $flash = $this->flashMessenger();
+    $flash->setMessageOpenFormat('<div%s>')
+        ->setMessageSeparatorString('<br><br>')
+        ->setMessageCloseString('</div>');
+?>
+
+<div class="tag-information">
+    <span>Information:</span> Zeilenumbrüche die durch die Enter-Taste eingefügt wurden werden automatisch in HTML-Zeilenumbrüche umgewandelt.
+    Zudem werden alle HTML-Tags, außer dem &lt;a&gt;-Tag, automatisch aus dem Text entfernt.
+</div>
+
+<?php echo $flash->render('error',   array('alert', 'alert-danger')); ?>
+<?php echo $flash->render('success', array('alert', 'alert-success')); ?>
+
+<form action="/dynMessages/save" method="post">
+    <table>
+        <thead>
+        <tr>
+            <th class="tag-col">Information</th>
+            <th class="text-col">Deutsch</th>
+            <th class="text-col">Englisch</th>
+        </tr>
+        </thead>
+        <tbody>
+        <?php foreach($tags as $tag => $content): ?>
+            <?php if(!array_key_exists($tag, $german) || !array_key_exists($tag, $english)) continue; ?>
+            <tr>
+                <td class="tag-col">
+                    <?php echo $content; ?>
+                </td>
+                <td class="text-col">
+                    <textarea class="text-input" rows=5 name="german[<?php echo $tag; ?>]"><?php echo $german[$tag]; ?></textarea>
+                </td>
+                <td class="text-col">
+                    <textarea class="text-input" rows=5 name="english[<?php echo $tag; ?>]"><?php echo $english[$tag]; ?></textarea>
+                </td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <input type="submit" value="Speichern">
+</form>

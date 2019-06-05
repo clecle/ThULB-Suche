@@ -31,6 +31,8 @@
 
 namespace ThULB\RecordDriver;
 
+use VuFind\RecordDriver\Response\PublicationDetails;
+
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
  * Göttingen (VZG)
@@ -50,7 +52,9 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     const PPN_LINK_ID_PREFIX = 'DE-601';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
-    
+
+    const SEPARATOR = '|\/|';
+
     /**
      * Contains all separators that are often part of MARC field entries and
      * should be eleminated, when custom formatting is applied
@@ -1259,7 +1263,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
       $retVal = [];
       
       /* extract all LINKS form MARC 981 */
-      $links = $this->getConditionalFieldArray('981', ['1', 'y', 'r', 'w'], true, '|', ['2' => '31']);
+      $links = $this->getConditionalFieldArray('981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => '31']);
 
       if ( !empty($links) ){
         /* what kind of LINKS do we have?
@@ -1267,7 +1271,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
          */
         foreach ( $links as $link ) {
           $more = "";
-          $linkElements = explode("|", $link);
+          $linkElements = explode(self::SEPARATOR, $link);
           $id = (isset($linkElements[0]) ? $linkElements[0] : '');
           $txt = (isset($linkElements[1]) ? $linkElements[1] : '');
           $url = (isset($linkElements[2]) ? $linkElements[2] : '');
@@ -1325,7 +1329,11 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
           $txt_sanitized = $url_data['host'];
           
           $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
-          $retVal[$id] = $txt_sanitized . "|" . $txt . "|" . $url . "|" . $more . "|" . $tmp;
+          $retVal[$id] = $txt_sanitized . self::SEPARATOR .
+              $txt . self::SEPARATOR .
+              $url . self::SEPARATOR .
+              $more . self::SEPARATOR .
+              $tmp;
         }
       } else {
         $retVal = "";
@@ -1427,5 +1435,33 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     protected function groupHighlighting($highlightString)
     {
         return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightString);
+    }
+
+    /**
+     * Get an array of publication detail lines combining information from
+     * getPublicationDates(), getPublicationInfo() and getPlacesOfPublication().
+     *
+     * @return array
+     */
+    public function getPublicationDetails()
+    {
+        $places = $this->getPlacesOfPublication();
+        $names = $this->getPublicationInfo('b');
+        $dates = $this->getHumanReadablePublicationDates();
+
+        $i = 0;
+        $retval = [];
+        while (isset($places[$i]) || isset($names[$i]) || isset($dates[$i])) {
+            // Build objects to represent each set of data; these will
+            // transform seamlessly into strings in the view layer.
+            $retval[] = new PublicationDetails(
+                isset($places[$i]) ? $places[$i] : '',
+                isset($names[$i]) ? $names[$i] : '',
+                isset($dates[$i]) ? $dates[$i] : ''
+            );
+            $i++;
+        }
+
+        return $retval;
     }
 }

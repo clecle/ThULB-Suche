@@ -493,7 +493,7 @@ class DAIA extends AbstractBase implements
                 list($responseMediaType) = array_pad(
                     explode(
                         ';',
-                        $result->getHeaders()->get('ContentType')->getFieldValue(),
+                        $result->getHeaders()->get('Content-Type')->getFieldValue(),
                         2
                     ),
                     2,

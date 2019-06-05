@@ -110,11 +110,6 @@ $config = array(
             )
         )
     ),
-    'service_manager' => array(
-        'factories' => array(
-            'Zend\View\Renderer\PhpRenderer' => 'ThULB\Service\ViewPhpRendererFactory',
-        ),
-    ),
     'view_helpers' => array(
         'invokables' => array(
             'thulb_metaDataHelper' => 'ThULB\View\Helper\Record\MetaDataHelper',

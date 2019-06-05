@@ -187,10 +187,5 @@ JS;
     <? if ($this->recaptcha()->active()): ?>
       <?=$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, "https://www.google.com/recaptcha/api.js?onload=recaptchaOnLoad&render=explicit&hl=" . $this->layout()->userLang, 'SET')?>
     <? endif; ?>
-
-
-    <? if($this->permission()->allowDisplay('access.Developer')): ?>
-        <?= $this->permission()->getAlternateContent('access.Developer'); ?>
-    <? endif; ?>
   </body>
 </html>

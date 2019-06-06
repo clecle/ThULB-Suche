@@ -32,7 +32,7 @@
             $this->transEsc('Profile Expiration') => 'expires',
           ]
         );
-        
+
         $accountinfo = [
             'group'  => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
             'status' => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
@@ -42,8 +42,14 @@
           $arrTemplate, $accountinfo,
           [
             $this->transEsc('User Group') => 'group',
-            $this->transEsc('User Status') => 'status',
           ]
+        );
+        echo $this->renderArray(
+            $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
+            $accountinfo,
+            [
+                $this->transEsc('User Status') => 'status'
+            ]
         );
         echo $this->renderArray(
           $arrImportantTemplate, $accountinfo,

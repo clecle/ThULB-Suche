@@ -97,6 +97,6 @@ class Factory
      */
     public function getDynMessagesController(ServiceManager $sm)
     {
-        return new DynMessagesController($sm->getServiceLocator());
+        return new DynMessagesController($sm);
     }
 }

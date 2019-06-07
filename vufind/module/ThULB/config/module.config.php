@@ -9,6 +9,10 @@ $config = array(
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
+        ),
+        'aliases' => array(
+            'dynMessages' => 'ThULB\Controller\DynMessagesController',
+            'DynMessages' => 'ThULB\Controller\DynMessagesController',
         )
     ),
     'vufind' => array(

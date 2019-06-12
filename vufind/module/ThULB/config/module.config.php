@@ -49,7 +49,10 @@ $config = array(
             ),
             'recommend' => array(
                 'factories' => array(
-                    'summoncombined' => 'ThULB\Recommend\Factory::getSummonCombined',
+                    'ThULB\Recommend\SummonCombined' => 'ThULB\Recommend\Factory::getSummonCombined',
+                ),
+                'aliases' => array(
+                    'summoncombined' => 'ThULB\Recommend\SummonCombined',
                 ),
                 'invokables' => array(
                     'summoncombineddeferred' => 'ThULB\Recommend\SummonCombinedDeferred',
@@ -69,8 +72,12 @@ $config = array(
             ),
             'recordtab' => array(
                 'factories' => array(
-                    'articlecl' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
-                    'nonarticlecl' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList'
+                    'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
+                    'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList'
+                ),
+                'aliases' => array(
+                    'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
+                    'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -84,7 +91,7 @@ $config = array(
             )
         ),
         'recorddriver_tabs' => array(
-            'VuFind\RecordDriver\SolrDefault' => array(
+            'VuFind\RecordDriver\RecordDefault' => array(
                 'tabs' => array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
@@ -130,7 +137,10 @@ $config = array(
     'zfc_rbac' => array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
-                'queriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
+                'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
+            ),
+            'aliases' => array(
+                'queriedCookie' => 'ThULB\Role\PermissionProvider\QueriedCookie',
             )
         ),
     ),

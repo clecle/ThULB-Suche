@@ -11,7 +11,7 @@ return array(
         ],
         'aliases' => array (
             'record' => 'ThULB\View\Helper\Root\Record',
-            'recordlink' => 'ThULB\View\Helper\Root\RecordLink',
+            'recordLink' => 'ThULB\View\Helper\Root\RecordLink',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_session' => 'ThULB\View\Helper\Root\Session',
         ),

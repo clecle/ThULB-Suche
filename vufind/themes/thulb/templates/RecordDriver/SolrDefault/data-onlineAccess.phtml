@@ -8,7 +8,7 @@
 ?>
 <? if (!empty($urls) || $openUrlActive): ?>
     <? foreach ($urls as $current): ?>
-        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" class="btn btn-primary"><?=$this->escapeHtml($current['desc'])?></a>
         <? if($current['desc'] === $this->transEsc('get_citation')): ?>
             <a class="hint" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" data-trigger="focus hover" title="<?= $this->transEsc('explain_reference') ?>"><i class="fa fa-question-circle"></i></a>
         <? endif; ?>

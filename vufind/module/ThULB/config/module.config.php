@@ -112,6 +112,7 @@ $config = [
         'vufind_permission_provider_manager' => [
             'factories' => [
                 'queriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
+                'ipRange' => 'ThULB\Role\PermissionProvider\Factory::getIpRange',
             ]
         ],
     ],

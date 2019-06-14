@@ -16,7 +16,7 @@ class IpRange extends OriginalIpRange
     public function getPermissions($options)
     {
         $server = $this->request->getServer();
-        $ip = $server->get('HTTP_X_FORWARDED_FORdfgswgfsdfgsdfg') ?: $server->get('REMOTE_ADDR');
+        $ip = $server->get('HTTP_X_FORWARDED_FOR') ?: $server->get('REMOTE_ADDR');
 
         if ($this->ipAddressUtils->isInRange($ip, (array)$options)) {
             // Match? Grant to all users (guest or logged in).

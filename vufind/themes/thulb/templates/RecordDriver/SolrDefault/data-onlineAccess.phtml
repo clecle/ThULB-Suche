@@ -7,9 +7,13 @@
   $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 ?>
 <? if (!empty($urls) || $openUrlActive): ?>
-  <? foreach ($urls as $current): ?>
-    <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a><br />
-  <? endforeach; ?>
+    <? foreach ($urls as $current): ?>
+        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a>
+        <? if($current['desc'] === $this->transEsc('get_citation')): ?>
+            <a class="hint" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" data-trigger="focus hover" title="<?= $this->transEsc('explain_reference') ?>"><i class="fa fa-question-circle"></i></a>
+        <? endif; ?>
+        <br />
+    <? endforeach; ?>
   <? if ($openUrlActive): ?>
     <?=$openUrl->renderTemplate()?><br />
   <? endif; ?>

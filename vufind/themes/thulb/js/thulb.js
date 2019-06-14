@@ -97,6 +97,13 @@ function setupRemoveSearchText() {
     });
 }
 
+/**
+ * Disply bootstrap for all links with the class hint and declared as tooltips
+ */
+function setupHintTooltips() {
+    $('a.hint[data-toggle="tooltip"]').tooltip();
+}
+
 function setAsyncResultNum() {
     var lookfor = $('#searchForm_lookfor').val();
     var type = $('#searchForm_type option:checked').val();
@@ -159,6 +166,7 @@ function hideMessage(message) {
 }
 
 $(document).ready(function thulbDocReady() {
+    setupHintTooltips();
     setupTruncations();
     setupThulbFacets();
     setupRemoveSearchText();

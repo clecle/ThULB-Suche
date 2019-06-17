@@ -138,10 +138,11 @@ $config = array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
                 'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
-                'ipRange' => 'ThULB\Role\PermissionProvider\Factory::getIpRange',
+                'ThULB\Role\PermissionProvider\IpRange' => 'ThULB\Role\PermissionProvider\Factory::getIpRange',
             ),
             'aliases' => array(
                 'queriedCookie' => 'ThULB\Role\PermissionProvider\QueriedCookie',
+                'ipRange' => 'ThULB\Role\PermissionProvider\IpRange'
             )
         ),
     ),

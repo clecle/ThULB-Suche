@@ -48,4 +48,19 @@ class Factory
     {
         return new QueriedCookie($sm->get('Request'), $sm->get('VuFind\CookieManager'));
     }
+
+    /**
+     * Factory for IpRange
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return IpRange
+     */
+    public static function getIpRange(ServiceManager $sm)
+    {
+        return new IpRange(
+            $sm->getServiceLocator()->get('Request'),
+            $sm->getServiceLocator()->get('VuFind\IpAddressUtils')
+        );
+    }
 }

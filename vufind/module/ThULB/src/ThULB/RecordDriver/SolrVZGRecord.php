@@ -49,7 +49,7 @@ use VuFind\RecordDriver\Response\PublicationDetails;
 
 class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 {
-    const PPN_LINK_ID_PREFIX = 'DE-601';
+    const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
 

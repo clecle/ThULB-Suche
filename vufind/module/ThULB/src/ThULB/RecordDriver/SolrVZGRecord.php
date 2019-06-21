@@ -1035,8 +1035,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         // First check the 440, 800 and 830 fields for series information:
         $primaryFields = [
             '440' => ['a', 'p'],
-            '800' => ['a', 'b', 'c', 'd', 'f', 'p', 'q', 't'],
-            '810' => ['a', 'p'],
+            '800' => ['t', 'a', 'p'],
+            '810' => ['t', 'a', 'p'],
             '830' => ['a', 'p']];
         $matches = $this->getSeriesFromMARC($primaryFields);
         
@@ -1098,7 +1098,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                         
                         $id = $this->getSubfieldArray($currentField, ['w'], false);
                         foreach ($id as $rawId) {
-                            if (strpos($rawId, '(DE-601)') === 0) {
+                            if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                                 $currentArray['id'] = substr($rawId, 8);
                                 break;
                             }
@@ -1112,6 +1112,45 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         }
 
         return $matches;
+    }
+
+    /**
+     * Return an array of non-empty subfield values found in the provided MARC
+     * field.  If $concat is true, the array will contain either zero or one
+     * entries (empty array if no subfields found, subfield values concatenated
+     * together in specified order if found).  If concat is false, the array
+     * will contain a separate entry for each subfield value found.
+     *
+     * @param object $currentField Result from File_MARC::getFields.
+     * @param array  $subfields    The MARC subfield codes to read
+     * @param bool   $concat       Should we concatenate subfields?
+     * @param string $separator    Separator string (used only when $concat === true)
+     *
+     * @return array
+     */
+    protected function getSubfieldArray($currentField, $subfields, $concat = true,
+                                        $separator = ' '
+    ) {
+        // Start building a line of text for the current field
+        $matches = [];
+
+        // Loop through all subfields, collecting results that match the whitelist;
+        // note that it is important to retain the original MARC order here!
+        if (!empty($subfields)) {
+            foreach ($subfields as $currentSubfield) {
+                if ($value = $currentField->getSubfield($currentSubfield)) {
+                    // Grab the current subfield value and act on it if it is
+                    // non-empty:
+                    $data = trim($value->getData());
+                    if (!empty($data)) {
+                        $matches[] = $data;
+                    }
+                }
+            }
+        }
+
+        // Send back the data in a different format depending on $concat mode:
+        return $concat && $matches ? [implode($separator, $matches)] : $matches;
     }
 
     /**
@@ -1193,7 +1232,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                     continue 2;
                 }
             }
-            $next = $next = $this
+            $next = $this
                 ->getSubfieldArray($currentField, $subfields, $concat, $separator);
             $matches = array_merge($matches, $next);
         }

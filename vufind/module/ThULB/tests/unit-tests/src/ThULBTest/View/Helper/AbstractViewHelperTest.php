@@ -114,6 +114,16 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
     }
 
     /**
+     * Get a configuration array to turn on first/last setting.
+     *
+     * @return array
+     */
+    protected function getFirstLastConfig()
+    {
+        return ['Record' => ['first_last_navigation' => true]];
+    }
+
+    /**
      * Get view helpers needed by test.
      *
      * @return array
@@ -131,6 +141,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
             'record' => new \VuFind\View\Helper\Root\Record(),
             'recordLink' => new \ThULB\View\Helper\Root\RecordLink($this->getMockBuilder('VuFind\Record\Router')->disableOriginalConstructor()->getMock()),
             'searchTabs' => $this->getMockBuilder('VuFind\View\Helper\Root\SearchTabs')->disableOriginalConstructor()->getMock(),
+            'searchOptions' => new \VuFind\View\Helper\Root\SearchOptions(new \VuFind\Search\Options\PluginManager($this->getServiceManager())),
             'transEsc' => new \VuFind\View\Helper\Root\TransEsc(),
             'translate' => new \VuFind\View\Helper\Root\Translate(),
 //            'usertags' => new \VuFind\View\Helper\Root\UserTags(),

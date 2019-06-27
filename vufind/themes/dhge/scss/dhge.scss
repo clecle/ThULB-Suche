@@ -525,3 +525,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
     @extend .label-info;
     background-color: $brand-inverted;
 }
+
+.flex-center {
+  display: flex;
+  align-items: center;
+}

@@ -100,8 +100,15 @@
                     <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                   </div>
                 </div>
-                <div class="searchtools col-xs-12 hidden-print">
-                  <!--strong><?=$this->transEsc('Search Tools')?>:</strong-->
+                <div class="searchtools col-xs-12 hidden-print flex-center">
+                    <div class="search-stats">
+                        <?php if ($recordTotal > 0): ?>
+                            <?=$this->context()->renderInContext('search/controls/showing.phtml', ['lookfor' => $lookfor, 'recordTotal' => $recordTotal]) ?>
+                        <?php else: ?>
+                            <h2><?=$this->transEsc('nohit_heading')?></h2>
+                        <?php endif; ?>
+                    </div>
+                    <!--strong><?=$this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
                     <li><a title="<?=$this->transEsc('Get RSS Feed')?>" href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
                     </li>

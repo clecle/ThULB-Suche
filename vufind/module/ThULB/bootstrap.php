@@ -28,7 +28,7 @@ defined('DEFAULT_SEARCH_BACKEND') || define('DEFAULT_SEARCH_BACKEND', 'Solr');
 defined('LOCAL_OVERRIDE_DIR')
     || define(
         'LOCAL_OVERRIDE_DIR',
-        (getenv('VUFIND_LOCAL_DIR') ? getenv('VUFIND_LOCAL_DIR') : '')
+        (getenv('VUFIND_LOCAL_DIR') ? getenv('VUFIND_LOCAL_DIR') : '/usr/local/vufind/local_thulb/')
     );
 
 // Define path to cache directory
@@ -54,7 +54,7 @@ set_include_path(implode(PATH_SEPARATOR, $pathParts));
 if (file_exists(__DIR__ . '/../../vendor/autoload.php')) {
     $loader = include __DIR__ . '/../../vendor/autoload.php';
     $loader = new Composer\Autoload\ClassLoader();
-    $loader->add('ThULBTest', __DIR__ . '/tests');
+    $loader->add('ThULBTest', __DIR__ . '/tests/unit-tests/src');
     $loader->add('ThULB', __DIR__ . '/src');
     // Dynamically discover all module src directories:
     $modules = opendir(__DIR__ . '/..');

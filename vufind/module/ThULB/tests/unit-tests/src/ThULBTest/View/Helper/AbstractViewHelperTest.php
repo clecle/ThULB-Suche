@@ -42,9 +42,11 @@ use Zend\Mvc\I18n\Translator as MvcTranslator;
  */
 abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCase
 {
-    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
-    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
-    
+//    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
+//    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
+    const FINDEX_REQUEST_PATH = '/index/test/k10plus/31/GBV_ILN_31/select';
+    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_KXP"&q=id:';
+
     protected $translationLocale = 'de';
     
     protected $config;

@@ -143,11 +143,15 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             } else {
                 $this->markTestSkipped('No information about template or record driver function provided in class  ' . get_class($this));
             }
-                      
+
+            $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', DE ===';
+
             // Test for german metadata presentation:
             $data = $formatter->getData($record, $spec->getArray());
-            
-            $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', DE ===';
+            if(empty($data)) {
+                $this->markTestSkipped('No Data to compare found for this record.' . "\n" . $comment);
+            }
+
             $this->assertEquals(
                 $this->normalizeUtf8String($longViewDe),
                 $this->convertHtmlToString($data[0]['value']),

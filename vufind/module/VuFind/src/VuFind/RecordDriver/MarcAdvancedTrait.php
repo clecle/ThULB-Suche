@@ -364,7 +364,7 @@ trait MarcAdvancedTrait
         }
 
         // Now check 490 and display it only if 440/800/830 were empty:
-        $secondaryFields = ['490' => ['a']];
+        $secondaryFields = ['490' => '490a'];
         $matches = $this->getSeriesFromMARC($secondaryFields);
         if (!empty($matches)) {
             return $matches;

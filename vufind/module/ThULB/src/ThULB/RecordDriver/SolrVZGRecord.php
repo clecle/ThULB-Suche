@@ -31,6 +31,7 @@
 
 namespace ThULB\RecordDriver;
 
+use File_MARC_Data_Field;
 use VuFind\RecordDriver\Response\PublicationDetails;
 
 /**
@@ -1034,14 +1035,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 
         // First check the 440, 800 and 830 fields for series information:
         $primaryFields = [
-            '440' => ['a', 'p'],
-            '800' => ['t', 'a', 'p'],
-            '810' => ['t', 'a', 'p'],
-            '830' => ['a', 'p']];
+            '440' => '440a 440p',
+            '800' => '800t 800a 800p',
+            '810' => '810t 810a 810p',
+            '830' => '830a 830p'];
         $matches = $this->getSeriesFromMARC($primaryFields);
         
         // Now check 490 and add it only if it has only a name and no numbering:
-        foreach ($this->getSeriesFromMARC(['490' => ['a']]) as $match) {
+        foreach ($this->getSeriesFromMARC(['490' => '490a']) as $match) {
             if (array_keys($match) === ['name']) {
                 $matches[] = $match;
             }
@@ -1075,7 +1076,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             if (is_array($series)) {
                 foreach ($series as $currentField) {
                     // Can we find a name using the specified subfield list?
-                    $name = $this->getSubfieldArray($currentField, $subfields);
+                    $name = [$this->getFormattedMarcData($subfields)];
                     if (!isset($name[0])) {
                         $volume = $this->getSubfieldArray($currentField, ['v']);
                         if ($volume) {
@@ -1112,45 +1113,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         }
 
         return $matches;
-    }
-
-    /**
-     * Return an array of non-empty subfield values found in the provided MARC
-     * field.  If $concat is true, the array will contain either zero or one
-     * entries (empty array if no subfields found, subfield values concatenated
-     * together in specified order if found).  If concat is false, the array
-     * will contain a separate entry for each subfield value found.
-     *
-     * @param object $currentField Result from File_MARC::getFields.
-     * @param array  $subfields    The MARC subfield codes to read
-     * @param bool   $concat       Should we concatenate subfields?
-     * @param string $separator    Separator string (used only when $concat === true)
-     *
-     * @return array
-     */
-    protected function getSubfieldArray($currentField, $subfields, $concat = true,
-                                        $separator = ' '
-    ) {
-        // Start building a line of text for the current field
-        $matches = [];
-
-        // Loop through all subfields, collecting results that match the whitelist;
-        // note that it is important to retain the original MARC order here!
-        if (!empty($subfields)) {
-            foreach ($subfields as $currentSubfield) {
-                if ($value = $currentField->getSubfield($currentSubfield)) {
-                    // Grab the current subfield value and act on it if it is
-                    // non-empty:
-                    $data = trim($value->getData());
-                    if (!empty($data)) {
-                        $matches[] = $data;
-                    }
-                }
-            }
-        }
-
-        // Send back the data in a different format depending on $concat mode:
-        return $concat && $matches ? [implode($separator, $matches)] : $matches;
     }
 
     /**

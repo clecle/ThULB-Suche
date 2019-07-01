@@ -586,6 +586,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getCorporateAuthors()
     {
         $author = $this->getFormattedMarcData('110a, (110b, (\((110c, 110d)\)))( 110g)');
+        if(!$author) {
+            $author = $this->getFormattedMarcData('111a( \(111g\))(, 111n)(, 111d)(, 111c)');
+        }
+
         return $author ? [$author] : [];
     }
     
@@ -597,6 +601,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getCorporateAuthorsRoles()
     {
         $role = $this->getFirstFieldValue('110', ['4']);
+        if(!$role) {
+            $role = $this->getFirstFieldValue('111', ['4']);
+        }
+
         return $role ? [$role] : [];
     }
     

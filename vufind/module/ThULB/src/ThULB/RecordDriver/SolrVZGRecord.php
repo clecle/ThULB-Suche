@@ -991,7 +991,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         
         $titleVariations = [];
-        
+
         $fields = $this->getMarcRecord()->getFields('246');
         foreach ($fields as $field) {
             $visibilityIndicator = $field->getIndicator('1');
@@ -1001,18 +1001,41 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             $fieldData = [];
             foreach ($field->getSubfields() as $subfield) {
                 if (in_array($subfield->getCode(), ['a', 'f', 'g', 'i'])) {
-                    $fieldData['246' . $subfield->getCode()] = 
-                            isset($fieldData['246' . $subfield->getCode()]) ? 
-                                ', ' . $subfield->getData() : $subfield->getData();
+                    $fieldData['246' . $subfield->getCode()] =
+                        isset($fieldData['246' . $subfield->getCode()]) ?
+                            ', ' . $subfield->getData() : $subfield->getData();
                 }
             }
 
             $titleVariations[] = $this->getFormattedMarcData(
-                    '246i: (246a, (246f, 246g))',
-                    true, 
-                    true, 
-                    $fieldData
-                );
+                '246i: (246a, (246f, 246g))',
+                true,
+                true,
+                $fieldData
+            );
+        }
+
+        $fields = $this->getMarcRecord()->getFields('247');
+        foreach ($fields as $field) {
+            $visibilityIndicator = $field->getIndicator('1');
+            if ($visibilityIndicator != '1') {
+                continue;
+            }
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                if (in_array($subfield->getCode(), ['a', 'b', 'f', 'g'])) {
+                    $fieldData['247' . $subfield->getCode()] =
+                        isset($fieldData['247' . $subfield->getCode()]) ?
+                            ', ' . $subfield->getData() : $subfield->getData();
+                }
+            }
+
+            $titleVariations[] = $this->getFormattedMarcData(
+                '247f: (247a, (247b, 247g))',
+                true,
+                true,
+                $fieldData
+            );
         }
         
         return array_merge(

@@ -155,6 +155,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Item Description', 'getGeneralNotes');
         $spec->setLine('Title of work', 'getTitleOfWork');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');
+        $spec->setLine('Reproduction', 'getReproduction');
         $spec->setTemplateLine('Fingerprint', 'getFingerprint', 'data-fingerprint.phtml');
         $spec->setLine('Bibliographic Citations', 'getBibliographicCitation');
         $spec->setLine('Publication Frequency', 'getPublicationFrequency');

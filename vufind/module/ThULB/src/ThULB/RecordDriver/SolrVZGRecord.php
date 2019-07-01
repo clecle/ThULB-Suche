@@ -1465,4 +1465,13 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 
         return $retval;
     }
+
+    public function getReproduction() {
+        return $this->getFieldArray(
+            '533',
+            ['a', 'b', 'c', 'd', 'e', 'f', 'n', '7'],
+            true,
+            ', '
+        );
+    }
 }

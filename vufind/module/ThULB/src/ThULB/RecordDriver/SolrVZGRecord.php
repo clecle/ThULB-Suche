@@ -1500,7 +1500,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getReproduction() {
         return $this->getFieldArray(
             '533',
-            ['a', 'b', 'c', 'd', 'e', 'f', 'n', '7'],
+            ['a', 'b', 'c', 'd', 'e', 'f', 'n'],
             true,
             ', '
         );

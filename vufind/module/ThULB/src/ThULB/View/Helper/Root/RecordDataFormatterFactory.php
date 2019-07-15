@@ -64,6 +64,7 @@ class RecordDataFormatterFactory extends OriginalFactory
     public function getDefaultFullSpecs()
     {
         $spec = new SpecBuilder();
+        $spec->setLine('Other Titles', 'getOtherTitles');
         $spec->setLine('PartInfo', 'getPartInfo');
         $spec->setTemplateLine(
             'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',

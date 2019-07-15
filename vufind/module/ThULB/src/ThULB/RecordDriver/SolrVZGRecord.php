@@ -32,6 +32,7 @@
 namespace ThULB\RecordDriver;
 
 use File_MARC_Data_Field;
+use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
 
 /**
@@ -1504,5 +1505,34 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             true,
             ', '
         );
+    }
+
+    /**
+     * Returns a string with all other titles of the work.
+     *
+     * @return string
+     * @throws File_MARC_Exception
+     */
+    public function getOtherTitles() {
+        $fields = $this->getMarcRecord()->getFields('249');
+
+        if(!is_array($fields) && count($fields) < 1) {
+            return '';
+        }
+        $field = $fields[0];
+
+        $data = '';
+        foreach ($field->getSubFields() as $subField) {
+            if($subField->getCode() === 'a') {
+                $separator = !empty($data) ? ' ; ' : '';
+            }
+            else {
+                $separator = $subField->getCode() === 'b' ? ' : ' : ' / ';
+            }
+
+            $data .= $separator . $subField->getData();
+        }
+
+        return $data;
     }
 }

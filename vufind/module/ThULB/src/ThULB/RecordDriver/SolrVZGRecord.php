@@ -125,7 +125,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getShortTitle()
     {
         if (is_null($this->shortTitle)) {
-            $shortTitle = $this->getFormattedMarcData('245a : 245b') ?:
+            $shortTitle = $this->getFormattedMarcData('245a : 245b ( / 245c)') ?:
                               $this->getFormattedMarcData('490v: 490a');
 
             if ($shortTitle === '')

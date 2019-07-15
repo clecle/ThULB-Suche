@@ -204,7 +204,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         }
         
         $string = implode("\n", $stringLines);
-        $string = html_entity_decode($string);
+        $string = html_entity_decode($string, ENT_QUOTES | ENT_HTML5);
         
         return $this->normalizeUtf8String($string);
     }

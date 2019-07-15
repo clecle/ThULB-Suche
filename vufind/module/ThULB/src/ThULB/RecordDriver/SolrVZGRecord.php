@@ -1049,8 +1049,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         
         return array_merge(
                 $titleVariations,
-                $this->getFieldArray('500'),
-                $this->getFieldArray('501')
+                $this->getFieldArray('500')
             );
     }
 
@@ -1505,6 +1504,43 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             true,
             ', '
         );
+    }
+
+    /**
+     * Get an array of lines from the table of contents.
+     *
+     * @return array
+     * @throws File_MARC_Exception
+     */
+    public function getTOC()
+    {
+        // Return empty array if we have no table of contents:
+        $fields = array_merge(
+            $this->getMarcRecord()->getFields('501'),
+            $this->getMarcRecord()->getFields('505')
+        );
+        if (!$fields) {
+            return [];
+        }
+
+        $display = array(
+            '501' => '501a',
+            '505' => '(505a) (505t (/ 505r)'
+        );
+
+        // If we got this far, we have a table -- collect it as a string:
+        $toc = [];
+        foreach ($fields as $field) {
+
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                $fieldData[$field->getTag() . $subfield->getCode()] =
+                    isset($fieldData[$field->getTag() . $subfield->getCode()]) ?
+                        ', ' . $subfield->getData() : $subfield->getData();
+            }
+            $toc[] = $this->getFormattedMarcData($display[$field->getTag()], true, true, $fieldData);
+        }
+        return $toc;
     }
 
     /**

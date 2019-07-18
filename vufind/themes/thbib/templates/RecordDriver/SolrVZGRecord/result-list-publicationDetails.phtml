@@ -1,0 +1,27 @@
+<?
+    $summAuthors = array_slice(array_merge(
+        array_slice($this->driver->getPrimaryAuthorsWithHighlighting(), 0, 1),
+        array_slice($this->driver->getSecondaryAuthors(), 0, 1),
+        array_slice($this->driver->getCorporateAuthors(), 0, 1)
+    ), 0, 2);
+    
+    if (!empty($summAuthors)): 
+?>
+  <?=$this->transEsc('by')?>
+  <? $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
+    <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>" class="authorLink"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ';' : ''?>
+  <? endforeach; ?>
+  <br/>
+<? endif; ?>
+<?// $journalTitle = $this->driver->getContainerTitle(); $journalRef = $this->driver->getContainerReference(); $summDate = $this->driver->getPublicationDates();?>
+<?// if (!empty($journalTitle)): ?>
+<!--    --><?//=$this->transEsc('Published in')?><!--:-->
+<!--    --><?// $containerSource = $this->driver->getSourceIdentifier(); ?>
+<!--    --><?// $containerID = $this->driver->getContainerRecordID(); ?>
+<!--    --><?// $containerLink = $this->driver->getContainerLink(); ?>
+<!--    --><?// /* TODO: handle highlighting more elegantly here: */?>
+<!--    <a href="--><?//=$containerLink ? $this->recordLink()->related($containerLink) : ($containerID ? $this->recordLink()->getUrl("$containerSource|$containerID") : $this->record($this->driver)->getLink('journaltitle', str_replace(array('{{{{START_HILITE}}}}', '{{{{END_HILITE}}}}'), '', $journalTitle)))?><!--">--><?//=$this->highlight($journalTitle) ?><!--</a>--><?//=($journalRef) ? ', ' . $journalRef : ''?>
+<!--    --><?//=!empty($summDate) ? ' (' . $this->escapeHtml($summDate[0]) . ')' : ''?>
+<?// endif; ?>
+  
+<?//=$this->driver->getReducedPublicationInfo() ?>

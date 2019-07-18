@@ -1,0 +1,84 @@
+@import "../../thulb/scss/thulb";
+
+.facet-tree-container li {
+  list-style: none;
+  padding-left: 0;
+}
+
+.facet-tree-parent > i[data-toggle="collapse"]::after,
+.facet-tree-container ul.collapsed::after {
+  content: '';
+  float: none;
+}
+
+.facet-tree-parent > i[data-toggle="collapse"]::before {
+  content: '\25BC';
+  float: none;
+}
+
+.facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
+  content: '\25B2';
+  float: none;
+}
+
+ul.facet-tree-container,
+.facet-tree-container ul {
+  padding-left: 0;
+}
+
+div.facet-tree-parent > i {
+  padding: 0 5px;
+}
+
+.facet-tree-container ul li:nth-child(odd) {
+  background-color: #fefefe;
+}
+
+.facet-tree-container ul li:nth-child(even) {
+  background-color: #ffffff;
+}
+
+.child.text {
+  font-size: 11px;
+}
+
+.facet-group .facet-tree-container .facet {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 15px 5px 0;
+  border-bottom: none;
+}
+
+.facet-tree-container ul > li {
+  padding-left: 25px;
+}
+
+.facet-tree-container .badge {
+  flex-shrink: 0;
+  margin-left: 3px; }
+
+.facet-tree-container ul:last-child,
+.facet-tree-parent {
+  border-bottom: 1px solid #ddd;
+}
+
+.facet-group .facet-tree-container .collapse,
+.facet-group .facet-tree-container .collapsing,
+.facet-group .facet-tree-container .facet {
+  border-left: none;
+  border-right: none;
+}
+
+.facet-tree-container .active a{
+  padding-right: .65rem;
+  background-color: #568ebe !important;
+  color: #fff !important;
+}
+
+.facet-tree-parent:hover {
+  color: #333333;
+  background-color: #eeeeee;
+  text-decoration: none;
+}

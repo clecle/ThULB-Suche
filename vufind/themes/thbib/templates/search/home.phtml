@@ -1,0 +1,48 @@
+<?
+  // Set page title.
+  $this->headTitle($this->translate('Search Home'));
+
+  // Disable top search box -- this page has a special layout.
+  $this->layout()->searchbox = false;
+
+  // Set default value if necessary:
+  if (!isset($this->searchClassId)) {
+    $this->searchClassId = 'Solr';
+  }
+
+  // Load search actions and settings (if any):
+  $options = $this->searchOptions($this->searchClassId);
+  $basicSearch = $options->getSearchAction();
+  $advSearch = $options->getAdvancedSearchAction();
+
+  $this->layout()->breadcrumbs = false;
+?>
+
+<div class="searchHomeContent">
+  <?
+  $ilsStatusScript = <<<JS
+      $(document).ready(function() {
+        $.ajax({
+            dataType: 'json',
+            method: 'GET',
+            data: {'offlineModeMsg':'ils_offline_home_message'},
+            url: VuFind.path + '/AJAX/JSON?method=getIlsStatus',
+            success: function(response) {
+                $('.searchHomeContent').append(response.data);
+            }
+        });
+        $("#searchForm_lookfor").focus();
+      });
+JS;
+  ?>
+  <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
+
+  <div class="row startpage_logo">
+    <div class="col-sm-4 col-sm-offset-4">
+      <img alt="welcome thulbsuche" src="<?=$this->imageLink('thulbsuche_l.png')?>">
+    </div>
+  </div>
+  <div class="startpage_searchbox">
+    <?=$this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
+  </div>
+</div>

@@ -1552,7 +1552,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getOtherTitles() {
         $fields = $this->getMarcRecord()->getFields('249');
 
-        if(!is_array($fields) && count($fields) < 1) {
+        if(!is_array($fields) || count($fields) < 1) {
             return '';
         }
         $field = $fields[0];

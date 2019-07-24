@@ -1606,7 +1606,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             return '';
         }
 
-        // If we got this far, we have a table -- collect it as a string:
         $contentTypes = [];
         foreach ($fields as $field) {
             $fieldData = [];
@@ -1619,5 +1618,56 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                 true, true, $fieldData);
         }
         return implode('; ', $contentTypes);
+    }
+
+    /**
+     * Returns an multidimensional array with all subjects.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getAllSubjectHeadings($extended = false) {
+
+        $subjects = parent::getAllSubjectHeadings($extended);
+
+        // Return empty array if we have no table of contents:
+        $fields = array_merge(
+            $this->getMarcRecord()->getFields('650'),
+            $this->getMarcRecord()->getFields('689')
+        );
+        if (!$fields) {
+            return [];
+        }
+
+        $subjects650 = array();
+        $subjects689 = array();
+        /* @var $field File_MARC_Data_Field */
+        foreach ($fields as $field) {
+            if($field->getTag() == '650') {
+                if($subfield = $field->getSubfield('8')) {
+                    $level = preg_split('/\./', $subfield->getData());
+                    if($subfield = $field->getSubfield('a')) {
+                        $subjects650[$level[0]][$level[1]] = $subfield->getData();
+                    }
+                }
+                else {
+                    if($subfield = $field->getSubfield('a')) {
+                        $subjects650[][0] = $subfield->getData();
+                    }
+                }
+            }
+            else {
+                $primary   = $field->getIndicator(1);
+                $secondary = $field->getIndicator(2);
+                if($primary !== false && $secondary !== false) {
+                    if($subfield = $field->getSubfield('a')) {
+                        $subjects689[$primary][$secondary] = $subfield->getData();
+                    }
+                }
+            }
+        }
+
+        return array_unique(array_merge($subjects, $subjects650, $subjects689), SORT_REGULAR);
     }
 }

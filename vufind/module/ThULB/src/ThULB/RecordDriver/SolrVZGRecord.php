@@ -1571,4 +1571,33 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 
         return $data;
     }
+
+    /**
+     * Returns a formatted string with the content types.
+     *
+     * @return string
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getTypeOfContent() {
+        // Return empty array if we have no table of contents:
+        $fields = $this->getMarcRecord()->getFields('655');
+        if (!$fields) {
+            return '';
+        }
+
+        // If we got this far, we have a table -- collect it as a string:
+        $contentTypes = [];
+        foreach ($fields as $field) {
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                $fieldData[$field->getTag() . $subfield->getCode()] =
+                    isset($fieldData[$field->getTag() . $subfield->getCode()]) ?
+                        ', ' . $subfield->getData() : $subfield->getData();
+            }
+            $contentTypes[] = $this->getFormattedMarcData('655a \(655x, 655y, 655z\)',
+                true, true, $fieldData);
+        }
+        return implode('; ', $contentTypes);
+    }
 }

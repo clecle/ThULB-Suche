@@ -141,6 +141,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
+        $spec->setLine('Type of content','getTypeOfContent');
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]

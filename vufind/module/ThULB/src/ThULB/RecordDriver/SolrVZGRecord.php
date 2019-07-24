@@ -691,8 +691,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         return $isbns;
     }
     
-    
-
     /**
      * Get an array of all invalid ISBNs associated with the record (may be empty).
      *
@@ -702,27 +700,49 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         return $this->getFieldArray('020', ['z'], false);
     }
-    
+
     /**
      * Get an array with the uniform title
-     * 
+     *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getTitleOfWork()
     {
         $uniformTitle = $this->getFieldArray(
-                '130',
-                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
-                true,
-                ', '
-            );
-        
-        return ($uniformTitle) ?: $this->getFieldArray(
-                '240',
-                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
-                true,
-                ', '
-            );
+            '130',
+            ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+            true,
+            ', '
+        );
+
+        $uniformTitle = array_merge($uniformTitle, $this->getFieldArray(
+            '240',
+            ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+            true,
+            ', '
+        ));
+
+        $fields = $this->getMarcRecord()->getFields('700');
+        foreach ($fields as $field) {
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                if (in_array($subfield->getCode(), ['a', 'b', 'c', 'd', 'f', 'l', 't'])) {
+                    $fieldData['700' . $subfield->getCode()] = $subfield->getData();
+                }
+            }
+
+            if (isset($fieldData['700t']) && !empty($fieldData['700t'])) {
+                $uniformTitle[] = $this->getFormattedMarcData(
+                    '700a(, 700b)(, 700c)(, 700d)(, 700l)(, 700t)(, 700f)',
+                    true,
+                    ', ',
+                    $fieldData
+                );
+            }
+        }
+
+        return $uniformTitle;
     }
     
     /**

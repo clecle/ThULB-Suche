@@ -644,12 +644,12 @@ dd > div.citations {
 }
 
 .facet-tree-parent > i[data-toggle="collapse"]::before {
-  content: '\25BC';
+  content: '\25B2';
   float: none;
 }
 
 .facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
-  content: '\25B2';
+  content: '\25BC';
   float: none;
 }
 

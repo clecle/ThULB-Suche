@@ -1628,46 +1628,65 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * @throws File_MARC_Exception
      */
     public function getAllSubjectHeadings($extended = false) {
+        return array_unique(
+            array_merge($this->getSubjectsFromField650(), $this->getSubjectsFromField689()),
+            SORT_REGULAR);
+    }
 
-        $subjects = parent::getAllSubjectHeadings($extended);
-
-        // Return empty array if we have no table of contents:
-        $fields = array_merge(
-            $this->getMarcRecord()->getFields('650'),
-            $this->getMarcRecord()->getFields('689')
-        );
+    /**
+     * Reads subjects with hierarchies from MRC 650 fields
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    private function getSubjectsFromField650() {
+        $fields = $this->getMarcRecord()->getFields('650');
         if (!$fields) {
             return [];
         }
 
-        $subjects650 = array();
-        $subjects689 = array();
-        /* @var $field File_MARC_Data_Field */
+        $subjects = array();
         foreach ($fields as $field) {
-            if($field->getTag() == '650') {
-                if($subfield = $field->getSubfield('8')) {
-                    $level = preg_split('/\./', $subfield->getData());
-                    if($subfield = $field->getSubfield('a')) {
-                        $subjects650[$level[0]][$level[1]] = $subfield->getData();
-                    }
+            if ($subfield = $field->getSubfield('8')) {
+                $level = preg_split('/\./', $subfield->getData());
+                if ($subfield = $field->getSubfield('a')) {
+                    $subjects[$level[0]][$level[1]] = $subfield->getData();
                 }
-                else {
-                    if($subfield = $field->getSubfield('a')) {
-                        $subjects650[][0] = $subfield->getData();
-                    }
-                }
-            }
-            else {
-                $primary   = $field->getIndicator(1);
-                $secondary = $field->getIndicator(2);
-                if($primary !== false && $secondary !== false) {
-                    if($subfield = $field->getSubfield('a')) {
-                        $subjects689[$primary][$secondary] = $subfield->getData();
-                    }
+            } else {
+                if ($subfield = $field->getSubfield('a')) {
+                    $subjects[][0] = $subfield->getData();
                 }
             }
         }
 
-        return array_unique(array_merge($subjects, $subjects650, $subjects689), SORT_REGULAR);
+        return $subjects;
+    }
+
+    /**
+     * Reads subjects with hierarchies from MRC 689 fields
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    private function getSubjectsFromField689() {
+        $fields = $this->getMarcRecord()->getFields('689');
+        if (!$fields) {
+            return [];
+        }
+
+        $subjects = array();
+        foreach ($fields as $field) {
+            $primary   = $field->getIndicator(1);
+            $secondary = $field->getIndicator(2);
+            if($primary !== false && $secondary !== false) {
+                if($subfield = $field->getSubfield('a')) {
+                    $subjects[$primary][$secondary] = $subfield->getData();
+                }
+            }
+        }
+
+        return $subjects;
     }
 }

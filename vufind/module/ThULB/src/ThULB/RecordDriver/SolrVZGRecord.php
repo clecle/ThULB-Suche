@@ -837,10 +837,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         
         // Eliminate all missing fields and surrounding content inside the
         // parantheses:
-        $format = preg_replace('/[^T\(\)]*F[^T\(\)]*/', '', $format);
+        $format = preg_replace('/[^T\(\)&;]*F[^T\(\)&;]*/', '', $format);
         // Remove all content in parantheses, that doesn't represent existing
         // Marc fields together with surrounding content
-        $format = preg_replace('/[^T\(\)]*\([^T]*\)[^T\(\)]*/', '', $format);
+        $format = preg_replace('/[^T\(\)&;]*\([^T]*\)[^T\(\)&;]*/', '', $format);
         // Remove separators for fields, where they are given with the field
         // content
         $format = preg_replace('/([^T\(\)]+S)|(S[^T\(\)]+)/', ' ', $format);
@@ -851,7 +851,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         // keep all escaped parantheses by converting them to their html equivalent
         $format = str_replace('&#40;', '(', $format);
         $format = str_replace('&#41;', ')', $format);
-        
+
+        // Remove empty previously escaped parentheses if empty
+        $format = preg_replace('/[^%s\(\)]*\([^%s]*\)[^%s\(\)]*/', '', $format);
+
         return trim(vsprintf($format, $marcData));
     }
 

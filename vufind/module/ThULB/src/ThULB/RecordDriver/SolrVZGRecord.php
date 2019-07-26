@@ -1689,4 +1689,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 
         return $subjects;
     }
+
+    /**
+     * Returns ppn links for this record.
+     *
+     * @return array
+     */
+    public function getPPNLink() {
+        return isset($this->fields['ppnlink']) && is_array($this->fields['ppnlink'])
+            ? $this->fields['ppnlink'] : [];
+    }
 }

@@ -74,4 +74,19 @@ class Factory extends OriginalFactory
             $sm->get('VuFind\RecommendPluginManager')
         );
     }
+
+    /**
+     * Factory for CollectionList tab plugin.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return CollectionList
+     */
+    public static function getRecordLinkCollectionList(ServiceManager $sm)
+    {
+        return new RecordLinkCollectionList(
+            $sm->get('VuFind\SearchRunner'),
+            $sm->get('VuFind\RecommendPluginManager')
+        );
+    }
 }

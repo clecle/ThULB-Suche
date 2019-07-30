@@ -1082,32 +1082,16 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * keys.
      *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getSeries()
     {
         $matches = [];
 
-        // First check the 440, 800 and 830 fields for series information:
-        $primaryFields = [
-            '440' => '440a 440p',
-            '800' => '800t 800a 800p',
-            '810' => '810t 810a 810p',
-            '830' => '830a 830p'];
+        $primaryFields = []; // not used
         $matches = $this->getSeriesFromMARC($primaryFields);
         
-        // Now check 490 and add it only if it has only a name and no numbering:
-        foreach ($this->getSeriesFromMARC(['490' => '490a']) as $match) {
-            if (array_keys($match) === ['name']) {
-                $matches[] = $match;
-            }
-        }
-        
-        if (!empty($matches)) {
-            return $matches;
-        }
-
-        // Still no results found?  Resort to the Solr-based method just in case!
-        return parent::getSeries();
+        return $matches;
     }
 
     /**
@@ -1118,50 +1102,65 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * (used to find series name)
      *
      * @return array
+     * @throws File_MARC_Exception
      */
     protected function getSeriesFromMARC($fieldInfo)
     {
         $matches = [];
 
-        // Loop through the field specification....
-        foreach ($fieldInfo as $field => $subfields) {
-            // Did we find any matching fields?
-            $series = $this->getMarcRecord()->getFields($field);
-            if (is_array($series)) {
-                foreach ($series as $currentField) {
-                    // Can we find a name using the specified subfield list?
-                    $name = [$this->getFormattedMarcData($subfields)];
-                    if (!isset($name[0])) {
-                        $volume = $this->getSubfieldArray($currentField, ['v']);
-                        if ($volume) {
-                            $name = $this->getConditionalFieldArray('490', ['a'], true, ' ', ['v' => $volume[0]]);
+        // Did we find any matching fields?
+        $series = $this->getMarcRecord()->getFields('490');
+        if (is_array($series)) {
+            /* @var $currentField File_MARC_Data_Field */
+            foreach ($series as $currentField) {
+                if (($name = $currentField->getSubfield('a')) === false ) {
+                    continue;
+                }
+                $currentArray = ['name' => $name->getData()];
+
+                if ($number = $currentField->getSubfield('v')) {
+                    $currentArray['number'] = $number->getData();
+                }
+
+                $secondaryFields = $this->getMarcRecord()->getFields('800|810|830', true);
+                /* @var $secondaryField File_MARC_Data_Field */
+                foreach ($secondaryFields as $secondaryField) {
+                    if ($number !== false && $secondaryField->getSubfield('v') === $number) {
+                        $rawId = $secondaryField->getSubfield('w')->getData();
+                        if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+                            $currentArray['id'] = substr($rawId, 8);
+                            break;
                         }
                     }
-                    
-                    if (isset($name[0])) {
-                        $currentArray = ['name' => $name[0]];
+                }
 
-                        // Can we find a number in subfield v?  (Note that number is
-                        // always in subfield v regardless of whether we are dealing
-                        // with 440, 490, 800 or 830 -- hence the hard-coded array
-                        // rather than another parameter in $fieldInfo).
-                        $number
-                            = $this->getSubfieldArray($currentField, ['v']);
-                        if (isset($number[0])) {
-                            $currentArray['number'] = $number[0];
-                        }
-                        
-                        $id = $this->getSubfieldArray($currentField, ['w'], false);
-                        foreach ($id as $rawId) {
-                            if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
-                                $currentArray['id'] = substr($rawId, 8);
-                                break;
-                            }
-                        }
+                // Save the current match:
+                $matches[] = $currentArray;
+            }
+        }
 
-                        // Save the current match:
-                        $matches[] = $currentArray;
+        // Did we find any matching fields?
+        $series = $this->getMarcRecord()->getFields('773');
+        if (is_array($series)) {
+            /* @var $currentField File_MARC_Data_Field */
+            foreach ($series as $currentField) {
+                if ($currentField->getSubfield('w')) {
+                    if (( $name = $currentField->getSubfield('t')) === false) {
+                        $name = $this->getMarcRecord()->getField('245')->getSubfield('a');
                     }
+                    $currentArray = ['name' => $name->getData()];
+
+                    if ($number = $currentField->getSubfield('g')) {
+                        $currentArray['number'] = $number->getData();
+                    }
+
+                    $rawId = $currentField->getSubfield('w')->getData();
+                    if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+                        $currentArray['id'] = substr($rawId, 8);
+                    }
+
+                    // Save the current match:
+                    $matches[] = $currentArray;
                 }
             }
         }

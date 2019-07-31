@@ -1111,7 +1111,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         // Did we find any matching fields?
         $series = $this->getMarcRecord()->getFields('490');
         if (is_array($series)) {
-            /* @var $currentField File_MARC_Data_Field */
             foreach ($series as $currentField) {
                 if (($name = $currentField->getSubfield('a')) === false ) {
                     continue;
@@ -1123,9 +1122,11 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                 }
 
                 $secondaryFields = $this->getMarcRecord()->getFields('800|810|830', true);
-                /* @var $secondaryField File_MARC_Data_Field */
                 foreach ($secondaryFields as $secondaryField) {
-                    if ($number !== false && $secondaryField->getSubfield('v') === $number) {
+                    $secondaryNumber = $secondaryField->getSubfield('v');
+                    if ($number !== false && $secondaryNumber !== false &&
+                        $secondaryNumber->getData() === $number->getData()) {
+
                         $rawId = $secondaryField->getSubfield('w')->getData();
                         if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                             $currentArray['id'] = substr($rawId, 8);

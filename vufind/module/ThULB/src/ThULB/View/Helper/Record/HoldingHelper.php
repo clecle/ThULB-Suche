@@ -156,7 +156,7 @@ class HoldingHelper extends AbstractHelper
   }
    
   public function getHoldingChronology(&$itemRow) {
-    $holding_chron = "";
+    $holding_chron = array();
     if (!empty($itemRow['chronology_about'])) {
       $holding_chron[] = $itemRow['chronology_about'];
     }

@@ -15,6 +15,15 @@ $config = array(
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
         )
     ),
+    'service_manager' => [
+        'factories' => [
+            'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+        ],
+        'aliases' => array(
+            'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
+            'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
+        )
+    ],
     'vufind' => array(
         'plugin_managers' => array(
             'ajaxhandler' => array(

@@ -7,10 +7,6 @@
     // Account for replace_other_urls setting
     $offlineMode = $this->ils()->getOfflineMode();
     
-    /**
-    * do we have Online-Contents?
-    */
-    $online_holdings = $this->driver->getOnlineHoldings();
     try {
         $holdings = $this->driver->getRealTimeHoldings();
     } catch (\VuFind\Exception\ILS $e) {
@@ -52,31 +48,57 @@
   <a class="placehold" data-lightbox title="<?=$this->transEsc('request_place_text')?>" href="<?=$this->recordLink()->getRequestUrl($holdingTitleHold)?>"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?=$this->transEsc('title_hold_place')?></a>
 <? endif; ?>
 
+<? if (!empty($holdings)): ?>
+  <? foreach ($holdings['holdings'] as $holding): ?>
+    <? $holding_location = $this->thulb_holdingHelper()->getLocation($holding); ?>
+    <? if ($holding_location != "Unknown") continue; // Skip if not an online holding ?>
 
-<? if ( !empty($online_holdings) ): ?>
-<h3><?=$this->transEsc("accessible_from_remote")?></h3>
-  <table class="table table-striped">
-  <? foreach ($online_holdings as $holds): ?>
-    <tr vocab="http://schema.org/" typeof="Offer">
-    <? list($txt_sanitized, $txt, $url, $more, $pic) = explode(\ThULB\RecordDriver\SolrVZGRecord::SEPARATOR, $holds); ?>
-      <td>
-        <dl class="dl-horizontal">
-          <dt><?=$this->transEsc('Link')?>:</dt>
-          <dd><?="<a href='" . $url . "' target='_blank' title='" . $this->transEsc($txt) ."'>" . $txt_sanitized . " <i class='fa fa-external-link' aria-hidden='true'></i></a>"; ?></dd>
-          <? if ( !empty($more) || !empty($pic) ): ?>
-          <dt><?=$this->transEsc("Item Notes")?>:</dt>
-          <dd>
-              <?=$more?>
-              <? if ( !empty($pic) ): ?>
-                <?="<img src='$pic' />"?>
+    <h3>Online</h3>
+    <table class="table table-striped"
+           summary="<?= $this->transEsc('Holdings details from') ?> <?= $this->transEsc($holding['location']) ?>">
+      <? foreach ($holding['items'] as $row): ?>
+        <? if (isset($row['barcode']) && $row['barcode'] != ""): ?>
+        <tr vocab="http://schema.org/" typeof="Offer">
+          <td>
+            <dl class="dl-horizontal">
+              <? $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
+              <? if ($callno): ?>
+                <dt><?= $this->transEsc("Call Number") ?>:</dt>
+                <dd><strong><?= $callno ?></strong></dd>
               <? endif; ?>
-          </dd>
-          <? endif; ?>
-        </dl>
-      </td>
-    </tr>
+
+              <? /* ANMERKGUNGEN & BESTAND */ ?>
+              <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
+              <? if ($callno != "Unknown" && $callno != "bestellt"): ?>
+                <dt><?=$this->transEsc("accessible_from_remote")?>:</dt>
+                <dd>
+                  <a href="<?php echo $row['remotehref']; ?>">Link</a>
+                </dd>
+              <? endif; ?>
+
+              <? if (!empty($comments)) : ?>
+                <dt><?= $this->transEsc("Item Notes") ?>:</dt>
+                <div class="item-notes">
+                  <dd>
+                    <? if (is_array($comments) && count($comments) > 0): ?>
+                      <ul>
+                        <? foreach ($comments as $comment): ?>
+                          <? if (!empty($comment)): ?>
+                            <li><?= $comment ?></li>
+                          <? endif; ?>
+                        <? endforeach; ?>
+                      </ul>
+                    <? endif; ?>
+                  </dd>
+                </div>
+              <? endif; ?>
+            </dl>
+          </td>
+        </tr>
+        <? endif; ?>
+      <? endforeach; ?>
+    </table>
   <? endforeach; ?>
-  </table>
 <? endif; ?>
 
 <? if ( !empty($holdings) ): ?>

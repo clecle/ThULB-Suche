@@ -349,7 +349,14 @@ class PAIA extends OriginalPAIA
     protected function getItemStatus($item)
     {
         $status = parent::getItemStatus($item);
-        
+
+        foreach($item['available'] as $available) {
+            if (isset($available['service']) && $available['service'] == 'remote') {
+                $status['remotehref'] = $available['href'];
+                $status['remotetitle'] = $available['title'];
+            }
+        }
+
         if (!$status['availability'] 
             && !isset($status['duedate'])
             && $status['holdtype'] !== 'recall'

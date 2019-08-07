@@ -48,63 +48,9 @@
   <a class="placehold" data-lightbox title="<?=$this->transEsc('request_place_text')?>" href="<?=$this->recordLink()->getRequestUrl($holdingTitleHold)?>"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?=$this->transEsc('title_hold_place')?></a>
 <? endif; ?>
 
-<? if (!empty($holdings)): ?>
-  <? foreach ($holdings['holdings'] as $holding): ?>
-    <? $holding_location = $this->thulb_holdingHelper()->getLocation($holding); ?>
-    <? if ($holding_location != "Unknown") continue; // Skip if not an online holding ?>
-
-    <h3>Online</h3>
-    <table class="table table-striped"
-           summary="<?= $this->transEsc('Holdings details from') ?> <?= $this->transEsc($holding['location']) ?>">
-      <? foreach ($holding['items'] as $row): ?>
-        <? if (isset($row['barcode']) && $row['barcode'] != ""): ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <? $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
-              <? if ($callno): ?>
-                <dt><?= $this->transEsc("Call Number") ?>:</dt>
-                <dd><strong><?= $callno ?></strong></dd>
-              <? endif; ?>
-
-              <? /* ANMERKGUNGEN & BESTAND */ ?>
-              <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-              <? if ($callno != "Unknown" && $callno != "bestellt"): ?>
-                <dt><?=$this->transEsc("accessible_from_remote")?>:</dt>
-                <dd>
-                  <a href="<?php echo $row['remotehref']; ?>">Link</a>
-                </dd>
-              <? endif; ?>
-
-              <? if (!empty($comments)) : ?>
-                <dt><?= $this->transEsc("Item Notes") ?>:</dt>
-                <div class="item-notes">
-                  <dd>
-                    <? if (is_array($comments) && count($comments) > 0): ?>
-                      <ul>
-                        <? foreach ($comments as $comment): ?>
-                          <? if (!empty($comment)): ?>
-                            <li><?= $comment ?></li>
-                          <? endif; ?>
-                        <? endforeach; ?>
-                      </ul>
-                    <? endif; ?>
-                  </dd>
-                </div>
-              <? endif; ?>
-            </dl>
-          </td>
-        </tr>
-        <? endif; ?>
-      <? endforeach; ?>
-    </table>
-  <? endforeach; ?>
-<? endif; ?>
-
 <? if ( !empty($holdings) ): ?>
   <? foreach ($holdings['holdings'] as $holding): ?>
     <? $holding_location = $this->thulb_holdingHelper()->getLocation($holding); ?>
-    <? if ($holding_location != "Unknown" ): /* No Callnumber? So we only have Remote-Access. Show nothing from DAIA - its covered via MARC 981 */ ?>
     <h3>
       <?=$this->thulb_holdingHelper()->getLocation($holding);?>
     </h3>
@@ -175,7 +121,18 @@
                   </div>
                 <? endif; ?>
 
-                <? if ($callno != "Unknown" && $callno != "bestellt" ): ?>
+                <?php if(!empty($row['remotehref'])): ?>
+                  <?php $linkDescription = ($holding['location'] != "Remote") ? "See also" : 'Link'; ?>
+                  <dt><?=$this->transEsc($linkDescription)?>:</dt>
+                  <dd>
+                    <a href="<?php echo $row['remotehref']; ?>"><?php echo $row['remotedomain']; ?></a>
+                    <?php if(!empty($row['remotetitle'])):?>
+                      [<?php echo $row['remotetitle']; ?>]
+                  <?php endif; ?>
+                  </dd>
+                <?php endif; ?>
+
+                <? if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"): ?>
                   <dt><?=$this->transEsc("Availability Status")?>:</dt>
                   <dd><?=$this->thulb_holdingHelper()->getAvailability($row);?></dd>
                 <? endif; ?>
@@ -196,7 +153,6 @@
       </tr>
     <? endif; ?>
     </table>
-    <? endif; /* Callnumber != Unknown */?>
   <? endforeach; ?>
 <? endif; ?>
 

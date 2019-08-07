@@ -83,12 +83,12 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
+//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-                    'testcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
+//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -118,13 +118,13 @@ $config = array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
-                    'RelatedResources' => 'testcl',
+//                    'RelatedResources' => 'relatedcl',
                     'Description'   => null,
                     'Reviews' => null,
                     'Excerpt' => null,
                     'Details' => 'staffviewcombined'
                 ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList', 'RelatedResources')
+                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList' /* , 'RelatedResources' */ )
             ),
             'VuFind\RecordDriver\Summon' => array(
                 'tabs' => array(

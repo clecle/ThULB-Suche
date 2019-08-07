@@ -350,10 +350,19 @@ class PAIA extends OriginalPAIA
     {
         $status = parent::getItemStatus($item);
 
-        foreach($item['available'] as $available) {
-            if (isset($available['service']) && $available['service'] == 'remote') {
-                $status['remotehref'] = $available['href'];
-                $status['remotetitle'] = $available['title'];
+        if(isset($item['available'])) {
+            foreach ($item['available'] as $available) {
+                if (isset($available['service']) && $available['service'] == 'remote') {
+                    $href = $available['href'];
+                    // custom DAIA field
+                    $status['remotehref'] = $href;
+                    // custom DAIA field
+                    $status['remotedomain'] = parse_url($href)['host'];
+                    // custom DAIA field
+                    $status['remotetitle'] = isset($available['title']) ? $available['title'] : '';
+
+                    break;
+                }
             }
         }
 
@@ -467,10 +476,14 @@ class PAIA extends OriginalPAIA
                 $result_item['storagehref'] = $this->getItemStorageLink($item);
                 // status and availability will be calculated in own function
                 $result_item = $this->getItemStatus($item) + $result_item;
+
+                if($result_item['location'] == 'Unknown' && !empty($result_item['remotehref'])) {
+                    $result_item['location'] = 'Remote';
+                }
                 // add result_item to the result array, if at least one relevant
                 // information is present
                 if ($result_item['callnumber'] !== ''
-                    || $result_item['about']
+                    || $result_item['about']  || $result_item['remotehref']
                 ) {
                     $result[] = $result_item;
                 }

@@ -673,6 +673,9 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         foreach ($fields as $field) {
             $fieldData = [];
             foreach ($field->getSubfields() as $subfield) {
+                if($subfield->getCode() == 'z') {
+                    continue 2;
+                }
                 if (in_array($subfield->getCode(), ['9', 'c'])) {
                     $fieldData['020' . $subfield->getCode()] = 
                             isset($fieldData['020' . $subfield->getCode()]) ? 

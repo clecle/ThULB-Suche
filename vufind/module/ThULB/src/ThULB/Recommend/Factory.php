@@ -45,7 +45,7 @@ class Factory
     public static function getSummonCombined(ServiceManager $sm)
     {
         return new SummonCombined(
-            $sm->getServiceLocator()->get('VuFind\SearchResultsPluginManager')
+            $sm->get('VuFind\SearchResultsPluginManager')
         );
     }
 }

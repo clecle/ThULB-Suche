@@ -146,7 +146,6 @@ class HoldingHelper extends AbstractHelper
     return $callnumberString;
   }
 
-
   public function getHoldingComments(&$itemRow)
   {
     $holding_comments = "";

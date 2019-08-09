@@ -44,10 +44,10 @@ class Factory
     public static function getRecord(ServiceManager $sm)
     {
         $helper = new Record(
-            $sm->getServiceLocator()->get('VuFind\Config')->get('config')
+            $sm->get('VuFind\Config')->get('config')
         );
         $helper->setCoverRouter(
-            $sm->getServiceLocator()->get('VuFind\Cover\Router')
+            $sm->get('VuFind\Cover\Router')
         );
         return $helper;
     }
@@ -61,7 +61,7 @@ class Factory
      */
     public static function getRecordLink(ServiceManager $sm)
     {
-        return new RecordLink($sm->getServiceLocator()->get('VuFind\RecordRouter'));
+        return new RecordLink($sm->get('VuFind\RecordRouter'));
     }
 
     /**
@@ -73,6 +73,6 @@ class Factory
      */
     public static function getSession(ServiceManager $sm)
     {
-        return new Session($sm->getServiceLocator()->get('VuFind\SessionManager'));
+        return new Session($sm->get('VuFind\SessionManager'));
     }
 }

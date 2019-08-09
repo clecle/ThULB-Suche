@@ -604,3 +604,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   padding: 10px;
   margin-bottom: 15px;
 }
+
+.record .format::after {
+  content: "";
+}

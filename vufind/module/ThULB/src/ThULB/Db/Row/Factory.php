@@ -26,8 +26,9 @@
  */
 
 namespace ThULB\Db\Row;
+use Interop\Container\ContainerInterface;
 use Zend\ServiceManager\ServiceManager,
-    VuFind\Db\Row\Factory as OriginalFactory;
+    VuFind\Db\Row\UserFactory as OriginalFactory;
 
 /**
  * Description of Factory
@@ -36,26 +37,18 @@ use Zend\ServiceManager\ServiceManager,
  */
 class Factory extends OriginalFactory
 {
-    /**
-     * Construct the User row prototype.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return OAuthUser
-     */
-    public static function getUser(ServiceManager $sm)
-    {
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
-        // Use a special row class when we're in privacy or oauth mode:
+    public function __invoke(ContainerInterface $container, $requestedName, array $options = null) {
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory!');
+        }
+        $config = $container->get('VuFind\Config\PluginManager')->get('config');
         $privacy = isset($config->Authentication->privacy)
             && $config->Authentication->privacy;
-        $oauth = isset($config->Authentication->oauth)
-            && $config->Authentication->oauth;
-        $rowClass = $oauth ? 'ThULB\Db\Row\OAuthUser' : ('VuFind\Db\Row\\' . ($privacy ? 'PrivateUser' : 'User'));
-        $prototype = static::getGenericRow($rowClass, $sm);
+        $rowClass = $privacy ? $this->privateUserClass : $requestedName;
+        $prototype = parent::__invoke($container, $rowClass, $options);
         $prototype->setConfig($config);
         if ($privacy) {
-            $sessionManager = $sm->getServiceLocator()->get('VuFind\SessionManager');
+            $sessionManager = $container->get('Zend\Session\SessionManager');
             $session = new \Zend\Session\Container('Account', $sessionManager);
             $prototype->setSession($session);
         }

@@ -349,7 +349,23 @@ class PAIA extends OriginalPAIA
     protected function getItemStatus($item)
     {
         $status = parent::getItemStatus($item);
-        
+
+        if(isset($item['available'])) {
+            foreach ($item['available'] as $available) {
+                if (isset($available['service']) && $available['service'] == 'remote') {
+                    $href = $available['href'];
+                    // custom DAIA field
+                    $status['remotehref'] = $href;
+                    // custom DAIA field
+                    $status['remotedomain'] = parse_url($href)['host'];
+                    // custom DAIA field
+                    $status['remotetitle'] = isset($available['title']) ? $available['title'] : '';
+
+                    break;
+                }
+            }
+        }
+
         if (!$status['availability'] 
             && !isset($status['duedate'])
             && $status['holdtype'] !== 'recall'
@@ -460,10 +476,15 @@ class PAIA extends OriginalPAIA
                 $result_item['storagehref'] = $this->getItemStorageLink($item);
                 // status and availability will be calculated in own function
                 $result_item = $this->getItemStatus($item) + $result_item;
+
+                if($result_item['location'] == 'Unknown' && !empty($result_item['remotehref'])) {
+                    $result_item['location'] = 'Remote';
+                }
                 // add result_item to the result array, if at least one relevant
                 // information is present
                 if ($result_item['callnumber'] !== ''
                     || $result_item['about']
+                    || (isset($result_item['remotehref']) && $result_item['remotehref'])
                 ) {
                     $result[] = $result_item;
                 }
@@ -825,5 +846,77 @@ class PAIA extends OriginalPAIA
         }
 
         return $responseArray;
+    }
+
+    /**
+     * Perform an HTTP request.
+     *
+     * @param string $id id for query in daia
+     *
+     * @return xml or json object
+     * @throws ILSException
+     */
+    protected function doHTTPRequest($id)
+    {
+        $http_headers = [
+            'Content-type: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+            'Accept: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+        ];
+
+        $params = [
+            'id' => $id,
+            'format' => $this->daiaResponseFormat,
+        ];
+
+        try {
+            $result = $this->httpService->get(
+                $this->baseUrl,
+                $params, $this->daiaTimeout, $http_headers
+            );
+        } catch (\Exception $e) {
+            throw new ILSException(
+                'HTTP request exited with Exception ' . $e->getMessage() .
+                ' for record: ' . $id
+            );
+        }
+
+        if (!$result->isSuccess()) {
+            throw new ILSException(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received, retrieving availability information for record: ' . $id
+            );
+        }
+
+        // check if result matches daiaResponseFormat
+        if ($this->contentTypesResponse != null) {
+            if ($this->contentTypesResponse[$this->daiaResponseFormat]) {
+                $contentTypesResponse = array_map(
+                    'trim',
+                    explode(
+                        ',',
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    )
+                );
+                list($responseMediaType) = array_pad(
+                    explode(
+                        ';',
+                        $result->getHeaders()->get('Content-Type')->getFieldValue(),
+                        2
+                    ),
+                    2,
+                    null
+                ); // workaround to avoid notices if encoding is not set in header
+                if (!in_array(trim($responseMediaType), $contentTypesResponse)) {
+                    throw new ILSException(
+                        'DAIA-ResponseFormat not supported. Received: ' .
+                        $responseMediaType . ' - ' .
+                        'Expected: ' .
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    );
+                }
+            }
+        }
+
+        return $result->getBody();
     }
 }

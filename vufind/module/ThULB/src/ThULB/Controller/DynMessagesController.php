@@ -51,12 +51,6 @@ class DynMessagesController extends AbstractBase
         $german = $this->readLanguageFile($this->_iniGerman);
         $english = $this->readLanguageFile($this->_iniEnglish);
 
-        $debug = array(
-            'REMOTE_ADDR' => $this->getRequest()->getServer()->get('REMOTE_ADDR'),
-            'hideVpnWarning' => $this->serviceLocator->get('VuFind\Role\PermissionManager')->isAuthorized('hide.VpnWarning')
-        );
-        echo '<pre>' . print_r($debug, true) . '</pre>';
-
         return new ViewModel(array(
                 'german' => $german,
                 'english' => $english,

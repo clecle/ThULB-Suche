@@ -36,8 +36,8 @@ class Factory {
     public static function getPAIA(ServiceManager $sm)
     {
         return new PAIA(
-            $sm->getServiceLocator()->get('VuFind\DateConverter'),
-            $sm->getServiceLocator()->get('VuFind\SessionManager')
+            $sm->get('VuFind\DateConverter'),
+            $sm->get('VuFind\SessionManager')
         );
     }
 }

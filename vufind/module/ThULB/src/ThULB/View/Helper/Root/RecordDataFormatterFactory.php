@@ -29,9 +29,10 @@
  */
 namespace ThULB\View\Helper\Root;
 
+use Interop\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
-use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
+use VuFind\View\Helper\Root\RecordDataFormatterFactory as OriginalFactory;
 
 /**
  * Factory for record driver data formatting view helper
@@ -39,16 +40,17 @@ use VuFind\View\Helper\Root\RecordDataFormatterFactory as OrignalFactory;
  * @author   Clemens Kynast <clemens.kynast@thulb.uni-jena.de>
  * @author   Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class RecordDataFormatterFactory extends OrignalFactory
+class RecordDataFormatterFactory extends OriginalFactory
 {
     /**
      * Create the helper.
      *
      * @return RecordDataFormatter
      */
-    public function __invoke()
-    {
-        $helper = parent::__invoke();
+    public function __invoke(ContainerInterface $container, $requestedName,
+                             array $options = null
+    ) {
+        $helper = parent::__invoke($container, $requestedName, $options);
         $helper->setDefaults('full', $this->getDefaultFullSpecs());
         
         return $helper;
@@ -62,6 +64,7 @@ class RecordDataFormatterFactory extends OrignalFactory
     public function getDefaultFullSpecs()
     {
         $spec = new SpecBuilder();
+        $spec->setLine('Other Titles', 'getOtherTitles');
         $spec->setLine('PartInfo', 'getPartInfo');
         $spec->setTemplateLine(
             'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
@@ -138,6 +141,7 @@ class RecordDataFormatterFactory extends OrignalFactory
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
+        $spec->setLine('Type of content','getTypeOfContent');
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
@@ -153,6 +157,7 @@ class RecordDataFormatterFactory extends OrignalFactory
         $spec->setLine('Item Description', 'getGeneralNotes');
         $spec->setLine('Title of work', 'getTitleOfWork');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');
+        $spec->setLine('Reproduction', 'getReproduction');
         $spec->setTemplateLine('Fingerprint', 'getFingerprint', 'data-fingerprint.phtml');
         $spec->setLine('Bibliographic Citations', 'getBibliographicCitation');
         $spec->setLine('Publication Frequency', 'getPublicationFrequency');

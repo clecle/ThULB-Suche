@@ -1,0 +1,67 @@
+<?php
+
+namespace ThULB\Mailer;
+
+use VuFind\Exception\Mail as MailException;
+use VuFind\Mailer\Mailer as OriginalMailer;
+use Zend\Mail\Address;
+use Zend\Mail\AddressList;
+
+class Mailer extends OriginalMailer {
+
+    private $defaultReplyTo = null;
+    /**
+     * Send an email message representing a link.
+     *
+     * @param string                          $to      Recipient email address
+     * @param string|\Zend\Mail\Address       $from    Sender name and email address
+     * @param string                          $msg     User notes to include in
+     * message
+     * @param string                          $url     URL to share
+     * @param \Zend\View\Renderer\PhpRenderer $view    View object (used to render
+     * email templates)
+     * @param string                          $subject Subject for email (optional)
+     * @param string                          $cc      CC recipient (null for none)
+     * @param string|Address|AddressList      $replyTo Reply-To address (or delimited
+     * list, null for none)
+     *
+     * @throws MailException
+     * @return void
+     */
+    public function sendLink($to, $from, $msg, $url, $view, $subject = null,
+                             $cc = null, $replyTo = null
+    ) {
+        $replyTo = $replyTo ?: $this->defaultReplyTo;
+        parent::sendLink($to, $from, $msg, $url, $view, $subject, $cc, $replyTo);
+    }
+
+    /**
+     * Send an email message representing a record.
+     *
+     * @param string                            $to      Recipient email address
+     * @param string|\Zend\Mail\Address         $from    Sender name and email
+     * address
+     * @param string                            $msg     User notes to include in
+     * message
+     * @param \VuFind\RecordDriver\AbstractBase $record  Record being emailed
+     * @param \Zend\View\Renderer\PhpRenderer   $view    View object (used to render
+     * email templates)
+     * @param string                            $subject Subject for email (optional)
+     * @param string                            $cc      CC recipient (null for none)
+     * @param string|Address|AddressList        $replyTo Reply-To address (or
+     * delimited list, null for none)
+     *
+     * @throws MailException
+     * @return void
+     */
+    public function sendRecord($to, $from, $msg, $record, $view, $subject = null,
+                               $cc = null, $replyTo = null
+    ) {
+        $replyTo = $replyTo ?: $this->defaultReplyTo;
+        parent::sendRecord($to, $from, $msg, $record, $view, $subject, $cc, $replyTo);
+    }
+
+    public function setDefaultReplyTo($replyTo) {
+        $this->defaultReplyTo = $replyTo;
+    }
+}

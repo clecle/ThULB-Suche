@@ -2,7 +2,7 @@
 /**
  * Class to help build URLs and forms in the view based on search settings.
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -26,6 +26,7 @@
  * @link     https://vufind.org Main Site
  */
 namespace VuFind\Search;
+
 use VuFind\Search\Base\Options;
 use VuFindSearch\Query\AbstractQuery;
 use VuFindSearch\Query\Query;
@@ -143,12 +144,23 @@ class UrlQueryHelper
                         $this->urlParams['lookfor' . $i][] = $inner->getString();
                         $this->urlParams['type' . $i][] = $inner->getHandler();
                         if (null !== ($op = $inner->getOperator())) {
+                            // We want the op and lookfor parameters to align
+                            // with each other; let's backfill empty op values
+                            // if there aren't enough in place already.
+                            $expectedOps
+                                = count($this->urlParams['lookfor' . $i]) - 1;
+                            while (
+                                count($this->urlParams['op' . $i] ?? [])
+                                < $expectedOps
+                            ) {
+                                $this->urlParams['op' . $i][] = '';
+                            }
                             $this->urlParams['op' . $i][] = $op;
                         }
                     }
                 }
             }
-        } else if ($this->queryObject instanceof Query) {
+        } elseif ($this->queryObject instanceof Query) {
             $search = $this->queryObject->getString();
             if (!empty($search)) {
                 $this->urlParams[$this->getBasicSearchParam()] = $search;
@@ -243,7 +255,7 @@ class UrlQueryHelper
      */
     public function replaceTerm($from, $to)
     {
-        $query = clone($this->queryObject);
+        $query = clone $this->queryObject;
         $query->replaceTerm($from, $to);
         return new static($this->urlParams, $query, $this->config);
     }
@@ -370,7 +382,7 @@ class UrlQueryHelper
         // Account for operators:
         if ($operator == 'NOT') {
             $field = '-' . $field;
-        } else if ($operator == 'OR') {
+        } elseif ($operator == 'OR') {
             $field = '~' . $field;
         }
 
@@ -452,7 +464,7 @@ class UrlQueryHelper
      */
     public function setHandler($handler)
     {
-        $query = clone($this->queryObject);
+        $query = clone $this->queryObject;
         // We can only set the handler on basic queries:
         if ($query instanceof Query) {
             $query->setHandler($handler);
@@ -551,7 +563,7 @@ class UrlQueryHelper
      */
     protected function filtered($field, $value, $filter)
     {
-        return (isset($filter[$field]) && preg_match($filter[$field], $value));
+        return isset($filter[$field]) && preg_match($filter[$field], $value);
     }
 
     /**

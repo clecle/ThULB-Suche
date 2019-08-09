@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 use Zend\Mvc\MvcEvent;
 use VuFind\Controller\SummonrecordController as OriginalSummonrecordController;
+use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Overrides the standard version in VuFind\Controller\SummonrecordController
@@ -37,6 +38,12 @@ use VuFind\Controller\SummonrecordController as OriginalSummonrecordController;
  */
 class SummonrecordController extends OriginalSummonrecordController
 {
+
+    public function __construct(ServiceLocatorInterface $sm)
+    {
+        parent::__construct($sm);
+    }
+
     /**
      * Use preDispatch event to add Summon message.
      *

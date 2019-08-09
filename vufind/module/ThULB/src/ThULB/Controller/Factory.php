@@ -35,18 +35,6 @@ use Zend\ServiceManager\ServiceManager;
 class Factory
 {
     /**
-     * Construct the AjaxController.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return AjaxController
-     */
-    public function getAjaxController(ServiceManager $sm)
-    {
-        return new AjaxController($sm->getServiceLocator());
-    }
-
-    /**
      * Construct the CartController.
      *
      * @param ServiceManager $sm Service manager.
@@ -56,10 +44,10 @@ class Factory
     public static function getCartController(ServiceManager $sm)
     {
         return new CartController(
-            $sm->getServiceLocator(),
+            $sm,
             new \Zend\Session\Container(
                 'cart_followup',
-                $sm->getServiceLocator()->get('VuFind\SessionManager')
+                $sm->get('VuFind\SessionManager')
             )
         );
     }
@@ -73,7 +61,7 @@ class Factory
      */
     public function getMyResearchController(ServiceManager $sm)
     {
-        return new MyResearchController($sm->getServiceLocator());
+        return new MyResearchController($sm);
     }
     
     /**
@@ -85,7 +73,7 @@ class Factory
      */
     public function getSummonController(ServiceManager $sm)
     {
-        return new SummonController($sm->getServiceLocator());
+        return new SummonController($sm);
     }
 
     /**
@@ -97,7 +85,7 @@ class Factory
      */
     public function getSummonrecordController(ServiceManager $sm)
     {
-        return new SummonrecordController($sm->getServiceLocator());
+        return new SummonrecordController($sm);
     }
 
     /**
@@ -109,6 +97,6 @@ class Factory
      */
     public function getDynMessagesController(ServiceManager $sm)
     {
-        return new DynMessagesController($sm->getServiceLocator());
+        return new DynMessagesController($sm);
     }
 }

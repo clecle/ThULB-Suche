@@ -3,7 +3,7 @@
  * VuFind controller base class (defines some methods that can be shared by other
  * controllers).
  *
- * PHP version 5
+ * PHP version 7
  *
  * Copyright (C) Villanova University 2010.
  *
@@ -28,14 +28,12 @@
  */
 namespace VuFind\Controller;
 
-use VuFind\Exception\Forbidden as ForbiddenException,
-    VuFind\Exception\ILS as ILSException,
-    Zend\Mvc\Controller\AbstractActionController,
-    Zend\Mvc\MvcEvent,
-    Zend\ServiceManager\ServiceLocatorInterface,
-    Zend\View\Model\ViewModel,
-    ZfcRbac\Service\AuthorizationServiceAwareInterface,
-    ZfcRbac\Service\AuthorizationServiceAwareTrait;
+use VuFind\Exception\ILS as ILSException;
+use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Mvc\MvcEvent;
+use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\View\Model\ViewModel;
+use ZfcRbac\Service\AuthorizationServiceAwareInterface;
 
 /**
  * VuFind controller base class (defines some methods that can be shared by other
@@ -70,13 +68,20 @@ class AbstractBase extends AbstractActionController
     protected $accessDeniedBehavior = null;
 
     /**
+     * Service manager
+     *
+     * @var ServiceLocatorInterface
+     */
+    protected $serviceLocator;
+
+    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm Service locator
      */
     public function __construct(ServiceLocatorInterface $sm)
     {
-        $this->setServiceLocator($sm);
+        $this->serviceLocator = $sm;
     }
 
     /**
@@ -149,7 +154,7 @@ class AbstractBase extends AbstractActionController
         $view = $this->createViewModel($params);
 
         // Load configuration and current user for convenience:
-        $config = $this->serviceLocator->get('VuFind\Config')->get('config');
+        $config = $this->getConfig();
         $view->disableFrom
             = (isset($config->Mail->disable_from) && $config->Mail->disable_from);
         $view->editableSubject = isset($config->Mail->user_editable_subjects)
@@ -183,7 +188,7 @@ class AbstractBase extends AbstractActionController
             ) {
                 $view->userEmailInFrom = true;
                 $view->from = $user->email;
-            } else if (isset($config->Mail->default_from)
+            } elseif (isset($config->Mail->default_from)
                 && $config->Mail->default_from
             ) {
                 $view->from = $config->Mail->default_from;
@@ -213,7 +218,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getAuthManager()
     {
-        return $this->serviceLocator->get('VuFind\AuthManager');
+        return $this->serviceLocator->get('VuFind\Auth\Manager');
     }
 
     /**
@@ -236,7 +241,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function getILSAuthenticator()
     {
-        return $this->serviceLocator->get('VuFind\ILSAuthenticator');
+        return $this->serviceLocator->get('VuFind\Auth\ILSAuthenticator');
     }
 
     /**
@@ -316,6 +321,7 @@ class AbstractBase extends AbstractActionController
 
         // Now check if the user has provided credentials with which to log in:
         $ilsAuth = $this->getILSAuthenticator();
+        $patron = null;
         if (($username = $this->params()->fromPost('cat_username', false))
             && ($password = $this->params()->fromPost('cat_password', false))
         ) {
@@ -362,7 +368,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getConfig($id = 'config')
     {
-        return $this->serviceLocator->get('VuFind\Config')->get($id);
+        return $this->serviceLocator->get('VuFind\Config\PluginManager')->get($id);
     }
 
     /**
@@ -372,7 +378,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getILS()
     {
-        return $this->serviceLocator->get('VuFind\ILSConnection');
+        return $this->serviceLocator->get('VuFind\ILS\Connection');
     }
 
     /**
@@ -382,7 +388,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getRecordLoader()
     {
-        return $this->serviceLocator->get('VuFind\RecordLoader');
+        return $this->serviceLocator->get('VuFind\Record\Loader');
     }
 
     /**
@@ -392,7 +398,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getRecordCache()
     {
-        return $this->serviceLocator->get('VuFind\RecordCache');
+        return $this->serviceLocator->get('VuFind\Record\Cache');
     }
 
     /**
@@ -402,7 +408,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getRecordRouter()
     {
-        return $this->serviceLocator->get('VuFind\RecordRouter');
+        return $this->serviceLocator->get('VuFind\Record\Router');
     }
 
     /**
@@ -414,7 +420,7 @@ class AbstractBase extends AbstractActionController
      */
     public function getTable($table)
     {
-        return $this->serviceLocator->get('VuFind\DbTablePluginManager')
+        return $this->serviceLocator->get('VuFind\Db\Table\PluginManager')
             ->get($table);
     }
 
@@ -545,7 +551,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function commentsEnabled()
     {
-        $check = $this->serviceLocator->get('VuFind\AccountCapabilities');
+        $check = $this->serviceLocator->get('VuFind\Config\AccountCapabilities');
         return $check->getCommentSetting() !== 'disabled';
     }
 
@@ -556,7 +562,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function listsEnabled()
     {
-        $check = $this->serviceLocator->get('VuFind\AccountCapabilities');
+        $check = $this->serviceLocator->get('VuFind\Config\AccountCapabilities');
         return $check->getListSetting() !== 'disabled';
     }
 
@@ -567,7 +573,7 @@ class AbstractBase extends AbstractActionController
      */
     protected function tagsEnabled()
     {
-        $check = $this->serviceLocator->get('VuFind\AccountCapabilities');
+        $check = $this->serviceLocator->get('VuFind\Config\AccountCapabilities');
         return $check->getTagSetting() !== 'disabled';
     }
 
@@ -608,6 +614,15 @@ class AbstractBase extends AbstractActionController
         $myResearchHomeUrl = $this->getServerUrl('myresearch-home');
         $mrhuNorm = $this->normalizeUrlForComparison($myResearchHomeUrl);
         if ($mrhuNorm === $refererNorm) {
+            return;
+        }
+
+        // If the referer is the MyResearch/UserLogin action, it probably means
+        // that the user is repeatedly mistyping their password. We should
+        // ignore this and instead rely on any previously stored referer.
+        $myUserLogin = $this->getServerUrl('myresearch-userlogin');
+        $mulNorm = $this->normalizeUrlForComparison($myUserLogin);
+        if (0 === strpos($refererNorm, $mulNorm)) {
             return;
         }
 

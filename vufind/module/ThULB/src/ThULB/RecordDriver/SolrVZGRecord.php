@@ -31,6 +31,8 @@
 
 namespace ThULB\RecordDriver;
 
+use File_MARC_Data_Field;
+use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
 
 /**
@@ -49,7 +51,7 @@ use VuFind\RecordDriver\Response\PublicationDetails;
 
 class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
 {
-    const PPN_LINK_ID_PREFIX = 'DE-601';
+    const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
 
@@ -124,7 +126,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getShortTitle()
     {
         if (is_null($this->shortTitle)) {
-            $shortTitle = $this->getFormattedMarcData('245a : 245b') ?:
+            $shortTitle = $this->getFormattedMarcData('245a : 245b ( / 245c)') ?:
                               $this->getFormattedMarcData('490v: 490a');
 
             if ($shortTitle === '')
@@ -585,6 +587,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getCorporateAuthors()
     {
         $author = $this->getFormattedMarcData('110a, (110b, (\((110c, 110d)\)))( 110g)');
+        if(!$author) {
+            $author = $this->getFormattedMarcData('111a( \(111g\))(, 111n)(, 111d)(, 111c)');
+        }
+
         return $author ? [$author] : [];
     }
     
@@ -596,6 +602,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getCorporateAuthorsRoles()
     {
         $role = $this->getFirstFieldValue('110', ['4']);
+        if(!$role) {
+            $role = $this->getFirstFieldValue('111', ['4']);
+        }
+
         return $role ? [$role] : [];
     }
     
@@ -681,8 +691,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         return $isbns;
     }
     
-    
-
     /**
      * Get an array of all invalid ISBNs associated with the record (may be empty).
      *
@@ -692,27 +700,49 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         return $this->getFieldArray('020', ['z'], false);
     }
-    
+
     /**
      * Get an array with the uniform title
-     * 
+     *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getTitleOfWork()
     {
         $uniformTitle = $this->getFieldArray(
-                '130',
-                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
-                true,
-                ', '
-            );
-        
-        return ($uniformTitle) ?: $this->getFieldArray(
-                '240',
-                ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'], 
-                true,
-                ', '
-            );
+            '130',
+            ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+            true,
+            ', '
+        );
+
+        $uniformTitle = array_merge($uniformTitle, $this->getFieldArray(
+            '240',
+            ['a', 'd', 'f', 'g', 'h', 'k', 'l', 'm', 'n', 'o', 'p', 'r', 's', 't'],
+            true,
+            ', '
+        ));
+
+        $fields = $this->getMarcRecord()->getFields('700');
+        foreach ($fields as $field) {
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                if (in_array($subfield->getCode(), ['a', 'b', 'c', 'd', 'f', 'l', 't'])) {
+                    $fieldData['700' . $subfield->getCode()] = $subfield->getData();
+                }
+            }
+
+            if (isset($fieldData['700t']) && !empty($fieldData['700t'])) {
+                $uniformTitle[] = $this->getFormattedMarcData(
+                    '700a(, 700b)(, 700c)(, 700d)(, 700l)(, 700t)(, 700f)',
+                    true,
+                    ', ',
+                    $fieldData
+                );
+            }
+        }
+
+        return $uniformTitle;
     }
     
     /**
@@ -807,10 +837,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         
         // Eliminate all missing fields and surrounding content inside the
         // parantheses:
-        $format = preg_replace('/[^T\(\)]*F[^T\(\)]*/', '', $format);
+        $format = preg_replace('/[^T\(\)&;]*F[^T\(\)&;]*/', '', $format);
         // Remove all content in parantheses, that doesn't represent existing
         // Marc fields together with surrounding content
-        $format = preg_replace('/[^T\(\)]*\([^T]*\)[^T\(\)]*/', '', $format);
+        $format = preg_replace('/[^T\(\)&;]*\([^T]*\)[^T\(\)&;]*/', '', $format);
         // Remove separators for fields, where they are given with the field
         // content
         $format = preg_replace('/([^T\(\)]+S)|(S[^T\(\)]+)/', ' ', $format);
@@ -821,7 +851,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         // keep all escaped parantheses by converting them to their html equivalent
         $format = str_replace('&#40;', '(', $format);
         $format = str_replace('&#41;', ')', $format);
-        
+
+        // Remove empty previously escaped parentheses if empty
+        $format = preg_replace('/[^%s\(\)]*\([^%s]*\)[^%s\(\)]*/', '', $format);
+
         return trim(vsprintf($format, $marcData));
     }
 
@@ -990,7 +1023,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         
         $titleVariations = [];
-        
+
         $fields = $this->getMarcRecord()->getFields('246');
         foreach ($fields as $field) {
             $visibilityIndicator = $field->getIndicator('1');
@@ -1000,24 +1033,46 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             $fieldData = [];
             foreach ($field->getSubfields() as $subfield) {
                 if (in_array($subfield->getCode(), ['a', 'f', 'g', 'i'])) {
-                    $fieldData['246' . $subfield->getCode()] = 
-                            isset($fieldData['246' . $subfield->getCode()]) ? 
-                                ', ' . $subfield->getData() : $subfield->getData();
+                    $fieldData['246' . $subfield->getCode()] =
+                        isset($fieldData['246' . $subfield->getCode()]) ?
+                            ', ' . $subfield->getData() : $subfield->getData();
                 }
             }
 
             $titleVariations[] = $this->getFormattedMarcData(
-                    '246i: (246a, (246f, 246g))',
-                    true, 
-                    true, 
-                    $fieldData
-                );
+                '246i: (246a, (246f, 246g))',
+                true,
+                true,
+                $fieldData
+            );
+        }
+
+        $fields = $this->getMarcRecord()->getFields('247');
+        foreach ($fields as $field) {
+            $visibilityIndicator = $field->getIndicator('1');
+            if ($visibilityIndicator != '1') {
+                continue;
+            }
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                if (in_array($subfield->getCode(), ['a', 'b', 'f', 'g'])) {
+                    $fieldData['247' . $subfield->getCode()] =
+                        isset($fieldData['247' . $subfield->getCode()]) ?
+                            ', ' . $subfield->getData() : $subfield->getData();
+                }
+            }
+
+            $titleVariations[] = $this->getFormattedMarcData(
+                '247f: (247a, (247b, 247g))',
+                true,
+                true,
+                $fieldData
+            );
         }
         
         return array_merge(
                 $titleVariations,
-                $this->getFieldArray('500'),
-                $this->getFieldArray('501')
+                $this->getFieldArray('500')
             );
     }
 
@@ -1027,32 +1082,16 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * keys.
      *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getSeries()
     {
         $matches = [];
 
-        // First check the 440, 800 and 830 fields for series information:
-        $primaryFields = [
-            '440' => ['a', 'p'],
-            '800' => ['a', 'b', 'c', 'd', 'f', 'p', 'q', 't'],
-            '810' => ['a', 'p'],
-            '830' => ['a', 'p']];
+        $primaryFields = []; // not used
         $matches = $this->getSeriesFromMARC($primaryFields);
         
-        // Now check 490 and add it only if it has only a name and no numbering:
-        foreach ($this->getSeriesFromMARC(['490' => ['a']]) as $match) {
-            if (array_keys($match) === ['name']) {
-                $matches[] = $match;
-            }
-        }
-        
-        if (!empty($matches)) {
-            return $matches;
-        }
-
-        // Still no results found?  Resort to the Solr-based method just in case!
-        return parent::getSeries();
+        return $matches;
     }
 
     /**
@@ -1063,50 +1102,66 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * (used to find series name)
      *
      * @return array
+     * @throws File_MARC_Exception
      */
     protected function getSeriesFromMARC($fieldInfo)
     {
         $matches = [];
 
-        // Loop through the field specification....
-        foreach ($fieldInfo as $field => $subfields) {
-            // Did we find any matching fields?
-            $series = $this->getMarcRecord()->getFields($field);
-            if (is_array($series)) {
-                foreach ($series as $currentField) {
-                    // Can we find a name using the specified subfield list?
-                    $name = $this->getSubfieldArray($currentField, $subfields);
-                    if (!isset($name[0])) {
-                        $volume = $this->getSubfieldArray($currentField, ['v']);
-                        if ($volume) {
-                            $name = $this->getConditionalFieldArray('490', ['a'], true, ' ', ['v' => $volume[0]]);
+        // Did we find any matching fields?
+        $series = $this->getMarcRecord()->getFields('490');
+        if (is_array($series)) {
+            foreach ($series as $currentField) {
+                if (($name = $currentField->getSubfield('a')) === false ) {
+                    continue;
+                }
+                $currentArray = ['name' => $name->getData()];
+
+                if ($number = $currentField->getSubfield('v')) {
+                    $currentArray['number'] = $number->getData();
+                }
+
+                $secondaryFields = $this->getMarcRecord()->getFields('800|810|830', true);
+                foreach ($secondaryFields as $secondaryField) {
+                    $secondaryNumber = $secondaryField->getSubfield('v');
+                    if ($number !== false && $secondaryNumber !== false &&
+                        $secondaryNumber->getData() === $number->getData()) {
+
+                        $rawId = $secondaryField->getSubfield('w')->getData();
+                        if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+                            $currentArray['id'] = substr($rawId, 8);
+                            break;
                         }
                     }
-                    
-                    if (isset($name[0])) {
-                        $currentArray = ['name' => $name[0]];
+                }
 
-                        // Can we find a number in subfield v?  (Note that number is
-                        // always in subfield v regardless of whether we are dealing
-                        // with 440, 490, 800 or 830 -- hence the hard-coded array
-                        // rather than another parameter in $fieldInfo).
-                        $number
-                            = $this->getSubfieldArray($currentField, ['v']);
-                        if (isset($number[0])) {
-                            $currentArray['number'] = $number[0];
-                        }
-                        
-                        $id = $this->getSubfieldArray($currentField, ['w'], false);
-                        foreach ($id as $rawId) {
-                            if (strpos($rawId, '(DE-601)') === 0) {
-                                $currentArray['id'] = substr($rawId, 8);
-                                break;
-                            }
-                        }
+                // Save the current match:
+                $matches[] = $currentArray;
+            }
+        }
 
-                        // Save the current match:
-                        $matches[] = $currentArray;
+        // Did we find any matching fields?
+        $series = $this->getMarcRecord()->getFields('773');
+        if (is_array($series)) {
+            /* @var $currentField File_MARC_Data_Field */
+            foreach ($series as $currentField) {
+                if ($currentField->getSubfield('w')) {
+                    if (( $name = $currentField->getSubfield('t')) === false) {
+                        $name = $this->getMarcRecord()->getField('245')->getSubfield('a');
                     }
+                    $currentArray = ['name' => $name->getData()];
+
+                    if ($number = $currentField->getSubfield('g')) {
+                        $currentArray['number'] = $number->getData();
+                    }
+
+                    $rawId = $currentField->getSubfield('w')->getData();
+                    if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+                        $currentArray['id'] = substr($rawId, 8);
+                    }
+
+                    // Save the current match:
+                    $matches[] = $currentArray;
                 }
             }
         }
@@ -1193,7 +1248,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                     continue 2;
                 }
             }
-            $next = $next = $this
+            $next = $this
                 ->getSubfieldArray($currentField, $subfields, $concat, $separator);
             $matches = array_merge($matches, $next);
         }
@@ -1463,5 +1518,188 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         }
 
         return $retval;
+    }
+
+    public function getReproduction() {
+        return $this->getFieldArray(
+            '533',
+            ['a', 'b', 'c', 'd', 'e', 'f', 'n'],
+            true,
+            ', '
+        );
+    }
+
+    /**
+     * Get an array of lines from the table of contents.
+     *
+     * @return array
+     * @throws File_MARC_Exception
+     */
+    public function getTOC()
+    {
+        // Return empty array if we have no table of contents:
+        $fields = array_merge(
+            $this->getMarcRecord()->getFields('501'),
+            $this->getMarcRecord()->getFields('505')
+        );
+        if (!$fields) {
+            return [];
+        }
+
+        $display = array(
+            '501' => '501a',
+            '505' => '(505a) (505t (/ 505r)'
+        );
+
+        // If we got this far, we have a table -- collect it as a string:
+        $toc = [];
+        foreach ($fields as $field) {
+
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                $fieldData[$field->getTag() . $subfield->getCode()] =
+                    isset($fieldData[$field->getTag() . $subfield->getCode()]) ?
+                        ', ' . $subfield->getData() : $subfield->getData();
+            }
+            $toc[] = $this->getFormattedMarcData($display[$field->getTag()], true, true, $fieldData);
+        }
+        return $toc;
+    }
+
+    /**
+     * Returns a string with all other titles of the work.
+     *
+     * @return string
+     * @throws File_MARC_Exception
+     */
+    public function getOtherTitles() {
+        $fields = $this->getMarcRecord()->getFields('249');
+
+        if(!is_array($fields) || count($fields) < 1) {
+            return '';
+        }
+        $field = $fields[0];
+
+        $data = '';
+        foreach ($field->getSubFields() as $subField) {
+            if($subField->getCode() === 'a') {
+                $separator = !empty($data) ? ' ; ' : '';
+            }
+            else {
+                $separator = $subField->getCode() === 'b' ? ' : ' : ' / ';
+            }
+
+            $data .= $separator . $subField->getData();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Returns a formatted string with the content types.
+     *
+     * @return string
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getTypeOfContent() {
+        // Return empty array if we have no table of contents:
+        $fields = $this->getMarcRecord()->getFields('655');
+        if (!$fields) {
+            return '';
+        }
+
+        $contentTypes = [];
+        foreach ($fields as $field) {
+            $fieldData = [];
+            foreach ($field->getSubfields() as $subfield) {
+                $fieldData[$field->getTag() . $subfield->getCode()] =
+                    isset($fieldData[$field->getTag() . $subfield->getCode()]) ?
+                        ', ' . $subfield->getData() : $subfield->getData();
+            }
+            $contentTypes[] = $this->getFormattedMarcData('655a \(655x, 655y, 655z\)',
+                true, true, $fieldData);
+        }
+        return implode('; ', $contentTypes);
+    }
+
+    /**
+     * Returns an multidimensional array with all subjects.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getAllSubjectHeadings($extended = false) {
+        return array_unique(
+            array_merge($this->getSubjectsFromField650(), $this->getSubjectsFromField689()),
+            SORT_REGULAR);
+    }
+
+    /**
+     * Reads subjects with hierarchies from MRC 650 fields
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    private function getSubjectsFromField650() {
+        $fields = $this->getMarcRecord()->getFields('650');
+        if (!$fields) {
+            return [];
+        }
+
+        $subjects = array();
+        foreach ($fields as $field) {
+            if ($subfield = $field->getSubfield('8')) {
+                $level = preg_split('/\./', $subfield->getData());
+                if ($subfield = $field->getSubfield('a')) {
+                    $subjects[$level[0]][$level[1]] = $subfield->getData();
+                }
+            } else {
+                if ($subfield = $field->getSubfield('a')) {
+                    $subjects[][0] = $subfield->getData();
+                }
+            }
+        }
+
+        return $subjects;
+    }
+
+    /**
+     * Reads subjects with hierarchies from MRC 689 fields
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    private function getSubjectsFromField689() {
+        $fields = $this->getMarcRecord()->getFields('689');
+        if (!$fields) {
+            return [];
+        }
+
+        $subjects = array();
+        foreach ($fields as $field) {
+            $primary   = $field->getIndicator(1);
+            $secondary = $field->getIndicator(2);
+            if($primary !== false && $secondary !== false) {
+                if($subfield = $field->getSubfield('a')) {
+                    $subjects[$primary][$secondary] = $subfield->getData();
+                }
+            }
+        }
+
+        return $subjects;
+    }
+
+    /**
+     * Returns ppn links for this record.
+     *
+     * @return array
+     */
+    public function getPPNLink() {
+        return isset($this->fields['ppnlink']) && is_array($this->fields['ppnlink'])
+            ? $this->fields['ppnlink'] : [];
     }
 }

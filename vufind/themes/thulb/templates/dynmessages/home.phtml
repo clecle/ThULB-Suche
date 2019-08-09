@@ -3,10 +3,7 @@
     $english = $this->english;
     $tags = $this->tags;
 
-    $flash = $this->flashMessenger();
-    $flash->setMessageOpenFormat('<div%s>')
-        ->setMessageSeparatorString('<br><br>')
-        ->setMessageCloseString('</div>');
+    $flash = $this->flashmessages();
 ?>
 
 <div class="tag-information">
@@ -14,8 +11,7 @@
     Zudem werden alle HTML-Tags, außer dem &lt;a&gt;-Tag, automatisch aus dem Text entfernt.
 </div>
 
-<?php echo $flash->render('error',   array('alert', 'alert-danger')); ?>
-<?php echo $flash->render('success', array('alert', 'alert-success')); ?>
+<?php echo $flash; ?>
 
 <form action="/dynMessages/save" method="post">
     <table>

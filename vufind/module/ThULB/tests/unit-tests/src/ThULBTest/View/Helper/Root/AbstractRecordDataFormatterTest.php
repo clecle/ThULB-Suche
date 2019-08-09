@@ -25,11 +25,13 @@
 
 namespace ThULBTest\View\Helper\Root;
 
+use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use Box\Spout\Reader\ReaderFactory;
 use Box\Spout\Common\Type;
 use ThULB\View\Helper\Root\RecordDataFormatterFactory;
 use ThULBTest\View\Helper\AbstractViewHelperTest;
+use VuFindTest\Container\MockContainer;
 
 /**
  * Generalized testing class for the record data formatter view helper. It makes
@@ -131,26 +133,30 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             $spec = $this->getFormatterSpecBuilder();
             if (!is_null($this->template)) {
                 $spec->setTemplateLine(
-                        $key,
-                        is_null($this->recordDriverFunction) ? true : $this->recordDriverFunction,
-                        $this->template,
-                        $this->options
-                    );
+                    $key,
+                    is_null($this->recordDriverFunction) ? true : $this->recordDriverFunction,
+                    $this->template,
+                    $this->options
+                );
             } else if (!is_null($this->recordDriverFunction)) {
                 $spec->setLine($this->metadataKey, $this->recordDriverFunction);
             } else {
                 $this->markTestSkipped('No information about template or record driver function provided in class  ' . get_class($this));
             }
-                      
+
+            $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', DE ===';
+
             // Test for german metadata presentation:
             $data = $formatter->getData($record, $spec->getArray());
-            
-            $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', DE ===';
+            if(empty($data)) {
+                $this->markTestSkipped('No Data to compare found for this record.' . "\n" . $comment);
+            }
+
             $this->assertEquals(
-                    $this->normalizeUtf8String($longViewDe),
-                    $this->convertHtmlToString($data[$key]['value']),
-                    $comment
-                );
+                $this->normalizeUtf8String($longViewDe),
+                $this->convertHtmlToString($data[0]['value']),
+                $comment
+            );
             
             // Test for english metadata presentation:
             if ($longViewEn) {
@@ -159,10 +165,10 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
                 $data = $formatter->getData($record, $spec->getArray());
                 $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', EN ===';
                 $this->assertEquals(
-                        $this->normalizeUtf8String($longViewEn),
-                        $this->convertHtmlToString($data[$key]['value']),
-                        $comment
-                    );
+                    $this->normalizeUtf8String($longViewEn),
+                    $this->convertHtmlToString($data[0]['value']),
+                    $comment
+                );
             }
             
             // Test for metadata title in different languages:
@@ -172,10 +178,10 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
                     $viewHelpers = $this->getViewHelpers();
                     $comment = '=== Sheet: ' . $this->sheetName . ', Titel ' . $locale . ' ===';
                     $this->assertEquals(
-                            $this->normalizeUtf8String($title),
-                            $this->normalizeUtf8String($viewHelpers['translate']($this->metadataKey)),
-                            $comment
-                        );
+                        $this->normalizeUtf8String($title),
+                        $this->normalizeUtf8String($viewHelpers['translate']($this->metadataKey)),
+                        $comment
+                    );
                 }
             }
         }
@@ -198,7 +204,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         }
         
         $string = implode("\n", $stringLines);
-        $string = html_entity_decode($string);
+        $string = html_entity_decode($string, ENT_QUOTES | ENT_HTML5);
         
         return $this->normalizeUtf8String($string);
     }
@@ -255,8 +261,8 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             }
         }
         if (empty($relevantRows)) {
-            $this->markTestSkipped('No sheet found for ' . get_class($this) . 
-                    '. Add it to rda.xlsx and define it in the test class.');
+            $this->markTestSkipped('No sheet found for ' . get_class($this) .
+                '. Add it to rda.xlsx and define it in the test class.');
         }
         
         return $relevantRows;
@@ -279,17 +285,17 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
     {
         // Build the formatter:
         $factory = new RecordDataFormatterFactory();
-        $formatter = $factory->__invoke();
+        $formatter = $factory->__invoke(new MockContainer($this), RecordDataFormatter::class);
 
         // Create a view object with a set of helpers:
         $helpers = $this->getViewHelpers();
         $view = $this->getPhpRenderer($helpers);
 
         // Mock out the router to avoid errors:
-        $match = new \Zend\Mvc\Router\RouteMatch([]);
+        $match = new \Zend\Router\RouteMatch([]);
         $match->setMatchedRouteName('foo');
         $view->plugin('url')
-            ->setRouter($this->createMock('Zend\Mvc\Router\RouteStackInterface'))
+            ->setRouter($this->createMock('Zend\Router\RouteStackInterface'))
             ->setRouteMatch($match);
 
         // Inject the view object into all of the helpers:

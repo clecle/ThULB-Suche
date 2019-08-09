@@ -102,9 +102,9 @@
       }
 
       // Session keep-alive
-      if ($this->KeepAlive()) {
+      if ($this->keepAlive()) {
           $this->headScript()->appendScript('var keepAliveInterval = '
-            . $this->KeepAlive());
+            . $this->keepAlive());
           $this->headScript()->appendFile("keep_alive.js");
       }
     ?>
@@ -121,7 +121,7 @@ JS;
     ?>
     <?=$this->headScript()?>
   </head>
-  <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><? if ($this->layout()->rtl): ?> rtl<? endif; ?><? if ($this->server_type() !== 'production'): ?> <?=$this->server_type()?>bg<? endif; ?>">
+  <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><? if ($this->layout()->rtl): ?> rtl<? endif; ?><? if ($this->thulb_serverType() !== 'production'): ?> <?=$this->thulb_serverType()?>bg<? endif; ?>">
     <? // Set up the search box -- there are three possible cases:
       // 1. No search box was set; we should default to the normal box
       // 2. It was set to false; we should display nothing

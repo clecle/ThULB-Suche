@@ -1,124 +1,166 @@
 <?php
 namespace ThULB\Module\Configuration;
 
-$config = [
-    'controllers' => [
-        'factories'    => [
-            'ajax' => 'ThULB\Controller\Factory::getAjaxController',
-            'cart' => 'ThULB\Controller\Factory::getCartController',
-            'my-research' => 'ThULB\Controller\Factory::getMyResearchController',
-            'summon' => 'ThULB\Controller\Factory::getSummonController',
-            'summonrecord' => 'ThULB\Controller\Factory::getSummonrecordController',
-            'dynmessages' => 'ThULB\Controller\Factory::getDynMessagesController',
-        ]
-    ],
-    'vufind' => [
-        'plugin_managers' => [
-            'db_row' => [
-                'factories' => [
-                    'user' => 'ThULB\Db\Row\Factory::getUser'
-                ],
-            ],
-            'hierarchy_treedataformatter' => [
-                'invokables' => [
-                    'json' => 'ThULB\Hierarchy\TreeDataFormatter\Json'
-                ],
-            ],
-            'hierarchy_treedatasource' => [
-                'factories' => [
-                    'solr' => 'ThULB\Hierarchy\TreeDataSource\Factory::getSolr',
-                ]
-            ],
-            'ils_driver' => [
-                'factories' => [
-                    'paia' => 'ThULB\ILS\Driver\Factory::getPAIA'
-                ]
-            ],
-            'recommend' => [
-                'factories' => [
-                    'summoncombined' => 'ThULB\Recommend\Factory::getSummonCombined',                    
-                ],
-                'invokables' => [
-                    'summoncombineddeferred' => 'ThULB\Recommend\SummonCombinedDeferred',
-                ]
-            ],
-            'recorddriver' => [
-                'factories' => [
-                    'solrmarc' => 'ThULB\RecordDriver\Factory::getSolrMarc',
-                    'summon' => 'ThULB\RecordDriver\Factory::getSummon'
-                ],
-            ],
-            'recordtab' => [
-                'factories' => [
-                    'articlecl' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
-                    'nonarticlecl' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList'
-                ],
-                'invokables' => [
-                    'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
-                ]
-            ],
-            'search_results' => [
-                'factories' => [
-                    'summon' => 'ThULB\Search\Results\Factory::getSummon',
-                    'solr' => 'ThULB\Search\Results\Factory::getSolr'
-                ]
-            ]
+$config = array(
+    'controllers' => array(
+        'factories'    => array(
+            'VuFind\Controller\CartController' => 'ThULB\Controller\Factory::getCartController',
+            'VuFind\Controller\MyResearchController' => 'ThULB\Controller\Factory::getMyResearchController',
+            'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
+            'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
+            'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
+        ),
+        'aliases' => array(
+            'dynMessages' => 'ThULB\Controller\DynMessagesController',
+            'DynMessages' => 'ThULB\Controller\DynMessagesController',
+        )
+    ),
+    'service_manager' => [
+        'factories' => [
+            'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
         ],
-        'recorddriver_tabs' => [
-            'VuFind\RecordDriver\SolrDefault' => [
-                'tabs' => [
+        'aliases' => array(
+            'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
+            'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
+        )
+    ],
+    'vufind' => array(
+        'plugin_managers' => array(
+            'ajaxhandler' => array(
+                'factories' => array(
+                    'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
+                    'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
+                ),
+                'aliases' => array(
+                    'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
+                    'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
+                )
+            ),
+            'db_row' => array(
+                'factories' => array(
+                    'VuFind\Db\Row\User' => 'ThULB\Db\Row\Factory'
+                ),
+            ),
+            'hierarchy_treedataformatter' => array(
+                'invokables' => array(
+                    'VuFind\Hierarchy\TreeDataFormatter\Json' => 'ThULB\Hierarchy\TreeDataFormatter\Json'
+                ),
+            ),
+            'hierarchy_treedatasource' => array(
+                'factories' => array(
+                    'VuFind\Hierarchy\TreeDataSource\Solr' => 'ThULB\Hierarchy\TreeDataSource\Factory::getSolr',
+                )
+            ),
+            'ils_driver' => array(
+                'factories' => array(
+                    'VuFind\ILS\Driver\PAIA' => 'ThULB\ILS\Driver\Factory::getPAIA',
+                )
+            ),
+            'recommend' => array(
+                'factories' => array(
+                    'ThULB\Recommend\SummonCombined' => 'ThULB\Recommend\Factory::getSummonCombined',
+                ),
+                'aliases' => array(
+                    'summoncombined' => 'ThULB\Recommend\SummonCombined',
+                ),
+                'invokables' => array(
+                    'summoncombineddeferred' => 'ThULB\Recommend\SummonCombinedDeferred',
+                )
+            ),
+            'recorddriver' => array(
+                'factories' => array(
+                    'ThULB\RecordDriver\SolrVZGRecord' => 'ThULB\RecordDriver\Factory::getSolrMarc',
+                    'VuFind\RecordDriver\Summon' => 'ThULB\RecordDriver\Factory::getSummon'
+                ),
+                'aliases' => array(
+                    'solrmarc' => 'ThULB\RecordDriver\SolrVZGRecord',
+                ),
+                'delegators' => array(
+                    'ThULB\RecordDriver\SolrVZGRecord' => ['VuFind\RecordDriver\IlsAwareDelegatorFactory'],
+                )
+            ),
+            'recordtab' => array(
+                'factories' => array(
+                    'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
+                    'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
+//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
+                ),
+                'aliases' => array(
+                    'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
+                    'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
+//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
+                ),
+                'invokables' => array(
+                    'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
+                )
+            ),
+            'search_results' => array(
+                'factories' => array(
+                    'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
+                    'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr'
+                )
+            )
+        ),
+        'recorddriver_tabs' => array(
+            'VuFind\RecordDriver\RecordDefault' => array(
+                'tabs' => array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
                     'Description'   => null,
                     'Reviews' => null,
                     'Excerpt' => null
-                ],
-                'backgroundLoadedTabs' => ['ArticleCollectionList', 'NonArticleCollectionList']
-            ],
-            'VuFind\RecordDriver\SolrMarc' => [
-                'tabs' => [
+                ),
+                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList')
+            ),
+            'VuFind\RecordDriver\SolrMarc' => array(
+                'tabs' => array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
+//                    'RelatedResources' => 'relatedcl',
                     'Description'   => null,
                     'Reviews' => null,
                     'Excerpt' => null,
                     'Details' => 'staffviewcombined'
-                ],
-                'backgroundLoadedTabs' => ['ArticleCollectionList', 'NonArticleCollectionList']
-            ],
-            'VuFind\RecordDriver\Summon' => [
-                'tabs' => [
+                ),
+                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList' /* , 'RelatedResources' */ )
+            ),
+            'VuFind\RecordDriver\Summon' => array(
+                'tabs' => array(
                     'Description' => null,
                     'Reviews' => null,
                     'Excerpt' => null
-                ],
+                ),
                 'defaultTab' => null
-            ]
-        ]
-    ],
-    'view_helpers' => [
-        'invokables' => [
-            'thulb_metadatahelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
-            'thulb_holdinghelper' => 'ThULB\View\Helper\Record\HoldingHelper',
-            'server_type' => 'ThULB\View\Helper\Root\ServerType',
-            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ'     // Helper to remove zero-width non-joiner characters from a string
-        ],
-    ],
-    
+            )
+        )
+    ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'thulb_metaDataHelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
+            'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
+            'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
+            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ'
+        ),
+    ),
+
     // Authorization configuration:
-    'zfc_rbac' => [
-        'vufind_permission_provider_manager' => [
-            'factories' => [
-                'queriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
-            ]
-        ],
-    ],
-];
+    'zfc_rbac' => array(
+        'vufind_permission_provider_manager' => array(
+            'factories' => array(
+                'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
+                'ThULB\Role\PermissionProvider\IpRange' => 'ThULB\Role\PermissionProvider\Factory::getIpRange',
+            ),
+            'aliases' => array(
+                'queriedCookie' => 'ThULB\Role\PermissionProvider\QueriedCookie',
+                'ipRange' => 'ThULB\Role\PermissionProvider\IpRange'
+            )
+        ),
+    ),
+);
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
-$routeGenerator->addStaticRoute($config, 'dynMessages/save');
 
 return $config;

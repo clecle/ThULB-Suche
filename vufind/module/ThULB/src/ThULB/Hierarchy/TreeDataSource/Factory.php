@@ -55,20 +55,15 @@ class Factory
      */
     public static function getSolr(ServiceManager $sm)
     {
-        $cacheDir = $sm->getServiceLocator()->get('VuFind\CacheManager')
-            ->getCacheDir(false);
-        $hierarchyFilters = $sm->getServiceLocator()->get('VuFind\Config')
-            ->get('HierarchyDefault');
+        $cacheDir = $sm->get('VuFind\CacheManager')->getCacheDir(false);
+        $hierarchyFilters = $sm->get('VuFind\Config')->get('HierarchyDefault');
         $filters = isset($hierarchyFilters->HierarchyTree->filterQueries)
           ? $hierarchyFilters->HierarchyTree->filterQueries->toArray()
           : [];
-        $solr = $sm->getServiceLocator()->get('VuFind\Search\BackendManager')
-            ->get('Solr')->getConnector();
-        $formatterManager = $sm->getServiceLocator()
-            ->get('VuFind\HierarchyTreeDataFormatterPluginManager');
+        $solr = $sm->get('VuFind\Search\BackendManager')->get('Solr')->getConnector();
+        $formatterManager = $sm->get('VuFind\HierarchyTreeDataFormatterPluginManager');
         
-        $searchSettings = $sm->getServiceLocator()->get('VuFind\Config')
-                ->get('searches');
+        $searchSettings = $sm->get('VuFind\Config')->get('searches');
         $maxRows = $searchSettings->General->result_limit;
                 
         return new Solr(

@@ -98,6 +98,7 @@ header .container.navbar { margin-bottom: 0; }
   .media {
     flex: 1;
     margin: 0;
+    position: relative;
   }
   .media-left,
   .media-right {
@@ -483,5 +484,5 @@ a.truncate {
   width: auto;
   text-align: right;
   position: absolute;
-  right: 10px;
+  right: 0;
 }

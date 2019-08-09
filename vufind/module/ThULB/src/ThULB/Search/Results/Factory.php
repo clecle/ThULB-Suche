@@ -45,12 +45,9 @@ class Factory {
      */
     public static function getSummon(ServiceManager $sm)
     {
-        $options = $sm->getServiceLocator()
-            ->get('VuFind\SearchParamsPluginManager')->get('Summon');
-        $searchService = $sm->getServiceLocator()
-            ->get('VuFind\Search');
-        $recordLoader = $sm->getServiceLocator()
-            ->get('VuFind\RecordLoader');
+        $options = $sm->get('VuFind\SearchParamsPluginManager')->get('Summon');
+        $searchService = $sm->get('VuFind\Search');
+        $recordLoader = $sm->get('VuFind\RecordLoader');
         
         // Clone the options instance in case caller modifies it:
         return new SummonResults(
@@ -62,14 +59,13 @@ class Factory {
     
     public static function getSolr(ServiceManager $sm)
     {
-        $params = $sm->getServiceLocator()
-            ->get('VuFind\SearchParamsPluginManager')->get('Solr');
-        $searchService = $sm->getServiceLocator()->get('VuFind\Search');
-        $recordLoader = $sm->getServiceLocator()->get('VuFind\RecordLoader');
+        $params = $sm->get('VuFind\SearchParamsPluginManager')->get('Solr');
+        $searchService = $sm->get('VuFind\Search');
+        $recordLoader = $sm->get('VuFind\RecordLoader');
         
         $solr = new SolrResults($params, $searchService, $recordLoader);
         
-        $config = $sm->getServiceLocator()->get('VuFind\Config')->get('config');
+        $config = $sm->get('VuFind\Config')->get('config');
         $spellConfig = isset($config->Spelling) ? $config->Spelling : null;
         $solr->setSpellingProcessor(
             new \VuFind\Search\Solr\SpellingProcessor($spellConfig)

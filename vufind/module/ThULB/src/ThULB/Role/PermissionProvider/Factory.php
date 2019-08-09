@@ -42,10 +42,25 @@ class Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return GetParam
+     * @return QueriedCookie
      */
     public static function getQueriedCookie(ServiceManager $sm)
     {
-        return new QueriedCookie($sm->getServiceLocator()->get('Request'), $sm->getServiceLocator()->get('VuFind\CookieManager'));
+        return new QueriedCookie($sm->get('Request'), $sm->get('VuFind\CookieManager'));
+    }
+
+    /**
+     * Factory for IpRange
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return IpRange
+     */
+    public static function getIpRange(ServiceManager $sm)
+    {
+        return new IpRange(
+            $sm->get('Request'),
+            $sm->get('VuFind\IpAddressUtils')
+        );
     }
 }

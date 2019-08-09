@@ -27,6 +27,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use Exception;
 use VuFind\View\Helper\Root\RecordLink as OriginalRecordLink;
 
 /**
@@ -40,43 +41,46 @@ class RecordLink extends OriginalRecordLink
      * Given an array representing a related record (which may be a bib ID or OCLC
      * number), this helper renders a URL linking to that record.
      *
-     * @param array $link   Link information from record model
-     * @param bool  $escape Should we escape the rendered URL?
+     * @param array $link Link information from record model
+     * @param bool $escape Should we escape the rendered URL?
+     * @param string $source Source ID for backend being used to retrieve records
      *
      * @return string       URL derived from link information
+     * @throws Exception
      */
-    public function related($link, $escape = true)
+    public function related($link, $escape = true, $source = DEFAULT_SEARCH_BACKEND)
     {
         $urlHelper = $this->getView()->plugin('url');
+        $baseUrl = $urlHelper($this->getSearchActionForSource($source));
         switch ($link['type']) {
         case 'bib':
-            $url = $urlHelper('search-results')
+            $url = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=id&jumpto=1';
             break;
         case 'isbn':
-            $url = $urlHelper('search-results')
+            $url = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=isbn';
             break;
         case 'issn':
-            $url = $urlHelper('search-results')
+            $url = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=issn';
             break;
         case 'zdb':
         case 'dnb':
-            $url = $urlHelper('search-results')
+            $url = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=ctrlnum';
             break;
         case 'title':
-            $url = $urlHelper('search-results')
+            $url = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=title';
             break;
         default:
-            throw new \Exception('Unexpected link type: ' . $link['type']);
+            throw new Exception('Unexpected link type: ' . $link['type']);
         }
 
         $escapeHelper = $this->getView()->plugin('escapeHtml');

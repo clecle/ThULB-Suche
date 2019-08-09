@@ -483,7 +483,8 @@ class PAIA extends OriginalPAIA
                 // add result_item to the result array, if at least one relevant
                 // information is present
                 if ($result_item['callnumber'] !== ''
-                    || $result_item['about']  || $result_item['remotehref']
+                    || $result_item['about']
+                    || (isset($result_item['remotehref']) && $result_item['remotehref'])
                 ) {
                     $result[] = $result_item;
                 }

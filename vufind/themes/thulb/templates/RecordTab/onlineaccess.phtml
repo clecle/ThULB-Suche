@@ -3,6 +3,8 @@
   $openUrlActive = $openUrl->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+  $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
+  $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 ?>
 
 <h3>
@@ -24,6 +26,9 @@
             <? if ($openUrlActive): ?>
               <?=$openUrl->renderTemplate()?><br />
             <? endif; ?>
+          <? endif; ?>
+          <? if ($citesLink && $citesCount > 0) : ?>
+            <?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
           <? endif; ?>
         </dd>
         <? if($current['desc'] === $this->transEsc('get_citation')): ?>

@@ -83,12 +83,14 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
+//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList',
+                    'ThULB\RecordTab\OnlineAccess' => 'Zend\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
+//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList',
+                    'onlineaccess' => 'ThULB\RecordTab\OnlineAccess'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -107,7 +109,7 @@ $config = array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
-                    'Description'   => null,
+                    'Description' => null,
                     'Reviews' => null,
                     'Excerpt' => null
                 ),
@@ -128,11 +130,15 @@ $config = array(
             ),
             'VuFind\RecordDriver\Summon' => array(
                 'tabs' => array(
+                    'OnlineAccess' => 'onlineaccess',
+                    'ArticleCollectionList' => null,
+                    'NonArticleCollectionList' => null,
                     'Description' => null,
                     'Reviews' => null,
-                    'Excerpt' => null
+                    'Excerpt' => null,
+                    'Details' => 'staffviewcombined'
                 ),
-                'defaultTab' => null
+                'defaultTab' => 'OnlineAccess'
             )
         )
     ),

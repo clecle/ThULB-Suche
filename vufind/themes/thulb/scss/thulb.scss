@@ -608,3 +608,13 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .record .format::after {
   content: "";
 }
+
+.sourceSummon table a.btn.btn-primary {
+  margin-bottom: 5px;
+}
+
+.sourceSummon table a.hint {
+  font-size: 16px;
+  padding-left: 5px;
+  margin-bottom: 5px;
+}

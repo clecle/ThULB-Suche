@@ -1,0 +1,42 @@
+<?
+  $openUrl = $this->openUrl($this->tab->getRecordDriver(), 'record');
+  $openUrlActive = $openUrl->isActive();
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+?>
+
+<h3>
+    <?=$this->transEsc('location_Remote')?>
+</h3>
+<table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">
+  <tr vocab="http://schema.org/" typeof="Offer">
+    <td>
+      <dl class="dl-horizontal">
+        <dt><?=$this->transEsc('Online Access')?>:</dt>
+        <dd>
+          <? if (!empty($urls) || $openUrlActive): ?>
+            <? foreach ($urls as $current): ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" class="btn btn-primary">
+                  <?=$this->escapeHtml($current['desc'])?>
+              </a>
+              <br />
+            <? endforeach; ?>
+            <? if ($openUrlActive): ?>
+              <?=$openUrl->renderTemplate()?><br />
+            <? endif; ?>
+          <? endif; ?>
+        </dd>
+        <? if($current['desc'] === $this->transEsc('get_citation')): ?>
+        <dt><?=$this->transEsc("Item Notes")?>:</dt>
+        <dd>
+          <div class="item-notes">
+            <ul>
+              <li><?= $this->transEsc('explain_reference') ?></li>
+            </ul>
+          </div>
+        </dd>
+        <?php endif; ?>
+      </dl>
+    </td>
+  </tr>
+</table>

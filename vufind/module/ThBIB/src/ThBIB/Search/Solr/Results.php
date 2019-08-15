@@ -54,14 +54,14 @@ class Results extends OriginalResults
             $list['class_local_iln']['list'] = $this->getTBHierarchies($list['class_local_iln']['list']);
         }
 
-
+        // format display text
         foreach ($facetFieldPrefixes as $field => $prefix) {
             if (!array_key_exists($field, $list)) {
                 continue;
             }
             $replace = array(
                 $facetFieldPrefixes[$field],
-//                '&lt;Thüringen&gt;'
+                '&lt;Thüringen&gt;'
             );
             foreach ($list[$field]['list'] as $index => $item) {
                 $list[$field]['list'][$index]['displayText'] =
@@ -93,6 +93,7 @@ class Results extends OriginalResults
         unset($groups);
         unset($classifications);
 
+        // create multidimensional array with parent > child structure
         foreach($oldFacetList as $index => $oldEntry) {
             $displayText = $oldEntry['displayText'];
             if(!isset($classificationList[$displayText])) {
@@ -109,6 +110,7 @@ class Results extends OriginalResults
 
         usort($groupFacetList, array($this, 'compareTBFacets'));
 
+        // create an array with parents and children
         $newFacetList = array();
         foreach($groupFacetList as $group) {
             if ($group['count'] == 0) {
@@ -141,17 +143,17 @@ class Results extends OriginalResults
 
             $queryParts = array();
             foreach ($classifications[$groupShort] as $classification) {
-                $queryParts[] = 'class_local_iln:"31:' . $classification . '"';
+                $queryParts[] = '"31:' . $classification . '"';
             }
 
             $groupList[$group] = array(
                 'value' => $group,
                 'displayText' => $group,
                 'count' => 0,
-                'operator' => 'AND',
+                'operator' => 'OR',
                 'isApplied' => false,
                 'children' => array(),
-                'tb_facet_value' => '#:"' . implode(' OR ', $queryParts) . '"'
+                'tb_facet_value' => '~class_local_iln:(' . implode(' OR ', $queryParts) . ')'
             );
         }
 

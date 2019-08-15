@@ -10,6 +10,52 @@ class Params extends OriginalParams
     const THBIB_FILTER = 'class_local:thüringen AND class_local:de-601';
 
     /**
+     * Return the current filters as an array of strings ['field:filter']
+     *
+     * @return array $filterQuery
+     */
+    public function getFilterSettings()
+    {
+        // Define Filter Query
+        $filterQuery = [];
+        $orFilters = [];
+        $filterList = array_merge(
+            $this->getHiddenFilters(),
+            $this->filterList
+        );
+        foreach ($filterList as $field => $filter) {
+            if ($orFacet = (substr($field, 0, 1) == '~')) {
+                $field = substr($field, 1);
+            }
+            foreach ($filter as $value) {
+                // Special case -- complex filter, that should be taken as-is:
+                if ($field == '#') {
+                    $q = $value;
+                } elseif (substr($value, -1) == '*'
+                    || preg_match('/\[[^\]]+\s+TO\s+[^\]]+\]/', $value)
+                    || preg_match('/^\(.*?\)$/', $value)    // do not escape when the value has parentheses
+                ) {
+                    // Special case -- allow trailing wildcards and ranges
+                    $q = $field . ':' . $value;
+                } else {
+                    $q = $field . ':"' . addcslashes($value, '"\\') . '"';
+                }
+                if ($orFacet) {
+                    $orFilters[$field] = $orFilters[$field] ?? [];
+                    $orFilters[$field][] = $q;
+                } else {
+                    $filterQuery[] = $q;
+                }
+            }
+        }
+        foreach ($orFilters as $field => $parts) {
+            $filterQuery[] = '{!tag=' . $field . '_filter}' . $field
+                . ':(' . implode(' OR ', $parts) . ')';
+        }
+        return $filterQuery;
+    }
+
+    /**
      * Return current facet configurations
      *
      * @return array $facetSet
@@ -57,7 +103,7 @@ class Params extends OriginalParams
         }
 
         if($removeFilter) {
-            $index = array_keys($facetSet['field'], 'class_local_iln');
+            $index = array_keys($facetSet['field'], '{!ex=class_local_iln_filter}class_local_iln');
             if(is_array($index) && count($index) > 0) {
                 unset($facetSet['field'][$index[0]]);
             }

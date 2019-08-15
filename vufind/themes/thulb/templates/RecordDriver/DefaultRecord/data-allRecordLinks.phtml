@@ -2,8 +2,13 @@
     $lines = [];
     foreach ($data as $recordLink) {
       $singleLine = $this->transEsc($recordLink['title']) . ': ';
-      $singleLine .= '<a href="' . $this->recordLink()->related($recordLink['link']) . '">' .
+      if(isset($recordLink['link'])) {
+          $singleLine .= '<a href="/Record/' . $recordLink['link']['value'] . '">' .
               $this->escapeHtml($recordLink['value']) . '</a>';
+      }
+      else {
+        $singleLine .= $this->escapeHtml($recordLink['value']);
+      }
       $singleLine = ($recordLink['pages']) ? $singleLine . ' ' . $recordLink['pages'] : $singleLine;
       $lines[] = $singleLine;
     }

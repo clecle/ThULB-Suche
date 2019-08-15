@@ -116,7 +116,7 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
             return $facet;
         }
 
-        $escape = true;
+        $escape = false;
 
         $parentFacet['value'] = $facet['tb_facet_value'];
         $isApplied = $results->getParams()->hasFilter($parentFacet['value']);

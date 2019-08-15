@@ -15,6 +15,15 @@ $config = array(
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
         )
     ),
+    'service_manager' => [
+        'factories' => [
+            'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+        ],
+        'aliases' => array(
+            'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
+            'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
+        )
+    ],
     'vufind' => array(
         'plugin_managers' => array(
             'ajaxhandler' => array(
@@ -73,11 +82,13 @@ $config = array(
             'recordtab' => array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
-                    'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList'
+                    'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
+//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
-                    'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList'
+                    'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
+//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -107,12 +118,13 @@ $config = array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
+//                    'RelatedResources' => 'relatedcl',
                     'Description'   => null,
                     'Reviews' => null,
                     'Excerpt' => null,
                     'Details' => 'staffviewcombined'
                 ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList')
+                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList' /* , 'RelatedResources' */ )
             ),
             'VuFind\RecordDriver\Summon' => array(
                 'tabs' => array(

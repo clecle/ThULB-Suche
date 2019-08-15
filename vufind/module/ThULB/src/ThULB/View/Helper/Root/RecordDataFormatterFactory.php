@@ -64,6 +64,7 @@ class RecordDataFormatterFactory extends OriginalFactory
     public function getDefaultFullSpecs()
     {
         $spec = new SpecBuilder();
+        $spec->setLine('Other Titles', 'getOtherTitles');
         $spec->setLine('PartInfo', 'getPartInfo');
         $spec->setTemplateLine(
             'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
@@ -140,6 +141,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
+        $spec->setLine('Type of content','getTypeOfContent');
         $spec->setTemplateLine(
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
@@ -155,6 +157,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Item Description', 'getGeneralNotes');
         $spec->setLine('Title of work', 'getTitleOfWork');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');
+        $spec->setLine('Reproduction', 'getReproduction');
         $spec->setTemplateLine('Fingerprint', 'getFingerprint', 'data-fingerprint.phtml');
         $spec->setLine('Bibliographic Citations', 'getBibliographicCitation');
         $spec->setLine('Publication Frequency', 'getPublicationFrequency');

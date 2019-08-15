@@ -26,14 +26,15 @@
 namespace ThULBTest\View\Helper\Root;
 
 /**
- * Test class for the record data formatters numbering pecularitier view helper 
- * functionality for periodical items.
+ * Test class for the record data formatters primary author view helper
+ * functionality.
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class NumPecMetadataTest extends AbstractRecordDataFormatterTest
+
+class TypeOfContentMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Anmerkungen zum Erscheinungsver';
-    protected $metadataKey = 'NumPecs';
-    protected $template = 'data-numbering_peculiarities.phtml';
+    protected $sheetName = 'Art des Inhalts';
+    protected $metadataKey = 'Type of content';
+    protected $recordDriverFunction = 'getTypeofContent';
 }

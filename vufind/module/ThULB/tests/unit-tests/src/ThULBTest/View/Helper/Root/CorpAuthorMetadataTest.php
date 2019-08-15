@@ -34,7 +34,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class CorpAuthorMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Körperschaft';
+    protected $sheetName = '1. Körperschaft';
     protected $metadataKey = 'Corporate Author';
     protected $recordDriverFunction = 'getDeduplicatedAuthors';
     protected $template = 'data-authors.phtml';

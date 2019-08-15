@@ -43,7 +43,12 @@ $config = array(
         'aliases' => array(
             'VuFind\HierarchicalFacetHelper' => 'ThBIB\Search\Solr\HierarchicalFacetHelper',
         )
-    )
+    ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'thulb_removeThBibFilter' => 'ThBIB\View\Helper\Root\RemoveThBibFilter',
+        ),
+    ),
 );
 
 return $config;

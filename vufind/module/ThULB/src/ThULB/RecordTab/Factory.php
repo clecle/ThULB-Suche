@@ -29,7 +29,6 @@
  */
 namespace ThULB\RecordTab;
 use Zend\ServiceManager\ServiceManager;
-use VuFind\RecordTab\Factory as OriginalFactory;
 
 /**
  * Record Tab Factory Class
@@ -43,7 +42,7 @@ use VuFind\RecordTab\Factory as OriginalFactory;
  *
  * @codeCoverageIgnore
  */
-class Factory extends OriginalFactory
+class Factory
 {
     /**
      * Factory for CollectionList tab plugin.

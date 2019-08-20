@@ -83,12 +83,12 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
+                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
+                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -101,40 +101,6 @@ $config = array(
                 )
             )
         ),
-        'recorddriver_tabs' => array(
-            'VuFind\RecordDriver\RecordDefault' => array(
-                'tabs' => array(
-                    'Similar' => null,
-                    'ArticleCollectionList' => 'articlecl',
-                    'NonArticleCollectionList' => 'nonarticlecl',
-                    'Description'   => null,
-                    'Reviews' => null,
-                    'Excerpt' => null
-                ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList')
-            ),
-            'VuFind\RecordDriver\SolrMarc' => array(
-                'tabs' => array(
-                    'Similar' => null,
-                    'ArticleCollectionList' => 'articlecl',
-                    'NonArticleCollectionList' => 'nonarticlecl',
-//                    'RelatedResources' => 'relatedcl',
-                    'Description'   => null,
-                    'Reviews' => null,
-                    'Excerpt' => null,
-                    'Details' => 'staffviewcombined'
-                ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList' /* , 'RelatedResources' */ )
-            ),
-            'VuFind\RecordDriver\Summon' => array(
-                'tabs' => array(
-                    'Description' => null,
-                    'Reviews' => null,
-                    'Excerpt' => null
-                ),
-                'defaultTab' => null
-            )
-        )
     ),
     'view_helpers' => array(
         'invokables' => array(

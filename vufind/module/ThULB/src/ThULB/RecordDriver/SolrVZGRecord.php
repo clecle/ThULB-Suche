@@ -34,7 +34,6 @@ namespace ThULB\RecordDriver;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
-use VuFind\Search\Solr\Params;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -674,6 +673,9 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         foreach ($fields as $field) {
             $fieldData = [];
             foreach ($field->getSubfields() as $subfield) {
+                if($subfield->getCode() == 'z') {
+                    continue 2;
+                }
                 if (in_array($subfield->getCode(), ['9', 'c'])) {
                     $fieldData['020' . $subfield->getCode()] = 
                             isset($fieldData['020' . $subfield->getCode()]) ? 

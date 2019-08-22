@@ -1,7 +1,7 @@
 // Thumbnail sizes for media items: search results, list entries, record views
-@thumbnail-width-small:   60px !default;
-@thumbnail-width-medium: 100px !default;
-@thumbnail-width-large:  160px !default;
+@thumbnail-width-small:   60px;
+@thumbnail-width-medium: 100px;
+@thumbnail-width-large:  160px;
 
 // Hide these on mobile
 @media (max-width: 767px) {
@@ -179,7 +179,7 @@ header .container.navbar { margin-bottom: 0; }
 @media (min-width: 768px) {
   .result-body {
     float: left;
-    width: 75%;
+    width: 100%;
   }
   .result-links {
     float: left;
@@ -301,7 +301,7 @@ body.rtl {
 .wikipedia img { margin-right: 1rem; }
 .geoItem {
     font-size: .9em;
-    margin: 0px 0px 10px;
+    margin: 0 0 10px;
 }
 .title-in-heading {
   font-size: inherit;
@@ -386,7 +386,7 @@ body.rtl {
   #moduletab li.show::after {
     border-color: none;
     border-style: solid;
-    border-width: 0px;
+    border-width: 0;
     content: "";
   }
 }

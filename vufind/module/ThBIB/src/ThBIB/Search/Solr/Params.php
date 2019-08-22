@@ -6,7 +6,6 @@ use VuFind\Search\Solr\Params as OriginalParams;
 
 class Params extends OriginalParams
 {
-//    const THBIB_FILTER = 'collection_details:\"GBV_ILN_31\" AND class_local:"thüringen" AND class_local:"de-601';
     const THBIB_FILTER = 'class_local:thüringen AND class_local:de-601';
 
     /**
@@ -33,7 +32,7 @@ class Params extends OriginalParams
                     $q = $value;
                 } elseif (substr($value, -1) == '*'
                     || preg_match('/\[[^\]]+\s+TO\s+[^\]]+\]/', $value)
-                    || preg_match('/^\(.*?\)$/', $value)    // do not escape when the value has parentheses
+                    || preg_match('/^\(.*\)$/', $value)    // do not escape when the value has parentheses
                 ) {
                     // Special case -- allow trailing wildcards and ranges
                     $q = $field . ':' . $value;

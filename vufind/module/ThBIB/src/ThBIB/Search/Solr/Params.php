@@ -67,6 +67,7 @@ class Params extends OriginalParams
 
             $facetSet = $this->checkForThbibFilter($facetSet);
 
+            // add facet prefixes if declared
             $config = $this->configLoader->get($this->getOptions()->getFacetsIni());
             if ($config->FacetFieldPrefixes != null) {
                 foreach ($config->FacetFieldPrefixes as $field => $prefix) {
@@ -78,6 +79,14 @@ class Params extends OriginalParams
         return $facetSet;
     }
 
+    /**
+     * Removes the ThBIB facet from the facetSet if the ThBIB filter is not used in
+     * normal Filters or RawHiddenFilters.
+     *
+     * @param array $facetSet
+     *
+     * @return array
+     */
     public function checkForThbibFilter($facetSet) {
 
         $removeFilter = true;

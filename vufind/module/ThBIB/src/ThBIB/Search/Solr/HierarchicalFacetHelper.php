@@ -83,6 +83,7 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
                 ->getDisplayString();
         }
 
+        // has a parent? set in Results::getTBHierarchies
         $level = isset($item['parent']) ? 1 : 0;
         $parent = $level ? $item['parent'] : null;
 
@@ -101,10 +102,9 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
     }
 
     /**
-     * Formats the given facet list. Changes the value of parent facets to search for all child facets.
-     * Updates the fields "isApplied", "value", "href"
+     * Updates parent facet data. Updates the fields "isApplied", "value", "href"
      *
-     * @param array          $facet     Facet list to format.
+     * @param array          $facet     Facet to format.
      * @param UrlQueryHelper $urlHelper UrlQueryHelper for creating facet URLs
      * @param Results        $results   Result object from the search
      *
@@ -112,6 +112,7 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
      */
     public function formatTBFacet($facet, $urlHelper, $results)
     {
+        // is parent facet?
         if (!isset($facet['tb_facet_value']) || empty($facet['tb_facet_value'])) {
             return $facet;
         }

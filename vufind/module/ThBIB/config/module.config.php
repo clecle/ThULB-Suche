@@ -4,14 +4,6 @@ namespace ThBIB\Module\Configuration;
 $config = array(
     'vufind' => array(
         'plugin_managers' => array(
-            'ajaxhandler' => array(
-                'factories' => array(
-                    'ThBIB\AjaxHandler\GetFacetData' => 'VuFind\AjaxHandler\GetFacetDataFactory',
-                ),
-                'aliases' => array(
-                    'getFacetData' => 'ThBIB\AjaxHandler\GetFacetData',
-                )
-            ),
             'recommend' => array(
                 'factories' => array(
                     'ThBIB\Recommend\SideFacets' => 'ThBIB\Recommend\Factory::getSideFacets',

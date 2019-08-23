@@ -50,6 +50,7 @@ class Results extends OriginalResults
             return $list;
         }
 
+        // replace normal ThBIB facet list with hierarchical list
         if(isset($list['class_local_iln'])) {
             $list['class_local_iln']['list'] = $this->getTBHierarchies($list['class_local_iln']['list']);
         }

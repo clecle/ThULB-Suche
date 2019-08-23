@@ -8,7 +8,7 @@ use Zend\View\Helper\AbstractHelper;
 class RemoveThBibFilter extends AbstractHelper
 {
     /**
-     * Remove Zero-width non-joiner from a string.
+     * Remove all Filters for the field "class_local_iln".
      *
      * @param UrlQueryHelper $query String to format
      *

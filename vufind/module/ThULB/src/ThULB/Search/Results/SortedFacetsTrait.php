@@ -59,7 +59,8 @@ trait SortedFacetsTrait
      * Sorts an array of facet fields to put all applied facets on top. All the
      * other sorting stays the same.
      * 
-     * @param type $facetFields array of facet fields
+     * @param array $facetFields array of facet fields
+     *
      * @return boolean true
      */
     protected function sortFacetList(&$facetFields)

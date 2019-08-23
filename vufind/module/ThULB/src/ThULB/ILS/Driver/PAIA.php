@@ -33,6 +33,8 @@
  */
 
 namespace ThULB\ILS\Driver;
+use Exception;
+use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
     VuFind\I18n\Translator\TranslatorAwareInterface,
     VuFind\Exception\ILS as ILSException,
@@ -45,7 +47,7 @@ use VuFind\ILS\Driver\PAIA as OriginalPAIA,
  */
 class PAIA extends OriginalPAIA
 {
-    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use TranslatorAwareTrait;
     
     const DAIA_DOCUMENT_ID_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
     const PAIA_INVALID_CREDENTIALS_MSG = '0:access_denied (invalid patron or password)';
@@ -493,7 +495,7 @@ class PAIA extends OriginalPAIA
 
         return $result;
     }
-    
+
     /**
      * Patron Login
      *
@@ -506,6 +508,8 @@ class PAIA extends OriginalPAIA
      * null on unsuccessful login.
      *
      * @throws ILSException
+     *
+     * @throws AuthException
      */
     public function patronLogin($username, $password)
     {
@@ -653,9 +657,9 @@ class PAIA extends OriginalPAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
+     * @param array $patron An array of patron data
      *
-     * @return bool True if request is valid, false if not
+     * @return array|bool True if request is valid, false if not, array if patron is blocked
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -675,7 +679,7 @@ class PAIA extends OriginalPAIA
         return false;
     }
 
-        /**
+    /**
      * PAIA authentication function
      *
      * @param string $username Username
@@ -742,7 +746,7 @@ class PAIA extends OriginalPAIA
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
-     * @param string $data_to_send POST data
+     * @param array  $data_to_send POST data
      * @param string $access_token PAIA access token for current session
      *
      * @return string POST response
@@ -766,7 +770,7 @@ class PAIA extends OriginalPAIA
                 $this->paiaTimeout,
                 $http_headers
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ILSException($e->getMessage());
         }
         if (!$result->isSuccess()) {
@@ -781,7 +785,7 @@ class PAIA extends OriginalPAIA
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
-     * @param string $data_to_send POST data
+     * @param array  $data_to_send POST data
      * @param string $access_token PAIA access token for current session
      *
      * @return string POST response
@@ -805,7 +809,7 @@ class PAIA extends OriginalPAIA
                 $this->paiaTimeout,
                 $http_headers
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ILSException($e->getMessage());
         }
 
@@ -853,7 +857,7 @@ class PAIA extends OriginalPAIA
      *
      * @param string $id id for query in daia
      *
-     * @return xml or json object
+     * @return string XML or JSON object
      * @throws ILSException
      */
     protected function doHTTPRequest($id)
@@ -873,7 +877,7 @@ class PAIA extends OriginalPAIA
                 $this->baseUrl,
                 $params, $this->daiaTimeout, $http_headers
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ILSException(
                 'HTTP request exited with Exception ' . $e->getMessage() .
                 ' for record: ' . $id

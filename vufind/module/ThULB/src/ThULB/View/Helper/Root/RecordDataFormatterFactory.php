@@ -45,6 +45,10 @@ class RecordDataFormatterFactory extends OriginalFactory
     /**
      * Create the helper.
      *
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param array|null         $options
+     *
      * @return RecordDataFormatter
      */
     public function __invoke(ContainerInterface $container, $requestedName,

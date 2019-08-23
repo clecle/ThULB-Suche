@@ -52,6 +52,7 @@ class Solr extends OriginalSolr
      * @param FormatterManager $fm        Formatter manager
      * @param string           $cacheDir  Directory to hold cache results (optional)
      * @param array            $filters   Filters to apply to Solr tree queries
+     * @param int              $maxRows
      */
     public function __construct(Connector $connector, FormatterManager $fm,
         $cacheDir = null, $filters = [], $maxRows = 2147483647

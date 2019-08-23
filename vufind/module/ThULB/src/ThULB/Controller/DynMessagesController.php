@@ -1,18 +1,18 @@
 <?php
 
-
 namespace ThULB\Controller;
-
 
 use Exception;
 use VuFind\Controller\AbstractBase;
+use VuFind\Log\LoggerAwareTrait;
+use Zend\Http\Response;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Session\Container;
 use Zend\View\Model\ViewModel;
 
 class DynMessagesController extends AbstractBase
 {
-    use \VuFind\Log\LoggerAwareTrait;
+    use LoggerAwareTrait;
 
     private $_basePath;
     private $_iniGerman;
@@ -58,6 +58,11 @@ class DynMessagesController extends AbstractBase
             ));
     }
 
+    /**
+     * Save message data.
+     *
+     * @return Response
+     */
     public function saveAction()
     {
         $english = $this->params()->fromPost('english');
@@ -135,7 +140,7 @@ class DynMessagesController extends AbstractBase
         if(is_file($fileName) && is_writable($fileName)) {
             ksort($values);
 
-            try{
+            try {
                 $file = fopen($fileName, 'w');
                 foreach ($values as $tag => $text) {
                     $tag = trim($tag);
@@ -151,10 +156,11 @@ class DynMessagesController extends AbstractBase
                 $success = false;
             }
             finally {
-                if($file !== false) {
+                if(isset($file) && $file !== false) {
                     fclose($file);
                 }
-            }        }
+            }
+        }
         else {
             $this->flashMessenger()->addErrorMessage("Die Datei '$fileName' konnte nicht geschrieben werden.<br>");
         }

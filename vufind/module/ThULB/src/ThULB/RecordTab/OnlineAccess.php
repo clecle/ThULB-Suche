@@ -2,9 +2,11 @@
 
 namespace ThULB\RecordTab;
 
-use VuFind\RecordTab\AbstractBase;
+use Exception;
+use VuFind\RecordDriver\AbstractBase;
+use VuFind\RecordTab\AbstractBase as AbstractTab;
 
-class OnlineAccess extends AbstractBase
+class OnlineAccess extends AbstractTab
 {
     /**
      * Get the on-screen description for this tab.
@@ -15,7 +17,14 @@ class OnlineAccess extends AbstractBase
         return 'Access';
     }
 
+    /**
+     * Get the record driver
+     *
+     * @return AbstractBase
+     * @throws Exception
+     */
     public function getRecordDriver() {
+        // make function public
         return parent::getRecordDriver();
     }
 }

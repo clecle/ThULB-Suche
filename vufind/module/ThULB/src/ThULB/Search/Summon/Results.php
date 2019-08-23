@@ -25,6 +25,9 @@
  */
 
 namespace ThULB\Search\Summon;
+use Exception;
+use ThULB\Search\Results\SortedFacetsTrait;
+use VuFind\Search\Summon\Params;
 use VuFind\Search\Summon\Results as OriginalResults;
 
 /**
@@ -34,13 +37,13 @@ use VuFind\Search\Summon\Results as OriginalResults;
  */
 class Results extends OriginalResults
 {
-    use \ThULB\Search\Results\SortedFacetsTrait;
-    
+    use SortedFacetsTrait;
+
     /**
      * Get complete facet counts for several index fields. Fork of the original
      * function in VuFind\Search\Summon\Results with ored param
      *
-     * @param array  $facetfields  name of the Solr fields to return facets for
+     * @param array  $facetFields  name of the Solr fields to return facets for
      * @param bool   $removeFilter Clear existing filters from selected fields (true)
      * or retain them (false)?
      * @param int    $limit        A limit for the number of facets returned, this
@@ -48,12 +51,16 @@ class Results extends OriginalResults
      * method because of PHP out of memory exceptions (default = -1, no limit).
      * @param string $facetSort    A facet sort value to use (null to retain current)
      * @param int    $page         1 based. Offsets results by limit.
+     * @param bool   $isOrFacet
      *
      * @return array an array with the facet values for each index field
+     *
+     * @throws Exception
      */
-    public function getPartialFieldFacets($facetfields, $removeFilter = true,
-        $limit = -1, $facetSort = null, $page = null, $ored = false
+    public function getPartialFieldFacets($facetFields, $removeFilter = true,
+                                          $limit = -1, $facetSort = null, $page = null, $isOrFacet = false
     ) {
+        /* @var $params Params */
         $params = $this->getParams();
         $query  = $params->getQuery();
         // No limit not implemented with Summon: cause page loop
@@ -65,10 +72,10 @@ class Results extends OriginalResults
         }
         $params->resetFacetConfig();
         if (null !== $facetSort && 'count' !== $facetSort) {
-            throw new \Exception("$facetSort facet sort not supported by Summon.");
+            throw new Exception("$facetSort facet sort not supported by Summon.");
         }
-        foreach ($facetfields as $facet) {
-            $params->addFacet($facet, null, $ored);
+        foreach ($facetFields as $facet) {
+            $params->addFacet($facet, null, $isOrFacet);
 
             // Clear existing filters for the selected field if necessary:
             if ($removeFilter) {
@@ -95,7 +102,7 @@ class Results extends OriginalResults
         }
         $ret = [];
         foreach ($facets as $data) {
-            if (in_array($data['displayName'], $facetfields)) {
+            if (in_array($data['displayName'], $facetFields)) {
                 $formatted = $this->formatFacetData($data);
                 $list = $formatted['counts'];
                 $ret[$data['displayName']] = [

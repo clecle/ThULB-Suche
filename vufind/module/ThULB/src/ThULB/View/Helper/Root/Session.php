@@ -9,11 +9,17 @@ class Session extends AbstractHelper
 {
     private $sessionManager;
 
-    public function __construct(SessionManager $sessionManager)
-    {
+    public function __construct(SessionManager $sessionManager) {
         $this->sessionManager = $sessionManager;
     }
 
+    /**
+     * Checks if a message with the given identifier should be displayed.
+     *
+     * @param $identifier
+     *
+     * @return bool
+     */
     public function isMessageDisplayed($identifier) {
 
         $value = 0;
@@ -24,6 +30,5 @@ class Session extends AbstractHelper
         }
 
         return $value < time();
-//        return true;
     }
 }

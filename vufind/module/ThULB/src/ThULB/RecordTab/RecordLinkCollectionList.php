@@ -29,8 +29,11 @@
  */
 namespace ThULB\RecordTab;
 use Exception;
+use ThULB\RecordDriver\SolrVZGRecord;
 use VuFind\Search\RecommendListener;
+use VuFind\Search\SearchRunner;
 use VuFind\Search\Solr\Results;
+use VuFind\Search\SolrCollection\Params;
 
 /**
  * Record link collection list tab.
@@ -59,7 +62,9 @@ class RecordLinkCollectionList extends CollectionList
                 + $this->getRequest()->getPost()->toArray();
             $rManager = $this->recommendManager;
 
-            $cb = function ($runner, $params, $searchId) use ($driver, $rManager) {
+            $cb = function (SearchRunner $runner, Params $params, $searchId) use ($driver, $rManager) {
+                // search all linked PPNs
+                /* @var $driver SolrVZGRecord */
                 $ppnLinks = $driver->getPPNLink();
 
                 $params->addHiddenFilter('#:id:(' . implode(' OR ', $ppnLinks) . ')');

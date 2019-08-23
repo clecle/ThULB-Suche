@@ -31,9 +31,11 @@
 
 namespace ThULB\RecordDriver;
 
+use Exception;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
+use VuFind\RecordDriver\SolrMarc;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -49,7 +51,7 @@ use VuFind\RecordDriver\Response\PublicationDetails;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 
-class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
+class SolrVZGRecord extends SolrMarc
 {
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
@@ -98,6 +100,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Returns true if the record supports real-time AJAX status lookups.
      *
      * @return bool
+     *
+     * @throws File_MARC_Exception
      */
     public function supportsAjaxStatus()
     {
@@ -173,15 +177,23 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         return $this->highlightedTitle;
     }
 
+    /**
+     * Get the title of the item from 245 or 490.
+     *
+     * @return string
+     */
     public function getTitle()
     {
         if (is_null($this->title)) {
             $title = $this->getFormattedMarcData('245n: (245p. (245a : 245b))') ?: $this->getFormattedMarcData('490v: 490a');
 
             if ($title === '') {
-                isset($this->fields['title']) ?
-                            is_array($this->fields['title']) ?
-                            $this->fields['title'][0] : $this->fields['title'] : '';
+                $testTitle = isset($this->fields['title']) ?
+                    (is_array($this->fields['title']) ?
+                            $this->fields['title'][0] : $this->fields['title']) : '';
+                if(!empty($testTitle)) {
+                    echo '<pre>' . print_r($testTitle, true) . '</pre>';
+                }
             }
 
             $this->title = $title;
@@ -226,6 +238,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
        return ($containerRef) ? $containerRef[0] : '';
     }
 
+    /**
+     * Get the container link of the item from 773.
+     *
+     * @return string
+     *
+     * @throws File_MARC_Exception
+     * @throws Exception
+     */
     public function getContainerLink()
     {
         $containerField = $this->getMarcRecord()->getField('773');
@@ -256,6 +276,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get basic classification numbers of the record.
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getBasicClassification()
     {
@@ -268,6 +290,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get classification numbers of the record in the "Thüringen-Bibliographie".
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getThuBiblioClassification()
     {
@@ -336,7 +360,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      *
      * not repeatable
      *
-     * @return string
+     * @return array
      */
     public function getFingerprint()
     {
@@ -353,6 +377,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get an array of physical descriptions of the item.
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getPhysicalDescriptions()
     {
@@ -426,13 +452,23 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     {
         return $this->getFormattedMarcData('250a - (((264a : 264b), 264c)');
     }
-    
+
+    /**
+     * Get the dissertation notes of the item from 502.
+     *
+     * @return string
+     */
     public function getDissertationNote()
     {
         $dissNote = $this->getFieldArray('502', ['a', 'b', 'c', 'd', 'g', 'o'], true, ', ');
         return ($dissNote) ? ltrim($dissNote[0], '@') : null;
     }
-    
+
+    /**
+     * Get the part info of the item from 245.
+     *
+     * @return string
+     */
     public function getPartInfo()
     {
         $nSubfields = $this->getFieldArray('245', ['n'], false);
@@ -478,6 +514,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get an array of all secondary authors (complementing getPrimaryAuthors()).
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getSecondaryAuthors()
     {
@@ -492,15 +530,15 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                 '710' => '710a, (710b, (\((710n, (710d, 710c))\)))( 710g)'
             ];
         
-        foreach ($relevantFields as $fieldnumber => $subfields) {
-            $fields = $this->getMarcRecord()->getFields($fieldnumber);
+        foreach ($relevantFields as $fieldNumber => $subfields) {
+            $fields = $this->getMarcRecord()->getFields($fieldNumber);
             foreach ($fields as $field) {
                 $fieldData = [];
                 foreach ($field->getSubfields() as $subfield) {
                     if (in_array($subfield->getCode(), $subfields)) {
-                        $fieldData[$fieldnumber . $subfield->getCode()] =
-                                isset($fieldData[$fieldnumber . $subfield->getCode()]) ?
-                                    $fieldData[$fieldnumber . $subfield->getCode()] .
+                        $fieldData[$fieldNumber . $subfield->getCode()] =
+                                isset($fieldData[$fieldNumber . $subfield->getCode()]) ?
+                                    $fieldData[$fieldNumber . $subfield->getCode()] .
                                         ', ' . $subfield->getData() :
                                     $subfield->getData();
                     }
@@ -508,7 +546,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                 
                 if ($fieldData) {
                     $secondaryAuthors[] = $this->getFormattedMarcData(
-                            $formattingRules[$fieldnumber],
+                            $formattingRules[$fieldNumber],
                             true, 
                             true, 
                             $fieldData
@@ -525,12 +563,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * getPrimaryAuthorsRoles()).
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getSecondaryAuthorsRoles()
     {
         $roles = [];
-        foreach (['700', '710'] as $fieldnumber) {
-            $fields = $this->getMarcRecord()->getFields($fieldnumber);
+        foreach (['700', '710'] as $fieldNumber) {
+            $fields = $this->getMarcRecord()->getFields($fieldNumber);
             foreach ($fields as $field) {
                 $fieldData = [];
                 foreach ($field->getSubfields() as $subfield) {
@@ -552,6 +592,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * with wich the publication was created
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getMeetingNames()
     {
@@ -610,7 +652,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     }
 
 
-
     /**
      * Get all record links related to the current record, that are precedings or
      * succeding titles respectively of the current record. Each link is returned
@@ -626,6 +667,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * )
      *
      * @return null|array
+     *
+     * @throws File_MARC_Exception
      */
     public function getLineageRecordLinks()
     {
@@ -664,6 +707,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get an array of all ISBNs associated with the record (may be empty).
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getISBNs()
     {
@@ -752,6 +797,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get an array with printing places
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getPrintingPlaces()
     {
@@ -798,18 +845,20 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * @param boolean $ignorePlaceholders Missing MARC subfields may contain
      *                                      placeholder strings; Set to true, to
      *                                      remove them
+     * @param array $data Data of the field to get data from.
+     *
      * @return string
      */
     protected function getFormattedMarcData($format, $removeSeparators = true, $ignorePlaceholders = true, $data = [])
     {   
-        // keep all escaped parantheses by converting them to their html equivalent
+        // keep all escaped parentheses by converting them to their html equivalent
         $format = str_replace('\(', '&#40;', $format);
         $format = str_replace('\)', '&#41;', $format);
         
         // get all MARC data that is required (only first field values)
         $marcData = [];
         $marcFieldStrings = [];
-        preg_match_all('/[\d]{3}[\da-z]{1}/', $format, $marcFieldStrings, PREG_OFFSET_CAPTURE);
+        preg_match_all('/[\d]{3}[\da-z]/', $format, $marcFieldStrings, PREG_OFFSET_CAPTURE);
         foreach ($marcFieldStrings[0] as $i => $marcFieldInfo) {
             $fieldNumber = substr($marcFieldInfo[0], 0, 3);
             $subfieldChar = substr($marcFieldInfo[0], 3);
@@ -840,19 +889,18 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         }
         
         // Eliminate all missing fields and surrounding content inside the
-        // parantheses:
+        // parentheses:
         $format = preg_replace('/[^T\(\)&;]*F[^T\(\)&;]*/', '', $format);
-        // Remove all content in parantheses, that doesn't represent existing
+        // Remove all content in parentheses, that doesn't represent existing
         // Marc fields together with surrounding content
         $format = preg_replace('/[^T\(\)&;]*\([^T]*\)[^T\(\)&;]*/', '', $format);
-        // Remove separators for fields, where they are given with the field
-        // content
+        // Remove separators for fields, where they are given with the field content
         $format = preg_replace('/([^T\(\)]+S)|(S[^T\(\)]+)/', ' ', $format);
         // Transform to a valid formatter string
         $format = str_replace('T', '%s', str_replace('(', '', str_replace(')', '', $format)));
         
         
-        // keep all escaped parantheses by converting them to their html equivalent
+        // keep all escaped parentheses by converting them to their html equivalent
         $format = str_replace('&#40;', '(', $format);
         $format = str_replace('&#41;', ')', $format);
 
@@ -869,6 +917,9 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      *
      * @return array|bool                 Array on success, boolean false if no
      * valid link could be found in the data.
+     *
+     * @throws File_MARC_Exception
+     * @throws Exception
      */
     protected function getFieldData($field)
     {
@@ -900,8 +951,10 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Extract link information from a given MARC field
      *
      * @param File_MARC_Data_Field $field
-     * @param string $title Optional title to search for in a fallback search
+     * @param string|bool $title Optional title to search for in a fallback search
      * @return bool|array
+     *
+     * @throws Exception
      */
     protected function getLinkFromField($field, $title = false)
     {
@@ -980,6 +1033,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * @param File_MARC_Data_Field $field Field to examine
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     protected function getRecordLinkNote($field)
     {
@@ -1022,6 +1077,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Get general notes on the record.
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getGeneralNotes()
     {
@@ -1086,6 +1143,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * keys.
      *
      * @return array
+     *
      * @throws File_MARC_Exception
      */
     public function getSeries()
@@ -1106,6 +1164,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * (used to find series name)
      *
      * @return array
+     *
      * @throws File_MARC_Exception
      */
     protected function getSeriesFromMARC($fieldInfo)
@@ -1125,6 +1184,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                     $currentArray['number'] = $number->getData();
                 }
 
+                // Do we have IDs to link the field to
                 $secondaryFields = $this->getMarcRecord()->getFields('800|810|830', true);
                 foreach ($secondaryFields as $secondaryField) {
                     $secondaryNumber = $secondaryField->getSubfield('v');
@@ -1159,6 +1219,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                         $currentArray['number'] = $number->getData();
                     }
 
+                    // Do we have IDs to link the field to
                     $rawId = $currentField->getSubfield('w')->getData();
                     if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                         $currentArray['id'] = substr($rawId, 8);
@@ -1186,6 +1247,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * </li>
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getURLs()
     {
@@ -1222,9 +1285,11 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * @param array  $conditions contains key value pairs with a subfield as key
      *                           and the expected subfield content as value
      *
-     * @see VuFind\RecordDriver\SolrMarc::getFieldArray() for the original function
-     *
      * @return array
+     *
+     * @throws File_MARC_Exception
+     *
+     * @see \VuFind\RecordDriver\SolrMarc::getFieldArray() for the original function
      */
     protected function getConditionalFieldArray($field, $subfields = null, $concat = true,
         $separator = ' ', $conditions = []
@@ -1261,39 +1326,12 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-     * Criteria:
-     *    Leader 07 = s
-     *  OR
-     *    Leader 19 = a
-     *  OR
-     *    Leader 007 00 = c
-     *    AND
-     *    Leader 007 01 = r
-     * @return boolean
+     * Check if the record is a news paper.
      *
-     * @deprecated
+     * @return bool
      *
+     * @throws File_MARC_Exception
      */
-    public function isOnlineOnlyRecord()
-    {
-      $leader = $this->getMarcRecord()->getLeader();
-      if ( strtoupper($leader[7] ) == "S" ) {
-        return true;
-      }
-      if ( strtoupper($leader[19]) == "A" ) {
-        return true;
-      }
-      $val = $this->getMarcRecord()->getFields('007');
-      if ( !empty($val) ) {
-        $val2 = $val[0]->getData();
-        if ( strtoupper(substr($val2, 0, 2)) == "CR" ) {
-          return true;
-        }
-      }
-
-      return false;
-    }
-    
     public function isNewsPaper()
     {
       $leader = $this->getMarcRecord()->getLeader();
@@ -1304,19 +1342,21 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
       return false;
     }
 
-     /**
-      * Return an array of all OnlineHoldings from MARCRecord
-      * Field 981: for Links
-      * Field 980: for description
-      * Field 982:
-      *
-      * $txt = Text for displaying the link
-      * $url = url to OnlineContent
-      * $more = further description (PICA 4801)
-      * $tmp = ELS-gif for Higliting ELS Links
-      *
-      * @return array
-      */
+    /**
+     * Return an array of all OnlineHoldings from MARCRecord
+     * Field 981: for Links
+     * Field 980: for description
+     * Field 982:
+     *
+     * $txt = Text for displaying the link
+     * $url = url to OnlineContent
+     * $more = further description (PICA 4801)
+     * $tmp = ELS-gif for Higliting ELS Links
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
     public function getOnlineHoldings()
     {
       $retVal = [];
@@ -1401,12 +1441,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     }
 
     /**
-      * Return an array of all Holding-Comments
-      * Field 980g, k
-      *
-      * @return array
-      *
-      */
+     * Return an array of all Holding-Comments
+     * Field 980g, k
+     *
+     * @param string $epn_str
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
     public function getHoldingComments($epn_str)
     {
       $retVal = [];
@@ -1433,8 +1475,6 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
                 ? $this->mainConfig->Hierarchy->driver : false;
         }
         return $hierarchyType;
-
-        return false;
     }
     
     /**
@@ -1490,7 +1530,14 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         
         return $modifiedString;
     }
-    
+
+    /**
+     * Get the group highlighting of the item.
+     *
+     * @param string $highlightString
+     *
+     * @return array
+     */
     protected function groupHighlighting($highlightString)
     {
         return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightString);
@@ -1524,6 +1571,11 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
         return $retval;
     }
 
+    /**
+     * Get reproduction of the item from 533.
+     *
+     * @return string
+     */
     public function getReproduction() {
         return $this->getFieldArray(
             '533',
@@ -1542,10 +1594,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getTOC()
     {
         // Return empty array if we have no table of contents:
-        $fields = array_merge(
-            $this->getMarcRecord()->getFields('501'),
-            $this->getMarcRecord()->getFields('505')
-        );
+        $fields = $this->getMarcRecord()->getFields('501|505', true);
         if (!$fields) {
             return [];
         }
@@ -1574,6 +1623,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Returns a string with all other titles of the work.
      *
      * @return string
+     *
      * @throws File_MARC_Exception
      */
     public function getOtherTitles() {
@@ -1630,6 +1680,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     /**
      * Returns an multidimensional array with all subjects.
      *
+     * @param bool $extended
      * @return array
      *
      * @throws File_MARC_Exception
@@ -1732,6 +1783,8 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
      * Also checks if the linked resources are available through the system.
      *
      * @return null|array
+     *
+     * @throws Exception
      */
     public function getAllRecordLinks() {
         $recordLinks = parent::getAllRecordLinks();
@@ -1751,6 +1804,7 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
             $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
 
             $availablePPNs = array();
+            /* @var $record SolrVZGRecord */
             foreach($result->getRecords() as $record) {
                 $availablePPNs[] = $record->getUniqueID();
             }

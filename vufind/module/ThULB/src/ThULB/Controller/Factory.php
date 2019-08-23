@@ -26,6 +26,7 @@
 
 namespace ThULB\Controller;
 use Zend\ServiceManager\ServiceManager;
+use Zend\Session\Container;
 
 /**
  * Factory to load our controllers.
@@ -45,7 +46,7 @@ class Factory
     {
         return new CartController(
             $sm,
-            new \Zend\Session\Container(
+            new Container(
                 'cart_followup',
                 $sm->get('VuFind\SessionManager')
             )

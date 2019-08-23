@@ -22,7 +22,6 @@ $fa-font-path: "../../bootstrap3/css/fonts";
 @import "../../bootstrap3/scss/components/similar-carousel";
 @import "../../bootstrap3/scss/components/sliders";
 
-
 /**
  * Notes
  * = As of 4.0, code styles aren't enforced, but
@@ -147,6 +146,7 @@ footer {
     padding-left: .5rem;
     padding-right: .5rem;
   }
+  .browse-list:last-child { padding-right: 0; }
 }
 // List item styling
 .browse-item {
@@ -288,7 +288,7 @@ footer {
 }
 
 .item-notes ul {
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 
 /* ------ Visualization View ------ */
@@ -301,7 +301,7 @@ footer {
   line-height: 12px;
   border: 1px solid #fff;
 }
-.node div {margin-top: 0px;}
+.node div {margin-top: 0;}
 .toplevel {border: 2px solid #000;}
 .node .label {
   position: absolute;
@@ -333,11 +333,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   h3 { font-size: 16px; }
 
   #moduletab li.show::after {
-    border: 0px none;
+    border: 0 none;
     content: "";
   }
   #moduletab li:hover::after {
-    border: 0px none;
+    border: 0 none;
   }
 }
 
@@ -373,18 +373,18 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .breadcrumb {
   padding: 5px 15px;
-  margin: 10px 0px;
+  margin: 10px 0;
   background-color: #fff;
 }
 
 .fullrecord_view {
   border: 1px solid #ccc;
-  padding: 0px 20px 20px 20px;
+  padding: 0 20px 20px 20px;
   position: relative;
 }
 
 .tab-content {
-  padding: 0px;
+  padding: 0;
   border: 1px solid #ddd;
 }
 
@@ -402,7 +402,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .pager li > a {
   border-radius: 5px;
-  margin: 0px 5px;
+  margin: 0 5px;
 }
 
 .table > td {
@@ -441,7 +441,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   background-color: $brand-primary;
   padding: 20px;
   margin-top: 20px;
-  display: table;
 }
 .tutorial_sub > h1 {
   font-weight: bold;
@@ -610,87 +609,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   content: "";
 }
 
-.facet-tree-container li {
-  list-style: none;
-  padding-left: 0;
-}
-
-.facet-tree-parent > i[data-toggle="collapse"]::after,
-.facet-tree-container ul.collapsed::after {
-  content: '';
-  float: none;
-}
-
-.facet-tree-parent > i[data-toggle="collapse"]::before {
-  content: '\25B2';
-  float: none;
-}
-
-.facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
-  content: '\25BC';
-  float: none;
-}
-
-ul.facet-tree-container,
-.facet-tree-container ul {
-  padding-left: 0;
-}
-
-div.facet-tree-parent > i {
-  padding: 0 5px;
-}
-
-.facet-tree-container ul li:nth-child(odd) {
-  background-color: #fefefe;
-}
-
-.facet-tree-container ul li:nth-child(even) {
-  background-color: #ffffff;
-}
-
-.child.text {
-  font-size: 11px;
-}
-
-.facet-group .facet-tree-container .facet {
-  display: flex;
-  width: 100%;
-  align-items: center;
-  justify-content: space-between;
-  padding: 5px 15px 5px 0;
-  border-bottom: none;
-}
-
-.facet-tree-container ul > li {
-  padding-left: 25px;
-}
-
-.facet-tree-container .badge {
-  flex-shrink: 0;
-  margin-left: 3px; }
-
-.facet-tree-container ul:last-child,
-.facet-tree-parent {
-  border-bottom: 1px solid #ddd;
-}
-
-.facet-group .facet-tree-container .collapse,
-.facet-group .facet-tree-container .collapsing,
-.facet-group .facet-tree-container .facet {
-  border-left: none;
-  border-right: none;
-}
-
-.facet-tree-container .active a{
-  padding-right: .65rem;
-  background-color: #568ebe !important;
-  color: #fff !important;
-}
-
-.facet-tree-parent:hover {
-  color: #333333;
-  background-color: #eeeeee;
-  text-decoration: none;
+.mainbody.right > h2 {
+  margin-top: 9px;
 }
 
 .facet-tree-container li {

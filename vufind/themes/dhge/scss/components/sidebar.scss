@@ -93,8 +93,8 @@
   a { color: #fff; }
 }
 .facet.active .badge,
-.jstree-node.active .badge,
-.jstree-node.active .badge .fa {
+.jstree-node.active > a .badge,
+.jstree-node.active > a .badge .fa {
   background-color: #fff;
   color: $brand-primary;
 }

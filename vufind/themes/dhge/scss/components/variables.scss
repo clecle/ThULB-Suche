@@ -15,9 +15,9 @@ $fa-font-path: "../../../../../../themes/bootstrap3/css/fonts" !default;
 
 // $navbar-height:                    50px !default;
 
-$border-radius-base:        0px !default;
-$border-radius-large:       0px !default;
-$border-radius-small:       0px !default;
+$border-radius-base:        4px !important;
+$border-radius-large:       6px !important;
+$border-radius-small:       3px !important;
 
 /* ------ COLORS ------ */
 
@@ -31,6 +31,7 @@ $border-radius-small:       0px !default;
 $brand-primary:             #007C28;
 $brand-secondary:           #a5c400;
 $brand-inverted:            #738a77;
+
 // $brand-success: #5cb85c !default;
 // $brand-info:    #5bc0de !default;
 // $brand-warning: #f0ad4e !default;

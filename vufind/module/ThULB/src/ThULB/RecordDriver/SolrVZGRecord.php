@@ -1840,4 +1840,20 @@ class SolrVZGRecord extends SolrMarc
 
         return $recordLinks;
     }
+
+    /**
+     * Checks if the record is part of the "Thüringen-Bibliographie"
+     *
+     * @return bool
+     */
+    public function isThuBibliography() {
+        $test = $this->getFieldArray('983', ['0', 'b']);
+
+        foreach($test as $field) {
+            if(preg_match('/^\(DE-601\).*<Thüringen>$/', $field)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

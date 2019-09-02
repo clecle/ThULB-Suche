@@ -34,6 +34,7 @@ namespace ThULB\RecordDriver;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
+use VuFind\RecordDriver\SolrMarc;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -49,7 +50,7 @@ use VuFind\RecordDriver\Response\PublicationDetails;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
 
-class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
+class SolrVZGRecord extends SolrMarc
 {
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
@@ -1708,5 +1709,21 @@ class SolrVZGRecord extends \VuFind\RecordDriver\SolrMarc
     public function getPPNLink() {
         return isset($this->fields['ppnlink']) && is_array($this->fields['ppnlink'])
             ? $this->fields['ppnlink'] : [];
+    }
+
+    /**
+     * Checks if the record is part of the "Thüringen-Bibliographie"
+     *
+     * @return bool
+     */
+    public function isThuBibliography() {
+        $test = $this->getFieldArray('983', ['0', 'b']);
+
+        foreach($test as $field) {
+            if(preg_match('/^\(DE-601\).*<Thüringen>$/', $field)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

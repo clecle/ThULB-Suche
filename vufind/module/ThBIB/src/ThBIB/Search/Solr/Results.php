@@ -109,7 +109,7 @@ class Results extends OriginalResults
         }
         unset($oldFacetList);
 
-        usort($groupFacetList, array($this, 'compareTBFacets'));
+        sort($groupFacetList);
 
         // create an array with parents and children
         $newFacetList = array();

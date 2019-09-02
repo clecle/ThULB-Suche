@@ -1719,7 +1719,7 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $subjects = array_values($subjects);
-        for($i = 0; $i < count($subjects); $i++) {
+        for($i = 0; $i < count ($subjects); $i++) {
             $subjects[$i] = array_values($subjects[$i]);
         }
         return $subjects;

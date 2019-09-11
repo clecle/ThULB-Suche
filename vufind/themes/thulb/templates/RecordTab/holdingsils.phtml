@@ -121,9 +121,8 @@
                   </div>
                 <? endif; ?>
 
-                <?php if(!empty($row['remotehref'])): ?>
-                  <?php $linkDescription = ($holding['location'] != "Remote") ? "See also" : 'Link'; ?>
-                  <dt><?=$this->transEsc($linkDescription)?>:</dt>
+                <?php if(!empty($row['remotehref']) && $holding['location'] != 'Remote'): ?>
+                  <dt><?=$this->transEsc('See also')?>:</dt>
                   <dd>
                     <a href="<?php echo $row['remotehref']; ?>"><?php echo $row['remotedomain']; ?></a>
                     <?php if(!empty($row['remotetitle'])):?>

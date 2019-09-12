@@ -189,7 +189,6 @@ class RecordDataFormatterFactory extends OriginalFactory
                 }
             ]
         );
-        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         return $spec->getArray();
     }
 }

@@ -622,3 +622,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   padding-left: 5px;
   margin-bottom: 5px;
 }
+
+dd > div.citations {
+  padding-top: .5rem;
+}

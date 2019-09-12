@@ -7,14 +7,11 @@
   $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 ?>
 
-<h3>
-    <?=$this->transEsc('location_Remote')?>
-</h3>
 <table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">
   <tr vocab="http://schema.org/" typeof="Offer">
     <td>
       <dl class="dl-horizontal">
-        <dt><?=$this->transEsc('Online Access')?>:</dt>
+        <dt><?=$this->transEsc('Link')?>:</dt>
         <dd>
           <? if (!empty($urls) || $openUrlActive): ?>
             <? foreach ($urls as $current): ?>
@@ -23,24 +20,20 @@
               </a>
               <br />
             <? endforeach; ?>
+            <? if($current['desc'] === $this->transEsc('get_citation')): ?>
+              <div class="item-notes">
+                  <?= $this->transEsc('explain_reference') ?>
+              </div>
+            <?php endif; ?>
+
             <? if ($openUrlActive): ?>
               <?=$openUrl->renderTemplate()?><br />
             <? endif; ?>
           <? endif; ?>
           <? if ($citesLink && $citesCount > 0) : ?>
-            <?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
+            <div class="citations"><?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?></div>
           <? endif; ?>
         </dd>
-        <? if($current['desc'] === $this->transEsc('get_citation')): ?>
-        <dt><?=$this->transEsc("Item Notes")?>:</dt>
-        <dd>
-          <div class="item-notes">
-            <ul>
-              <li><?= $this->transEsc('explain_reference') ?></li>
-            </ul>
-          </div>
-        </dd>
-        <?php endif; ?>
       </dl>
     </td>
   </tr>

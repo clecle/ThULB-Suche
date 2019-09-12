@@ -32,7 +32,7 @@ $this->layout()->ignoreHiddenFilterMemory = true;
         S C R O L L D A T A
     */ ?>
     <? if (isset($this->scrollData) && ($this->scrollData['previousRecord'] || $this->scrollData['nextRecord'])): ?>
-      <ul class="pager hidden-print pull-right" style="margin-bottom:0px;">
+      <ul class="pager hidden-print pull-right" style="margin-bottom:0;">
 
         <? if ($this->scrollData['previousRecord']): ?>
         <? if ($this->scrollData['firstRecord']): ?>

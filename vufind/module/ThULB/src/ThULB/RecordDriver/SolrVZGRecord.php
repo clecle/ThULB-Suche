@@ -743,10 +743,21 @@ class SolrVZGRecord extends SolrMarc
      * Get an array of all invalid ISBNs associated with the record (may be empty).
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getInvalidISBNs()
     {
-        return $this->getFieldArray('020', ['z'], false);
+        $fields = $this->getMarcRecord()->getFields('020');
+
+        $invalidISBNs = array();
+        foreach($fields as $field) {
+            if($field->getSubfield('z')) {
+                $invalidISBNs[] = $field->getSubfield('9')->getData();
+            }
+        }
+
+        return $invalidISBNs;
     }
 
     /**
@@ -890,7 +901,7 @@ class SolrVZGRecord extends SolrMarc
         
         // Eliminate all missing fields and surrounding content inside the
         // parentheses:
-        $format = preg_replace('/[^T\(\)&;]*F[^T\(\)&;]*/', '', $format);
+        $format = preg_replace('/[^T\()&;]*F[^T\(\)&;]*/', '', $format);
         // Remove all content in parentheses, that doesn't represent existing
         // Marc fields together with surrounding content
         $format = preg_replace('/[^T\(\)&;]*\([^T]*\)[^T\(\)&;]*/', '', $format);

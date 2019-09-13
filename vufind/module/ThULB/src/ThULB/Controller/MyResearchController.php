@@ -27,6 +27,9 @@
 
 namespace ThULB\Controller;
 use VuFind\Controller\MyResearchController as OriginalController;
+use VuFind\RecordDriver\AbstractBase;
+use Zend\Paginator\Adapter\ArrayAdapter;
+use Zend\Paginator\Paginator;
 
 
 /**
@@ -128,8 +131,8 @@ class MyResearchController extends OriginalController
 
         // Build paginator if needed:
         if ($limit > 0 && $limit < count($result)) {
-            $adapter = new \Zend\Paginator\Adapter\ArrayAdapter($result);
-            $paginator = new \Zend\Paginator\Paginator($adapter);
+            $adapter = new ArrayAdapter($result);
+            $paginator = new Paginator($adapter);
             $paginator->setItemCountPerPage($limit);
             $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
             $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
@@ -220,7 +223,7 @@ class MyResearchController extends OriginalController
     /**
      * Provide a link to the password change site of the ILS.
      *
-     * @return view
+     * @return mixed
      */
     public function changePasswordLinkAction()
     {
@@ -255,7 +258,7 @@ class MyResearchController extends OriginalController
      *
      * @param array $current Record information
      *
-     * @return \VuFind\RecordDriver\AbstractBase
+     * @return AbstractBase
      */
     protected function getDriverForILSRecord($current)
     {

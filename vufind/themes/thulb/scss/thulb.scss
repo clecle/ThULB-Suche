@@ -612,3 +612,17 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .mainbody.right > h2 {
   margin-top: 9px;
 }
+
+.sourceSummon table a.btn.btn-primary {
+  margin-bottom: 5px;
+}
+
+.sourceSummon table a.hint {
+  font-size: 16px;
+  padding-left: 5px;
+  margin-bottom: 5px;
+}
+
+dd > div.citations {
+  padding-top: .5rem;
+}

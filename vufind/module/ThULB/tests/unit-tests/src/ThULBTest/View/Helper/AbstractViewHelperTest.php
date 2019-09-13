@@ -102,6 +102,8 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
         $jsonString = trim($response->getBody());
         $jsonObject = json_decode($jsonString, true);
         $marcObject = new SolrVZGRecord($this->getMainConfig());
+        $marcObject->attachSearchService($this->getServiceManager()->get('VuFindSearch\Service'));
+
         
         if ($jsonObject['response']['numFound'] < 1) {
             $this->markTestIncomplete("No document found with ppn \"$ppn\"...");

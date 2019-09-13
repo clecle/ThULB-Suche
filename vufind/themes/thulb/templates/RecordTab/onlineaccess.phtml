@@ -1,0 +1,40 @@
+<?
+  $openUrl = $this->openUrl($this->tab->getRecordDriver(), 'record');
+  $openUrlActive = $openUrl->isActive();
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+  $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
+  $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
+?>
+
+<table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">
+  <tr vocab="http://schema.org/" typeof="Offer">
+    <td>
+      <dl class="dl-horizontal">
+        <dt><?=$this->transEsc('Link')?>:</dt>
+        <dd>
+          <? if (!empty($urls) || $openUrlActive): ?>
+            <? foreach ($urls as $current): ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" class="btn btn-primary">
+                  <?=$this->escapeHtml($current['desc'])?>
+              </a>
+              <br />
+            <? endforeach; ?>
+            <? if($current['desc'] === $this->transEsc('get_citation')): ?>
+              <div class="item-notes">
+                  <?= $this->transEsc('explain_reference') ?>
+              </div>
+            <?php endif; ?>
+
+            <? if ($openUrlActive): ?>
+              <?=$openUrl->renderTemplate()?><br />
+            <? endif; ?>
+          <? endif; ?>
+          <? if ($citesLink && $citesCount > 0) : ?>
+            <div class="citations"><?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?></div>
+          <? endif; ?>
+        </dd>
+      </dl>
+    </td>
+  </tr>
+</table>

@@ -26,6 +26,7 @@
 
 namespace ThULB\Search\Solr;
 
+use ThULB\Search\Results\SortedFacetsTrait;
 use VuFind\Search\Solr\Results as OriginalResults;
 
 /**
@@ -35,5 +36,5 @@ use VuFind\Search\Solr\Results as OriginalResults;
  */
 class Results extends OriginalResults
 {
-    use \ThULB\Search\Results\SortedFacetsTrait;
+    use SortedFacetsTrait;
 }

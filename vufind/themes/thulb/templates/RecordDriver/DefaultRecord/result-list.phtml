@@ -77,7 +77,11 @@
           <? if (!is_array($urls)) $urls = array();
             if(!$this->driver->isCollection()):
               foreach ($urls as $current): ?>
-                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext" target="new"><i class="fa fa-external-link" aria-hidden="true"></i> <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?></a><br/>
+                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext" target="new"><i class="fa fa-external-link" aria-hidden="true"></i> <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?></a>
+                <? if($current['desc'] === $this->transEsc('get_citation')): ?>
+                  <a class="hint" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" data-trigger="focus hover" title="<?= $this->transEsc('explain_reference') ?>"><i class="fa fa-question-circle"></i></a>
+                <? endif; ?>
+                <br/>
             <? endforeach; ?>
           <? endif; ?>
         <? endif; ?>

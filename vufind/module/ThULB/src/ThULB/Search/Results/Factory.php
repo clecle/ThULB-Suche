@@ -26,6 +26,7 @@
  */
 
 namespace ThULB\Search\Results;
+use VuFind\Search\Solr\SpellingProcessor;
 use Zend\ServiceManager\ServiceManager,
     ThULB\Search\Summon\Results as SummonResults,
     ThULB\Search\Solr\Results as SolrResults;
@@ -41,7 +42,7 @@ class Factory {
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return Summon
+     * @return SummonResults
      */
     public static function getSummon(ServiceManager $sm)
     {
@@ -56,7 +57,14 @@ class Factory {
                 $recordLoader
             );
     }
-    
+
+    /**
+     * Factory for Solr results object.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SolrResults
+     */
     public static function getSolr(ServiceManager $sm)
     {
         $params = $sm->get('VuFind\SearchParamsPluginManager')->get('Solr');
@@ -68,7 +76,7 @@ class Factory {
         $config = $sm->get('VuFind\Config')->get('config');
         $spellConfig = isset($config->Spelling) ? $config->Spelling : null;
         $solr->setSpellingProcessor(
-            new \VuFind\Search\Solr\SpellingProcessor($spellConfig)
+            new SpellingProcessor($spellConfig)
         );
         
         return $solr;

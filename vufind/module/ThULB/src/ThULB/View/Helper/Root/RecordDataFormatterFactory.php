@@ -45,6 +45,10 @@ class RecordDataFormatterFactory extends OriginalFactory
     /**
      * Create the helper.
      *
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param array|null         $options
+     *
      * @return RecordDataFormatter
      */
     public function __invoke(ContainerInterface $container, $requestedName,
@@ -146,7 +150,6 @@ class RecordDataFormatterFactory extends OriginalFactory
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
         );
-        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         $spec->setTemplateLine(
             'Related Items', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
         );

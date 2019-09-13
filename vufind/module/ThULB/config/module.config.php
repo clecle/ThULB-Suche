@@ -83,13 +83,11 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList',
                     'ThULB\RecordTab\OnlineAccess' => 'Zend\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList',
                     'onlineaccess' => 'ThULB\RecordTab\OnlineAccess'
                 ),
                 'invokables' => array(
@@ -120,13 +118,12 @@ $config = array(
                     'Similar' => null,
                     'ArticleCollectionList' => 'articlecl',
                     'NonArticleCollectionList' => 'nonarticlecl',
-                    'RelatedResources' => 'relatedcl',
                     'Description'   => null,
                     'Reviews' => null,
                     'Excerpt' => null,
                     'Details' => 'staffviewcombined'
                 ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList'  , 'RelatedResources'  )
+                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList')
             ),
             'VuFind\RecordDriver\Summon' => array(
                 'tabs' => array(

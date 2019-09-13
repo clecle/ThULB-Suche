@@ -1804,13 +1804,24 @@ class SolrVZGRecord extends SolrMarc
             return $recordLinks;
         }
 
+        // Display ISBN or ISSN (if existing) as text
+        foreach($recordLinks as $index => $recordLink) {
+            if(in_array($recordLink['link']['type'], ['isbn', 'issn'])) {
+                $recordLinks[$index]['value'] = strtoupper($recordLink['link']['type'])
+                    . " " . $recordLink['link']['value'];
+                $recordLinks[$index]['link'] = null;
+            }
+        }
+
+        // Get all linked PPNs
         $linkedPPNs = array();
         for($i = 0; $i < count($recordLinks); $i++) {
-            if(isset($recordLinks[$i]['link']['value'])) {
+            if(isset($recordLinks[$i]['link']['value']) && $recordLinks[$i]['link']['type'] == 'bib') {
                 $linkedPPNs[] = $recordLinks[$i]['link']['value'];
             }
         }
 
+        // Check if the PPNs are available in ThULB
         if(count($linkedPPNs) > 0) {
             $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
 

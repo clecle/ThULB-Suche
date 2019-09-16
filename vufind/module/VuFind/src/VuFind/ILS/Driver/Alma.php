@@ -134,8 +134,8 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
 
         try {
             // Set API key if it is not already available in the GET params
-            if (!isset($paramsGet['apiKey'])) {
-                $paramsGet['apiKey'] = $this->apiKey;
+            if (!isset($paramsGet['apikey'])) {
+                $paramsGet['apikey'] = $this->apiKey;
             }
 
             // Create the API URL
@@ -465,7 +465,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
     {
 
         // Get config for creating new Alma users from Alma.ini
-        $newUserConfig = $this->config['NewUser'];
+        $newUserConfig = $this->config['NewUser'] ?? [];
 
         // Check if config params are all set
         $configParams = [
@@ -473,24 +473,19 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             'accountType', 'status', 'emailType', 'idType'
         ];
         foreach ($configParams as $configParam) {
-            if (!isset($newUserConfig[$configParam])
-                || empty(trim($newUserConfig[$configParam]))
-            ) {
+            if (empty(trim($newUserConfig[$configParam] ?? ''))) {
                 $errorMessage = 'Configuration "' . $configParam . '" is not set ' .
-                                'in Alma.ini in the [NewUser] section!';
-                error_log('[ALMA]: ' . $errorMessage);
+                                'in Alma ini in the [NewUser] section!';
+                $this->logError($errorMessage);
                 throw new \VuFind\Exception\Auth($errorMessage);
             }
         }
 
         // Calculate expiry date based on config in Alma.ini
-        $dateNow = new \DateTime('now');
-        $expiryDate = null;
-        if (isset($newUserConfig['expiryDate'])
-            && !empty(trim($newUserConfig['expiryDate']))
-        ) {
+        $expiryDate = new \DateTime('now');
+        if (!empty(trim($newUserConfig['expiryDate'] ?? ''))) {
             try {
-                $expiryDate = $dateNow->add(
+                $expiryDate->add(
                     new \DateInterval($newUserConfig['expiryDate'])
                 );
             } catch (\Exception $exception) {
@@ -500,19 +495,15 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
                 throw new \VuFind\Exception\Auth($errorMessage);
             }
         } else {
-            $expiryDate = $dateNow->add(new \DateInterval('P1Y'));
+            $expiryDate->add(new \DateInterval('P1Y'));
         }
-        $expiryDateXml = ($expiryDate != null)
-                 ? '<expiry_date>' . $expiryDate->format('Y-m-d') . 'Z</expiry_date>'
-                 : '';
 
         // Calculate purge date based on config in Alma.ini
         $purgeDate = null;
-        if (isset($newUserConfig['purgeDate'])
-            && !empty(trim($newUserConfig['purgeDate']))
-        ) {
+        if (!empty(trim($newUserConfig['purgeDate'] ?? ''))) {
             try {
-                $purgeDate = $dateNow->add(
+                $purgeDate = new \DateTime('now');
+                $purgeDate->add(
                     new \DateInterval($newUserConfig['purgeDate'])
                 );
             } catch (\Exception $exception) {
@@ -522,45 +513,40 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
                 throw new \VuFind\Exception\Auth($errorMessage);
             }
         }
-        $purgeDateXml = ($purgeDate != null)
-                    ? '<purge_date>' . $purgeDate->format('Y-m-d') . 'Z</purge_date>'
-                    : '';
 
         // Create user XML for Alma API
-        $userXml = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        . '<user>'
-        . '<record_type>' . $this->config['NewUser']['recordType'] . '</record_type>'
-        . '<first_name>' . $formParams['firstname'] . '</first_name>'
-        . '<last_name>' . $formParams['lastname'] . '</last_name>'
-        . '<user_group>' . $this->config['NewUser']['userGroup'] . '</user_group>'
-        . '<preferred_language>' . $this->config['NewUser']['preferredLanguage'] .
-          '</preferred_language>'
-        . $expiryDateXml
-        . $purgeDateXml
-        . '<account_type>' . $this->config['NewUser']['accountType'] .
-          '</account_type>'
-        . '<status>' . $this->config['NewUser']['status'] . '</status>'
-        . '<contact_info>'
-        . '<emails>'
-        . '<email preferred="true">'
-        . '<email_address>' . $formParams['email'] . '</email_address>'
-        . '<email_types>'
-        . '<email_type>' . $this->config['NewUser']['emailType'] . '</email_type>'
-        . '</email_types>'
-        . '</email>'
-        . '</emails>'
-        . '</contact_info>'
-        . '<user_identifiers>'
-        . '<user_identifier>'
-        . '<id_type>' . $this->config['NewUser']['idType'] . '</id_type>'
-        . '<value>' . $formParams['username'] . '</value>'
-        . '</user_identifier>'
-        . '</user_identifiers>'
-        . '</user>';
+        $xml = simplexml_load_string(
+            '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
+            . "\n\n<user/>"
+        );
+        $xml->addChild('record_type', $newUserConfig['recordType']);
+        $xml->addChild('first_name', $formParams['firstname']);
+        $xml->addChild('last_name', $formParams['lastname']);
+        $xml->addChild('user_group', $newUserConfig['userGroup']);
+        $xml->addChild(
+            'preferred_language', $newUserConfig['preferredLanguage']
+        );
+        $xml->addChild('account_type', $newUserConfig['accountType']);
+        $xml->addChild('status', $newUserConfig['status']);
+        $xml->addChild('expiry_date', $expiryDate->format('Y-m-d') . 'Z');
+        if (null !== $purgeDate) {
+            $xml->addChild('purge_date', $purgeDate->format('Y-m-d') . 'Z');
+        }
 
-        // Remove whitespaces from XML
-        $userXml = preg_replace("/\n/i", "", $userXml);
-        $userXml = preg_replace("/>\s*</i", "><", $userXml);
+        $contactInfo = $xml->addChild('contact_info');
+        $emails = $contactInfo->addChild('emails');
+        $email = $emails->addChild('email');
+        $email->addAttribute('preferred', 'true');
+        $email->addChild('email_address', $formParams['email']);
+        $emailTypes = $email->addChild('email_types');
+        $emailTypes->addChild('email_type', $newUserConfig['emailType']);
+
+        $userIdentifiers = $xml->addChild('user_identifiers');
+        $userIdentifier = $userIdentifiers->addChild('user_identifier');
+        $userIdentifier->addChild('id_type', $newUserConfig['idType']);
+        $userIdentifier->addChild('value', $formParams['username']);
+
+        $userXml = $xml->asXML();
 
         // Create user in Alma
         $almaAnswer = $this->makeRequest(
@@ -693,14 +679,18 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         );
         $fineList = [];
         foreach ($xml as $fee) {
+            $created = (string)$fee->creation_time;
             $checkout = (string)$fee->status_time;
             $fineList[] = [
-                "title"   => (string)$fee->type,
-                "amount"   => $fee->original_amount * 100,
-                "balance"  => $fee->balance * 100,
-                "checkout" => $this->dateConverter->convert(
-                    'Y-m-d H:i',
-                    'm-d-Y',
+                "title"   => (string)($fee->title ?? ''),
+                "amount"   => round(floatval($fee->original_amount) * 100),
+                "balance"  => round(floatval($fee->balance) * 100),
+                "createdate" => $this->dateConverter->convertToDisplayDateAndTime(
+                    'Y-m-d\TH:i:s.???T',
+                    $created
+                ),
+                "checkout" => $this->dateConverter->convertToDisplayDateAndTime(
+                    'Y-m-d\TH:i:s.???T',
                     $checkout
                 ),
                 "fine"     => (string)$fee->type['desc']
@@ -941,13 +931,13 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
      * Get transactions of the current patron.
      *
      * @param array $patron The patron array from patronLogin
+     * @param array $params Parameters
      *
-     * @return string[]    Transaction information as array or empty array if the
-     *                  patron has no transactions.
+     * @return array Transaction information as array.
      *
      * @author Michael Birkner
      */
-    public function getMyTransactions($patron)
+    public function getMyTransactions($patron, $params = [])
     {
         // Defining the return value
         $returnArray = [];
@@ -958,13 +948,25 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         // Create a timestamp for calculating the due / overdue status
         $nowTS = mktime();
 
-        // Create parameters for the API call
-        // INFO: "order_by" does not seem to work as expected!
-        //       This is an Alma API problem.
+        $sort = explode(
+            ' ', !empty($params['sort']) ? $params['sort'] : 'checkout desc', 2
+        );
+        if ($sort[0] == 'checkout') {
+            $sortKey = 'loan_date';
+        } elseif ($sort[0] == 'title') {
+            $sortKey = 'title';
+        } else {
+            $sortKey = 'due_date';
+        }
+        $direction = (isset($sort[1]) && 'desc' === $sort[1]) ? 'DESC' : 'ASC';
+
+        $pageSize = $params['limit'] ?? 50;
         $params = [
-            'limit' => '100',
-            'order_by' => 'due_date',
-            'direction' => 'DESC',
+            'limit' => $pageSize,
+            'offset' => isset($params['page'])
+                ? ($params['page'] - 1) * $pageSize : 0,
+            'order_by' => $sortKey,
+            'direction' => $direction,
             'expand' => 'renewable'
         ];
 
@@ -975,7 +977,9 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         );
 
         // If there is an API result, process it
+        $totalCount = 0;
         if ($apiResult) {
+            $totalCount = $apiResult->attributes()->total_record_count;
             // Iterate over all item loans
             foreach ($apiResult->item_loan as $itemLoan) {
                 $loan['duedate'] = $this->parseDate(
@@ -1020,7 +1024,10 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             }
         }
 
-        return $returnArray;
+        return [
+            'count' => $totalCount,
+            'records' => $returnArray
+        ];
     }
 
     /**
@@ -1219,6 +1226,18 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
                     ?? 10
                     ?: 10;
             }
+        } elseif ('getMyTransactions' === $function) {
+            $functionConfig = [
+                'max_results' => 100,
+                'sort' => [
+                    'checkout desc' => 'sort_checkout_date_desc',
+                    'checkout asc' => 'sort_checkout_date_asc',
+                    'due desc' => 'sort_due_date_desc',
+                    'due asc' => 'sort_due_date_asc',
+                    'title asc' => 'sort_title'
+                ],
+                'default_sort' => 'due asc'
+            ];
         } else {
             $functionConfig = false;
         }
@@ -1280,7 +1299,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             // Create HTTP client with Alma API URL for title level requests
             $client = $this->httpService->createClient(
                 $this->baseUrl . '/bibs/' . urlencode($mmsId)
-                . '/requests?apiKey=' . urlencode($this->apiKey)
+                . '/requests?apikey=' . urlencode($this->apiKey)
                 . '&user_id=' . urlencode($patronCatUsername)
                 . '&format=json'
             );
@@ -1290,7 +1309,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
                 $this->baseUrl . '/bibs/' . urlencode($mmsId)
                 . '/holdings/' . urlencode($holId)
                 . '/items/' . urlencode($itmId)
-                . '/requests?apiKey=' . urlencode($this->apiKey)
+                . '/requests?apikey=' . urlencode($this->apiKey)
                 . '&user_id=' . urlencode($patronCatUsername)
                 . '&format=json'
             );
@@ -1330,6 +1349,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         return [
             'success' => false,
             'sysMessage' => $error->errorList->error[0]->errorMessage
+                ?? 'hold_error_fail'
         ];
     }
 
@@ -1418,8 +1438,8 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
     {
         // Remove trailing Z from end of date
         // e.g. from Alma we get dates like 2012-07-13Z without time, which is wrong)
-        if (strpos($date, 'Z', (strlen($date) - 1))) {
-            $date = preg_replace('/Z{1}$/', '', $date);
+        if (strpos($date, 'T') === false && substr($date, -1) === 'Z') {
+            $date = substr($date, 0, -1);
         }
 
         $compactDate = "/^[0-9]{8}$/"; // e. g. 20120725
@@ -1427,7 +1447,7 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
         $euro = "/^[0-9]+\/[0-9]+\/[0-9]{4}$/"; // e. g. 13/7/2012
         $euroPad = "/^[0-9]{1,2}\/[0-9]{1,2}\/[0-9]{2,4}$/"; // e. g. 13/07/2012
         $datestamp = "/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/"; // e. g. 2012-07-13
-        $timestamp = "/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}$/";
+        $timestamp = "/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}Z$/";
         // e. g. 2017-07-09T18:00:00
 
         if ($date == null || $date == '') {
@@ -1442,11 +1462,11 @@ class Alma extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterface
             return $this->dateConverter->convertToDisplayDate('d/m/y', $date);
         } elseif (preg_match($datestamp, $date) === 1) {
             return $this->dateConverter->convertToDisplayDate('Y-m-d', $date);
-        } elseif (preg_match($timestamp, substr($date, 0, 19)) === 1) {
+        } elseif (preg_match($timestamp, $date) === 1) {
             if ($withTime) {
                 return $this->dateConverter->convertToDisplayDateAndTime(
-                    'Y-m-d\TH:i:s',
-                    substr($date, 0, 19)
+                    'Y-m-d\TH:i:sT',
+                    $date
                 );
             } else {
                 return $this->dateConverter->convertToDisplayDate(

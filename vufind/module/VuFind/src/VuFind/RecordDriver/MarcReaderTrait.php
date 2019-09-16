@@ -93,7 +93,7 @@ trait MarcReaderTrait
      * @param bool   $concat    Should we concatenate subfields?
      * @param string $separator Separator string (used only when $concat === true)
      *
-     * @return array|string
+     * @return array
      */
     protected function getFieldArray($field, $subfields = null, $concat = true,
         $separator = ' '

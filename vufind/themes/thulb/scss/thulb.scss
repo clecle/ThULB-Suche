@@ -570,6 +570,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .center-text {
   text-align: center;
+  justify-content: center;
 }
 
 .alert-info .btn-primary {
@@ -625,4 +626,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 dd > div.citations {
   padding-top: .5rem;
+}
+
+#message_under_search_box {
+  width: 100%;
 }

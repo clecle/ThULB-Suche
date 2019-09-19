@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 use VuFind\Controller\MyResearchController as OriginalController;
 use VuFind\RecordDriver\AbstractBase;
+use Zend\Mvc\MvcEvent;
 use Zend\Paginator\Adapter\ArrayAdapter;
 use Zend\Paginator\Paginator;
 
@@ -265,5 +266,28 @@ class MyResearchController extends OriginalController
         $current['id'] = str_replace(self::ID_URI_PREFIX, '', $current['id']);
         
         return parent::getDriverForILSRecord($current);
+    }
+
+    /**
+     * Execute the request.
+     * Logout logged in users if the ILS Driver switched to an offline mode and redirect to login screen.
+     *
+     * @param  MvcEvent $event
+     * @return mixed
+     */
+    public function onDispatch(MvcEvent $event)
+    {
+        $routeName = 'myresearch-userlogin';
+        if($this->getILS()->getOfflineMode()
+                && strtolower($event->getRouteMatch()->getMatchedRouteName()) !== $routeName
+                && $this->getAuthManager()->isLoggedIn()) {
+
+            $event->getRouteMatch()->setParam('action', 'logout');
+            parent::onDispatch($event);
+
+            return $this->redirect()->toRoute($routeName);
+        }
+
+        return parent::onDispatch($event);
     }
 }

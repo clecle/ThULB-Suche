@@ -273,10 +273,10 @@ class SolrVZGRecord extends SolrMarc
     public function getThuBiblioClassification()
     {
         $fields = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => '31']);
-        
+
         return $fields;
     }
-    
+
     /**
      * extract ZDB Number from 035 $a
      * 
@@ -1709,21 +1709,5 @@ class SolrVZGRecord extends SolrMarc
     public function getPPNLink() {
         return isset($this->fields['ppnlink']) && is_array($this->fields['ppnlink'])
             ? $this->fields['ppnlink'] : [];
-    }
-
-    /**
-     * Checks if the record is part of the "Thüringen-Bibliographie"
-     *
-     * @return bool
-     */
-    public function isThuBibliography() {
-        $test = $this->getFieldArray('983', ['0', 'b']);
-
-        foreach($test as $field) {
-            if(preg_match('/^\(DE-601\).*<Thüringen>$/', $field)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

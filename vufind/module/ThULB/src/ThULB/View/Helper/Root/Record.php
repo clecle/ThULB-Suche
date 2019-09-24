@@ -91,16 +91,6 @@ class Record extends OriginalRecord
     }
 
     /**
-     * Is this Record part of the thuringia bibliography?
-     *
-     * @return string
-     */
-    public function getThuringiaBibliography()
-    {
-        return $this->renderTemplate('isThuBibliography.phtml');
-    }
-
-    /**
      * Recursively locate and render a template that matches the provided class
      * name (or one of its parent classes); throw an exception if no match is
      * found.

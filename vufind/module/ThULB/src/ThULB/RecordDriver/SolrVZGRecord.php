@@ -1345,12 +1345,33 @@ class SolrVZGRecord extends SolrMarc
      */
     public function isNewsPaper()
     {
-      $leader = $this->getMarcRecord()->getLeader();
-      if ( strtoupper($leader[7] ) == "S" ) {
-        return true;
-      }
+        $leader = $this->getMarcRecord()->getLeader();
+        if ( strtoupper($leader[7] ) == "S" ) {
+            return true;
+        }
 
-      return false;
+        return false;
+    }
+
+    /**
+     * Check if the record is of the given format.
+     *
+     * @param string $format Format to test for
+     * @param bool   $pcre if true, then match as a regular expression
+     *
+     * @return bool
+     */
+    public function isFormat($format = null, $pcre = null) {
+        $formats = $this->getFormats();
+        if(is_array($formats) && count($formats) > 0) {
+            if (($pcre && preg_match("/$format/", $formats[0]))
+                || (!$pcre && $formats[0] === $format)
+            ) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

@@ -90,7 +90,7 @@ class SolrVZGRecord extends SolrMarc
     protected $title;
     
     /**
-     * The title of the record with highlighing markers
+     * The title of the record with highlighting markers
      * 
      * @var string
      */
@@ -219,6 +219,8 @@ class SolrVZGRecord extends SolrMarc
      * journal).
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getContainerTitle()
     {
@@ -231,6 +233,8 @@ class SolrVZGRecord extends SolrMarc
      * record (i.e. volume, year, issue, pages).
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getContainerReference()
     {
@@ -308,6 +312,8 @@ class SolrVZGRecord extends SolrMarc
      * followed by ZDB Number
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getZDBID() {
         $id_nums = $this->getFieldArray('035', ['a']);
@@ -361,6 +367,8 @@ class SolrVZGRecord extends SolrMarc
      * not repeatable
      *
      * @return array
+     *
+     * @throws File_MARC_Exception
      */
     public function getFingerprint()
     {
@@ -368,6 +376,14 @@ class SolrVZGRecord extends SolrMarc
     }
     
     // Bibliographic citation from Marc field 510
+
+    /**
+     * Get bibliographic citations from Marc field 510
+     *
+     * @return string
+     *
+     * @throws File_MARC_Exception
+     */
     public function getBibliographicCitation()
     {
         return implode(' ; ', $this->getFieldArray('510', ['a'], false));
@@ -405,6 +421,8 @@ class SolrVZGRecord extends SolrMarc
      * Get the scale of a map.
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getCartographicScale()
     {
@@ -457,6 +475,8 @@ class SolrVZGRecord extends SolrMarc
      * Get the dissertation notes of the item from 502.
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getDissertationNote()
     {
@@ -468,6 +488,8 @@ class SolrVZGRecord extends SolrMarc
      * Get the part info of the item from 245.
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getPartInfo()
     {
@@ -520,7 +542,6 @@ class SolrVZGRecord extends SolrMarc
     public function getSecondaryAuthors()
     {
         $secondaryAuthors = [];
-        $authorData = [];
         $relevantFields = [
                 '700' => ['a', 'b', 'c', 'd', 'g'],
                 '710' => ['a', 'b', 'c', 'd', 'g', 'n']
@@ -572,7 +593,6 @@ class SolrVZGRecord extends SolrMarc
         foreach (['700', '710'] as $fieldNumber) {
             $fields = $this->getMarcRecord()->getFields($fieldNumber);
             foreach ($fields as $field) {
-                $fieldData = [];
                 foreach ($field->getSubfields() as $subfield) {
                     if ($subfield->getCode() === '4') {
                         $roles[] = $subfield->getData();
@@ -653,8 +673,8 @@ class SolrVZGRecord extends SolrMarc
 
 
     /**
-     * Get all record links related to the current record, that are precedings or
-     * succeding titles respectively of the current record. Each link is returned
+     * Get all record links related to the current record, that are preceding or
+     * succeeding titles respectively of the current record. Each link is returned
      * as array.
      * Format:
      * array(
@@ -669,6 +689,7 @@ class SolrVZGRecord extends SolrMarc
      * @return null|array
      *
      * @throws File_MARC_Exception
+     * @throws Exception
      */
     public function getLineageRecordLinks()
     {
@@ -1159,8 +1180,6 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getSeries()
     {
-        $matches = [];
-
         $primaryFields = []; // not used
         $matches = $this->getSeriesFromMARC($primaryFields);
         
@@ -1539,16 +1558,16 @@ class SolrVZGRecord extends SolrMarc
             uksort($replacements, $keySorter);
 
             // use a recursive function to make replacements
-            $replace = function ($subject, $searches, $highlightings) use (&$replace) {
+            $replace = function ($subject, $searches, $highlights) use (&$replace) {
                 $searchString = array_pop($searches);
                 if (!$searchString) {
                     return $subject;
                 }
-                $highlightString = array_pop($highlightings);
+                $highlightString = array_pop($highlights);
                 $parts = explode($searchString, $subject);
                 if (is_array($parts) && $parts) {
                     foreach ($parts as $i => $part) {
-                        $parts[$i] = trim($replace(' ' . $part . ' ', $searches, $highlightings));
+                        $parts[$i] = trim($replace(' ' . $part . ' ', $searches, $highlights));
                     }
                 
                     return implode($highlightString, $parts);
@@ -1588,11 +1607,11 @@ class SolrVZGRecord extends SolrMarc
         $dates = $this->getHumanReadablePublicationDates();
 
         $i = 0;
-        $retval = [];
+        $retVal = [];
         while (isset($places[$i]) || isset($names[$i]) || isset($dates[$i])) {
             // Build objects to represent each set of data; these will
             // transform seamlessly into strings in the view layer.
-            $retval[] = new PublicationDetails(
+            $retVal[] = new PublicationDetails(
                 isset($places[$i]) ? $places[$i] : '',
                 isset($names[$i]) ? $names[$i] : '',
                 isset($dates[$i]) ? $dates[$i] : ''
@@ -1600,13 +1619,15 @@ class SolrVZGRecord extends SolrMarc
             $i++;
         }
 
-        return $retval;
+        return $retVal;
     }
 
     /**
      * Get reproduction of the item from 533.
      *
      * @return string
+     *
+     * @throws File_MARC_Exception
      */
     public function getReproduction() {
         return $this->getFieldArray(

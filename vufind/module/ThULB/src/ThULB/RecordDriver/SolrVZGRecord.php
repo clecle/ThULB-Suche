@@ -716,12 +716,69 @@ class SolrVZGRecord extends SolrMarc
                     // Get data for field
                     $tmp = $this->getFieldData($field);
                     if (is_array($tmp)) {
+                        if ($subfieldA = $field->getSubfield('a')) {
+                            $tmp['value'] .= ' ' . trim($subfieldA->getData());
+                        }
                         $retVal[] = $tmp;
                     }
                 }
             }
         }
-        return empty($retVal) ? null : $retVal;
+
+        return empty($retVal) ? null : $this->checkListForAvailability($retVal);
+    }
+
+    /**
+     * Checks if the given records are available in the library.
+     * The link field of records with PPNs not available in the library will be set to NULL.
+     * The given list needs the following format:
+     * array(
+     *     array(
+     *         'title' => label_for_title
+     *         'value' => link_name
+     *         'link'  => link_URI
+     *     ),
+     *     ...
+     * )
+     *
+     * @param $recordLinkList
+     *
+     * @return array The list with unavailable links set to NULL.
+     *
+     * @throws Exception
+     */
+    protected function checkListForAvailability($recordLinkList) {
+        if(!is_array($recordLinkList)) {
+            return $recordLinkList;
+        }
+
+        // Get all linked PPNs
+        $linkedPPNs = array();
+        for($i = 0; $i < count($recordLinkList); $i++) {
+            if(isset($recordLinkList[$i]['link']['value']) && $recordLinkList[$i]['link']['type'] == 'bib') {
+                $linkedPPNs[] = $recordLinkList[$i]['link']['value'];
+            }
+        }
+
+        // Check if the PPNs are available in ThULB
+        if(count($linkedPPNs) > 0) {
+            $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
+
+            $availablePPNs = array();
+            /* @var $record SolrVZGRecord */
+            foreach($result->getRecords() as $record) {
+                $availablePPNs[] = $record->getUniqueID();
+            }
+
+            // Set links to NULL if not available
+            foreach($recordLinkList as $index => $recordLink) {
+                if (!in_array($recordLink['link']['value'], $availablePPNs)) {
+                    $recordLinkList[$index]['link'] = null;
+                }
+            }
+        }
+
+        return $recordLinkList;
     }
 
     /**
@@ -1816,7 +1873,7 @@ class SolrVZGRecord extends SolrMarc
         $ppnLinks = array();
 
         /* @var $fields File_MARC_Data_Field[] */
-        $fields = $this->getMarcRecord()->getFields('760|762|765|767|770|772|773|774|775|776|777|780|787', true);
+        $fields = $this->getMarcRecord()->getFields('760|762|765|767|770|772|774|775|776|777|780|787', true);
         foreach ($fields as $field) {
             $links = $field->getSubfields('w');
             if(is_array($links) && count($links) > 0) {
@@ -1855,30 +1912,7 @@ class SolrVZGRecord extends SolrMarc
             }
         }
 
-        // Get all linked PPNs
-        $linkedPPNs = array();
-        for($i = 0; $i < count($recordLinks); $i++) {
-            if(isset($recordLinks[$i]['link']['value']) && $recordLinks[$i]['link']['type'] == 'bib') {
-                $linkedPPNs[] = $recordLinks[$i]['link']['value'];
-            }
-        }
-
-        // Check if the PPNs are available in ThULB
-        if(count($linkedPPNs) > 0) {
-            $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
-
-            $availablePPNs = array();
-            /* @var $record SolrVZGRecord */
-            foreach($result->getRecords() as $record) {
-                $availablePPNs[] = $record->getUniqueID();
-            }
-
-            foreach($recordLinks as $index => $recordLink) {
-                if (!in_array($recordLink['link']['value'], $availablePPNs)) {
-                    $recordLinks[$index]['link'] = null;
-                }
-            }
-        }
+        $recordLinks = $this->checkListForAvailability($recordLinks);
 
         return $recordLinks;
     }

@@ -285,8 +285,15 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getBasicClassification()
     {
-        $fields = $this->getConditionalFieldArray('084', ['a'], true, ' ', ['2' => 'bkl']);
-        
+        $fields = array();
+        foreach($this->getMarcRecord()->getFields('936') as $dataField) {
+            if($dataField->getIndicator(1) == 'b' && $dataField->getIndicator(2) == 'k') {
+                $fields[] = array(
+                    'bcl' => $dataField->getSubfield('a')->getData(),
+                    'desc' => $dataField->getSubfield('j')->getData() ?: null
+                );
+            }
+        }
         return $fields;
     }
 

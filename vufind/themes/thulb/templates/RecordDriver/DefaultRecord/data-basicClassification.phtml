@@ -4,7 +4,8 @@
     <? foreach ($bcl as $class): ?>
         <?= ($i++ > 0) ? '<br />' : '' ?>
         <? if ($class['desc']): ?>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['desc'])?>%22&amp;type=bklname"><?=$class['bcl']?> <?=htmlspecialchars($class['desc'])?></a>
+            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>
+            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['desc'])?>%22&amp;type=bklname"><?=htmlspecialchars($class['desc'])?></a>
         <? else: ?>
             <?=$class['bcl']?>
         <? endif; ?>

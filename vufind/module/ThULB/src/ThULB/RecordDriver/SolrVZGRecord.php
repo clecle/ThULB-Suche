@@ -290,7 +290,8 @@ class SolrVZGRecord extends SolrMarc
             if($dataField->getIndicator(1) == 'b' && $dataField->getIndicator(2) == 'k') {
                 $fields[] = array(
                     'bcl' => $dataField->getSubfield('a')->getData(),
-                    'desc' => $dataField->getSubfield('j')->getData() ?: null
+                    /*'desc' => $dataField->getSubfields('j')->getData() ?: null*/
+                    'desc' => $dataField->getSubfields('j') ?: null
                 );
             }
         }

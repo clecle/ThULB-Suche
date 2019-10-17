@@ -4,8 +4,19 @@
     <? foreach ($bcl as $class): ?>
         <?= ($i++ > 0) ? '<br />' : '' ?>
         <? if ($class['desc']): ?>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['desc'])?>%22&amp;type=bklname"><?=htmlspecialchars($class['desc'])?></a>
+            <? $bklname = ""; ?>
+            <? $j = 0; ?>
+            <? $c = count($class['desc']); ?>
+            <? for ($j = 0; $j < $c; $j++): ?>
+                <? $bklsubname = $class['desc'][$j]->getData(); ?>
+                <? if ($j == 0) {
+                    $bklname = $bklsubname;
+                } else  {
+                    $bklname = $bklname . " > " . $bklsubname;
+                }?>
+            <? endfor; ?>
+                <!--<a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>-->
+                <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($bklsubname)?>%22&amp;type=bklname"><?=$class['bcl']?> <?=htmlspecialchars($bklname)?></a>
         <? else: ?>
             <?=$class['bcl']?>
         <? endif; ?>

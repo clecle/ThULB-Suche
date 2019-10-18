@@ -277,21 +277,36 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Get basic classification numbers of the record.
+     * Get basic classification numbers of the record. If available descriptions are returned as
+     * an array with the values of the $j subfields, else description is null.
+     *
+     * Format:
+     * array(
+     *     'bcl' => classification_number
+     *     'desc'  => array(
+     *         description_string_1,
+     *         description_string_2,
+     *         description_string_3,
+     *         ...
+     *     )
+     * )
      *
      * @return array
      *
      * @throws File_MARC_Exception
      */
-    public function getBasicClassification()
-    {
+    public function getBasicClassification() {
         $fields = array();
         foreach($this->getMarcRecord()->getFields('936') as $dataField) {
             if($dataField->getIndicator(1) == 'b' && $dataField->getIndicator(2) == 'k') {
+                $descriptions = array();
+                foreach($dataField->getSubfields('j') as $subField) {
+                    $descriptions[] = $subField->getData();
+                }
                 $fields[] = array(
                     'bcl' => $dataField->getSubfield('a')->getData(),
                     /*'desc' => $dataField->getSubfields('j')->getData() ?: null*/
-                    'desc' => $dataField->getSubfields('j') ?: null
+                    'descriptions' => count($descriptions) ? $descriptions : null
                 );
             }
         }

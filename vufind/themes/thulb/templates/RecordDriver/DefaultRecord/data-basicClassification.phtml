@@ -15,10 +15,9 @@
                     $bklname = $bklname . " > " . $bklsubname;
                 }?>
             <? endfor; ?>
-                <!--<a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>-->
                 <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($bklsubname)?>%22&amp;type=bklname"><?=$class['bcl']?> <?=htmlspecialchars($bklname)?></a>
         <? else: ?>
-            <?=$class['bcl']?>
+            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>
         <? endif; ?>
     <? endforeach; ?>
 <? endif; ?>

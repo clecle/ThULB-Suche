@@ -1,16 +1,10 @@
-<? $bcl = $this->driver->tryMethod('getBasicClassification'); ?>
+<? $classification = $this->driver->tryMethod('getBasicClassification'); ?>
 <? $i = 0; ?>
-<? if ($bcl): ?>
-    <? foreach ($bcl as $class): ?>
-        <?= ($i++ > 0) ? '<br />' : '' ?>
-        <? if ($class['descriptions']): ?>
-            <? $bklName = implode(' > ', $class['descriptions']); ?>
-            <? $bklSubName = end($class['descriptions']); ?>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($bklSubName)?>%22&amp;type=bklname">
-                <?=$class['bcl']?> <?=htmlspecialchars($bklName)?>
-            </a>
-        <? else: ?>
-            <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bcl'])?>%22&amp;type=bklnumber"><?=$class['bcl']?></a>
-        <? endif; ?>
+<? if ($classification): ?>
+    <? foreach ($classification as $class): ?>
+      <?= ($i++ > 0) ? '<br />' : '' ?>
+      <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bklnumber'])?>%22&amp;type=bklnumber">
+          <?= $class['bklnumber'] . ' ' . implode(' > ', $class['bklname']); ?>
+      </a>
     <? endforeach; ?>
 <? endif; ?>

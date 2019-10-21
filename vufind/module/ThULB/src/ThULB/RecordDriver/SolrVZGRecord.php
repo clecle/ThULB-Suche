@@ -282,8 +282,8 @@ class SolrVZGRecord extends SolrMarc
      *
      * Format:
      * array(
-     *     'bcl' => classification_number
-     *     'desc'  => array(
+     *     'bklnumber' => classification_number
+     *     'bklname'  => array(
      *         description_string_1,
      *         description_string_2,
      *         description_string_3,
@@ -304,9 +304,8 @@ class SolrVZGRecord extends SolrMarc
                     $descriptions[] = $subField->getData();
                 }
                 $fields[] = array(
-                    'bcl' => $dataField->getSubfield('a')->getData(),
-                    /*'desc' => $dataField->getSubfields('j')->getData() ?: null*/
-                    'descriptions' => count($descriptions) ? $descriptions : null
+                    'bklnumber' => $dataField->getSubfield('a')->getData(),
+                    'bklname' => count($descriptions) ? $descriptions : null
                 );
             }
         }

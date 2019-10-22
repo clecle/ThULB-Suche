@@ -1702,6 +1702,33 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get production of the item from 264.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getProduction() {
+        $productions = array();
+        foreach($this->getMarcRecord()->getFields('264') as $currentField) {
+            if($currentField->getIndicator(2) == 0) {
+                $a = array();
+                $subfields = $currentField->getSubfields('a');
+                foreach($subfields as $currentSubfield) {
+                    $a[] = $currentSubfield->getData();
+                }
+
+                $b = $currentField->getSubfield('b');
+                $b = $b ? ' : ' . $b->getData() : '';
+
+                $productions[] = implode('; ', $a) . $b;
+            }
+        }
+
+        return $productions;
+    }
+
+    /**
      * Get reproduction of the item from 533.
      *
      * @return string

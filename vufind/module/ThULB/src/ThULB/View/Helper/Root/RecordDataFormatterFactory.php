@@ -129,6 +129,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine(
             'Publication Metadata', 'getPublicationDetails', 'data-publicationDetails.phtml'
         );
+        $spec->setLine('Production', 'getProduction');
         $spec->setLine('Printing places', 'getPrintingPlaces');
         $spec->setLine('Dissertation', 'getDissertationNote');
         $spec->setLine('Map Scale', 'getCartographicScale');

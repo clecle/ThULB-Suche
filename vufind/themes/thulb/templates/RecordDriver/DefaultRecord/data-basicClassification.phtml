@@ -4,7 +4,7 @@
   <? foreach ($classification as $class): ?>
     <?= ($i++ > 0) ? '<br />' : '' ?>
     <a href="<?=$this->url('search-results')?>?lookfor=%22<?=urlencode($class['bklnumber'])?>%22&amp;type=bklnumber">
-      <?= $class['bklnumber'] . ' ' . (is_array($class['bklname']) ? implode(' > ', $class['bklname']) : ''); ?>
+      <?= $class['bklnumber'] . ' ' . (is_array($class['bklname']) ? implode(', ', $class['bklname']) : ''); ?>
     </a>
   <? endforeach; ?>
 <? endif; ?>

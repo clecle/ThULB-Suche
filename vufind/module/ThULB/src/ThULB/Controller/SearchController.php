@@ -28,6 +28,8 @@
 namespace ThULB\Controller;
 
 use VuFind\Controller\SearchController as OriginalController;
+use VuFind\Search\Results\PluginManager as ResultsPluginManager;
+use VuFindSearch\Backend\Exception\BackendException;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -64,4 +66,26 @@ class SearchController extends OriginalController
 
         return $view;
     }
+
+    /**
+     * Results action.
+     *
+     * @return mixed
+     */
+    public function resultsAction()
+    {
+        try {
+            $view = parent::resultsAction();
+        } catch (BackendException $e) {
+            // An error occurred in the backend, create an empty result list and forward the exception to the template
+            $resultsManager = $this->serviceLocator->get(ResultsPluginManager::class);
+            $view = $this->createViewModel();
+            $view->results = $resultsManager->get('EmptySet');
+            $view->params = $resultsManager->get($this->searchClassId)->getParams();
+            $view->exception = $e;
+        }
+
+        return $view;
+    }
+
 }

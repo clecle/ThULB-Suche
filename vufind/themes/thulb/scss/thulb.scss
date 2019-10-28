@@ -631,3 +631,9 @@ dd > div.citations {
 #message_under_search_box {
   width: 100%;
 }
+
+@media (min-width: 768px) {
+  #resultlist > .alert.alert-danger {
+    margin-left: 10px;
+  }
+}

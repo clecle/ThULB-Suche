@@ -2,5 +2,5 @@
     $OpenAccess = is_callable([$this->driver, 'isThuBibliography']) ? $this->driver->isThuBibliography() : false;
 ?>
 <? if ($OpenAccess) :?>
-<span class="label th-bibliography" title="<?=$this->translate('Th_Biblio')?>"><?=$this->translate('Th_Biblio')?></span>
+<img alt="<?=$this->translate('Th_Biblio')?>" src="<?=$this->imageLink('ThüringenBib_Icon.png')?>" class="thbib-img" />
 <? endif;?>

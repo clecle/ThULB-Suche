@@ -5,8 +5,8 @@
   <?php for ($i = 0; $i < count($list); $i++) : ?>
     <li>
       <?php $parent = $list[$i]; ?>
-      <div class="facet-tree-parent flex-center<?php if ($parent['isApplied']): ?> active<?php endif; ?>">
-        <i data-toggle="collapse" class="collapsed"  href="#<?php echo "$facet-parent-$i"; ?>"></i>
+      <div class="facet-tree-parent flex-center collapsed<?php if ($parent['isApplied']): ?> active<?php endif; ?>"
+           data-toggle="collapse" href="#<?php echo "$facet-parent-$i"; ?>">
         <a href="<?php echo $parent['href']; ?>" class="facet flex-center">
           <span class="main text" role="menuitem" title="<?php echo $parent['displayText']; ?>"><?php echo $parent['displayText']; ?></span>
           <?php if ($parent['isApplied']): ?>

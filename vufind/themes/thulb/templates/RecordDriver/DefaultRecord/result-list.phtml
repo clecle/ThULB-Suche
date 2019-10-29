@@ -85,7 +85,6 @@
 
         <?=$this->record($this->driver)->getFormatList() ?>
         <?=$this->record($this->driver)->getOpenAccess() ?>
-        <?=$this->record($this->driver)->getThuringiaBibliography() ?>
         <?=$this->record($this->driver)->getCitationReferences() ?>
 
         <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
@@ -93,6 +92,9 @@
             <span class="label label-default"><?=$this->transEsc('Loading')?>...</span>
           </span>
         <? endif; ?>
+
+        <?=$this->record($this->driver)->getThuringiaBibliography() ?>
+
         <?=$this->record($this->driver)->getPreviews()?>
       </div>
       <div class="col-xs-1 right hidden-print favorite-action">

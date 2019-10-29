@@ -54,7 +54,7 @@
 
 <img src="/themes/thulb/images/Ajax-loader.gif"
      id="img-load" />
-<div id="searchcontent">
+<div id="searchcontent"<?= isset($searchClassId) ? 'class="search-' . $searchClassId . '";' : '';?>>
   <div id="overlay" class="col-xs-12">
     <p>&nbsp;</p>
   </div>

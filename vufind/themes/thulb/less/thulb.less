@@ -627,41 +627,27 @@ dd > div.citations {
 }
 
 #message_under_search_box {
-  width: 100
+  width: 100%;
 }
 
 span.th-bibliography {
   background-color: #b2b333;
 }
 
+// hierarchical facet
 .facet-tree-container li {
   list-style: none;
   padding-left: 0;
 }
 
-.facet-tree-parent > i[data-toggle="collapse"]::after,
 .facet-tree-container ul.collapsed::after {
   content: '';
-  float: none;
-}
-
-.facet-tree-parent > i[data-toggle="collapse"]::before {
-  content: '\25B2';
-  float: none;
-}
-
-.facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
-  content: '\25BC';
   float: none;
 }
 
 ul.facet-tree-container,
 .facet-tree-container ul {
   padding-left: 0;
-}
-
-div.facet-tree-parent > i {
-  padding: 0 5px;
 }
 
 .facet-tree-container ul li:nth-child(odd) {
@@ -681,7 +667,7 @@ div.facet-tree-parent > i {
   width: 100%;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 15px 5px 0;
+  padding: .35rem .65rem .35rem 1rem;
   border-bottom: none;
 }
 
@@ -705,14 +691,37 @@ div.facet-tree-parent > i {
   border-right: none;
 }
 
-.facet-tree-container .active a{
+.facet-tree-container a {
   padding-right: .65rem;
+}
+.facet-tree-container .active a {
   background-color: #568ebe !important;
   color: #fff !important;
+}
+
+.search-Solr a.checkbox-filter:after {
+  content: '';
+  float: right;
+  background: url("/themes/thulb/images/ThüringenBib_Icon.png") no-repeat;
+  height: 20px;
+  width: 30px;
+  background-size: 25px;
 }
 
 .facet-tree-parent:hover {
   color: #333333;
   background-color: #eeeeee;
   text-decoration: none;
+}
+
+.facet-tree-container div.facet-tree-parent {
+  padding-right: .65rem;
+}
+
+span.th-bibliography {
+  background-color: #b2b333;
+}
+
+.thbib-img {
+  height: 16px;
 }

@@ -109,11 +109,11 @@ class HoldingHelper extends AbstractHelper
     return $availabilityString;
   }
 
-  public function getLocation(&$holding)
+  public function getLocation(&$holding, $includeHTML = true)
   {
     $locationText = $this->view->transEsc('location_' . $holding['location'], [], $holding['location']);
 
-    if (isset($holding['locationhref']) && $holding['locationhref']) {
+    if ($includeHTML && isset($holding['locationhref']) && $holding['locationhref']) {
       $locationText = '<a href="' . $holding['locationhref'] . '" target="_blank">' . $locationText . '</a>';
     }
 
@@ -162,4 +162,48 @@ class HoldingHelper extends AbstractHelper
     }
     return $holding_chron;
   }
+
+    /**
+     * Returns a shortened list of the holdings. Only contains the unique call numbers for each location.
+     *
+     * Return Format:
+     *     array(
+     *         'location_1' => array(
+     *              'unique_call_number_1',
+     *              'unique_call_number_2',
+     *              'unique_call_number_3'
+     *         ),
+     *         ...
+     *     )
+     *
+     * @param $holdings
+     *
+     * @return array
+     */
+    public function getHoldingsShort($holdings) {
+        $holdingsShort = array();
+        if(!isset($holdings['holdings']) || !is_array($holdings['holdings'])) {
+            return $holdingsShort;
+        }
+
+        foreach($holdings['holdings'] as $holding) {
+            $callNumbers = array();
+            foreach($holding['items'] as $item) {
+                $includeService = in_array('loan', $item['services'])
+                    || in_array('presentation', $item['services']);
+                $hasDueDate = isset($item['duedate']) && !empty($item['duedate']);
+
+                if(($item['status'] == 'available' && $includeService)
+                    || ($item['status'] == 'unavailable' && $hasDueDate)) {
+                    $callNumbers[] = $item['callnumber'];
+                }
+            }
+
+            $location = $this->getLocation($holding, false);
+            $holdingsShort[$location] = array_unique($callNumbers);
+        }
+
+        ksort($holdingsShort);
+        return $holdingsShort;
+    }
 }

@@ -10,6 +10,15 @@
     $user_id = $this->user ? $this->user->id : null;
   }
   $editable = $this->user && $user_id === $this->user->id;
+
+  try {
+    $holdings = $this->driver->getRealTimeHoldings();
+    $holdingsShort = $this->thulb_holdingHelper()->getHoldingsShort($holdings);
+  } catch (\VuFind\Exception\ILS $e) {
+    $holdings = ['holdings' => []];
+    $offlineMode = 'ils-offline';
+  }
+
   // Thumbnail
   $coverDetails = $this->record($this->driver)->getCoverDetails('list-entry', 'medium', $this->recordLink()->getUrl($this->driver));
   $cover = $coverDetails['html'];
@@ -58,6 +67,15 @@
                   }
                 }
               } ?>
+
+            <? if(isset($holdingsShort) && !empty($holdingsShort)): ?>
+              <div>
+                <span class="callnumberTitle"><?=$this->transEsc('Call Number'); ?>:</span><br>
+                <? foreach ($holdingsShort as $location => $callNumbers): ?>
+                  <span class="callnumberLocation"><?= $location; ?>:</span> <?= implode(' | ', $callNumbers); ?><br>
+                <? endforeach; ?>
+              </div>
+            <? endif; ?>
 
             <? $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected

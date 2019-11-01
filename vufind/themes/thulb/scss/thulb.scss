@@ -703,13 +703,24 @@ ul.facet-tree-container,
   color: #fff !important;
 }
 
+a.checkbox-filter {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  font-weight: bold;
+  color: #333333;
+  align-items: center;
+}
+
 .search-Solr a.checkbox-filter:after {
   content: '';
   float: right;
-  background: url("/themes/thulb/images/ThüringenBib_Icon.png") no-repeat;
-  height: 20px;
-  width: 30px;
-  background-size: 25px;
+  background: url("/themes/thulb/images/ThuringenBib_Icon.png") no-repeat;
+  height: 16px;
+  width: 24px;
+  background-size: 22px;
+  border-radius: 3px;
+  border: solid 1px #ccc;
 }
 
 .facet-tree-parent:hover {
@@ -728,4 +739,6 @@ span.th-bibliography {
 
 .thbib-img {
   height: 16px;
+  border-radius: 3px;
+  border: solid 1px #ccc;
 }

@@ -712,17 +712,6 @@ a.checkbox-filter {
   align-items: center;
 }
 
-.search-Solr a.checkbox-filter:after {
-  content: '';
-  float: right;
-  background: url("/themes/thulb/images/ThuringenBib_Icon.png") no-repeat;
-  height: 16px;
-  width: 24px;
-  background-size: 22px;
-  border-radius: 3px;
-  border: solid 1px #ccc;
-}
-
 .facet-tree-parent:hover {
   color: #333333;
   background-color: #eeeeee;

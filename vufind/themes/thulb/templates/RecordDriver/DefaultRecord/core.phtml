@@ -3,6 +3,11 @@
      $cover = $this->record($this->driver)->getCover('core', 'medium', $this->record($this->driver)->getThumbnail('large'));
      $preview = $this->record($this->driver)->getPreviews();
      $this->jsTranslations()->addStrings(array('truncate_more' => 'truncate_more', 'truncate_less' => 'truncate_less'));
+     $this->jsTranslations()->addStrings(
+         [
+             'noHoldings' => 'see volumes tab for further holdings'
+         ]
+     );
   ?>
   
 

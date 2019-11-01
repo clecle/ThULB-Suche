@@ -133,6 +133,44 @@ function registerAjaxCommentRecord() {
   return false;
 }
 
+// Forward declaration
+var ajaxLoadTab = function ajaxLoadTabForward() {};
+
+function handleAjaxTabLinks(_context) {
+  var context = typeof _context === "undefined" ? document : _context;
+  // Form submission
+  $(context).find('a').each(function handleLink() {
+    var $a = $(this);
+    var href = $a.attr('href');
+    if (typeof href !== 'undefined' && href.match(/\/AjaxTab[/?]/)) {
+      $a.unbind('click').click(function linkClick() {
+        var tabid = $('.record-tabs .nav-tabs li.active').data('tab');
+        var $tab = $('.' + tabid + '-tab');
+        $tab.html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ' + VuFind.translate('loading') + '...</div>');
+        ajaxLoadTab($tab, tabid, false, href);
+        return false;
+      });
+    }
+  });
+}
+
+function handleAjaxJumpMenus(_context) {
+  var context = typeof _context === "undefined" ? document : _context;
+  // Form submission
+  $(context).find('select.jumpMenu').change(function handleLink() {
+    var tabid = $('.record-tabs .nav-tabs li.active').data('tab');
+    var $tab = $('.' + tabid + '-tab');
+
+    $tab.html('<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ' + VuFind.translate('loading') + '...</div>');
+
+    ajaxLoadTab(
+        $tab, tabid, false,
+        $(this).parent('form').attr('action'),
+        $(this).val()
+    );
+  });
+}
+
 function registerTabEvents() {
   // Logged in AJAX
   registerAjaxCommentRecord();
@@ -146,6 +184,9 @@ function registerTabEvents() {
 
   setUpCheckRequest();
 
+  handleAjaxJumpMenus();
+  handleAjaxTabLinks();
+
   VuFind.lightbox.bind('.tab-pane.active');
 }
 
@@ -158,49 +199,53 @@ function removeHashFromLocation() {
   }
 }
 
-function ajaxLoadTab($newTab, tabid, setHash) {
-  // Parse out the base URL for the current record:
-  var urlParts = document.URL.split(/[?#]/);
-  var urlWithoutFragment = urlParts[0];
-  var path = VuFind.path;
-  var urlroot = null;
-  if (path === '') {
-    // special case -- VuFind installed at site root:
-    var chunks = urlWithoutFragment.split('/');
-    urlroot = '/' + chunks[3] + '/' + chunks[4];
+function fillEmptyHoldingsTab() {
+  var tabContent = $('.holdings-tab').text();
+
+  if (($.trim(tabContent)).length === 0) {
+    $('.holdings-tab').html(VuFind.translate('noHoldings'));
+  }
+}
+
+ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl, sortType) {
+  // Request the tab via AJAX:
+  var url = '';
+  var postData = {
+    tab: tabid,
+    sort: sortType
+  };
+  // If tabUrl is defined, it overrides base URL and tabid
+  if (typeof tabUrl !== 'undefined') {
+    url = tabUrl;
   } else {
-    // standard case -- VuFind has its own path under site:
-    var pathInUrl = urlWithoutFragment.indexOf(path, urlWithoutFragment.indexOf('//') + 2);
-    var parts = urlWithoutFragment.substring(pathInUrl + path.length + 1).split('/');
-    urlroot = '/' + parts[0] + '/' + parts[1];
+    url = VuFind.path + getUrlRoot(document.URL) + '/AjaxTab';
   }
 
-  // Request the tab via AJAX:
   $.ajax({
-    url: path + urlroot + '/AjaxTab',
+    url: url,
     type: 'POST',
-    data: {tab: tabid}
+    data: postData
   })
-  .done(function ajaxLoadTabDone(data) {
-    $newTab.html(data);
-    $('select[name=sort]').change(function jumpMenu(){ $(this).parent('form').submit(); });
-    if (data.length > 0) {
-      $('.' + tabid).parent().removeClass('hidden');
-    }
-    registerTabEvents();
-    if (typeof syn_get_widget === "function") {
-      syn_get_widget();
-    }
-    if (typeof setHash == 'undefined' || setHash) {
-      window.location.hash = tabid;
-    } else {
-      removeHashFromLocation();
-    }
-    setupJumpMenus($newTab);
-    fillEmptyHoldingsTab();
-  });
+    .always(function ajaxLoadTabDone(data) {
+      if (typeof data === 'object') {
+        $newTab.html(data.responseText ? data.responseText : VuFind.translate('error_occurred'));
+      } else {
+        $newTab.html(data);
+      }
+      if (data.length > 0) {
+        $('li[data-tab="' + tabid + '"]').removeClass('hidden');
+      }
+      registerTabEvents();
+      if (typeof syn_get_widget === "function") {
+        syn_get_widget();
+      }
+      if (typeof setHash == 'undefined' || setHash) {
+        window.location.hash = tabid;
+      }
+      fillEmptyHoldingsTab();
+    });
   return false;
-}
+};
 
 function refreshTagList(_target, _loggedin) {
   var loggedin = !!_loggedin || userIsLoggedIn;
@@ -264,30 +309,22 @@ function backgroundLoadTab(tabid) {
     return;
   }
   var newTab = getNewRecordTab(tabid);
-  $('.nav-tabs a.' + tabid).closest('.result,.record').find('.tab-content').append(newTab);
+  $('[data-tab="' + tabid + '"]').closest('.result,.record').find('.tab-content').append(newTab);
   return ajaxLoadTab(newTab, tabid, false);
 }
 
 function applyRecordTabHash() {
-  var activeTab = $('.record-tabs li.active a').attr('class');
+  var activeTab = $('.record-tabs li.active').attr('data-tab');
   var $initiallyActiveTab = $('.record-tabs li.initiallyActive a');
   var newTab = typeof window.location.hash !== 'undefined'
-    ? window.location.hash.toLowerCase() : '';
+      ? window.location.hash.toLowerCase() : '';
 
   // Open tab in url hash
   if (newTab.length <= 1 || newTab === '#tabnav') {
     $initiallyActiveTab.click();
   } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
-    $('.' + newTab.substr(1)).click();
+    $('li[data-tab="' + newTab.substr(1) + '"] a').click();
   }
-}
-
-function fillEmptyHoldingsTab() {
-    var tabContent = $('.holdings-tab').text();
-    
-    if (($.trim(tabContent)).length === 0) {
-        $('.holdings-tab').html(VuFind.translate('noHoldings'));
-    }
 }
 
 $(window).on('hashchange', applyRecordTabHash);
@@ -299,7 +336,7 @@ function recordDocReady() {
     if ($li.hasClass('active')) {
       return true;
     }
-    var tabid = this.className;
+    var tabid = $li.attr('data-tab');
     if (tabid === 'articlecollectionlist' || tabid === 'nonarticlecollectionlist') {
         VuFind.cart.init();
     }
@@ -336,7 +373,7 @@ function recordDocReady() {
   });
 
   $('[data-background]').each(function setupBackgroundTabs(index, el) {
-    backgroundLoadTab(el.className);
+    backgroundLoadTab(el.dataset.tab);
   });
 
   registerTabEvents();

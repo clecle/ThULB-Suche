@@ -354,7 +354,7 @@ class PAIA extends OriginalPAIA
 
         if(isset($item['available'])) {
             foreach ($item['available'] as $available) {
-                if (isset($available['service']) && $available['service'] == 'remote') {
+                if (isset($available['service']) && in_array($available['service'], ['remote', 'openaccess'])) {
                     $href = $available['href'];
                     // custom DAIA field
                     $status['remotehref'] = $href;

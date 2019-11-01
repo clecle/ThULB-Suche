@@ -632,6 +632,12 @@ dd > div.citations {
   width: 100%;
 }
 
+@media (min-width: 768px) {
+  #resultlist > .alert.alert-danger {
+    margin-left: 10px;
+  }
+}
+
 // hierarchical facet
 .facet-tree-container li {
   list-style: none;

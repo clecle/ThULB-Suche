@@ -321,9 +321,16 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getThuBiblioClassification()
     {
-        $fields = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => '31']);
-        
-        return $fields;
+        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => '31']);
+        $thuBib = array();
+
+        foreach($classNumbers as $classNumber) {
+            $isThuBib = $this->getConditionalFieldArray('983', ['b', '0'], true, ' ', ['a' => $classNumber]);
+            if( $isThuBib && preg_match('/^\(DE-601\).*<Thüringen>$/', $isThuBib[0])) {
+                array_push($thuBib, $classNumber);
+            }
+        }
+        return $thuBib;
     }
 
     /**

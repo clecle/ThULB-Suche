@@ -6,7 +6,7 @@ use VuFind\Search\Solr\Params as OriginalParams;
 
 class Params extends OriginalParams
 {
-    const THBIB_FILTER = 'class_local:thüringen AND class_local:de-601';
+    const THBIB_FILTER = 'class_local:thüringen AND class_local:de-601 AND class_local:31';
 
     /**
      * Return the current filters as an array of strings ['field:filter']

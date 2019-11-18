@@ -6,8 +6,6 @@ use VuFind\Search\Solr\Params as OriginalParams;
 
 class Params extends OriginalParams
 {
-    const THBIB_FILTER = 'class_local:thüringen AND class_local:de-601 AND class_local:31';
-
     /**
      * Return the current filters as an array of strings ['field:filter']
      *
@@ -91,9 +89,12 @@ class Params extends OriginalParams
 
         $removeFilter = true;
 
+        $config = $this->configLoader->get($this->getOptions()->getFacetsIni());
+        $thbibFilter = str_replace('#:', '', $config->CheckboxFacets->Th_Biblio);
+
         if(!empty($this->filterList)) {
             foreach($this->filterList as $filter) {
-                if(in_array(self::THBIB_FILTER, $filter)) {
+                if(in_array($thbibFilter, $filter)) {
                     $removeFilter = false;
                     break;
                 }
@@ -103,7 +104,7 @@ class Params extends OriginalParams
         $config = $this->configLoader->get($this->getOptions()->getSearchIni());
         if ($config->RawHiddenFilters != null) {
             foreach ($config->RawHiddenFilters as $rawHiddenFilter) {
-                if($rawHiddenFilter == self::THBIB_FILTER) {
+                if($rawHiddenFilter == $thbibFilter) {
                     $removeFilter = false;
                     break;
                 }

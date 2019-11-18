@@ -1,6 +1,6 @@
 <?php
 
-namespace ThBIB\Search\Solr;
+namespace ThULB\Search\Solr;
 
 use VuFind\Search\Solr\Options as OriginalOptions;
 use Zend\Config\Config;

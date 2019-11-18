@@ -20,10 +20,12 @@ $config = array(
     'service_manager' => [
         'factories' => [
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
+            'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
         )
     ],
     'vufind' => array(
@@ -61,9 +63,11 @@ $config = array(
             'recommend' => array(
                 'factories' => array(
                     'ThULB\Recommend\SummonCombined' => 'ThULB\Recommend\Factory::getSummonCombined',
+                    'ThULB\Recommend\SideFacets' => 'ThULB\Recommend\Factory::getSideFacets',
                 ),
                 'aliases' => array(
                     'summoncombined' => 'ThULB\Recommend\SummonCombined',
+                    'sidefacets' => 'ThULB\Recommend\SideFacets',
                 ),
                 'invokables' => array(
                     'summoncombineddeferred' => 'ThULB\Recommend\SummonCombinedDeferred',
@@ -96,6 +100,14 @@ $config = array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
                 )
             ),
+            'search_params' => array(
+                'factories' => array(
+                    'ThULB\Search\Solr\Params' => 'VuFind\Search\Solr\ParamsFactory'
+                ),
+                'aliases' => array(
+                    'solr' => 'ThULB\Search\Solr\Params'
+                )
+            ),
             'search_results' => array(
                 'factories' => array(
                     'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
@@ -109,7 +121,8 @@ $config = array(
             'thulb_metaDataHelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
             'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
-            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ'
+            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
+            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter'
         ),
     ),
 

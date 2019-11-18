@@ -1,6 +1,6 @@
 <?php
 
-namespace ThBIB\View\Helper\Root;
+namespace ThULB\View\Helper\Root;
 
 use VuFind\Search\UrlQueryHelper;
 use Zend\View\Helper\AbstractHelper;

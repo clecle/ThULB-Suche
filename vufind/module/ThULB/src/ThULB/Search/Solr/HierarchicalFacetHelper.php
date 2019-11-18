@@ -1,6 +1,6 @@
 <?php
 
-namespace ThBIB\Search\Solr;
+namespace ThULB\Search\Solr;
 
 use VuFind\Search\UrlQueryHelper;
 use VuFind\Search\Solr\HierarchicalFacetHelper as OriginalFacetHelper;

@@ -48,4 +48,19 @@ class Factory
             $sm->get('VuFind\SearchResultsPluginManager')
         );
     }
+
+    /**
+     * Factory for SideFacets module.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SideFacets
+     */
+    public static function getSideFacets(ServiceManager $sm)
+    {
+        return new SideFacets(
+            $sm->get('VuFind\Config\PluginManager'),
+            $sm->get('ThULB\Search\Solr\HierarchicalFacetHelper')
+        );
+    }
 }

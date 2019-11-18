@@ -1,9 +1,9 @@
 <?php
 
-namespace ThBIB\Recommend;
+namespace ThULB\Recommend;
 
 use Exception;
-use ThBIB\Search\Solr\HierarchicalFacetHelper;
+use ThULB\Search\Solr\HierarchicalFacetHelper;
 use VuFind\Recommend\SideFacets as OriginalSideFacets;
 
 class SideFacets extends OriginalSideFacets

@@ -1,0 +1,38 @@
+<?php $list  = $cluster['list'] ?? []; ?>
+<?php $facet = $facet ?? ''; ?>
+
+<ul class="facet-tree-container">
+  <?php for ($i = 0; $i < count($list); $i++) : ?>
+    <li>
+      <?php $parent = $list[$i]; ?>
+      <div class="facet-tree-parent flex-center collapsed<?php if ($parent['isApplied']): ?> active<?php endif; ?>"
+           data-toggle="collapse" href="#<?php echo "$facet-parent-$i"; ?>">
+        <a href="<?php echo $parent['href']; ?>" class="facet flex-center">
+          <span class="main text" role="menuitem" title="<?php echo $parent['displayText']; ?>"><?php echo $parent['displayText']; ?></span>
+          <?php if ($parent['isApplied']): ?>
+            <span class="status"><i class="fa fa-check" aria-hidden="true"></i></span>
+          <?php endif; ?>
+        </a>
+      </div>
+
+      <ul id="<?php echo "$facet-parent-$i"; ?>" aria-expanded="false" class="collapsed collapse">
+        <?php for ($i = $i + 1; $i < count($list); $i++) : ?>
+          <?php $child = $list[$i]; ?>
+          <?php if ($parent['value'] !== $child['parent']): ?>
+            <?php $i--; break; ?>
+          <?php endif; ?>
+          <li role="treeitem" class="facet-tree-child">
+            <a href="<?php echo $child['href']; ?>" class="facet<?php if ($child['isApplied']): ?> active<?php endif; ?> flex-center">
+              <span class="child text" role="menuitem" title="<?php echo $child['displayText']; ?>"><?php echo $child['displayText']; ?></span>
+              <?php if ($child['isApplied']): ?>
+                <span class="status"><i class="fa fa-check" aria-hidden="true"></i></span>
+              <?php else: ?>
+                <span class="badge"><?php echo $this->localizedNumber($child['count']) ?></span>
+              <?php endif; ?>
+            </a>
+          </li>
+        <?php endfor; ?>
+      </ul>
+    </li>
+  <?php endfor; ?>
+</ul>

@@ -54,7 +54,7 @@
 
 <img src="/themes/thulb/images/Ajax-loader.gif"
      id="img-load" />
-<div id="searchcontent"<?= isset($searchClassId) ? 'class="search-' . $searchClassId . '";' : '';?>>
+<div id="searchcontent">
   <div id="overlay" class="col-xs-12">
     <p>&nbsp;</p>
   </div>
@@ -68,29 +68,25 @@
         <?=$this->flashmessages()?>
 
         <? if ($recordTotal < 1): ?>
-          <? if(isset($this->exception)): ?>
-            <?= $this->render('error/index.phtml'); ?>
-          <? else: ?>
-            <p>
-              <? if (isset($this->overrideEmptyMessage)): ?>
-                <?=$this->overrideEmptyMessage?>
-              <? else: ?>
-                <? $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
-                <?=$this->layout()->srmessage ?>
-              <? endif; ?>
-            </p>
-            <? if (isset($this->parseError)): ?>
-              <p class="alert alert-danger"><?=$this->transEsc('nohit_parse_error')?></p>
+          <p>
+            <? if (isset($this->overrideEmptyMessage)): ?>
+              <?=$this->overrideEmptyMessage?>
+            <? else: ?>
+        <? $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
+        <?=$this->layout()->srmessage ?>
             <? endif; ?>
-            <? foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
-              <?=$this->recommend($current)?>
-            <? endforeach; ?>
-            <? foreach ($this->results->getRecommendations('noresults') as $current): ?>
-              <? if (!in_array($current, $top)): ?>
-                <?=$this->recommend($current)?>
-              <? endif; ?>
-            <? endforeach; ?>
+          </p>
+          <? if (isset($this->parseError)): ?>
+            <p class="alert alert-danger"><?=$this->transEsc('nohit_parse_error')?></p>
           <? endif; ?>
+          <? foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
+            <?=$this->recommend($current)?>
+          <? endforeach; ?>
+          <? foreach ($this->results->getRecommendations('noresults') as $current): ?>
+            <? if (!in_array($current, $top)): ?>
+              <?=$this->recommend($current)?>
+            <? endif; ?>
+          <? endforeach; ?>
         <? else: ?>
         
         <div class="visible-xs">
@@ -104,7 +100,14 @@
                     <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                   </div>
                 </div>
-                <div class="searchtools col-xs-12 hidden-print">
+                <div class="searchtools col-xs-12 hidden-print flex-center">
+                    <div class="search-stats">
+                        <?php if ($recordTotal > 0): ?>
+                            <?=$this->context()->renderInContext('search/controls/showing.phtml', ['lookfor' => $lookfor, 'recordTotal' => $recordTotal]) ?>
+                        <?php else: ?>
+                            <h2><?=$this->transEsc('nohit_heading')?></h2>
+                        <?php endif; ?>
+                    </div>
                   <!--strong><?=$this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
                     <li><a title="<?=$this->transEsc('Get RSS Feed')?>" href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>

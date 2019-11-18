@@ -19,10 +19,10 @@
       line-height: 1.1rem;
     }
   }
-  .facet { border-bottom: 1px solid $list-group-border; }
+  .facet { border-bottom: 1px solid @list-group-border; }
   .title {
     padding-right: 8px;
-    border: 1px solid $list-group-border;
+    border: 1px solid @list-group-border;
     font-weight: bold;
   }
 
@@ -41,10 +41,10 @@
   .collapse,
   .collapsing,
   & > .facet {
-    border-left: 1px solid $list-group-border;
-    border-right: 1px solid $list-group-border;
+    border-left: 1px solid @list-group-border;
+    border-right: 1px solid @list-group-border;
   }
-  & > .facet:first-child { border-top: 1px solid $list-group-border; }
+  & > .facet:first-child { border-top: 1px solid @list-group-border; }
 
   .facetOR .text {
     display: inline-block;
@@ -76,7 +76,7 @@
   display: block;
   padding-bottom: 1rem;
   font-weight: bold;
-  color: $text-color;
+  color: @text-color;
 }
 .facet-group > .checkbox,
 .sidebar .facet.checkbox {
@@ -87,28 +87,28 @@
 .active-filters .facet,
 .facet-group .active {
   padding-right: .65rem;
-  background-color: $brand-primary !important;
+  background-color: @brand-primary !important;
   color: #fff !important;
 
   a { color: #fff; }
 }
 .facet.active .badge,
-.jstree-node.active > a .badge,
-.jstree-node.active > a .badge .fa {
+.jstree-node.active .badge,
+.jstree-node.active .badge .fa {
   background-color: #fff;
-  color: $brand-primary;
+  color: @brand-primary;
 }
 
 .narrow-toggle { text-align: center; }
 
 .sidebar .format {
-  @extend .label;
-  @extend .label-info;
+  &:extend(.label);
+  &:extend(.label-info);
 }
 .top-row .applied {
   font-weight: bold;
   &:hover {
-    color: $state-danger-text;
+    color: @state-danger-text;
     .fa.fa-check:before {
       content: "\f00d";
     }

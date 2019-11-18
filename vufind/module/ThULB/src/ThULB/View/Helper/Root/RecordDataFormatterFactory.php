@@ -181,7 +181,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
-        $spec->setTemplateLine('ThuBiblio Classification', true, 'data-thuBiblioClassification.phtml');
+        $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
         $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
             [
                 'useCache' => true,

@@ -81,13 +81,23 @@ class Record extends OriginalRecord
     }
     
     /**
-     * Is this Record OpenAcess?
+     * Is this Record OpenAccess?
      *
      * @return string
      */
     public function getOpenAccess()
     {
         return $this->renderTemplate('isopenaccess.phtml');
+    }
+
+    /**
+     * Is this Record part of the thuringia bibliography?
+     *
+     * @return string
+     */
+    public function getThuringiaBibliography()
+    {
+        return $this->renderTemplate('isThuBibliography.phtml');
     }
 
     /**

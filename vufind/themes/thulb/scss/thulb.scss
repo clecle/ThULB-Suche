@@ -644,14 +644,29 @@ dd > div.citations {
   padding-left: 0;
 }
 
+.facet-tree-parent > i[data-toggle="collapse"]::after,
 .facet-tree-container ul.collapsed::after {
   content: '';
+  float: none;
+}
+
+.facet-tree-parent > i[data-toggle="collapse"]::before {
+  content: '\25B2';
+  float: none;
+}
+
+.facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
+  content: '\25BC';
   float: none;
 }
 
 ul.facet-tree-container,
 .facet-tree-container ul {
   padding-left: 0;
+}
+
+div.facet-tree-parent > i {
+  padding: 0 5px;
 }
 
 .facet-tree-container ul li:nth-child(odd) {

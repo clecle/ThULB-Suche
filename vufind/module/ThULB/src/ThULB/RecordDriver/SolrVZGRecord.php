@@ -927,7 +927,7 @@ class SolrVZGRecord extends SolrMarc
     public function getPrintingPlaces()
     {
         $printingPlaces = [];
-        $fields = $this->getMarcRecord()->getFields('260');
+        $fields = $this->getMarcRecord()->getFields('751');
         if (is_array($fields)) {
             foreach ($fields as $currentField) {
                 $ind1 = $currentField->getIndicator(1);

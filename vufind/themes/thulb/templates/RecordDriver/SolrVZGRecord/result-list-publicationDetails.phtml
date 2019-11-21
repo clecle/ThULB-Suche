@@ -11,7 +11,8 @@
 ?>
   <?=$this->transEsc('by')?>
   <? $authorCount = count($summAuthors); foreach ($summAuthors as $i => $summAuthor): ?>
-    <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>" class="authorLink"><?=$this->highlight($summAuthor)?></a><?=$i + 1 < $authorCount ? ';' : ''?>
+    <? $info = $this->record($this->driver)->getAuthorTitleAndDate($summAuthor); ?>
+    <a href="<?=$this->record($this->driver)->getLink('author', $this->highlight($summAuthor, null, true, false))?>" class="authorLink"><?=$this->highlight($summAuthor)?></a><?= (!empty($info) ? ' ' . $info : '') . ($i + 1 < $authorCount ? ';' : '')?>
   <? endforeach; ?>
   <br/>
 <? endif; ?>

@@ -238,8 +238,8 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getContainerReference()
     {
-        $containerRef = $this->getFieldArray('773', ['g'], false); 
-       return ($containerRef) ? $containerRef[0] : '';
+        $containerRef = $this->getFieldArray('773', ['g'], false);
+        return ($containerRef) ? $containerRef[0] : '';
     }
 
     /**
@@ -546,13 +546,24 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getPrimaryAuthors()
     {
-        $author = $this->getFormattedMarcData('100a (100b (\((100c, 100d)\)))( 100g)');
+        $author = $this->getFormattedMarcData('100a (100b)');
         return $author ? [$author] : [];
     }
     
     /**
-     * Get the roles of the main authors of the record.
+     * Get the title and dates of the main authors of the record.
      * 
+     * @return array
+     */
+    public function getPrimaryAuthorsTitleAndDates()
+    {
+        $information = $this->getFormattedMarcData('(\((100c, 100d)\))( 100g)');
+        return $information ? [$information] : [];
+    }
+
+    /**
+     * Get the roles of the main authors of the record.
+     *
      * @return array
      */
     public function getPrimaryAuthorsRoles()
@@ -572,40 +583,36 @@ class SolrVZGRecord extends SolrMarc
     {
         $secondaryAuthors = [];
         $relevantFields = [
-                '700' => ['a', 'b', 'c', 'd', 'g'],
-                '710' => ['a', 'b', 'c', 'd', 'g', 'n']
-            ];
+            '700' => ['a', 'b'],
+            '710' => ['a', 'b']
+        ];
         $formattingRules = [
-                '700' => '700a (700b (\((700c, 700d)\)))( 700g)',
-                '710' => '710a, (710b, (\((710n, (710d, 710c))\)))( 710g)'
-            ];
-        
-        foreach ($relevantFields as $fieldNumber => $subfields) {
-            $fields = $this->getMarcRecord()->getFields($fieldNumber);
-            foreach ($fields as $field) {
-                $fieldData = [];
-                foreach ($field->getSubfields() as $subfield) {
-                    if (in_array($subfield->getCode(), $subfields)) {
-                        $fieldData[$fieldNumber . $subfield->getCode()] =
-                                isset($fieldData[$fieldNumber . $subfield->getCode()]) ?
-                                    $fieldData[$fieldNumber . $subfield->getCode()] .
-                                        ', ' . $subfield->getData() :
-                                    $subfield->getData();
-                    }
-                }
-                
-                if ($fieldData) {
-                    $secondaryAuthors[] = $this->getFormattedMarcData(
-                            $formattingRules[$fieldNumber],
-                            true, 
-                            true, 
-                            $fieldData
-                        );
-                }
-            }
-        }
-        
-        return $secondaryAuthors;
+            '700' => '700a (700b )',
+            '710' => '710a, (710b)'
+        ];
+
+        return $this->getFormattedData($relevantFields, $formattingRules);
+    }
+
+    /**
+     * Get an array of all secondary authors titles and dates (complementing getPrimaryAuthors()).
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getSecondaryAuthorsTitleAndRoles()
+    {
+        $relevantFields = [
+            '700' => ['c', 'd', 'g'],
+            '710' => ['c', 'd', 'g', 'n']
+        ];
+        $formattingRules = [
+            '700' => '(\((700c, 700d)\))( 700g)',
+            '710' => '(\((710n, (710d, 710c))\))( 710g)'
+        ];
+
+        return $this->getFormattedData($relevantFields, $formattingRules);
     }
 
     /**
@@ -631,8 +638,7 @@ class SolrVZGRecord extends SolrMarc
                 $roles[] = '';
             }
         }
-        
-        
+
         return $roles;
     }
 
@@ -937,6 +943,71 @@ class SolrVZGRecord extends SolrMarc
         }
         
         return $printingPlaces;
+    }
+
+    /**
+     * Deduplicate author information into associative array with main/corporate/
+     * secondary keys.
+     *
+     * @param array $dataFields An array of extra data fields to retrieve (see
+     * getAuthorDataFields)
+     *
+     * @return array
+     */
+    public function getDeduplicatedAuthors($dataFields = ['titleAndDate', 'role']) {
+        return parent::getDeduplicatedAuthors($dataFields);
+    }
+
+    /**
+     * Wrapper function for 'getFormattedMarcData' to simplify the usage.
+     * The condition type is determined by the name of the array key, e.g. subfield or indicator.
+     *
+     * Formats:
+     *     $relevantFields = array (
+     *         field_name_1 => array (
+     *             subfield_name_1, subfield_name_2, ...
+     *         ),
+     *         ...
+     *     )
+     *     $formattingRules = array (
+     *         field_name_1 => format_rule,
+     *         ...
+     *     )
+     *
+     * @param array $relevantFields  The marc fields and subfields used.
+     * @param array $formattingRules The rules by which to format the data.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getFormattedData($relevantFields, $formattingRules) {
+        $returnData = array();
+        foreach ($relevantFields as $fieldNumber => $subfields) {
+            $fields = $this->getMarcRecord()->getFields($fieldNumber);
+            foreach ($fields as $field) {
+                $fieldData = [];
+                foreach ($field->getSubfields() as $subfield) {
+                    if (in_array($subfield->getCode(), $subfields)) {
+                        $fieldData[$fieldNumber . $subfield->getCode()] =
+                            isset($fieldData[$fieldNumber . $subfield->getCode()]) ?
+                                $fieldData[$fieldNumber . $subfield->getCode()] . ', ' . $subfield->getData() :
+                                $subfield->getData();
+                    }
+                }
+
+                if ($fieldData) {
+                    $returnData[] = $this->getFormattedMarcData(
+                        $formattingRules[$fieldNumber],
+                        true,
+                        true,
+                        $fieldData
+                    );
+                }
+            }
+        }
+
+        return $returnData;
     }
 
     /**

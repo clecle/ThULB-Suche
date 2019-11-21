@@ -43,6 +43,7 @@ class AuthorMetadataTest extends AbstractRecordDataFormatterTest
                         'type' => 'primary',
                         'schemaLabel' => 'author',
                         'requiredDataFields' => [
+                            ['name' => 'titleAndDate'],
                             ['name' => 'role', 'prefix' => 'CreatorRoles::']
                         ]]
                 ];

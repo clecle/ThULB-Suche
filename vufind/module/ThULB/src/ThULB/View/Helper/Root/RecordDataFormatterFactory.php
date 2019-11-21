@@ -81,6 +81,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                 'context' => ['type' => 'primary',
                     'schemaLabel' => 'author',
                     'requiredDataFields' => [
+                        ['name' => 'titleAndDate'],
                         ['name' => 'role', 'prefix' => 'CreatorRoles::']
                     ]
                 ],
@@ -111,6 +112,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                     'type' => 'secondary',
                     'schemaLabel' => 'contributor',
                     'requiredDataFields' => [
+                        ['name' => 'titleAndDate'],
                         ['name' => 'role', 'prefix' => 'CreatorRoles::']
                     ]
                 ],

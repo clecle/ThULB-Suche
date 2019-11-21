@@ -146,4 +146,21 @@ class Record extends OriginalRecord
             $template, $parentClass, $topClassName ?? $className
         );
     }
+
+    /**
+     *
+     *
+     * @param string $author
+     *
+     * @return string
+     */
+    public function getAuthorTitleAndDate($author) {
+        foreach ($this->driver->getDeduplicatedAuthors() as $type):
+            if(isset($type[$author])):
+                return isset($type[$author]['titleAndDate']) ? $type[$author]['titleAndDate'][0] : '';
+            endif;
+        endforeach;
+
+        return '';
+    }
 }

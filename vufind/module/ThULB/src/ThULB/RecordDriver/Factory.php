@@ -43,7 +43,8 @@ class Factory
         $driver = new SolrVZGRecord(
             $sm->get('VuFind\Config')->get('config'),
             null,
-            $sm->get('VuFind\Config')->get('searches')
+            $sm->get('VuFind\Config')->get('searches'),
+            $sm->get('VuFind\Config')->get('marcFormat')
         );
         $driver->attachILS(
             $sm->get('VuFind\ILSConnection'),

@@ -36,6 +36,7 @@ use File_MARC_Data_Field;
 use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
+use Zend\Config\Config;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -95,6 +96,19 @@ class SolrVZGRecord extends SolrMarc
      * @var string
      */
     protected $highlightedTitle;
+
+    /**
+     * Marc format configuration
+     *
+     * @var Config
+     */
+    protected $marcFormatConfig;
+
+    public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null, $marcFormatConfig = null)
+    {
+        $this->marcFormatConfig = $marcFormatConfig;
+        parent::__construct($mainConfig, $recordConfig, $searchSettings);
+    }
 
     /**
      * Returns true if the record supports real-time AJAX status lookups.
@@ -2059,5 +2073,26 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         return false;
+    }
+
+    /**
+     * Get an array of all the formats associated with the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getFormats() {
+        $formats = parent::getFormats();
+        foreach($formats as $index => $format) {
+            if(strtolower($format) == 'unknown') {
+                $format = substr($this->getMarcRecord()->getLeader(), 6, 1);
+                if(isset($this->marcFormatConfig->Leader6_Format[$format])) {
+                    $formats[$index] = $this->marcFormatConfig->Leader6_Format[$format];
+                }
+            }
+        }
+
+        return $formats;
     }
 }

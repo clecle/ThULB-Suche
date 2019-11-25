@@ -560,7 +560,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getPrimaryAuthors()
     {
-        $author = $this->getFormattedMarcData('100a (100b)');
+        $author = $this->getFormattedMarcData('100a (100b)(, 100c)');
         return $author ? [$author] : [];
     }
     
@@ -569,9 +569,9 @@ class SolrVZGRecord extends SolrMarc
      * 
      * @return array
      */
-    public function getPrimaryAuthorsTitleAndDates()
+    public function getPrimaryAuthorsDetails()
     {
-        $information = $this->getFormattedMarcData('(\((100c, 100d)\))( 100g)');
+        $information = $this->getFormattedMarcData('( 100g)');
         return $information ? [$information] : [];
     }
 
@@ -596,12 +596,10 @@ class SolrVZGRecord extends SolrMarc
     public function getSecondaryAuthors()
     {
         $relevantFields = [
-            '700' => ['a', 'b'],
-            '710' => ['a', 'b']
+            '700' => ['a', 'b', 'c']
         ];
         $formattingRules = [
-            '700' => '700a (700b )',
-            '710' => '710a, (710b)'
+            '700' => '700a (700b)(, 700c)'
         ];
 
         return $this->getFormattedData($relevantFields, $formattingRules);
@@ -614,16 +612,10 @@ class SolrVZGRecord extends SolrMarc
      *
      * @throws File_MARC_Exception
      */
-    public function getSecondaryAuthorsTitleAndRoles()
+    public function getSecondaryAuthorsDetails()
     {
-        $relevantFields = [
-            '700' => ['c', 'd', 'g'],
-            '710' => ['c', 'd', 'g', 'n']
-        ];
-        $formattingRules = [
-            '700' => '(\((700c, 700d)\))( 700g)',
-            '710' => '(\((710n, (710d, 710c))\))( 710g)'
-        ];
+        $relevantFields = array('700' => ['g']);
+        $formattingRules = array('700' => '( 700g)');
 
         return $this->getFormattedData($relevantFields, $formattingRules);
     }
@@ -639,17 +631,15 @@ class SolrVZGRecord extends SolrMarc
     public function getSecondaryAuthorsRoles()
     {
         $roles = [];
-        foreach (['700', '710'] as $fieldNumber) {
-            $fields = $this->getMarcRecord()->getFields($fieldNumber);
-            foreach ($fields as $field) {
-                foreach ($field->getSubfields() as $subfield) {
-                    if ($subfield->getCode() === '4') {
-                        $roles[] = $subfield->getData();
-                        continue 2;
-                    }
+        $fields = $this->getMarcRecord()->getFields('700');
+        foreach ($fields as $field) {
+            foreach ($field->getSubfields() as $subfield) {
+                if ($subfield->getCode() === '4') {
+                    $roles[] = $subfield->getData();
+                    continue 2;
                 }
-                $roles[] = '';
             }
+            $roles[] = '';
         }
 
         return $roles;
@@ -914,7 +904,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getDeduplicatedAuthors($dataFields = ['titleAndDate', 'role']) {
+    public function getDeduplicatedAuthors($dataFields = ['detail', 'role']) {
         return parent::getDeduplicatedAuthors($dataFields);
     }
 

@@ -148,16 +148,16 @@ class Record extends OriginalRecord
     }
 
     /**
-     *
+     * Get the detail information of the given author.
      *
      * @param string $author
      *
      * @return string
      */
-    public function getAuthorTitleAndDate($author) {
+    public function getAuthorDetails($author) {
         foreach ($this->driver->getDeduplicatedAuthors() as $type):
             if(isset($type[$author])):
-                return isset($type[$author]['titleAndDate']) ? $type[$author]['titleAndDate'][0] : '';
+                return isset($type[$author]['detail']) ? $type[$author]['detail'][0] : '';
             endif;
         endforeach;
 

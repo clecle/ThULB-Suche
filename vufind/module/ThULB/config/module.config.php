@@ -102,10 +102,12 @@ $config = array(
             ),
             'search_params' => array(
                 'factories' => array(
-                    'ThULB\Search\Solr\Params' => 'VuFind\Search\Solr\ParamsFactory'
+                    'ThULB\Search\Solr\Params' => 'VuFind\Search\Solr\ParamsFactory',
+                    'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
                 ),
                 'aliases' => array(
-                    'solr' => 'ThULB\Search\Solr\Params'
+                    'solr' => 'ThULB\Search\Solr\Params',
+                    'summon' => 'ThULB\Search\Summon\Params'
                 )
             ),
             'search_results' => array(

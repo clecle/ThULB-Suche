@@ -74,6 +74,9 @@ class SearchController extends OriginalController
      */
     public function resultsAction()
     {
+        // Check permission to avoid an error with debug mode
+        $this->plugin('permission')->check('hide.VpnWarning', $this->accessDeniedBehavior);
+
         try {
             $view = parent::resultsAction();
         } catch (BackendException $e) {

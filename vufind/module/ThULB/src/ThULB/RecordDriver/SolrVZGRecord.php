@@ -2003,24 +2003,26 @@ class SolrVZGRecord extends SolrMarc
         return false;
     }
 
-    /**
-     * Get an array of all the formats associated with the record.
-     *
-     * @return array
-     *
-     * @throws File_MARC_Exception
-     */
-    public function getFormats() {
-        $formats = parent::getFormats();
-        foreach($formats as $index => $format) {
-            if(strtolower($format) == 'unknown') {
-                $format = substr($this->getMarcRecord()->getLeader(), 6, 1);
-                if(isset($this->marcFormatConfig->Leader6_Format[$format])) {
-                    $formats[$index] = $this->marcFormatConfig->Leader6_Format[$format];
-                }
-            }
-        }
-
-        return $formats;
-    }
+//    Commented out for possible future use.
+//    /**
+//     * Get an array of all the formats associated with the record.
+//     * Get the format from the leader if a format is 'unknown'.
+//     *
+//     * @return array
+//     *
+//     * @throws File_MARC_Exception
+//     */
+//    public function getFormats() {
+//        $formats = parent::getFormats();
+//        foreach($formats as $index => $format) {
+//            if(strtolower($format) == 'unknown') {
+//                $format = substr($this->getMarcRecord()->getLeader(), 6, 1);
+//                if(isset($this->marcFormatConfig->Leader6_Format[$format])) {
+//                    $formats[$index] = $this->marcFormatConfig->Leader6_Format[$format];
+//                }
+//            }
+//        }
+//
+//        return $formats;
+//    }
 }

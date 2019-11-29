@@ -92,7 +92,7 @@ class SolrVZGRecord extends SolrMarc
     
     /**
      * The title of the record with highlighting markers
-     * 
+     *
      * @var string
      */
     protected $highlightedTitle;
@@ -1368,9 +1368,10 @@ class SolrVZGRecord extends SolrMarc
             foreach ($series as $currentField) {
                 if ($currentField->getSubfield('w')) {
                     if (( $name = $currentField->getSubfield('t')) === false) {
-                        $name = $this->getMarcRecord()->getField('245')->getSubfield('a');
+                        $field = $this->getMarcRecord()->getField('245');
+                        $name = $field ? $field->getSubfield('a') : '';
                     }
-                    $currentArray = ['name' => $name->getData()];
+                    $currentArray = ['name' => $name ? $name->getData() : $this->translate('Main entry')];
 
                     if ($number = $currentField->getSubfield('g')) {
                         $currentArray['number'] = $number->getData();

@@ -10547,6 +10547,9 @@ label {
 .highlight,
 mark {
   background: #ffff66;
+  padding: .1em .2em;
+}
+.Summontitle > mark {
   padding: 0em;
 }
 img {

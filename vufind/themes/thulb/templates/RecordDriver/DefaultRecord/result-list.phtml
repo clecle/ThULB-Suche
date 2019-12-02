@@ -28,9 +28,15 @@
     <div class="row result-body">
       <div class="col-xs-11 middle">
         <div>
-          <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title getFull truncate" data-view="<?=$this->params->getOptions()->getListViewOption() ?>">
-            <?=$this->record($this->driver)->getTitleHtml()?>
-          </a>
+          <? if ($this->driver->getSourceIdentifier() == "Summon"): ?>
+            <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title Summontitle getFull truncate" data-view="<?=$this->params->getOptions()->getListViewOption() ?>">
+              <?=$this->record($this->driver)->getTitleHtml()?>
+            </a>
+          <? else: ?>
+            <a href="<?=$this->recordLink()->getUrl($this->driver)?>" class="title getFull truncate" data-view="<?=$this->params->getOptions()->getListViewOption() ?>">
+                <?=$this->record($this->driver)->getTitleHtml()?>
+            </a>
+          <? endif; ?>
         </div>
         <div>
            <?=$this->record($this->driver)->renderTemplate('result-list-publicationDetails.phtml')?>

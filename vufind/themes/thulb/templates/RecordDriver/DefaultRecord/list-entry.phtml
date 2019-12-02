@@ -11,14 +11,6 @@
   }
   $editable = $this->user && $user_id === $this->user->id;
 
-  try {
-    $holdings = $this->driver->getRealTimeHoldings();
-    $holdingsShort = $this->thulb_holdingHelper()->getHoldingsShort($holdings);
-  } catch (\VuFind\Exception\ILS $e) {
-    $holdings = ['holdings' => []];
-    $offlineMode = 'ils-offline';
-  }
-
   // Thumbnail
   $coverDetails = $this->record($this->driver)->getCoverDetails('list-entry', 'medium', $this->recordLink()->getUrl($this->driver));
   $cover = $coverDetails['html'];
@@ -68,14 +60,23 @@
                 }
               } ?>
 
-            <? if(isset($holdingsShort) && !empty($holdingsShort)): ?>
-              <div>
-                <span class="callnumberTitle"><?=$this->transEsc('Call Number'); ?>:</span><br>
-                <? foreach ($holdingsShort as $location => $callNumbers): ?>
-                  <span class="callnumberLocation"><?= $location; ?>:</span> <?= implode(' | ', $callNumbers); ?><br>
-                <? endforeach; ?>
-              </div>
-            <? endif; ?>
+            <div class="callnumAndLocation ajax-availability hidden">
+              <?php if ($this->driver->supportsAjaxStatus()): ?>
+                <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
+                <span class="callnumber ajax-availability hidden">
+                  <?=$this->transEsc('Loading')?>...<br/>
+                </span>
+                <strong><?=$this->transEsc('Located')?>:</strong>
+                <span class="location ajax-availability hidden">
+                  <?=$this->transEsc('Loading')?>...
+                </span>
+                <div class="locationDetails"></div>
+              <?php else: ?>
+                <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+                <strong class=""><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
+                <?php endif; ?>
+              <?php endif; ?>
+            </div>
 
             <? $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected

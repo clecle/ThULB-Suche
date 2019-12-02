@@ -37,7 +37,9 @@ use Zend\Config\Config;
  */
 class Results extends OriginalResults
 {
-    use SortedFacetsTrait;
+    use SortedFacetsTrait {
+        getFacetList as public trait_getFacetList;
+    }
 
     /**
      * Returns the stored list of facets for the last search
@@ -49,33 +51,33 @@ class Results extends OriginalResults
      */
     public function getFacetList($filter = null)
     {
-        $list = parent::getFacetList($filter);
+        $facetList = $this->trait_getFacetList($filter);
 
-        if (empty($list) || !($facetFieldPrefixes = $this->getOptions()->getFacetPrefixes())) {
-            return $list;
+        if (empty($facetList) || !($facetFieldPrefixes = $this->getOptions()->getFacetPrefixes())) {
+            return $facetList;
         }
 
         // replace normal ThBIB facet list with hierarchical list
-        if(isset($list['class_local_iln'])) {
-            $list['class_local_iln']['list'] = $this->getTBHierarchies($list['class_local_iln']['list']);
+        if(isset($facetList['class_local_iln'])) {
+            $facetList['class_local_iln']['list'] = $this->getTBHierarchies($facetList['class_local_iln']['list']);
         }
 
         // format display text
         foreach ($facetFieldPrefixes as $field => $prefix) {
-            if (!array_key_exists($field, $list)) {
+            if (!array_key_exists($field, $facetList)) {
                 continue;
             }
             $replace = array(
                 $facetFieldPrefixes[$field],
                 '&lt;Thüringen&gt;'
             );
-            foreach ($list[$field]['list'] as $index => $item) {
-                $list[$field]['list'][$index]['displayText'] =
+            foreach ($facetList[$field]['list'] as $index => $item) {
+                $facetList[$field]['list'][$index]['displayText'] =
                     str_replace($replace, '', $item['displayText']);
             }
         }
 
-        return $list;
+        return $facetList;
     }
 
     /**

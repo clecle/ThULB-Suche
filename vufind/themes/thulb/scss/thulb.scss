@@ -741,6 +741,14 @@ a.checkbox-filter {
   padding-right: .65rem;
 }
 
+.full-facet-list .fa-square-o {
+  display: none;
+}
+
+.full-facet-list .js-facet-item.active .text {
+  display: block;
+}
+
 span.th-bibliography {
   background-color: #b2b333;
 }

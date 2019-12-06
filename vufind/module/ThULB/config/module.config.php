@@ -20,12 +20,14 @@ $config = array(
     'service_manager' => [
         'factories' => [
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+            'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
+            'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
-            'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
+            'VuFind\Record\Loader' => 'ThULB\Record\Loader',
         )
     ],
     'vufind' => array(

@@ -128,6 +128,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         foreach ($this->getRelevantData() as list($comment, $ppn, $longViewDe, $longViewEn, $shortView, $link)) {
             $record = $this->getRecordFromFindex($ppn);
             $this->setTranslationLocale('de');
+            $record->setTranslator($this->getTranslator());
             $formatter = $this->getFormatter();
 
             $spec = $this->getFormatterSpecBuilder();
@@ -161,6 +162,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             // Test for english metadata presentation:
             if ($longViewEn) {
                 $this->setTranslationLocale('en');
+                $record->setTranslator($this->getTranslator());
                 $formatter = $this->getFormatter();
                 $data = $formatter->getData($record, $spec->getArray());
                 $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', EN ===';

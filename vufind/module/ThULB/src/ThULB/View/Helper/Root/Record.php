@@ -81,13 +81,23 @@ class Record extends OriginalRecord
     }
     
     /**
-     * Is this Record OpenAcess?
+     * Is this Record OpenAccess?
      *
      * @return string
      */
     public function getOpenAccess()
     {
         return $this->renderTemplate('isopenaccess.phtml');
+    }
+
+    /**
+     * Is this Record part of the thuringia bibliography?
+     *
+     * @return string
+     */
+    public function getThuringiaBibliography()
+    {
+        return $this->renderTemplate('isThuBibliography.phtml');
     }
 
     /**
@@ -135,5 +145,22 @@ class Record extends OriginalRecord
         return $this->resolveClassTemplate(
             $template, $parentClass, $topClassName ?? $className
         );
+    }
+
+    /**
+     * Get the detail information of the given author.
+     *
+     * @param string $author
+     *
+     * @return string
+     */
+    public function getAuthorDetails($author) {
+        foreach ($this->driver->getDeduplicatedAuthors() as $type):
+            if(isset($type[$author])):
+                return isset($type[$author]['detail']) ? $type[$author]['detail'][0] : '';
+            endif;
+        endforeach;
+
+        return '';
     }
 }

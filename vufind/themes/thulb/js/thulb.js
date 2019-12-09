@@ -201,6 +201,11 @@ $(document).ready(function thulbDocReady() {
             $(this).closest('form').attr('target', '_self');
         }
     });
+
+    // retain filter sessionStorage
+    $('.searchFormKeepFilters').click(function retainFiltersInSessionStorage() {
+        $('.applied-filter').prop('checked', this.checked);
+    });
 });
 
 document.addEventListener('VuFind.lightbox.rendered', function(event) {

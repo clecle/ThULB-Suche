@@ -43,6 +43,7 @@ class OtherAuthorsMetadataTest extends AbstractRecordDataFormatterTest
                         'type' => 'secondary',
                         'schemaLabel' => 'contributor',
                         'requiredDataFields' => [
+                            ['name' => 'detail'],
                             ['name' => 'role', 'prefix' => 'CreatorRoles::']
                         ]]
                 ];

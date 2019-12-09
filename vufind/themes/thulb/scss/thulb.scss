@@ -51,6 +51,10 @@ mark {
   background: lighten(#FF0, 20%);
   padding: .1em .2em;
 }
+.Summontitle > mark {
+  background: lighten(#FF0, 20%);
+  padding: 0em;
+}
 
 // Normalize
 img { max-width: 100%; }
@@ -654,4 +658,132 @@ dd > div.citations {
 .callnumberLocation {
   font-style: italic;
   text-decoration: underline;
+}
+
+@media (min-width: 768px) {
+  #resultlist > .alert.alert-danger {
+    margin-left: 10px;
+  }
+}
+
+// hierarchical facet
+.facet-tree-container li {
+  list-style: none;
+  padding-left: 0;
+}
+
+.facet-tree-parent > i[data-toggle="collapse"]::after,
+.facet-tree-container ul.collapsed::after {
+  content: '';
+  float: none;
+}
+
+.facet-tree-parent > i[data-toggle="collapse"]::before {
+  content: '\25B2';
+  float: none;
+}
+
+.facet-tree-parent > i.collapsed[data-toggle="collapse"]::before {
+  content: '\25BC';
+  float: none;
+}
+
+ul.facet-tree-container,
+.facet-tree-container ul {
+  padding-left: 0;
+}
+
+div.facet-tree-parent > i {
+  padding: 0 5px;
+}
+
+.facet-tree-container ul li:nth-child(odd) {
+  background-color: #fefefe;
+}
+
+.facet-tree-container ul li:nth-child(even) {
+  background-color: #ffffff;
+}
+
+.child.text {
+  font-size: 11px;
+}
+
+.facet-group .facet-tree-container .facet {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  padding: .35rem .65rem .35rem 1rem;
+  border-bottom: none;
+}
+
+.facet-tree-container ul > li {
+  padding-left: 25px;
+}
+
+.facet-tree-container .badge {
+  flex-shrink: 0;
+  margin-left: 3px; }
+
+.facet-tree-container ul:last-child,
+.facet-tree-parent {
+  border-bottom: 1px solid #ddd;
+}
+
+.facet-group .facet-tree-container .collapse,
+.facet-group .facet-tree-container .collapsing,
+.facet-group .facet-tree-container .facet {
+  border-left: none;
+  border-right: none;
+}
+
+.facet-tree-container a {
+  padding-right: .65rem;
+}
+.facet-tree-container .active a {
+  background-color: #568ebe !important;
+  color: #fff !important;
+}
+
+a.checkbox-filter {
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 1rem;
+  font-weight: bold;
+  color: #333333;
+  align-items: center;
+}
+
+.facet-tree-parent:hover {
+  color: #333333;
+  background-color: #eeeeee;
+  text-decoration: none;
+}
+
+.facet-tree-container div.facet-tree-parent {
+  padding-right: .65rem;
+}
+
+.full-facet-list .fa-square-o {
+  display: none;
+}
+
+.full-facet-list .js-facet-item.active .text {
+  display: block;
+}
+
+span.th-bibliography {
+  background-color: #b2b333;
+}
+
+.thbib-img {
+  height: 16px;
+  border-radius: 3px;
+  border: solid 1px #ccc;
+}
+
+span.service_loan {
+  background-color: inherit;
+  color: inherit;
 }

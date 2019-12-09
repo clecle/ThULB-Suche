@@ -189,6 +189,14 @@
                'hiddenFilters' => $hiddenFilters]); ?>
     </div>
 
+    <?=$this->context($this)->renderInContext(
+        'search/filters.phtml',
+        [
+            'params' => $params ?? null,
+            'urlQuery' => isset($results) ? $results->getUrlQuery() : null
+        ]
+    );?>
+
     <? if ($recordTotal > 0): ?>
       <?=$this->render('search/controls/searchSort.phtml')?>
       <?=$this->render('search/controls/limit.phtml')?>

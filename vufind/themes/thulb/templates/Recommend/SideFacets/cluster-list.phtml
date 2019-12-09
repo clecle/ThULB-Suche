@@ -1,13 +1,6 @@
 <? $idAndClass = 'id="more-narrowGroupHidden-'.$this->escapeHtmlAttr($this->title).'" class="facet narrow-toggle"'; ?>
 <? $moreClass = 'narrowGroupHidden-'.$this->escapeHtmlAttr($this->title).' hidden'; ?>
 <? foreach ($this->cluster['list'] as $i => $thisFacet): ?>
-  <?
-    if(empty($thisFacet['displayText'])) {
-      $thisFacet['displayText'] = "-";
-    } elseif (in_array($thisFacet['displayText'], ['true', 'false'])) {
-        $thisFacet['displayText'] = $this->translate('facet_' . $thisFacet['displayText']);
-    }
-  ?>
   <? /* MORE link */ ?>
   <? if ($i == $this->facets_before_more): ?>
     <? if ($facetLightbox = $this->options->getFacetListAction()): ?>

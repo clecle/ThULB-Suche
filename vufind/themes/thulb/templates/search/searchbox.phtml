@@ -86,12 +86,6 @@
     ?>
     <? if ((isset($hasDefaultsApplied) && $hasDefaultsApplied) || !empty($filterDetails)): ?>
       <? $defaultFilterState = $options->getRetainFilterSetting() ? ' checked="checked"' : ''; ?>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox"<?=$defaultFilterState?> class="searchFormKeepFilters"/>
-          <?=$this->transEsc("basic_search_keep_filters")?>
-        </label>
-      </div>
       <div class="hidden">
         <? foreach ($filterDetails as $current): ?>
           <input class="applied-filter" id="<?=$this->escapeHtmlAttr($current['id'])?>" type="checkbox"<?=$defaultFilterState?> name="filter[]" value="<?=$this->escapeHtmlAttr($current['value'])?>" />
@@ -122,6 +116,14 @@
         echo '<input type="hidden" name="sort" value="' . $this->escapeHtmlAttr($lastSort) . '" />';
       }
     ?>
+    <?=$this->context($this)->renderInContext(
+        'search/filters.phtml',
+        [
+            'params' => $params ?? null,
+            'urlQuery' => isset($results) ? $results->getUrlQuery() : null,
+            'showOnMobile' => false
+        ]
+    );?>
   </form>
 <? endif; ?>
 

@@ -1,11 +1,11 @@
 <?php
   if (!isset($this->params)) {
     // No current search, use last search in memory
-    $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  } else {
-    // clone params so that the manipulation doesn't cause trouble e.g. for facets
-    $params = clone $this->params;
+    return;
   }
+
+  // clone params so that the manipulation doesn't cause trouble e.g. for facets
+  $params = clone $this->params;
 
   $this->showOnMobile = $this->showOnMobile ?? true;
 

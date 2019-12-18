@@ -144,16 +144,39 @@ function styleHtmlTooltips()
     });
 }
 
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
+function toggleVpnWarning(show, html) {
+    var ajaxMessage = $('.vpn-warning-wrapper');
+    if(typeof html !== 'undefined' && html !== '') {
+        ajaxMessage.html(html);
+    }
+
+    ajaxMessage.animate({
+        'opacity': show,      // animate slideUp
+        'margin-top':  show,
+        'margin-bottom':  show,
+        'padding-top': show,
+        'padding-bottom': show,
+        'height':  show
+    }, 700);
+}
+
+function checkVpnWarning(accepted) {
+    if(accepted) {
+        toggleVpnWarning('hide');
+    }
+
+    $.ajax({
+        dataType: 'json',
+        method: 'POST',
+        url: VuFind.path + '/AJAX/JSON?method=vpnWarning' + (accepted ? '&vpn-accepted=ja' : '')
+    }).done(function showVpnWarning (response) {
+        if(response.data.html) {
+            toggleVpnWarning('show', response.data.html);
+        }
+    });
 }
 
 function hideMessage(message) {
-    console.log(message);
-
     $.ajax({
         dataType: 'json',
         method: 'POST',
@@ -171,6 +194,8 @@ $(document).ready(function thulbDocReady() {
     setupRemoveSearchText();
 	setAsyncResultNum();
     styleHtmlTooltips();
+
+    checkVpnWarning(false);
     
     $('.checkbox-select-all').change(function unsetDisabledCheckboxes() {
         var $form = this.form ? $(this.form) : $(this).closest('form');

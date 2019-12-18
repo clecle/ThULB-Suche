@@ -18,12 +18,15 @@ class IpRange extends OriginalIpRange
         $server = $this->request->getServer();
         $ip = $server->get('HTTP_X_FORWARDED_FOR') ?: $server->get('REMOTE_ADDR');
 
-        if ($this->ipAddressUtils->isInRange($ip, (array)$options)) {
-            // Match? Grant to all users (guest or logged in).
-            return ['guest', 'loggedin'];
+        // Check if a ip is not in range
+        $allIps = explode(',', $ip);
+        foreach($allIps as $singleIp) {
+            if(!$this->ipAddressUtils->isInRange($singleIp, (array) $options)) {
+                return [];
+            }
         }
 
-        //  No match? No permissions.
-        return [];
+        // All ips in range? Grant to all users (guest or logged in).
+        return ['guest', 'loggedin'];
     }
 }

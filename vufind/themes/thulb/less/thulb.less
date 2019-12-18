@@ -799,3 +799,35 @@ span.filters-title {
   display: flex;
   justify-content: space-between;
 }
+
+div.groupLocation {
+  .text-success,
+  .text-warning,
+  .text-danger {
+    float: left;
+    margin-right: 5px;
+  }
+}
+
+.favourite-list {
+  font-size: 13px;
+}
+
+.striped {
+  .cart-controls {
+    padding: 0 8px;
+  }
+
+  > div.result {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+
+    &:nth-of-type(even) {
+      background-color: @table-bg-accent;
+
+      a.getFull.title:after {
+        background-color: @table-bg-accent;
+      }
+    }
+  }
+}

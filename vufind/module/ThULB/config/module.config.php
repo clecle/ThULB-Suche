@@ -1,9 +1,6 @@
 <?php
 namespace ThULB\Module\Configuration;
 
-use ThULB\AjaxHandler\VpnWarning;
-use ThULB\AjaxHandler\VpnWarningFactory;
-
 $config = array(
     'controllers' => array(
         'factories'    => array(
@@ -39,12 +36,14 @@ $config = array(
                 'factories' => array(
                     'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
                     'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
-                    VpnWarning::class => VpnWarningFactory::class
+                    \ThULB\AjaxHandler\VpnWarning::class => \ThULB\AjaxHandler\VpnWarningFactory::class,
+                    \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                 ),
                 'aliases' => array(
                     'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
-                    'vpnWarning' => VpnWarning::class
+                    'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
+                    \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
                 )
             ),
             'db_row' => array(

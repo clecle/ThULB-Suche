@@ -555,6 +555,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   display: none;
 }
 
+.vpn-warning-wrapper {
+  position: sticky;
+  bottom: 0;
+}
+
 .information {
   margin-top: 10px;
   background-color: $brand-secondary;

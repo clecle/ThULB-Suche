@@ -1371,7 +1371,7 @@ class SolrVZGRecord extends SolrMarc
                         $field = $this->getMarcRecord()->getField('245');
                         $name = $field ? $field->getSubfield('a') : '';
                     }
-                    $currentArray = ['name' => $name ? $name->getData() : $this->translate('Zur Gesamtaufnahme')];
+                    $currentArray = ['name' => $name ? $name->getData() : $this->translate('Main entry')];
 
                     if ($number = $currentField->getSubfield('g')) {
                         $currentArray['number'] = $number->getData();

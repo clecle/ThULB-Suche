@@ -857,3 +857,13 @@ div.groupLocation {
     }
   }
 }
+
+li[data-tab="details"] a {
+  color: transparent !important;
+  outline: transparent !important;
+
+  &:hover {
+    background-color: transparent;
+    border-color: transparent;
+  }
+}

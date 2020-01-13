@@ -35,6 +35,9 @@
       <span class="filter-value">
         <?php
           $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : '';
+          if($filter['desc'] == 'Th_Biblio') {
+            $removeLink = $this->thulb_removeThBibFilter($removeLink);
+          }
           $desc = $this->translate($filter['desc']);
           $ariaLabel = $this->translate('Remove filter') . ' ' . $this->escapeHtmlAttr($desc);
         ?>

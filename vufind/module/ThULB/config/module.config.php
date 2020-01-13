@@ -21,6 +21,7 @@ $config = array(
         'factories' => [
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
+            'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
@@ -106,9 +107,17 @@ $config = array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
                 )
             ),
+            'search_facets' => array(
+                'factories' => array(
+                    \ThULB\Search\Facets\ThBIBFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+                ),
+                'aliases' => array(
+                    'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class
+                )
+            ),
             'search_params' => array(
                 'factories' => array(
-                    'ThULB\Search\Solr\Params' => 'VuFind\Search\Solr\ParamsFactory',
+                    'ThULB\Search\Solr\Params' => \ThULB\Search\Solr\ParamsFactory::class,
                     'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
                 ),
                 'aliases' => array(

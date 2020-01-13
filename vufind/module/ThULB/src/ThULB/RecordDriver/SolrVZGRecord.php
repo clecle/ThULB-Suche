@@ -658,37 +658,47 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = array('711' => '(711a (\((711n, (711d, 711c))\))');
         return $this->getFormattedData($relevantFields, $formattingRules);
     }
-    
+
     /**
      * Get the corporate authors (if any) for the record
-     * 
+     *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getCorporateAuthors()
     {
-        $author = $this->getFormattedMarcData('110a, (110b, (\((110c, 110d)\)))( 110g)');
-        if(!$author) {
-            $author = $this->getFormattedMarcData('111a( \(111g\))(, 111n)(, 111d)(, 111c)');
-        }
-
-        return $author ? [$author] : [];
+        $relevantFields = array(
+            '110' => ['a', 'b', 'c', 'd', 'g'],
+            '710' => ['a', 'b', 'c', 'd', 'g']
+        );
+        $formattingRules = array(
+            '110' => '110a, (110b, (\((110c, 110d)\)))( 110g)',
+            '710' => '710a, (710b, (\((710c, 710d)\)))( 710g)'
+        );
+        return $authors = $this->getFormattedData($relevantFields, $formattingRules);
     }
-    
+
     /**
-     * Get the roles of corporate authors (if any) for the record. 
-     * 
+     * Get the roles of corporate authors (if any) for the record.
+     *
      * @return array
+     * @throws File_MARC_Exception
      */
     public function getCorporateAuthorsRoles()
     {
-        $role = $this->getFirstFieldValue('110', ['4']);
-        if(!$role) {
-            $role = $this->getFirstFieldValue('111', ['4']);
+        $roles = [];
+
+        $fields = $this->getMarcRecord()->getFields('110|710', true);
+        foreach ($fields as $field) {
+            if ($subfield = $field->getSubField('4')) {
+                $roles[] = $subfield->getData();
+            } else {
+                $roles[] = '';
+            }
         }
 
-        return $role ? [$role] : [];
+        return $roles;
     }
-
 
     /**
      * Get all record links related to the current record, that are preceding or

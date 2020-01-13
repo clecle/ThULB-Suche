@@ -832,12 +832,17 @@ div.groupLocation {
   }
 }
 
-li[data-tab="details"] a {
-  color: transparent !important;
-  outline: transparent !important;
+li[data-tab="details"] {
+  float: right;
 
-  &:hover {
-    background-color: transparent;
-    border-color: transparent;
+  a {
+    color: transparent !important;
+    outline: transparent !important;
+    margin-right: 0;
+
+    &:hover {
+      background-color: transparent;
+      border-color: transparent;
+    }
   }
 }

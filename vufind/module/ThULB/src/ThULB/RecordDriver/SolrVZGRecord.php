@@ -1426,7 +1426,7 @@ class SolrVZGRecord extends SolrMarc
         $urls = $this->getMarcRecord()->getFields('856');
         foreach ($urls as $url) {
             $address = $url->getSubfield('u');
-            $description = $url->getSubfield('y');
+            $description = $url->getSubfield('3');
             if ($address && $description) {
                 $retVal[] = [
                         'url'   => $address->getData(),

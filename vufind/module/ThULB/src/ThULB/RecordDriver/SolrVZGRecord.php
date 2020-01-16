@@ -672,8 +672,8 @@ class SolrVZGRecord extends SolrMarc
             '710' => ['a', 'b', 'c', 'd', 'g']
         );
         $formattingRules = array(
-            '110' => '110a, (110b, (\((110c, 110d)\)))( 110g)',
-            '710' => '710a, (710b, (\((710c, 710d)\)))( 710g)'
+            '110' => '110a (/ 110b, (\((110c, 110d)\)))( 110g)',
+            '710' => '710a (/ 710b, (\((710c, 710d)\)))( 710g)'
         );
         return $authors = $this->getFormattedData($relevantFields, $formattingRules);
     }

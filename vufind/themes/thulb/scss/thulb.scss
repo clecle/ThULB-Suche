@@ -555,6 +555,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   display: none;
 }
 
+.vpn-warning-wrapper {
+  position: sticky;
+  bottom: 0;
+}
+
 .information {
   margin-top: 10px;
   background-color: $brand-secondary;
@@ -787,7 +792,8 @@ span.th-bibliography {
   border: solid 1px #ccc;
 }
 
-span.service_loan {
+span.service_loan,
+span.service_presentation {
   background-color: inherit;
   color: inherit;
 }
@@ -797,10 +803,11 @@ span.service_loan {
 
   .cart-controls .checkbox {
     line-height: 1.1rem;
-    margin-top: 5px;
+    margin: 5px 0 0 0;
 
     input[type="checkbox"] {
-      margin: 0 5px 0 0;
+      position: relative;
+      margin: -1px 5px 0 0;
     }
   }
 }

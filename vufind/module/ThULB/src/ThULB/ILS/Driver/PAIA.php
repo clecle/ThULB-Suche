@@ -34,6 +34,7 @@
 
 namespace ThULB\ILS\Driver;
 use Exception;
+use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
     VuFind\I18n\Translator\TranslatorAwareInterface,
@@ -930,5 +931,102 @@ class PAIA extends OriginalPAIA
         }
 
         return $result->getBody();
+    }
+
+    /**
+     * This method cancels a list of holds for a specific patron.
+     *
+     * @param array $cancelDetails An associative array with two keys:
+     *      patron   array returned by the driver's patronLogin method
+     *      details  an array of strings returned by the driver's
+     *               getCancelHoldDetails method
+     *
+     * @return array Associative array containing:
+     *      count   The number of items successfully cancelled
+     *      items   Associative array where key matches one of the item_id
+     *              values returned by getMyHolds and the value is an
+     *              associative array with these keys:
+     *                success    Boolean true or false
+     *                status     A status message from the language file
+     *                           (required – VuFind-specific message,
+     *                           subject to translation)
+     *                sysMessage A system supplied failure message
+     *
+     * @throws ForbiddenException
+     */
+    public function cancelHolds($cancelDetails)
+    {
+        // check if user has appropriate scope (refer to scope declaration above for
+        // further details)
+        if (!$this->paiaCheckScope(self::SCOPE_WRITE_ITEMS)) {
+            throw new ForbiddenException(
+                'Exception::access_denied_write_items'
+            );
+        }
+
+        $it = $cancelDetails['details'];
+        $items = [];
+        foreach ($it as $item) {
+            $items[] = ['item' => stripslashes($item)];
+        }
+        $patron = $cancelDetails['patron'];
+        $post_data = ["doc" => $items];
+
+        try {
+            $array_response = $this->paiaPostAsArray(
+                'core/' . $patron['cat_username'] . '/cancel', $post_data
+            );
+        } catch (\Exception $e) {
+            $this->debug($e->getMessage());
+            return [
+                'success' => false,
+                'status' => $e->getMessage(),
+            ];
+        }
+
+        $details = [];
+
+        if (isset($array_response['error'])) {
+            $details[] = [
+                'success' => false,
+                'status' => $array_response['error_description'],
+                'sysMessage' => $array_response['error']
+            ];
+        } else {
+            $count = 0;
+            $elements = $array_response['doc'];
+            foreach ($elements as $element) {
+                $item_id = $element['item'];
+                if (isset($element['error'])) {
+                    $details[$item_id] = [
+                        'success' => false,
+                        'status' => $element['error'],
+                        'sysMessage' => 'Cancel request rejected'
+                    ];
+                } else {
+                    $details[$item_id] = [
+                        'success' => true,
+                        'status' => 'Success',
+                        'sysMessage' => 'Successfully cancelled'
+                    ];
+                    $count++;
+
+                    // DAIA cache cannot be cleared for particular item as PAIA only
+                    // operates with specific item URIs and the DAIA cache is setup
+                    // by doc URIs (containing items with URIs)
+                }
+            }
+
+            // If caching is enabled for PAIA clear the cache as at least for one
+            // item cancel was successful and therefore the status changed.
+            // Otherwise the changed status will not be shown before the cache
+            // expires.
+            if ($this->paiaCacheEnabled) {
+                $this->removeCachedData($patron['cat_username']);
+            }
+        }
+        $returnArray = ['count' => $count, 'items' => $details];
+
+        return $returnArray;
     }
 }

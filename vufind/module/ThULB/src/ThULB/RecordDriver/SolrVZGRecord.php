@@ -1428,14 +1428,18 @@ class SolrVZGRecord extends SolrMarc
             $address = $url->getSubfield('u');
             $description = $url->getSubfield('3');
             if ($address && $description) {
-                $retVal[] = [
-                        'url'   => $address->getData(),
-                        'desc'  => $description->getData()
+                $address = $address->getData();
+                $description = $description->getData();
+                if(!isset($retVal[$address]) && strtolower($description) != 'cover') {
+                    $retVal[$address] = [
+                        'url' => $address,
+                        'desc' => $description
                     ];
+                }
             }  
         }
 
-        return $retVal;
+        return array_values($retVal);
     }
 
     /**

@@ -60,24 +60,6 @@
                 }
               } ?>
 
-            <div class="callnumAndLocation ajax-availability hidden">
-              <?php if ($this->driver->supportsAjaxStatus()): ?>
-                <strong class="hideIfDetailed"><?=$this->transEsc('Call Number')?>:</strong>
-                <span class="callnumber ajax-availability hidden">
-                  <?=$this->transEsc('Loading')?>...<br/>
-                </span>
-                <strong><?=$this->transEsc('Location_s')?>:</strong>
-                <span class="location ajax-availability hidden">
-                  <?=$this->transEsc('Loading')?>...
-                </span>
-                <div class="locationDetails"></div>
-              <?php else: ?>
-                <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
-                <strong class=""><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
-                <?php endif; ?>
-              <?php endif; ?>
-            </div>
-
             <? $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
                 $user_id, 'tag'

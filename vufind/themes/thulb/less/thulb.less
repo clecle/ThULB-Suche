@@ -642,6 +642,30 @@ dd > div.citations {
   width: 100%;
 }
 
+#searchForm #searchForm_type {
+  border-bottom-right-radius: 0 !important;
+  border-top-right-radius: 0 !important;
+  background-color: #eee;
+}
+
+#searchForm #searchForm_lookfor {
+  border-radius: 0 !important;
+}
+
+#searchForm button {
+  border-bottom-left-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.callnumberTitle {
+  font-weight: bold;
+}
+
+.callnumberLocation {
+  font-style: italic;
+  text-decoration: underline;
+}
+
 @media (min-width: 768px) {
   #resultlist > .alert.alert-danger {
     margin-left: 10px;
@@ -759,6 +783,73 @@ span.service_presentation {
     input[type="checkbox"] {
       position: relative;
       margin: -1px 5px 0 0;
+    }
+  }
+}
+span.filters-title {
+  font-weight: bold;
+}
+
+.active-filters .reset-filters-btn, .active-filters .filters-toggle {
+  margin: 10px 0 0;
+  background-color: #eeeeee;
+  border-color: #cccccc;
+  color: #333;
+  flex: 1;
+  max-width: 47%;
+  min-width: fit-content;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.filters-toggle-bar {
+  display: flex;
+  justify-content: space-between;
+}
+
+div.groupLocation {
+  .text-success,
+  .text-warning,
+  .text-danger {
+    float: left;
+    margin-right: 5px;
+  }
+}
+
+.favourite-list {
+  font-size: 13px;
+}
+
+.striped {
+  .cart-controls {
+    padding: 0 8px;
+  }
+
+  > div.result {
+    border-top: 1px solid #ddd;
+    padding: 8px;
+
+    &:nth-of-type(even) {
+      background-color: @table-bg-accent;
+
+      a.getFull.title:after {
+        background-color: @table-bg-accent;
+      }
+    }
+  }
+}
+
+li[data-tab="details"] {
+  float: right;
+
+  a {
+    color: transparent !important;
+    outline: transparent !important;
+    margin-right: 0;
+
+    &:hover {
+      background-color: transparent;
+      border-color: transparent;
     }
   }
 }

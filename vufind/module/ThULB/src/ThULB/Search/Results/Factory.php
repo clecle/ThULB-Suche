@@ -70,8 +70,9 @@ class Factory {
         $params = $sm->get('VuFind\SearchParamsPluginManager')->get('Solr');
         $searchService = $sm->get('VuFind\Search');
         $recordLoader = $sm->get('VuFind\RecordLoader');
-        
-        $solr = new SolrResults($params, $searchService, $recordLoader);
+        $facetManager = $sm->get(\ThULB\Search\Facets\PluginManager::class);
+
+        $solr = new SolrResults($params, $searchService, $recordLoader, $facetManager);
         
         $config = $sm->get('VuFind\Config')->get('config');
         $spellConfig = isset($config->Spelling) ? $config->Spelling : null;

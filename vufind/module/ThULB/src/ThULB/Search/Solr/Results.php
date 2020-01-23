@@ -26,9 +26,13 @@
 
 namespace ThULB\Search\Solr;
 
+use ThULB\Search\Facets\PluginManager;
 use ThULB\Search\Results\SortedFacetsTrait;
+use VuFind\Record\Loader;
+use VuFind\Search\Base\Params;
 use VuFind\Search\Solr\Results as OriginalResults;
-use Zend\Config\Config;
+use VuFindSearch\Backend\Solr\Response\Json\Facets;
+use VuFindSearch\Service as SearchService;
 
 /**
  * Results
@@ -41,167 +45,103 @@ class Results extends OriginalResults
         getFacetList as public trait_getFacetList;
     }
 
+    /* @var Facets */
+    protected $responseFacets;
+
+    /**
+     * Facet PluginManager.
+     *
+     * @var PluginManager
+     */
+    private $facetManager;
+
+    public function __construct(Params $params, SearchService $searchService,
+                                Loader $recordLoader, PluginManager $facetManager)
+    {
+        $this->facetManager = $facetManager;
+        parent::__construct($params, $searchService, $recordLoader);
+    }
+
     /**
      * Returns the stored list of facets for the last search
      *
      * @param array $filter Array of field => on-screen description listing
      * all of the desired facet fields; set to null to get all configured values.
      *
-     * @return array Facets data arrays
+     * @return array        Facets data arrays
      */
     public function getFacetList($filter = null)
     {
-        $facetList = $this->trait_getFacetList($filter);
-
-        if (empty($facetList) || !($facetFieldPrefixes = $this->getOptions()->getFacetPrefixes())) {
-            return $facetList;
+        // Make sure we have processed the search before proceeding:
+        if (null === $this->responseFacets) {
+            $this->performAndProcessSearch();
         }
 
-        // replace normal ThBIB facet list with hierarchical list
-        if(isset($facetList['class_local_iln'])) {
-            $facetList['class_local_iln']['list'] = $this->getTBHierarchies($facetList['class_local_iln']['list']);
+        // If there is no filter, we'll use all facets as the filter:
+        if (null === $filter) {
+            $filter = $this->getParams()->getFacetConfig();
         }
 
-        // format display text
-        foreach ($facetFieldPrefixes as $field => $prefix) {
-            if (!array_key_exists($field, $facetList)) {
+        // Start building the facet list:
+        $list = [];
+
+        // Loop through every field returned by the result set
+        $fieldFacets = $this->responseFacets->getFieldFacets();
+        $translatedFacets = $this->getOptions()->getTranslatedFacets();
+        foreach (array_keys($filter) as $field) {
+            $data = $fieldFacets[$field] ?? [];
+            // Skip empty arrays:
+            if (count($data) < 1) {
                 continue;
             }
-            $replace = array(
-                $facetFieldPrefixes[$field],
-                '&lt;Thüringen&gt;'
-            );
-            foreach ($facetList[$field]['list'] as $index => $item) {
-                $facetList[$field]['list'][$index]['displayText'] =
-                    str_replace($replace, '', $item['displayText']);
+            // Initialize the settings for the current field
+            $list[$field] = [];
+            // Add the on-screen label
+            $list[$field]['label'] = $filter[$field];
+            // Build our array of values for this field
+            $list[$field]['list']  = [];
+            // Should we translate values for the current facet?
+            if ($translate = in_array($field, $translatedFacets)) {
+                $translateTextDomain = $this->getOptions()
+                    ->getTextDomainForTranslatedFacet($field);
             }
-        }
+            else {
+                $translateTextDomain = '';
+            }
 
-        return $facetList;
-    }
+            // Use custom facet class if available
+            if($this->facetManager->has($field)) {
+                $facet = $this->facetManager->get($field);
+                $list[$field]['list'] =
+                    $facet->getFacetList($field, $data, $this->getParams());
 
-    /**
-     * Creates the "Thüringen Bibliographie" hierarchical facet.
-     *
-     * @param array $oldFacetList
-     *
-     * @return array
-     */
-    public function getTBHierarchies($oldFacetList) {
-
-        $groups = $this->getOptions()->getTBClassificationGroups();
-        $classifications = $this->getOptions()->getTBClassification();
-
-        if(empty($groups) || empty($classifications)) {
-            return $oldFacetList;
-        }
-
-        $groupFacetList = $this->getTBGroupFacetList($groups, $classifications);
-        $classificationList = $this->getTBClassificationList($classifications, $groups);
-        unset($groups);
-        unset($classifications);
-
-        // create multidimensional array with parent > child structure
-        foreach($oldFacetList as $index => $oldEntry) {
-            $displayText = $oldEntry['displayText'];
-            if(!isset($classificationList[$displayText])) {
                 continue;
             }
 
-            $group = $classificationList[$displayText];
-            $oldEntry['parent'] = $group;
-            $oldEntry['displayText'] = htmlspecialchars($displayText);
-            $groupFacetList[$group]['count'] += $oldEntry['count'];
-            $groupFacetList[$group]['children'][] = $oldEntry;
-        }
-        unset($oldFacetList);
+            // Loop through values:
+            foreach ($data as $value => $count) {
+                // Initialize the array of data about the current facet:
+                $currentSettings = [];
+                $currentSettings['value'] = $value;
 
-        sort($groupFacetList);
+                $displayText = $this->getParams()
+                    ->checkForDelimitedFacetDisplayText($field, $value);
 
-        // create an array with parents and children
-        $newFacetList = array();
-        foreach($groupFacetList as $group) {
-            if ($group['count'] == 0) {
-                continue;
-            }
-            $children = $group['children'];
-            unset($group['children']);
-            usort($children, array($this, 'compareTBFacets'));
+                $currentSettings['displayText'] = $translate
+                    ? $this->translate("$translateTextDomain::$displayText")
+                    : $displayText;
+                $currentSettings['count'] = $count;
+                $currentSettings['operator']
+                    = $this->getParams()->getFacetOperator($field);
+                $currentSettings['isApplied']
+                    = $this->getParams()->hasFilter("$field:" . $value)
+                    || $this->getParams()->hasFilter("~$field:" . $value);
 
-            $newFacetList[] = $group;
-            $newFacetList = array_merge($newFacetList, $children);
-        }
-
-        return $newFacetList;
-    }
-
-    /**
-     * Creates an array of facets for the given groups.
-     * Keys are the names of the groups.
-     *
-     * @param Config $groups List of strings with the names for the group facets.
-     * @param Config $classifications List of tb classifications
-     *
-     * @return array
-     */
-    protected function getTBGroupFacetList($groups, $classifications) {
-
-        $groupList = array();
-        foreach($groups as $groupShort => $group) {
-
-            $queryParts = array();
-            foreach ($classifications[$groupShort] as $classification) {
-                $queryParts[] = '"31:' . $classification . '"';
-            }
-
-            $groupList[$group] = array(
-                'value' => $group,
-                'displayText' => $group,
-                'count' => 0,
-                'operator' => 'OR',
-                'isApplied' => false,
-                'children' => array(),
-                'tb_facet_value' => '~class_local_iln:(' . implode(' OR ', $queryParts) . ')'
-            );
-        }
-
-        return $groupList;
-    }
-
-    /**
-     * Creates an array with all available classifications as keys and their respective groups as values.
-     *
-     * @param Config $classifications
-     * @param Config $groups
-     *
-     * @return array
-     */
-    protected function getTBClassificationList($classifications, $groups) {
-        $classificationList = array();
-        foreach($classifications as $group => $items) {
-            foreach ($items as $item) {
-                if (isset($groups[$group])) {
-                    $classificationList['31:' . $item] = $groups[$group];
-                }
+                // Store the collected values:
+                $list[$field]['list'][] = $currentSettings;
             }
         }
-        return $classificationList;
-    }
 
-    /**
-     * Compares 2 facets for sorting.
-     * Sorts first by count(DESC) and then by displayText(ASC).
-     *
-     * @param array $facet1
-     * @param array $facet2
-     *
-     * @return int
-     */
-    public static function compareTBFacets($facet1, $facet2)
-    {
-        if($facet1['count'] == $facet2['count']) {
-            return strcmp($facet1['displayText'], $facet2['displayText']);
-        }
-        return $facet2['count'] - $facet1['count'];
+        return $this->sortFacets($list);
     }
 }

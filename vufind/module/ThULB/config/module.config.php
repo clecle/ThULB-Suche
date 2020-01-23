@@ -1,9 +1,6 @@
 <?php
 namespace ThULB\Module\Configuration;
 
-use ThULB\AjaxHandler\VpnWarning;
-use ThULB\AjaxHandler\VpnWarningFactory;
-
 $config = array(
     'controllers' => array(
         'factories'    => array(
@@ -26,6 +23,7 @@ $config = array(
         'factories' => [
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
+            'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
@@ -41,12 +39,14 @@ $config = array(
                 'factories' => array(
                     'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
                     'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
-                    VpnWarning::class => VpnWarningFactory::class
+                    \ThULB\AjaxHandler\VpnWarning::class => \ThULB\AjaxHandler\VpnWarningFactory::class,
+                    \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                 ),
                 'aliases' => array(
                     'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
-                    'vpnWarning' => VpnWarning::class
+                    'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
+                    \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
                 )
             ),
             'db_row' => array(
@@ -109,9 +109,17 @@ $config = array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
                 )
             ),
+            'search_facets' => array(
+                'factories' => array(
+                    \ThULB\Search\Facets\ThBIBFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+                ),
+                'aliases' => array(
+                    'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class
+                )
+            ),
             'search_params' => array(
                 'factories' => array(
-                    'ThULB\Search\Solr\Params' => 'VuFind\Search\Solr\ParamsFactory',
+                    'ThULB\Search\Solr\Params' => \ThULB\Search\Solr\ParamsFactory::class,
                     'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
                 ),
                 'aliases' => array(

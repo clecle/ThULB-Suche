@@ -11,11 +11,6 @@ try {
     $params = false;
 }
 $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1];
-$this->jsTranslations()->addStrings(
-    [
-        'noHoldings' => 'see volumes tab for further holdings'
-    ]
-);
 ?>
 <? if ($results && $params && ($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
     <? foreach ($results->getRecommendations('top') as $current): ?>
@@ -37,12 +32,12 @@ $this->jsTranslations()->addStrings(
         <? endif; ?>
     </div>
     <div class="pull-right flip">
-        <?=str_replace('/AjaxTab', '/NonArticleCollectionList', $this->render('search/controls/limit.phtml', $searchDetails))?>
-        <?=str_replace('/AjaxTab', '/NonArticleCollectionList', $this->render('search/controls/sort.phtml', $searchDetails))?>
+        <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
+        <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
     </div>
   </div>
   <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
       <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
-      <?=str_replace('/AjaxTab', '/NonArticleCollectionList', $this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results]))?>
+      <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
   </form>
 <? endif; ?>

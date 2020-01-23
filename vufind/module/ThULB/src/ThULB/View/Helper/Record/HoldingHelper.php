@@ -109,11 +109,11 @@ class HoldingHelper extends AbstractHelper
     return $availabilityString;
   }
 
-  public function getLocation(&$holding)
+  public function getLocation(&$holding, $includeHTML = true)
   {
     $locationText = $this->view->transEsc('location_' . $holding['location'], [], $holding['location']);
 
-    if (isset($holding['locationhref']) && $holding['locationhref']) {
+    if ($includeHTML && isset($holding['locationhref']) && $holding['locationhref']) {
       $locationText = '<a href="' . $holding['locationhref'] . '" target="_blank">' . $locationText . '</a>';
     }
 

@@ -1430,8 +1430,8 @@ class SolrVZGRecord extends SolrMarc
             if ($address && $description) {
                 $address = $address->getData();
                 $description = $description->getData();
-                if(!isset($retVal[$address]) && strtolower($description) != 'cover') {
-                    $retVal[$address] = [
+                if(!in_array(strtolower($description), ['cover', 'volltext'])) {
+                    $retVal[strtolower($description)] = [
                         'url' => $address,
                         'desc' => $description
                     ];
@@ -1439,7 +1439,7 @@ class SolrVZGRecord extends SolrMarc
             }  
         }
 
-        return array_values($retVal);
+        return $retVal;
     }
 
     /**

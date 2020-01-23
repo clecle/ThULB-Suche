@@ -80,12 +80,11 @@
             <br/>
             <?=$openUrl->renderTemplate()?>
           <? endif; ?>
-          <? if (!is_array($urls)) $urls = array();
-            if(!$this->driver->isCollection()):
-              foreach ($urls as $current): ?>
-                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext" target="new"><i class="fa fa-external-link" aria-hidden="true"></i> <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?></a>
-                <br/>
-            <? endforeach; ?>
+          <? if (!is_array($urls)) $urls = array(); ?>
+            <?php if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])): ?>
+              <?php $current = $urls['inhaltsverzeichnis']; ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext" target="new"><i class="fa fa-external-link" aria-hidden="true"></i> <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?></a>
+              <br/>
           <? endif; ?>
         <? endif; ?>
 

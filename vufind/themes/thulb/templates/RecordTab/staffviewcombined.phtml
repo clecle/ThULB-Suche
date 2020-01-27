@@ -1,10 +1,11 @@
-
 <?
     // Set page title.
     $this->headTitle($this->translate('Staff View') . ': ' . $this->driver->getBreadcrumb());
 ?>
-<h3><?=$this->transEsc('Full Marc record')?></h3>
-<?=\VuFind\XSLT\Processor::process('record-marc.xsl', $this->driver->getXML('marc21'))?>
+<?php if($xml = $this->driver->getXML('marc21')): ?>
+  <h3><?=$this->transEsc('Full Marc record')?></h3>
+  <?=\VuFind\XSLT\Processor::process('record-marc.xsl', $xml)?>
+<?php endif; ?>
 
 <h3><?=$this->transEsc('Solr Index fields')?></h3>
 <table class="citation table table-striped">

@@ -128,11 +128,13 @@ class SolrVZGRecord extends SolrMarc
                 break;
             }
         }
-        
+
         $leader = $this->getMarcRecord()->getLeader();
         $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31', 'e' => 'a']);
-        
-        return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a' && !$noStatus && empty($ordered));
+        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31']);
+
+        return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
+            && !$noStatus && count($allCopies) !== count($ordered));
         
     }
 

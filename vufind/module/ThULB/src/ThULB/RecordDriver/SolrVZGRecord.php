@@ -656,8 +656,14 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getMeetingNames()
     {
-        $relevantFields = array('711' => ['a', 'c', 'd', 'n']);
-        $formattingRules = array('711' => '(711a (\((711n, (711d, 711c))\))');
+        $relevantFields = array(
+            '111' => ['a', 'c', 'd', 'g', 'n'],
+            '711' => ['a', 'c', 'd', 'g', 'n']
+        );
+        $formattingRules = array(
+            '111' => '111a \((111g, )(111n, )(111d, )(111c)\)',
+            '711' => '711a \((711g, )(711n, )(711d, )(711c)\)'
+        );
         return $this->getFormattedData($relevantFields, $formattingRules);
     }
 

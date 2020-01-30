@@ -118,7 +118,13 @@ class RecordDataFormatterFactory extends OriginalFactory
                 ],
             ]
         );
-        $spec->setLine('Conference', 'getMeetingNames');
+        $spec->setLine('Conference', 'getMeetingNames', null,
+            [
+                'labelFunction' => function ($data) {
+                    return count($data) > 1 ? 'Conferences' : 'Conference';
+                },
+            ]
+        );
         $spec->setLine(
             'Format', 'getFormats', 'RecordHelper',
             ['helperMethod' => 'getFormatList']

@@ -81,7 +81,7 @@
                   <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
                     <dt><?=$this->transEsc('Link')?>:</dt>
                     <dd>
-                      <a href="<?php echo $row['remotehref']; ?>"><?php echo $row['remotedomain']; ?></a>
+                      <a href="<?php echo $row['remotehref']; ?>" target="_blank"><?php echo $row['remotedomain']; ?></a>
                         <?php if(!empty($row['remotetitle'])):?>
                           [<?php echo $row['remotetitle']; ?>]
                         <?php endif; ?>

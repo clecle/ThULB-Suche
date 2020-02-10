@@ -79,7 +79,7 @@ class ArticleCollectionList extends CollectionList
                 $listener->attach($runner->getEventManager()->getSharedManager());
             };
             $this->results
-                = $this->runner->run($request, 'SolrCollection', $cb);
+                = $this->runner->run($request, $this->searchClassId, $cb);
         }
         return $this->results;
     }

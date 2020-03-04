@@ -341,7 +341,7 @@ class SolrVZGRecord extends SolrMarc
 
         foreach($classNumbers as $classNumber) {
             $isThuBib = $this->getConditionalFieldArray('983', ['b', '0'], true, ' ', ['a' => $classNumber]);
-            if( $isThuBib && preg_match('/^\(DE-601\).*<Thüringen>$/', $isThuBib[0])) {
+            if( $isThuBib && preg_match('/.*<Thüringen>$/', $isThuBib[0])) {
                 array_push($thuBib, $classNumber);
             }
         }

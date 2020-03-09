@@ -181,6 +181,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('Invalid ISBN', 'getInvalidISBNs');
         $spec->setLine('ISSN', 'getISSNs');
+        $spec->setLine('ISMN', 'getISMNs');
         /* ZDB Id */
         $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');
         $spec->setLine('DOI', 'getCleanDOI');

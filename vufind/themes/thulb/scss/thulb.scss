@@ -643,6 +643,17 @@ dd > div.citations {
 
 #message_under_search_box {
   width: 100%;
+  margin-top: 10px;
+  justify-content: space-between;
+
+  div {
+    margin: auto;
+  }
+
+  i {
+    cursor: pointer;
+    font-size: 20px;
+  }
 }
 
 #searchForm #searchForm_type {

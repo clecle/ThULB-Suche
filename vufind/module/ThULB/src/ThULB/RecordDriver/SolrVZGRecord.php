@@ -833,6 +833,21 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get an array of all ISBNs associated with the record (may be empty).
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getISMNs()
+    {
+        $relevantFields = array('024' => ['9', 'c']);
+        $formattingRules = array('024' => '0249 024c');
+        $conditions = array (['indicator' => '1', 'operator' => '==', 'value' => '2']);
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+    }
+
+    /**
      * Get an array of all invalid ISBNs associated with the record (may be empty).
      *
      * @return array

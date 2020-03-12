@@ -99,14 +99,17 @@
               <? endforeach; ?>
             <? endif; ?>
 
-            <? if (count($this->lists) > 0): ?>
+            <div class="hidden-print">
+              <? if (count($this->lists) > 0): ?>
                 <strong><?=$this->transEsc('Saved in')?>:</strong>
                 <? $i=0;foreach($this->lists as $current): ?>
                     <a href="<?=$this->url('userList', array('id' => $current->id))?>"><?=$this->escapeHtml($current->title)?></a><? if($i++ < count($this->lists)-1): ?>,<? endif; ?>
                 <? endforeach; ?>
                 <br/>
-            <? endif; ?>
+              <? endif; ?>
+            </div>
 
+            <div class="hidden-print">
             <? /* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
                   but even if we don't plan to display the link, we still want to get the $openUrl
                   value for use in generating a COinS (Z3988) tag -- see bottom of file.
@@ -131,7 +134,7 @@
                   <br/>
                 <? endif; ?>
               <? endif; ?>
-
+            </div>
             <?=$this->record($this->driver)->getFormatList() ?>
 
             <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
@@ -143,7 +146,7 @@
         </div>
 
         <? if ($editable) : ?>
-          <div class="col-sm-2 right">
+          <div class="col-sm-2 right hidden-print">
             <a href="<?=$this->url('myresearch-edit')?>?id=<?=urlencode($id)?>&amp;source=<?=urlencode($source)?><? if (!is_null($list_id)):?>&amp;list_id=<?=urlencode($list_id)?><? endif; ?>" class="edit tool"><i class="fa fa-fw fa-edit" aria-hidden="true"></i> <?=$this->transEsc('Edit')?></a><br/>
             <? /* Use a different delete URL if we're removing from a specific list or the overall favorites: */
               $deleteUrl = null === $list_id

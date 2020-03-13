@@ -1562,6 +1562,29 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Checks, if there are copies in archives of the ThULB.
+     *
+     * @return bool
+     *
+     * @throws File_MARC_Exception
+     */
+    public function isInArchive() {
+        $archiveCodes = array('HZ', 'Mag', 'Mag3', 'Mag5', 'Mag6');
+
+        $conditions = array(['subfield' => '2', 'operator' => '==', 'value' => '31']);
+        $recordArchiveCodes = $this->getFormattedData(['980' => ['f']], ['980' => '980f'], $conditions);
+        $recordArchiveCodes = array_unique($recordArchiveCodes);
+
+        foreach($recordArchiveCodes as $code) {
+            if(in_array($code, $archiveCodes)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Return an array of all OnlineHoldings from MARCRecord
      * Field 981: for Links
      * Field 980: for description

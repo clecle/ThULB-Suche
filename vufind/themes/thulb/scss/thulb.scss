@@ -890,3 +890,51 @@ li[data-tab="details"] {
     }
   }
 }
+
+.flex-group {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.journal-request {
+  h4 {
+    margin-top: 40px;
+    font-weight: bold;
+  }
+
+  span.form-description {
+    font-weight: bold;
+  }
+  .form-description {
+    width: 150px;
+  }
+
+  .form-data,
+  .form-information,
+  .form-submit {
+    min-width: 200px;
+    flex-grow: 1;
+  }
+
+  input:not([type="radio"]),
+  textarea {
+    width: 100%;
+  }
+
+  input[type="submit"] {
+    display: block;
+    margin: 20px auto 0;
+    max-width: 400px;
+    flex-grow: 1;
+  }
+
+  table {
+    table-layout: inherit;
+
+    .table-callnumber {
+      white-space: nowrap;
+    }
+  }
+}

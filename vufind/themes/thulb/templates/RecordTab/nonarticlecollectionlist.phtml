@@ -12,30 +12,40 @@
   }
   $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1];
 ?>
-<? if ($results && $params && ($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-  <? foreach ($results->getRecommendations('top') as $current): ?>
-    <?=$this->recommend($current)?>
-  <? endforeach; ?>
-  <div class="clearfix hidden-print">
-    <div class="pull-left flip">
-      <?
-        $transParams = [
-          '%%start%%' => $this->localizedNumber($results->getStartRecord()),
-          '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
-          '%%total%%' => $this->localizedNumber($recordTotal)
-        ];
-      ?>
-      <? if (!isset($this->skipTotalCount)): ?>
-        <?=$this->translate('showing_items_of_html', $transParams); ?>
-      <? else: ?>
-        <?=$this->translate('showing_items_html', $transParams); ?>
-      <? endif; ?>
+<? if ($results && $params): // only display these at very top if we have results ?>
+  <?php $recordTotal = $results->getResultTotal(); ?>
+  <?php if($recordTotal > 0): ?>
+    <? foreach ($results->getRecommendations('top') as $current): ?>
+      <?=$this->recommend($current)?>
+    <? endforeach; ?>
+    <div class="clearfix hidden-print">
+      <div class="pull-left flip">
+        <?
+          $transParams = [
+            '%%start%%' => $this->localizedNumber($results->getStartRecord()),
+            '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
+            '%%total%%' => $this->localizedNumber($recordTotal)
+          ];
+        ?>
+        <? if (!isset($this->skipTotalCount)): ?>
+          <?=$this->translate('showing_items_of_html', $transParams); ?>
+        <? else: ?>
+          <?=$this->translate('showing_items_html', $transParams); ?>
+        <? endif; ?>
+      </div>
+      <div class="pull-right flip">
+        <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
+        <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
+      </div>
+      <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+        <div class="journal-not-found flex-center center-text">
+          <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
+          <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" class="btn btn-primary" target="_blank"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+        </div>
+      <?php endif; ?>
     </div>
-    <div class="pull-right flip">
-      <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
-      <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
-    </div>
-  </div>
+  <?php endif; ?>
+
   <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
     <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
     <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>

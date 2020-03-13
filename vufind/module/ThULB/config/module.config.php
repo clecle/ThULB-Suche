@@ -10,11 +10,14 @@ $config = array(
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
+            \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             'ThULB\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
         ),
         'aliases' => array(
             'dynMessages' => 'ThULB\Controller\DynMessagesController',
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
+            'request' => \ThULB\Controller\RequestController::class,
+            'Request' => \ThULB\Controller\RequestController::class,
             'VuFind\Controller\SearchController' => 'ThULB\Controller\SearchController',
             \VuFind\Controller\RecordController::class => \ThULB\Controller\RecordController::class,
         )
@@ -162,5 +165,6 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
+$routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
 
 return $config;

@@ -32,18 +32,21 @@ class JournalRequest extends FPDF
     protected $descName = "Name";
     protected $descTitle = "Title";
     protected $descUsername = "Username";
-    protected $descVolume = "Volume";
-    protected $descYear = "Year";
+    protected $descVolume = "storage_retrieval_request_volume";
+    protected $descYear = "storage_retrieval_request_year";
 
-    protected $translations;
+    protected $translator;
 
-    public function __construct($translations, $orientation = 'P', $unit = 'mm', $size = 'A4') {
+    public function __construct(Translate $translator, $orientation = 'P', $unit = 'mm', $size = 'A4') {
         parent::__construct($orientation, $unit, $size);
 
-        $this->translations = $translations;
+        $this->translator = $translator;
     }
 
     public function create() {
+        $globalLocale = $this->translator->getTranslator()->getLocale();
+        $this->translator->getTranslator()->setLocale('de');
+
         $this->AddPage();
         $this->SetFont('Arial', '', 8);
         $this->SetMargins($this->printBorder, $this->printBorder);
@@ -54,6 +57,8 @@ class JournalRequest extends FPDF
         $this->addCardUser();
 
         $this->addCardCallNumber();
+
+        $this->translator->getTranslator()->setLocale($globalLocale);
     }
 
     protected function addLines() {
@@ -121,7 +126,7 @@ class JournalRequest extends FPDF
     }
 
     protected function addText($description, $text, $cellWidth, $asTable = false) {
-        $description = $this->translations[$description] . ':';
+        $description = $this->translator->translate($description) . ':';
         $spaceBetweenLines = 1;
 
         $x = $this->GetX();

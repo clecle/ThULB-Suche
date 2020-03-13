@@ -4,7 +4,6 @@ namespace ThULB\Controller;
 
 use ThULB\PDF\JournalRequest;
 use VuFind\Controller\RecordController as OriginalRecordController;
-use VuFind\View\Helper\Root\Translate;
 use Whoops\Exception\ErrorException;
 use Zend\View\Model\ViewModel;
 
@@ -25,7 +24,7 @@ class RequestController extends OriginalRecordController
             $filename = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
 
             try {
-                $pdf = new JournalRequest($this->getTranslations());
+                $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
 
                 $pdf->setCallNumber($formData['callnumber']);
                 $pdf->setComment($formData['comment']);
@@ -38,7 +37,7 @@ class RequestController extends OriginalRecordController
 
                 $pdf->create();
 //                $pdf->Output('F', '/vagrant/pdfs/' . $filename);
-//                $pdf->Output();
+                $pdf->Output();
 
                 $this->addFlashMessage(true, 'journal_request_succeeded');
             }
@@ -111,27 +110,6 @@ class RequestController extends OriginalRecordController
             $error = true;
         }
         return !$error;
-    }
-
-    protected function getTranslations() {
-        /* @var $translator Translate */
-        $translator = $this->getViewRenderer()->plugin('translate');
-        $globalLocale = $translator->getTranslator()->getLocale();
-        $translator->getTranslator()->setLocale('de');
-
-        $translations = array();
-        $translations['Call Number'] = $translator->translate("Call Number");
-        $translations['Email'] = $translator->translate("Email");
-        $translations['Name'] = $translator->translate("Name");
-        $translations['Note'] = $translator->translate("Note");
-        $translations['Title'] = $translator->translate("Title");
-        $translations['Username'] = $translator->translate("Username");
-        $translations['Volume'] = $translator->translate("storage_retrieval_request_volume");
-        $translations['Year'] = $translator->translate("storage_retrieval_request_year");
-
-        $translator->getTranslator()->setLocale($globalLocale);
-
-        return $translations;
     }
 
     private function addFlashMessage($success, $messageKey, $messageFields = []) {

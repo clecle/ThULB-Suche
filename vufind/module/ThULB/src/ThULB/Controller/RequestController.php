@@ -96,13 +96,14 @@ class RequestController extends OriginalRecordController
 
     protected function getInventoryForRequest() {
         if(!$this->inventory) {
+            $archiveIds = array_keys($this->departmentsConfig->DepartmentEmails->toArray());
             $holdings = $this->loadRecord()->getRealTimeHoldings();
             foreach ($holdings['holdings'] as $location => $holding) {
-                if (strpos($location, 'Magazin') === false) {
-                    continue;
-                }
-
                 foreach ($holding['items'] as $item) {
+                    if (!in_array($item['departmentId'], $archiveIds)) {
+                        continue;
+                    }
+
                     $this->inventory[$location . $item['callnumber']] = array(
                         'departmentId' => $item['departmentId'],
                         'callnumber' => $item['callnumber'],

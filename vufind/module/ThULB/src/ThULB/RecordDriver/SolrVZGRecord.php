@@ -104,9 +104,18 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $marcFormatConfig;
 
-    public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null, $marcFormatConfig = null)
+    /**
+     * DAIA departments configuration
+     *
+     * @var Config
+     */
+    protected $departmentConfig;
+
+    public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
+                                $marcFormatConfig = null, $departmentConfig = null)
     {
         $this->marcFormatConfig = $marcFormatConfig;
+        $this->departmentConfig = $departmentConfig;
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
@@ -1569,7 +1578,7 @@ class SolrVZGRecord extends SolrMarc
      * @throws File_MARC_Exception
      */
     public function isInArchive() {
-        $archiveCodes = array('HZ', 'Mag', 'Mag3', 'Mag5', 'Mag6');
+        $archiveCodes = array_keys($this->departmentConfig->DepartmentEmails->toArray());
 
         $conditions = array(['subfield' => '2', 'operator' => '==', 'value' => '31']);
         $recordArchiveCodes = $this->getFormattedData(['980' => ['f']], ['980' => '980f'], $conditions);

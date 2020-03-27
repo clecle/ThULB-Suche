@@ -4,12 +4,41 @@ namespace ThULB\Controller;
 
 use ThULB\PDF\JournalRequest;
 use VuFind\Controller\RecordController as OriginalRecordController;
+use VuFind\Exception\Mail as MailException;
+use VuFind\Mailer\Mailer;
 use Whoops\Exception\ErrorException;
+use Zend\Config\Config;
+use Zend\Mime\Message;
+use Zend\Mime\Mime;
+use Zend\Mime\Part;
+use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 
 class RequestController extends OriginalRecordController
 {
+    protected $departmentsConfig;
+    protected $mainConfig;
+
     protected $inventory = array();
+
+    /**
+     * Constructor
+     *
+     * @param ServiceLocatorInterface $sm     Service manager
+     * @param Config                  $config VuFind configuration
+     */
+    public function __construct(ServiceLocatorInterface $sm, Config $config)
+    {
+        // Call standard record controller initialization:
+        parent::__construct($sm, $config);
+
+        // Load default tab setting:
+        $this->fallbackDefaultTab = isset($config->Site->defaultRecordTab)
+            ? $config->Site->defaultRecordTab : 'Holdings';
+
+        $this->mainConfig = $config;
+        $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
+    }
 
     public function journalAction () {
 
@@ -18,32 +47,24 @@ class RequestController extends OriginalRecordController
             return $this->forceLogin();
         }
 
+        $savePath = $this->mainConfig->JournalRequest->request_save_path;
+        if (!file_exists($savePath) || !is_readable($savePath) || !is_writable($savePath)) {
+            $this->addFlashMessage(false, 'File not writable: "' . $savePath . '"');
+//            throw new IOException('File not writable: "' . $savePath . '"');
+        }
+
         $formData = $this->getFormData();
 
-        if($this->getRequest()->isPost() && $this->validateFormData($formData)) {
-            $filename = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
+        if ($this->getRequest()->isPost() && $this->validateFormData($formData)) {
+            $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
+            $email = $this->getEmailForCallnumber($formData['callnumber']);
 
-            try {
-                $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
-
-                $pdf->setCallNumber($formData['callnumber']);
-                $pdf->setComment($formData['comment']);
-                $pdf->setVolume($formData['volume']);
-                $pdf->setEmail($formData['email']);
-                $pdf->setName($formData['name']);
-                $pdf->setUserName($formData['username']);
-                $pdf->setWorkTitle($formData['title']);
-                $pdf->setYear($formData['year']);
-
-                $pdf->create();
-//                $pdf->Output('F', '/vagrant/pdfs/' . $filename);
-                $pdf->Output();
-
+            if ($this->createPDF($formData, $fileName) &&
+                    $this->sendRequestEmail($fileName, $email)) {
                 $this->addFlashMessage(true, 'journal_request_succeeded');
             }
-            catch (ErrorException $e) {
+            else {
                 $this->addFlashMessage(false, 'journal_request_failed');
-                $this->addFlashMessage(false, $e->getMessage());
             }
         }
 
@@ -83,6 +104,7 @@ class RequestController extends OriginalRecordController
 
                 foreach ($holding['items'] as $item) {
                     $this->inventory[$location . $item['callnumber']] = array(
+                        'departmentId' => $item['departmentId'],
                         'callnumber' => $item['callnumber'],
                         'location' => $location,
                         'chronology' => !empty($item['chronology_about']) ? $item['chronology_about'] : $item['about']
@@ -93,6 +115,81 @@ class RequestController extends OriginalRecordController
         }
 
         return $this->inventory;
+    }
+
+    protected function createPDF($formData, $filePath) {
+        try {
+            $savePath = $this->mainConfig->JournalRequest->request_save_path;
+
+            $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
+
+            $pdf->setCallNumber($formData['callnumber']);
+            $pdf->setComment($formData['comment']);
+            $pdf->setVolume($formData['volume']);
+            $pdf->setEmail($formData['email']);
+            $pdf->setName($formData['name']);
+            $pdf->setUserName($formData['username']);
+            $pdf->setWorkTitle($formData['title']);
+            $pdf->setYear($formData['year']);
+
+            $pdf->create();
+            $pdf->Output('F', $savePath . $filePath);
+//            $pdf->Output();
+        }
+        catch (ErrorException $e) {
+            $this->addFlashMessage(false, 'journal_request_failed');
+            $this->addFlashMessage(false, $e->getMessage());
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function sendRequestEmail($fileName, $email) {
+        try {
+            $savePath = $this->mainConfig->JournalRequest->request_save_path;
+
+            // first create the parts
+            $text = new Part();
+            $text->type = Mime::TYPE_TEXT;
+            $text->charset = 'utf-8';
+
+            $fileContent = file_get_contents($savePath . $fileName, 'r');
+            $attachment = new Part($fileContent);
+            $attachment->type = 'application/pdf';
+            $attachment->encoding = Mime::ENCODING_BASE64;
+            $attachment->filename = $fileName;
+            $attachment->disposition = Mime::DISPOSITION_ATTACHMENT;
+
+            // then add them to a MIME message
+            $mimeMessage = new Message();
+            $mimeMessage->setParts(array($text, $attachment));
+
+            $mailer = $this->serviceLocator->get(Mailer::class);
+            $mailer->send(
+                $email,
+                $this->mainConfig->Mail->default_from,
+                'storage_retrieval_request_new_request',
+                $mimeMessage
+            );
+        }
+        catch (MailException $e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getEmailForCallnumber($callnumber) {
+        foreach($this->getInventoryForRequest() as $archive) {
+            if ($archive['callnumber'] == $callnumber) {
+                if (isset($this->departmentsConfig->DepartmentEmails[$archive['departmentId']])) {
+                    return $archive['departmentId'] . ' - ' . $this->departmentsConfig->DepartmentEmails[$archive['departmentId']];
+                }
+            }
+        }
+
+        return null;
     }
 
     protected function validateFormData($formData) {

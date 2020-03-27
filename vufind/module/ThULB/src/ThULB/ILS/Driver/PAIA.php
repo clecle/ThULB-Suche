@@ -189,6 +189,7 @@ class PAIA extends OriginalPAIA
         foreach ($result as $index => $doc) {
             if (isset($doc['callnumber'])) {
                 $result[$index]['callnumber'] = $this->getItemCallnumber(['label' => $doc['callnumber']]);
+                $result[$index]['departmentId'] = $this->getDepIpFromItem(['label' => $doc['callnumber']], $result[$index]['callnumber']);
             }
         }
         
@@ -279,7 +280,8 @@ class PAIA extends OriginalPAIA
             // PAIA custom field
             // label (0..1) call number, shelf mark or similar item label
             $result['callnumber'] = $this->getItemCallnumber($doc);
-            
+            $result['departmentId'] = $this->getDepIpFromItem($doc, $result['callnumber']);
+
             // status: provided (the document is ready to be used by the patron)
             $result['available'] = $doc['status'] == 4 ? true : false;
             
@@ -465,6 +467,8 @@ class PAIA extends OriginalPAIA
                 $result_item['reserve'] = $this->getItemReserveStatus($item);
                 // get callnumber
                 $result_item['callnumber'] = $this->getItemCallnumber($item);
+                // get department id
+                $result_item['departmentId'] = $this->getDepIpFromItem($item, $result_item['callnumber']);
                 // get location
                 $result_item['location'] = $this->getItemDepartment($item);
                 // custom DAIA field
@@ -627,6 +631,24 @@ class PAIA extends OriginalPAIA
         }
         
         return $callNumber;
+    }
+
+    /**
+     * Get department id of an item by removing the shortened call number
+     * (without department id) from the item call number.
+     *
+     * @param array $document
+     * @param string $shortenedCallnumber
+     *
+     * @return string|null
+     */
+    protected function getDepIpFromItem($document, $shortenedCallnumber) {
+        $callnumber = $document['label'] ?? null;
+        if(!empty($callnumber) && !empty($shortenedCallnumber)) {
+            return str_replace(':' . $shortenedCallnumber, '', $callnumber);
+        }
+
+        return null;
     }
 
     /**

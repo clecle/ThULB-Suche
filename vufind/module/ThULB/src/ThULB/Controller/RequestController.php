@@ -168,7 +168,8 @@ class RequestController extends OriginalRecordController
 
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
-                $email,
+//                $email,
+                'discovery_thulb@uni-jena.de',
                 $this->mainConfig->Mail->default_from,
                 'Neue Zeitschriftenanfrage',
                 $mimeMessage

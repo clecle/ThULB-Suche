@@ -40,7 +40,7 @@
     <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
       <div class="journal-not-found flex-center center-text">
         <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
-        <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" class="btn btn-primary" target="_blank"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+        <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox class="btn btn-primary"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
       </div>
     <?php endif; ?>
   </div>
@@ -51,6 +51,6 @@
 <?php elseif($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
   <div class="journal-not-found flex-center center-text">
     <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
-    <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" class="btn btn-primary" target="_blank"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+    <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox class="btn btn-primary"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
   </div>
 <? endif; ?>

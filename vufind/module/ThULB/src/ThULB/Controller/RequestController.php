@@ -170,7 +170,7 @@ class RequestController extends OriginalRecordController
             $mailer->send(
                 $email,
                 $this->mainConfig->Mail->default_from,
-                'storage_retrieval_request_new_request',
+                'Neue Zeitschriftenanfrage',
                 $mimeMessage
             );
         }

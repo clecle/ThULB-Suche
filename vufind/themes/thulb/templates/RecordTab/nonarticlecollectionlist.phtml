@@ -17,32 +17,36 @@
     <?=$this->recommend($current)?>
   <? endforeach; ?>
   <div class="clearfix hidden-print">
-    <?php if($recordTotal > 0): ?>
+    <?
+    $transParams = [
+        '%%start%%' => $this->localizedNumber($results->getStartRecord()),
+        '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
+        '%%total%%' => $this->localizedNumber($recordTotal)
+    ];
+    ?>
+    <div class="clearfix">
       <div class="pull-left flip">
-        <?
-          $transParams = [
-            '%%start%%' => $this->localizedNumber($results->getStartRecord()),
-            '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
-            '%%total%%' => $this->localizedNumber($recordTotal)
-          ];
-        ?>
+        <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
+        <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
+      </div>
+    </div>
+    <div class="clearfix">
+      <div class="pull-left flip">
         <? if (!isset($this->skipTotalCount)): ?>
           <?=$this->translate('showing_items_of_html', $transParams); ?>
         <? else: ?>
           <?=$this->translate('showing_items_html', $transParams); ?>
         <? endif; ?>
       </div>
-      <div class="pull-right flip">
-        <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
-        <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
-      </div>
-    <?endif; ?>
-    <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
-      <div class="journal-not-found flex-center center-text">
-        <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
-        <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox class="btn btn-primary"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
-      </div>
-    <?php endif; ?>
+      <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+        <div class="journal-not-found pull-right flip">
+          <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
+          <strong>
+            <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+          </strong>
+        </div>
+      <?php endif; ?>
+    </div>
   </div>
   <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
     <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
@@ -51,6 +55,8 @@
 <?php elseif($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
   <div class="journal-not-found flex-center center-text">
     <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
-    <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox class="btn btn-primary"><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+    <strong>
+      <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+    </strong>
   </div>
 <? endif; ?>

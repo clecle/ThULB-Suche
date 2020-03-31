@@ -33,5 +33,7 @@ class HideMessage extends AbstractBase
 
             $this->sessionManager->getStorage()->offsetSet($identifier, $expires);
         }
+
+        return $this->formatResponse(true);
     }
 }

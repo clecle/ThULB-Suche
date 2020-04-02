@@ -7,10 +7,6 @@
     <h4><?= $this->transEsc('User data'); ?></h4>
     <div class="user-data">
       <div class="flex-group">
-        <span class="form-description"><?= $this->transEsc('Email'); ?>:</span>
-        <span class="form-information"><?= $formData['email']; ?></span>
-      </div>
-      <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Name'); ?>:</span>
         <span class="form-information"><?= $formData['name']; ?></span>
       </div>
@@ -61,6 +57,10 @@
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_volume'); ?>:</span>
         <span class="form-data"><input id="year" name="volume" type="text" value="<?= $formData['volume']; ?>"/></span>
+      </div>
+      <div class="flex-group">
+        <span class="form-description"><?= $this->transEsc('Issue'); ?>:</span>
+        <span class="form-data"><input id="year" name="issue" type="text" value="<?= $formData['issue']; ?>"/></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_page(s)'); ?>:</span>

@@ -18,22 +18,24 @@ class JournalRequest extends FPDF
     // Form data
     protected $callNumber;
     protected $comment;
-    protected $email;
+    protected $issue;
     protected $name;
+    protected $requestPages;
     protected $title;
     protected $username;
     protected $volume;
     protected $year;
 
     // Description keys
-    protected $descCallNumber = "Call Number";
-    protected $descComment = "Note";
-    protected $descEmail = "Email";
-    protected $descName = "Name";
-    protected $descTitle = "Title";
-    protected $descUsername = "Username";
-    protected $descVolume = "storage_retrieval_request_volume";
-    protected $descYear = "storage_retrieval_request_year";
+    protected $descCallNumber = 'Call Number';
+    protected $descComment = 'Note';
+    protected $descIssue = 'Issue';
+    protected $descName = 'Name';
+    protected $descPages = 'storage_retrieval_request_page(s)';
+    protected $descTitle = 'Title';
+    protected $descUsername = 'Username';
+    protected $descVolume = 'storage_retrieval_request_volume';
+    protected $descYear = 'storage_retrieval_request_year';
 
     protected $translator;
 
@@ -94,14 +96,15 @@ class JournalRequest extends FPDF
         $x = $this->widthCallNumberIndex + $this->printBorder;
         $this->addHeadLine('In Nutzerkartei', $x, $this->printBorder, $availableTextWidth, 10);
 
-        $this->addText($this->descTitle,      $this->title,      $availableTextWidth, true);
-        $this->addText($this->descEmail,      $this->email,      $availableTextWidth, true);
-        $this->addText($this->descName,       $this->name,       $availableTextWidth, true);
-        $this->addText($this->descUsername,   $this->username,   $availableTextWidth, true);
-        $this->addText($this->descCallNumber, $this->callNumber, $availableTextWidth, true);
-        $this->addText($this->descYear,       $this->year,       $availableTextWidth, true);
-        $this->addText($this->descVolume,     $this->volume,     $availableTextWidth, true);
-        $this->addText($this->descComment,    $this->comment,    $availableTextWidth, true);
+        $this->addText($this->descTitle,      $this->title,        $availableTextWidth, true);
+        $this->addText($this->descName,       $this->name,         $availableTextWidth, true);
+        $this->addText($this->descUsername,   $this->username,     $availableTextWidth, true);
+        $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth, true);
+        $this->addText($this->descYear,       $this->year,         $availableTextWidth, true);
+        $this->addText($this->descVolume,     $this->volume,       $availableTextWidth, true);
+        $this->addText($this->descIssue,      $this->issue,        $availableTextWidth, true);
+        $this->addText($this->descPages,      $this->requestPages, $availableTextWidth, true);
+        $this->addText($this->descComment,    $this->comment,      $availableTextWidth, true);
     }
 
     protected function addCardCallNumber() {
@@ -110,13 +113,14 @@ class JournalRequest extends FPDF
         $y = $this->dinA4height - $this->heightCallNumberIndex + $this->printBorder;
         $this->addHeadLine('In Signaturenkartei', $this->printBorder, $y, $availableTextWidth, 10);
 
-        $this->addText($this->descCallNumber, $this->callNumber, $availableTextWidth);
-        $this->addText($this->descName,       $this->name,       $availableTextWidth);
-        $this->addText($this->descUsername,   $this->username,   $availableTextWidth);
-        $this->addText($this->descTitle,      $this->title,      $availableTextWidth);
-        $this->addText($this->descEmail,      $this->email,      $availableTextWidth);
-        $this->addText($this->descYear,       $this->year,       $availableTextWidth);
-        $this->addText($this->descVolume,     $this->volume,     $availableTextWidth);
+        $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth);
+        $this->addText($this->descName,       $this->name,         $availableTextWidth);
+        $this->addText($this->descUsername,   $this->username,     $availableTextWidth);
+        $this->addText($this->descTitle,      $this->title,        $availableTextWidth);
+        $this->addText($this->descYear,       $this->year,         $availableTextWidth);
+        $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
+        $this->addText($this->descIssue,      $this->issue,        $availableTextWidth);
+        $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
     }
 
     protected function addCardBook() {
@@ -124,13 +128,14 @@ class JournalRequest extends FPDF
 
         $this->addHeadLine('Ins Buch', $this->printBorder, $this->printBorder, $availableTextWidth, 10);
 
-        $this->addText($this->descTitle,      $this->title,      $availableTextWidth);
-        $this->addText($this->descEmail,      $this->email,      $availableTextWidth);
-        $this->addText($this->descName,       $this->name,       $availableTextWidth);
-        $this->addText($this->descUsername,   $this->username,   $availableTextWidth);
-        $this->addText($this->descCallNumber, $this->callNumber, $availableTextWidth);
-        $this->addText($this->descYear,       $this->year,       $availableTextWidth);
-        $this->addText($this->descVolume,     $this->volume,     $availableTextWidth);
+        $this->addText($this->descTitle,      $this->title,        $availableTextWidth);
+        $this->addText($this->descName,       $this->name,         $availableTextWidth);
+        $this->addText($this->descUsername,   $this->username,     $availableTextWidth);
+        $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth);
+        $this->addText($this->descYear,       $this->year,         $availableTextWidth);
+        $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
+        $this->addText($this->descIssue,      $this->issue,        $availableTextWidth);
+        $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
     }
 
     protected function addText($description, $text, $cellWidth, $asTable = false) {
@@ -157,8 +162,12 @@ class JournalRequest extends FPDF
         $this->title = $title;
     }
 
-    public function setEmail($email) {
-        $this->email = $email;
+    public function setIssue($issue) {
+        $this->issue = $issue;
+    }
+
+    public function setPages($pages) {
+        $this->requestPages = $pages;
     }
 
     public function setName($username) {

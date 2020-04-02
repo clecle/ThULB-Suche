@@ -82,13 +82,13 @@ class RequestController extends OriginalRecordController
         $defaultCallnumber = count($inventory) == 1 ? array_shift($inventory)['callnumber'] : '';
 
         return array (
-            'email'      => $params->fromPost('email', $user['email']),
             'name'       => $params->fromPost('name', $user['firstname'] . ' ' . $user['lastname']),
             'username'   => $params->fromPost('username', $user['cat_id']),
             'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
             'callnumber' => $params->fromPost('callnumber', $defaultCallnumber),
             'year'       => $params->fromPost('year', ''),
             'volume'     => $params->fromPost('volume', ''),
+            'issue'      => $params->fromPost('issue', ''),
             'pages'      => $params->fromPost('pages', ''),
             'comment'    => $params->fromPost('comment', '')
         );
@@ -127,7 +127,8 @@ class RequestController extends OriginalRecordController
             $pdf->setCallNumber($formData['callnumber']);
             $pdf->setComment($formData['comment']);
             $pdf->setVolume($formData['volume']);
-            $pdf->setEmail($formData['email']);
+            $pdf->setIssue($formData['issue']);
+            $pdf->setPages($formData['pages']);
             $pdf->setName($formData['name']);
             $pdf->setUserName($formData['username']);
             $pdf->setWorkTitle($formData['title']);

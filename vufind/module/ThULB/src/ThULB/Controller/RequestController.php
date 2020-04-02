@@ -61,10 +61,10 @@ class RequestController extends OriginalRecordController
 
             if ($this->createPDF($formData, $fileName) &&
                     $this->sendRequestEmail($fileName, $email)) {
-                $this->addFlashMessage(true, 'journal_request_succeeded');
+                $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded');
             }
             else {
-                $this->addFlashMessage(false, 'journal_request_failed');
+                $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
             }
         }
 
@@ -138,7 +138,7 @@ class RequestController extends OriginalRecordController
 //            $pdf->Output();
         }
         catch (ErrorException $e) {
-            $this->addFlashMessage(false, 'journal_request_failed');
+            $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
             $this->addFlashMessage(false, $e->getMessage());
             return false;
         }

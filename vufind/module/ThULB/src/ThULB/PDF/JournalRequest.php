@@ -39,12 +39,23 @@ class JournalRequest extends FPDF
 
     protected $translator;
 
+    /**
+     * Constructor.
+     *
+     * @param Translate $translator Translator to use.
+     * @param string $orientation Page orientation.
+     * @param string $unit Unit to measure pages.
+     * @param string $size Size of the pages.
+     */
     public function __construct(Translate $translator, $orientation = 'P', $unit = 'mm', $size = 'A4') {
         parent::__construct($orientation, $unit, $size);
 
         $this->translator = $translator;
     }
 
+    /**
+     * Create the request pdf. Data must be set beforehand.
+     */
     public function create() {
         $globalLocale = $this->translator->getTranslator()->getLocale();
         $this->translator->getTranslator()->setLocale('de');
@@ -71,6 +82,9 @@ class JournalRequest extends FPDF
         $this->translator->getTranslator()->setLocale($globalLocale);
     }
 
+    /**
+     * Add vertical and horizontal separation lines to the pdf.
+     */
     protected function addLines() {
         $this->Line(
             $this->widthCallNumberIndex, 0,
@@ -82,6 +96,16 @@ class JournalRequest extends FPDF
         );
     }
 
+    /**
+     * Add a text formatted as headline.
+     * Sets XY coordinates for the next lines to be added.
+     *
+     * @param string $headline Headline text
+     * @param int $x X coordinate of the headline.
+     * @param int $y Y coordinate of the headline.
+     * @param int $width Width of the headline.
+     * @param int $spaceAtBottom Space between headline and the next text.
+     */
     protected function addHeadLine($headline, $x, $y, $width, $spaceAtBottom = 0) {
         $this->SetXY($x, $y);
         $this->SetFont($this->FontFamily, 'UIB', $this->FontSizePt + 3);
@@ -90,6 +114,9 @@ class JournalRequest extends FPDF
         $this->SetXY($x, $y + $spaceAtBottom);
     }
 
+    /**
+     * Write information for the user card to the pdf.
+     */
     protected function addCardUser() {
         $availableTextWidth = $this->dinA4width - $this->widthCallNumberIndex - $this->printBorder * 2;
 
@@ -107,6 +134,9 @@ class JournalRequest extends FPDF
         $this->addText($this->descComment,    $this->comment,      $availableTextWidth, true);
     }
 
+    /**
+     * Write information for the callnumber card to the pdf.
+     */
     protected function addCardCallNumber() {
         $availableTextWidth = $this->widthCallNumberIndex - $this->printBorder * 2;
 
@@ -123,6 +153,9 @@ class JournalRequest extends FPDF
         $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
     }
 
+    /**
+     * Write information for the book card to the pdf.
+     */
     protected function addCardBook() {
         $availableTextWidth = $this->widthCallNumberIndex - $this->printBorder * 2;
 
@@ -138,6 +171,14 @@ class JournalRequest extends FPDF
         $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
     }
 
+    /**
+     * Adds a text to the pdf. X, Y coordinates have to be set beforehand.
+     *
+     * @param string $description Translation key of the description.
+     * @param string $text Text to be added.
+     * @param int $cellWidth Width of the text cell.
+     * @param bool $asTable Format text as a table?
+     */
     protected function addText($description, $text, $cellWidth, $asTable = false) {
         $description = $this->translator->translate($description) . ':';
         $spaceBetweenLines = 1;
@@ -158,38 +199,83 @@ class JournalRequest extends FPDF
         $this->SetXY($x, $this->GetY());
     }
 
+    /**
+     * Set title data.
+     *
+     * @param string $title
+     */
     public function setWorkTitle ($title) {
         $this->title = $title;
     }
 
+    /**
+     * Set issue data.
+     *
+     * @param string $issue
+     */
     public function setIssue($issue) {
         $this->issue = $issue;
     }
 
+    /**
+     * Set pages data.
+     *
+     * @param string $pages
+     */
     public function setPages($pages) {
         $this->requestPages = $pages;
     }
 
+    /**
+     * Set name data.
+     *
+     * @param string $username
+     */
     public function setName($username) {
         $this->name = $username;
     }
 
+    /**
+     * Set user id data.
+     *
+     * @param string $userId
+     */
     public function setUserName($userId) {
         $this->username = $userId;
     }
 
+    /**
+     * Set callnumber data.
+     *
+     * @param string $callNumber
+     */
     public function setCallNumber($callNumber) {
         $this->callNumber = $callNumber;
     }
 
+    /**
+     * Set year data.
+     *
+     * @param string $year
+     */
     public function setYear($year) {
         $this->year = $year;
     }
 
+    /**
+     * Set volume data.
+     *
+     * @param string $volume
+     */
     public function setVolume($volume) {
         $this->volume = $volume;
     }
 
+    /**
+     * Set comment data.
+     *
+     * @param string $comment
+     */
     public function setComment($comment) {
         $this->comment = $comment;
     }

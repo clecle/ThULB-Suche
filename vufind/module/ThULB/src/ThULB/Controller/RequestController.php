@@ -40,6 +40,11 @@ class RequestController extends OriginalRecordController
         $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
     }
 
+    /**
+     * Action for placing a journal request.
+     *
+     * @return ViewModel
+     */
     public function journalAction () {
 
         // Force login if necessary:
@@ -75,6 +80,11 @@ class RequestController extends OriginalRecordController
         ]);
     }
 
+    /**
+     * Get data array of values from the request or default values.
+     *
+     * @return array
+     */
     protected function getFormData() {
         $params = $this->params();
         $user = $this->getUser();
@@ -94,6 +104,23 @@ class RequestController extends OriginalRecordController
         );
     }
 
+    /**
+     * Get the items available in journal request form.
+     * Performs a DAIA-Request for the current record and returns a filtered list.
+     *
+     * Return format:
+     *     array (
+     *         array (
+     *             'departmentId' => ...,
+     *             'callnumber' => ...,
+     *             'location' => ...,
+     *             'chronology' => ...
+     *         ),
+     *         ...
+     *     )
+     *
+     * @return array Array of available items.
+     */
     protected function getInventoryForRequest() {
         if(!$this->inventory) {
             $archiveIds = array_keys($this->departmentsConfig->DepartmentEmails->toArray());
@@ -118,7 +145,15 @@ class RequestController extends OriginalRecordController
         return $this->inventory;
     }
 
-    protected function createPDF($formData, $filePath) {
+    /**
+     * Create the pdf for the request and save it.
+     *
+     * @param array $formData Data to create pdf with.
+     * @param string $fileName Name for the pdf to vbe saved as.
+     *
+     * @return bool Success of the pdf creation.
+     */
+    protected function createPDF($formData, $fileName) {
         try {
             $savePath = $this->mainConfig->JournalRequest->request_save_path;
 
@@ -135,7 +170,7 @@ class RequestController extends OriginalRecordController
             $pdf->setYear($formData['year']);
 
             $pdf->create();
-            $pdf->Output('F', $savePath . $filePath);
+            $pdf->Output('F', $savePath . $fileName);
 //            $pdf->Output();
         }
         catch (ErrorException $e) {
@@ -147,7 +182,15 @@ class RequestController extends OriginalRecordController
         return true;
     }
 
-    protected function sendRequestEmail($fileName, $email) {
+    /**
+     * Send the request email.
+     *
+     * @param string $fileName Name of the file to be attached to the email
+     * @param string $recipient Recipient of the email.
+     *
+     * @return bool Success of sending the email.
+     */
+    protected function sendRequestEmail($fileName, $recipient) {
         try {
             $savePath = $this->mainConfig->JournalRequest->request_save_path;
 
@@ -169,7 +212,7 @@ class RequestController extends OriginalRecordController
 
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
-//                $email,
+//                $recipient,
                 'discovery_thulb@uni-jena.de',
                 $this->mainConfig->Mail->default_from,
                 'Neue Zeitschriftenanfrage',
@@ -183,6 +226,13 @@ class RequestController extends OriginalRecordController
         return true;
     }
 
+    /**
+     * Gets the configured email for the given email.
+     *
+     * @param string $callnumber
+     *
+     * @return string|null
+     */
     protected function getEmailForCallnumber($callnumber) {
         foreach($this->getInventoryForRequest() as $archive) {
             if ($archive['callnumber'] == $callnumber) {
@@ -195,6 +245,13 @@ class RequestController extends OriginalRecordController
         return null;
     }
 
+    /**
+     * Validate form data.
+     *
+     * @param $formData
+     *
+     * @return bool
+     */
     protected function validateFormData($formData) {
         $error = false;
         if(empty($formData['callnumber'])) {
@@ -212,6 +269,13 @@ class RequestController extends OriginalRecordController
         return !$error;
     }
 
+    /**
+     * Adds a flash message.
+     *
+     * @param bool $success Type of flash message. TRUE for success message, FALSE for error message.
+     * @param string $messageKey Key of the message to translate.
+     * @param array $messageFields Additional fields to translate and insert into the message.
+     */
     private function addFlashMessage($success, $messageKey, $messageFields = []) {
         $messageFunction = $success ? 'addSuccessMessage' : 'addErrorMessage';
         foreach ($messageFields as $field => $message) {

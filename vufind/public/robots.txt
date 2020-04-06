@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /AJAX
+Disallow: /Summon
+Disallow: /vufind/AJAX
+Disallow: /vufind/Summon
+Disallow: /AJAX/
+Disallow: /Summon/
+Disallow: /vufind/AJAX/
+Disallow: /vufind/Summon/

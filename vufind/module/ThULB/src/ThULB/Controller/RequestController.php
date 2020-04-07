@@ -260,9 +260,9 @@ class RequestController extends OriginalRecordController
             );
             $error = true;
         }
-        if(empty($formData['year'])) {
+        if(empty($formData['year']) && empty($formData['comment'])) {
             $this->addFlashMessage(
-                false, 'storage_retrieval_request_error_field_empty', ['%%field%%' => 'storage_retrieval_request_year']
+                false, 'storage_retrieval_request_error_fields_empty', ['%%field1%%' => 'storage_retrieval_request_year', '%%field2%%' => 'Note']
             );
             $error = true;
         }

@@ -215,7 +215,7 @@ class RequestController extends OriginalRecordController
 //                $recipient,
                 'discovery_thulb@uni-jena.de',
                 $this->mainConfig->Mail->default_from,
-                'Neue Zeitschriftenanfrage',
+                $this->translate('storage_retrieval_request_email_subject'),
                 $mimeMessage
             );
         }

@@ -58,6 +58,7 @@ class JournalRequest extends FPDF
      */
     public function create() {
         $globalLocale = $this->translator->getTranslator()->getLocale();
+        $this->translator->getTranslator()->addTranslationFile('ExtendedIni', null, 'default', 'de');
         $this->translator->getTranslator()->setLocale('de');
 
         $this->AddPage();

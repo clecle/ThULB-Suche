@@ -239,7 +239,7 @@ class RequestController extends OriginalRecordController
         foreach($this->getInventoryForRequest() as $archive) {
             if ($archive['callnumber'] == $callnumber) {
                 if (isset($this->departmentsConfig->DepartmentEmails[$archive['departmentId']])) {
-                    return $archive['departmentId'] . ' - ' . $this->departmentsConfig->DepartmentEmails[$archive['departmentId']];
+                    return $this->departmentsConfig->DepartmentEmails[$archive['departmentId']];
                 }
             }
         }

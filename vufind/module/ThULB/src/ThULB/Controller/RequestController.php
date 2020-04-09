@@ -63,10 +63,12 @@ class RequestController extends OriginalRecordController
         if ($this->getRequest()->isPost() && $this->validateFormData($formData)) {
             $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
             $email = $this->getEmailForCallnumber($formData['callnumber']);
+            $borrowCounter = $this->getBorrowCounterForCallnumber($formData['callnumber']);
 
             if ($this->createPDF($formData, $fileName) &&
                     $this->sendRequestEmail($fileName, $email)) {
-                $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded');
+                $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
+                    ['%%location%%' => $borrowCounter]);
             }
             else {
                 $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
@@ -246,6 +248,25 @@ class RequestController extends OriginalRecordController
     }
 
     /**
+     * Gets the configured email for the given email.
+     *
+     * @param string $callnumber
+     *
+     * @return string|null
+     */
+    protected function getBorrowCounterForCallnumber($callnumber) {
+        foreach($this->getInventoryForRequest() as $archive) {
+            if ($archive['callnumber'] == $callnumber) {
+                if (isset($this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']])) {
+                    return $this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * Validate form data.
      *
      * @param $formData
@@ -277,13 +298,17 @@ class RequestController extends OriginalRecordController
      * @param array $messageFields Additional fields to translate and insert into the message.
      */
     private function addFlashMessage($success, $messageKey, $messageFields = []) {
-        $messageFunction = $success ? 'addSuccessMessage' : 'addErrorMessage';
         foreach ($messageFields as $field => $message) {
             $messageFields[$field] = $this->translate($message);
         }
 
-        $this->flashMessenger()->$messageFunction (
-            $this->translate($messageKey, $messageFields)
+        $this->flashMessenger()->addMessage(
+            array (
+                'html' => true,
+                'msg' => $messageKey,
+                'tokens' => $messageFields
+            ),
+            $success ? 'success' : 'error'
         );
     }
 }

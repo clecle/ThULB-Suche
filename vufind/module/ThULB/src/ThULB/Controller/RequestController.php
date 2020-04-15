@@ -5,17 +5,21 @@ namespace ThULB\Controller;
 use ThULB\PDF\JournalRequest;
 use VuFind\Controller\RecordController as OriginalRecordController;
 use VuFind\Exception\Mail as MailException;
+use VuFind\Log\LoggerAwareTrait;
 use VuFind\Mailer\Mailer;
 use Whoops\Exception\ErrorException;
 use Zend\Config\Config;
+use Zend\Log\LoggerAwareInterface;
 use Zend\Mime\Message;
 use Zend\Mime\Mime;
 use Zend\Mime\Part;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\View\Model\ViewModel;
 
-class RequestController extends OriginalRecordController
+class RequestController extends OriginalRecordController implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
     protected $departmentsConfig;
     protected $mainConfig;
 
@@ -38,6 +42,7 @@ class RequestController extends OriginalRecordController
 
         $this->mainConfig = $config;
         $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
+        $this->setLogger($sm->get('VuFind\Logger'));
     }
 
     /**
@@ -177,7 +182,11 @@ class RequestController extends OriginalRecordController
         }
         catch (ErrorException $e) {
             $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
-            $this->addFlashMessage(false, $e->getMessage());
+
+            if($this->logger != null && is_callable($this->logger, 'logException')) {
+                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
+            }
+
             return false;
         }
 
@@ -222,6 +231,10 @@ class RequestController extends OriginalRecordController
             );
         }
         catch (MailException $e) {
+            if($this->logger != null && is_callable($this->logger, 'logException')) {
+                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
+            }
+
             return false;
         }
 

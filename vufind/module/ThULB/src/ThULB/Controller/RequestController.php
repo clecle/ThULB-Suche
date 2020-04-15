@@ -2,6 +2,7 @@
 
 namespace ThULB\Controller;
 
+use IOException;
 use ThULB\PDF\JournalRequest;
 use VuFind\Controller\RecordController as OriginalRecordController;
 use VuFind\Exception\Mail as MailException;
@@ -36,10 +37,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         // Call standard record controller initialization:
         parent::__construct($sm, $config);
 
-        // Load default tab setting:
-        $this->fallbackDefaultTab = isset($config->Site->defaultRecordTab)
-            ? $config->Site->defaultRecordTab : 'Holdings';
-
         $this->mainConfig = $config;
         $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
         $this->setLogger($sm->get('VuFind\Logger'));
@@ -49,6 +46,8 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * Action for placing a journal request.
      *
      * @return ViewModel
+     *
+     * @throws IOException
      */
     public function journalAction () {
 
@@ -59,8 +58,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
         $savePath = $this->mainConfig->JournalRequest->request_save_path;
         if (!file_exists($savePath) || !is_readable($savePath) || !is_writable($savePath)) {
-            $this->addFlashMessage(false, 'File not writable: "' . $savePath . '"');
-//            throw new IOException('File not writable: "' . $savePath . '"');
+            throw new IOException('File not writable: "' . $savePath . '"');
         }
 
         $formData = $this->getFormData();
@@ -178,7 +176,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
             $pdf->create();
             $pdf->Output('F', $savePath . $fileName);
-//            $pdf->Output();
         }
         catch (ErrorException $e) {
             $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
@@ -290,13 +287,15 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         $error = false;
         if(empty($formData['callnumber'])) {
             $this->addFlashMessage(
-                false, 'storage_retrieval_request_error_field_empty', ['%%field%%' => 'storage_retrieval_request_select_location']
+                false, 'storage_retrieval_request_error_field_empty',
+                ['%%field%%' => 'storage_retrieval_request_select_location']
             );
             $error = true;
         }
         if(empty($formData['year']) && empty($formData['comment'])) {
             $this->addFlashMessage(
-                false, 'storage_retrieval_request_error_fields_empty', ['%%field1%%' => 'storage_retrieval_request_year', '%%field2%%' => 'Note']
+                false, 'storage_retrieval_request_error_fields_empty',
+                ['%%field1%%' => 'storage_retrieval_request_year', '%%field2%%' => 'Note']
             );
             $error = true;
         }

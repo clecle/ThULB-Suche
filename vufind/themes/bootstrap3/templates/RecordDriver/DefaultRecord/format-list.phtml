@@ -1,3 +1,9 @@
+<<<<<<< HEAD:vufind/themes/thulb/templates/RecordDriver/DefaultRecord/format-list.phtml
+<? foreach ($this->driver->getFormats() as $format): ?>
+  <span class="format <?=$this->record($this->driver)->getFormatClass($format) ?>"><?=$this->transEsc('Formats::' . $format)?></span>
+<? endforeach; ?>
+=======
 <?php foreach ($this->driver->getFormats() as $format): ?>
   <span class="format <?=$this->record($this->driver)->getFormatClass($format) ?>"><?=$this->transEsc($format) ?></span>
 <?php endforeach; ?>
+>>>>>>> f420edaa6b58c45621d4ebe4d100df44efb8e15c:vufind/themes/bootstrap3/templates/RecordDriver/DefaultRecord/format-list.phtml

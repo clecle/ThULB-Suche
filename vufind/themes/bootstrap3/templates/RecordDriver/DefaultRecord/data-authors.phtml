@@ -7,7 +7,9 @@ $formatProperty = function ($datafield, $name, $label) {
     $translate = function ($str) use ($that, $label) {
         return $that->transEsc($label . $str);
     };
-    return '<span class="author-property-' . $name . '">(' . implode(', ', array_unique(array_map($translate, $datafield))) . ')</span>';
+
+    $text = implode(', ', array_unique(array_map($translate, $datafield)));
+    return '<span class="author-property-' . $name . '">' . ($name == 'role' ? ' [' . $text . ']' : $text) . '</span>';
 };
 $formattedAuthors = [];
 ?>
@@ -37,6 +39,12 @@ $formattedAuthors = [];
       $formattedAuthors[] = trim(preg_replace('/\s+<\//', '</', ob_get_contents()));
       ob_end_clean();
     ?>
+<<<<<<< HEAD:vufind/themes/thulb/templates/RecordDriver/DefaultRecord/data-authors.phtml
+  <? endforeach; ?>
+<? endif; ?>
+<?=implode('; ', $formattedAuthors)?>
+=======
   <?php endforeach; ?>
 <?php endif; ?>
 <?=implode(', ', $formattedAuthors)?>
+>>>>>>> f420edaa6b58c45621d4ebe4d100df44efb8e15c:vufind/themes/bootstrap3/templates/RecordDriver/DefaultRecord/data-authors.phtml

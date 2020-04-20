@@ -45,7 +45,7 @@
         "zendframework/zend-config": "3.3.0",
         "zendframework/zend-console": "2.8.0",
         "zendframework/zend-crypt": "3.3.1",
-        "zendframework/zend-db": "2.11.0",
+        "zendframework/zend-db": "2.10.1",
         "zendframework/zend-dom": "2.7.2",
         "zendframework/zend-escaper": "2.6.1",
         "zendframework/zend-eventmanager": "3.2.1",
@@ -84,7 +84,8 @@
         "phpmd/phpmd": "2.8.1",
         "phpunit/phpunit": "7.5.20",
         "sebastian/phpcpd": "4.1.0",
-        "squizlabs/php_codesniffer": "3.5.3"
+        "squizlabs/php_codesniffer": "3.5.3",
+        "dmore/chrome-mink-driver": "^2.7"
     },
     "extra": {
         "merge-plugin": {

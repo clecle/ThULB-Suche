@@ -341,7 +341,7 @@ class SolrVZGRecord extends SolrMarc
 
         foreach($classNumbers as $classNumber) {
             $isThuBib = $this->getConditionalFieldArray('983', ['b', '0'], true, ' ', ['a' => $classNumber]);
-            if( $isThuBib && preg_match('/^\(DE-601\).*<Thüringen>$/', $isThuBib[0])) {
+            if( $isThuBib && preg_match('/.*<Thüringen>$/', $isThuBib[0])) {
                 array_push($thuBib, $classNumber);
             }
         }
@@ -829,6 +829,21 @@ class SolrVZGRecord extends SolrMarc
         $relevantFields = array('020' => ['9', 'c']);
         $formattingRules = array('020' => '0209 : 020c');
         $conditions = array (['subfield' => 'z', 'operator' => '==', 'value' => null]);
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+    }
+
+    /**
+     * Get an array of all ISBNs associated with the record (may be empty).
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getISMNs()
+    {
+        $relevantFields = array('024' => ['9', 'c']);
+        $formattingRules = array('024' => '0249 024c');
+        $conditions = array (['indicator' => '1', 'operator' => '==', 'value' => '2']);
         return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 

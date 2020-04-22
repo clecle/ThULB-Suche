@@ -52,6 +52,14 @@ $config = array(
                     'VuFind\Db\Row\User' => 'ThULB\Db\Row\Factory'
                 ),
             ),
+            'doilinker' => array(
+                'factories' => array (
+                    'ThULB\DoiLinker\Unpaywall' => 'VuFind\DoiLinker\UnpaywallFactory',
+                ),
+                'aliases' => array (
+                    'VuFind\DoiLinker\Unpaywall' => 'ThULB\DoiLinker\Unpaywall',
+                )
+            ),
             'hierarchy_treedataformatter' => array(
                 'invokables' => array(
                     'VuFind\Hierarchy\TreeDataFormatter\Json' => 'ThULB\Hierarchy\TreeDataFormatter\Json'

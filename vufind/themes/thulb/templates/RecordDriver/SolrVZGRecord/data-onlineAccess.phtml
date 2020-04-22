@@ -1,6 +1,8 @@
 <?
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
+$doi = $this->doi($this->driver, 'record');
+$doiActive = $doi->isActive();
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
   $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
@@ -18,3 +20,4 @@
 <? if ($citesLink && $citesCount > 0) : ?>
   <?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
 <? endif; ?>
+<?php if ($doiActive): ?><?=$doi->renderTemplate()?><?php endif; ?>

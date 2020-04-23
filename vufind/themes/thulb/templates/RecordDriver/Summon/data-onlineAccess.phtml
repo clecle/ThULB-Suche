@@ -1,1 +1,4 @@
-<?php // Hide in summon
+<?php
+  $doi = $this->doi($this->driver, 'record');
+  $doiActive = $doi->isActive();
+?><?php if ($doiActive): ?><?=$doi->renderTemplate()?><?php endif; ?>

@@ -28,8 +28,11 @@
 namespace ThULB\DoiLinker;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface;
 use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
+use Zend\Log\LoggerAwareInterface;
+
 /**
  * Unpaywall DOI linker
  *
@@ -39,8 +42,12 @@ use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:doi_linkers Wiki
  */
-class Unpaywall extends OriginalUnpaywall
+class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
+
+    const API_CALL_TIMEOUT = 5;
+
     /**
      * Given an array of DOIs, perform a lookup and return an associative array
      * of arrays, keyed by DOI. Each array contains one or more associative arrays
@@ -57,10 +64,35 @@ class Unpaywall extends OriginalUnpaywall
         if(!empty($response)) {
             foreach($response as $doi => $doiData) {
                 foreach($doiData as $index => $data) {
-                    $response[$doi][$index]['label'] .= ' (Unpaywall)';
+                    $response[$doi][$index]['label'] = 'PDF (Unpaywall)';
                 }
             }
         }
         return $response;
+    }
+
+    /**
+     * Takes a DOI and do an API call to Unpaywall service
+     *
+     * @param string $doi DOI
+     *
+     * @return null|string
+     */
+    protected function callApi($doi) {
+        try {
+            $url = $this->apiUrl . "/" . urlencode($doi) . "?"
+                . http_build_query(['email' => $this->email]);
+            $client = $this->httpService->createClient($url);
+            $client->setOptions(['timeout' => self::API_CALL_TIMEOUT]);
+            $response = $client->send();
+            if ($response->isSuccess()) {
+                return $response->getBody();
+            }
+        }
+        catch (\Exception $e) {
+            $this->logError($e);
+        }
+
+        return null;
     }
 }

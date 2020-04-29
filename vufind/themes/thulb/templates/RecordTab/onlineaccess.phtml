@@ -13,6 +13,10 @@
       <dl class="dl-horizontal">
         <dt><?=$this->transEsc('Link')?>:</dt>
         <dd>
+          <?= $this->render('Helpers/doi.phtml', ['driver' => $this->driver, 'location' => 'holdings']); ?>
+        </dd>
+        <dt>&nbsp;</dt>
+        <dd>
           <? if (!empty($urls) || $openUrlActive): ?>
             <? foreach ($urls as $current): ?>
               <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" class="btn btn-primary">

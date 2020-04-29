@@ -15,6 +15,8 @@
     }
     // Set page title.
     $this->headTitle($this->translate('Holdings') . ': ' . $this->driver->getBreadcrumb());
+
+    $doiHtml = $this->render('Helpers/doi.phtml', ['driver' => $this->driver, 'location' => 'holdings']);
 ?>
 
 <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
@@ -42,6 +44,17 @@
 <? $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
   <a class="placehold" data-lightbox title="<?=$this->transEsc('request_place_text')?>" href="<?=$this->recordLink()->getRequestUrl($holdingTitleHold)?>"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?=$this->transEsc('title_hold_place')?></a>
 <? endif; ?>
+
+<table class="table table-striped">
+  <tr vocab="http://schema.org/" typeof="Offer">
+    <td>
+      <dl class="dl-horizontal">
+        <dt><?=$this->transEsc('Link')?>:</dt>
+        <dd><?=$doiHtml; ?></dd>
+      </dl>
+    </td>
+  </tr>
+</table>
 
 <? if ( !empty($holdings) ): ?>
   <? foreach ($holdings['holdings'] as $holding): ?>

@@ -147,7 +147,8 @@ $config = array(
             'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
-            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter'
+            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
+            'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ),
 

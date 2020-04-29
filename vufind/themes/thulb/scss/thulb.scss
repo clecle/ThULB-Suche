@@ -917,4 +917,8 @@ li[data-tab="details"] {
   i {
     color: #20e168;
   }
+
+  &.btn-primary:hover {
+    background-color: #02c34a;
+  }
 }

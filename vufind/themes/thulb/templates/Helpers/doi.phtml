@@ -6,10 +6,9 @@
   $doi = $this->doi($this->driver, $this->location ?? '');
   $doiActive = $doi->isActive();
 ?>
-
 <?php if ($doiActive && ($linkedDoi = $this->thulb_doiLinker($cleanDoi))): ?>
   <?php foreach($linkedDoi[$cleanDoi] as $linkedDoiData): ?>
-    <a href="<?=$linkedDoiData['link'];?>" target="_blank" class="btn btn-primary unpaywall <?=$linkedDoiData['oa_status'];?>">
+    <a href="<?=$linkedDoiData['link'];?>" target="_blank" class="btn btn-primary unpaywall">
       <div><i class="fa fa-unlock-alt"></i></div>
       <span style="font-weight: bold"><?=$linkedDoiData['label'];?></span>
     </a>

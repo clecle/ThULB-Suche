@@ -45,16 +45,18 @@
   <a class="placehold" data-lightbox title="<?=$this->transEsc('request_place_text')?>" href="<?=$this->recordLink()->getRequestUrl($holdingTitleHold)?>"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?=$this->transEsc('title_hold_place')?></a>
 <? endif; ?>
 
-<table class="table table-striped">
-  <tr vocab="http://schema.org/" typeof="Offer">
-    <td>
-      <dl class="dl-horizontal">
-        <dt><?=$this->transEsc('Link')?>:</dt>
-        <dd><?=$doiHtml; ?></dd>
-      </dl>
-    </td>
-  </tr>
-</table>
+<?php if(!empty($doiHtml)): ?>
+  <table class="table table-striped">
+    <tr vocab="http://schema.org/" typeof="Offer">
+      <td>
+        <dl class="dl-horizontal">
+          <dt><?=$this->transEsc('Link')?>:</dt>
+          <dd><?=$doiHtml; ?></dd>
+        </dl>
+      </td>
+    </tr>
+  </table>
+<?php endif; ?>
 
 <? if ( !empty($holdings) ): ?>
   <? foreach ($holdings['holdings'] as $holding): ?>

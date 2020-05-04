@@ -16,7 +16,7 @@
     // Set page title.
     $this->headTitle($this->translate('Holdings') . ': ' . $this->driver->getBreadcrumb());
 
-    $doiHtml = $this->render('Helpers/doi.phtml', ['driver' => $this->driver, 'location' => 'holdings']);
+    $doiHtml = $this->render('Helpers/doi-linker.phtml', ['driver' => $this->driver, 'location' => 'holdings']);
 ?>
 
 <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>

@@ -6,7 +6,7 @@
   $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
   $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 
-  $doiHtml = $this->render('Helpers/doi.phtml', ['driver' => $this->driver, 'location' => 'holdings']);
+  $doiHtml = $this->render('Helpers/doi-linker.phtml', ['driver' => $this->driver, 'location' => 'holdings']);
 ?>
 
 <table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">

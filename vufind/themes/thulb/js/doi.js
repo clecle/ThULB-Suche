@@ -21,32 +21,33 @@ VuFind.register('doi', function Doi() {
             dataType: 'json',
             url: url
         })
-            .done(function embedDoiLinksDone(response) {
-                elements.each(function populateDoiLinks(x, doiEl) {
-                    var currentDoi = $(doiEl).data('doi');
-                    if ("undefined" !== typeof response.data[currentDoi]) {
-                        $(doiEl).empty();
-                        var externalIcon = $('<i />');
-                        externalIcon.attr('class', 'fa fa-external-link');
-                        for (var i = 0; i < response.data[currentDoi].length; i++) {
-                            var newLink = $('<a />');
-                            newLink.attr('href', response.data[currentDoi][i].link);
-                            newLink.text(' ' + response.data[currentDoi][i].label);
-                            if (typeof response.data[currentDoi][i].icon !== 'undefined') {
-                                var icon = $('<img />');
-                                icon.attr('src', response.data[currentDoi][i].icon);
-                                icon.attr('class', 'doi-icon');
-                                $(doiEl).append(icon);
-                            }
-                            $(doiEl).append(externalIcon);
-                            $(doiEl).append(newLink);
-                            if(!$(doiEl).next().is('a')) {
-                                $(doiEl).append("<br />");
-                            }
+        .done(function embedDoiLinksDone(response) {
+            elements.each(function populateDoiLinks(x, doiEl) {
+                var currentDoi = $(doiEl).data('doi');
+                if ("undefined" !== typeof response.data[currentDoi]) {
+                    $(doiEl).empty();
+                    var externalIcon = $('<i />');
+                    externalIcon.attr('class', 'fa fa-external-link');
+                    for (var i = 0; i < response.data[currentDoi].length; i++) {
+                        var newLink = $('<a />');
+                        newLink.attr('href', response.data[currentDoi][i].link);
+                        newLink.text(' ' + response.data[currentDoi][i].label);
+                        newLink.prepend(externalIcon);
+                        if (typeof response.data[currentDoi][i].icon !== 'undefined') {
+                            var icon = $('<img />');
+                            icon.attr('src', response.data[currentDoi][i].icon);
+                            icon.attr('class', 'doi-icon');
+                            $(doiEl).append(icon);
+                        }
+                        // $(doiEl).append(externalIcon);
+                        $(doiEl).append(newLink);
+                        if(!$(doiEl).next().is('a')) {
+                            $(doiEl).append("<br />");
                         }
                     }
-                });
+                }
             });
+        });
     }
 
     // Assign actions to the OpenURL links. This can be called with a container e.g. when

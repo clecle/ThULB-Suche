@@ -26,8 +26,6 @@ VuFind.register('doi', function Doi() {
           var currentDoi = $(doiEl).data('doi');
           if ("undefined" !== typeof response.data[currentDoi]) {
             $(doiEl).empty();
-            var externalIcon = $('<i />');
-            externalIcon.attr('class', 'fa fa-external-link');
             for (var i = 0; i < response.data[currentDoi].length; i++) {
               var newLink = $('<a />');
               newLink.attr('href', response.data[currentDoi][i].link);
@@ -38,9 +36,8 @@ VuFind.register('doi', function Doi() {
                 icon.attr('class', 'doi-icon');
                 $(doiEl).append(icon);
               }
-              $(doiEl).append(externalIcon);
               $(doiEl).append(newLink);
-              // $(doiEl).append("<br />");
+              $(doiEl).append("<br />");
             }
           }
         });

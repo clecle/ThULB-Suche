@@ -867,6 +867,7 @@ li[data-tab="details"] {
 
 .unpaywall {
   background: #20e168;
+  border: none;
 
   div {
     color: #fff;
@@ -878,7 +879,6 @@ li[data-tab="details"] {
     margin-right: 10px;
     padding-left: 3px;
     border-radius: 40px 0 0 40px;
-    box-shadow: 0 1px 5px -1px #333;
     cursor: pointer;
     opacity: 1;
     display: flex;
@@ -892,7 +892,9 @@ li[data-tab="details"] {
     color: #20e168;
   }
 
-  &.btn-primary:hover {
+  &.btn-primary:hover,
+  &.btn-primary:focus,
+  &.btn-primary:active {
     background-color: #02c34a;
   }
 }

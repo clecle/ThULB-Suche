@@ -24,6 +24,12 @@ VuFind.register('doi', function Doi() {
         .done(function embedDoiLinksDone(response) {
             elements.each(function populateDoiLinks(x, doiEl) {
                 var currentDoi = $(doiEl).data('doi');
+
+                var loadingImg = $(doiEl).prev();
+                if($(loadingImg).is('img')) {
+                    $(loadingImg).hide();
+                }
+
                 if ("undefined" !== typeof response.data[currentDoi]) {
                     $(doiEl).empty();
                     var externalIcon = $('<i />');

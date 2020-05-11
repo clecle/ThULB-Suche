@@ -360,7 +360,7 @@ class PAIA extends OriginalPAIA
                     // custom DAIA field
                     $status['remotehref'] = $href;
                     // custom DAIA field
-                    $status['remotedomain'] = parse_url($href)['host'];
+                    $status['remotedomain'] = parse_url($href)['host'] ?? $href;
                     // custom DAIA field
                     $status['remotetitle'] = isset($available['title']) ? $available['title'] : '';
 

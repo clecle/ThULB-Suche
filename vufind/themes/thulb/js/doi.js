@@ -32,11 +32,13 @@ VuFind.register('doi', function Doi() {
 
                 if ("undefined" !== typeof response.data[currentDoi]) {
                     $(doiEl).empty();
-                    var externalIcon = $('<i />');
-                    externalIcon.attr('class', 'fa fa-external-link');
+                    var externalIcon = $('<div />');
+                    externalIcon.html('<i class="fa fa-unlock-alt"></i>');
                     for (var i = 0; i < response.data[currentDoi].length; i++) {
                         var newLink = $('<a />');
                         newLink.attr('href', response.data[currentDoi][i].link);
+                        newLink.attr('target', '_blank');
+                        newLink.attr('class', 'btn btn-primary btn-small unpaywall');
                         newLink.text(' ' + response.data[currentDoi][i].label);
                         newLink.prepend(externalIcon);
                         if (typeof response.data[currentDoi][i].icon !== 'undefined') {
@@ -45,7 +47,6 @@ VuFind.register('doi', function Doi() {
                             icon.attr('class', 'doi-icon');
                             $(doiEl).append(icon);
                         }
-                        // $(doiEl).append(externalIcon);
                         $(doiEl).append(newLink);
                         if(!$(doiEl).next().is('a')) {
                             $(doiEl).append("<br />");

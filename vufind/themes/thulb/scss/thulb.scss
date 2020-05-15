@@ -933,3 +933,22 @@ li[data-tab="details"] {
   height: 15px;
   padding-right: 5px;
 }
+
+.btn-small {
+  padding: 1px 3px;
+}
+
+#resultlist a.unpaywall.btn-small {
+  padding: 1px 3px;
+  margin-right: 5px;
+
+  div {
+    margin-top: 2px;
+    height: 15px;
+    width: 15px;
+
+    i {
+      font-size: 12px;
+    }
+  }
+}

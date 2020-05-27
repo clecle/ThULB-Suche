@@ -201,4 +201,57 @@ class Summon extends OriginalSummon
         }
         return $params;
     }
+
+    /**
+     * Get all subject headings associated with this record.  Each heading is
+     * returned as an array of chunks, increasing from least specific to most
+     * specific.
+     *
+     * @param bool $extended Whether to return a keyed array with the following
+     * keys:
+     * - heading: the actual subject heading chunks
+     * - type: heading type
+     * - source: source vocabulary
+     *
+     * @return array
+     */
+    public function getAllSubjectHeadings($extended = false)
+    {
+        $subjects = [];
+        $lowerSubjects = [];
+        foreach ($this->subjectFields as $field => $fieldType) {
+            if (!isset($this->fields[$field])) {
+                continue;
+            }
+            foreach ($this->fields[$field] as $topic) {
+                $topic = trim($topic);
+                $value = $extended ? "$fieldType|||$topic" : $topic;
+
+                // do not show the same subject with a different case
+                if(!in_array(strtolower($value), $lowerSubjects)) {
+                    $subjects[] = $value;
+                    $lowerSubjects[] = strtolower($value);
+                }
+            }
+        }
+        unset($lowerSubjects);
+        sort($subjects, SORT_STRING | SORT_FLAG_CASE);
+
+        $retVal = [];
+        foreach($subjects as $value) {
+            if($extended) {
+                $splitValues = explode('|||', $value);
+                $retVal[] = [
+                    'heading' => [$splitValues[1]],
+                    'type' => $splitValues[0],
+                    'source' => ''
+                ];
+            }
+            else {
+                $retVal[] = [$value];
+            }
+        }
+
+        return $retVal;
+    }
 }

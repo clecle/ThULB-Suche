@@ -2041,6 +2041,11 @@ class SolrVZGRecord extends SolrMarc
         return false;
     }
 
+    public function getHoldings()
+    {
+        return parent::getRealTimeHoldings();
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

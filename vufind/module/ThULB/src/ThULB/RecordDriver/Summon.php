@@ -254,4 +254,24 @@ class Summon extends OriginalSummon
 
         return $retVal;
     }
+
+    public function getHoldings() {
+
+        $retVal = [];
+
+        foreach($this->getURLs() as $url) {
+            $retVal['holdings']['Remote']['location'] = 'Remote';
+            $retVal['holdings']['Remote']['items'][] = [
+                'barcode' => true,
+                'callnumber' => '',
+                'location' => 'Remote',
+                'remotedesc' => $url['desc'],
+                'remotehref' => $url['url'],
+                'remotetitle' => '',
+                'status' => 'available',
+            ];
+        }
+
+        return $retVal;
+    }
 }

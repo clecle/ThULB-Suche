@@ -2,5 +2,5 @@
     $OpenAccess = is_callable([$this->driver, 'isOpenAccess']) ? $this->driver->isOpenAccess() : false;
 ?>
 <? if ($OpenAccess) :?>
-<span class="openaccess" title="<?=$this->translate('Open Access')?>"><?=$this->translate('Open Access')?></span>
+<span title="<?=$this->translate('Open Access')?>"><?=$this->translate('Open Access')?></span>
 <? endif;?>

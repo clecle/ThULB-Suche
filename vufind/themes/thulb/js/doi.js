@@ -38,7 +38,7 @@ VuFind.register('doi', function Doi() {
                         var newLink = $('<a />');
                         newLink.attr('href', response.data[currentDoi][i].link);
                         newLink.attr('target', '_blank');
-                        newLink.attr('class', 'btn btn-primary btn-small unpaywall');
+                        newLink.attr('class', 'btn btn-primary btn-xs unpaywall');
                         newLink.text(' ' + response.data[currentDoi][i].label);
                         newLink.prepend(externalIcon);
                         if (typeof response.data[currentDoi][i].icon !== 'undefined') {

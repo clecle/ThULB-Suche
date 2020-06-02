@@ -524,7 +524,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .openaccess {
   &:extend(.label);
   &:extend(.label-info);
-  background-color: @brand-inverted;
+  background-color: #b2b2b2;
+}
+
+.result .format {
+  background-color: #b2b2b2;
 }
 
 .delete-icon {
@@ -899,10 +903,6 @@ li[data-tab="details"] {
   }
 }
 
-#resultlist .doiLink a {
-  padding-right: 10px;
-}
-
 .doiLinkLoading {
   height: 15px;
   padding-right: 5px;
@@ -928,5 +928,22 @@ li[data-tab="details"] {
 }
 
 .fulltext {
-  padding-right: 10px;
+  margin-right: 5px;
+}
+
+.media .result-body .action-row {
+  padding-top: 5px;
+}
+
+.btn-xxs {
+  padding: .1em .5em .1em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#resultlist .speech-bubble {
+  font-size: 100%;
+  font-weight: unset;
 }

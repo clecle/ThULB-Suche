@@ -66,10 +66,6 @@
           </div>
         <? endif; ?>
 
-        <?=$this->record($this->driver)->getFormatList() ?>
-        <?=$this->record($this->driver)->getOpenAccess() ?>
-        <?=$this->record($this->driver)->getCitationReferences() ?>
-
         <? /* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
             but even if we don't plan to display the link, we still want to get the $openUrl
             value for use in generating a COinS (Z3988) tag -- see bottom of file.
@@ -82,14 +78,29 @@
           $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         ?>
 
+        <?=$this->record($this->driver)->getFormatList() ?>
+        <?=$this->record($this->driver)->getOpenAccess() ?>
+
+        <? if(!$this->driver->isCollection()):
+          foreach ($urls as $current):
+            $asBtn = $current['desc'] == $this->transEsc('Get full text');
+            if(!$asBtn): ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
+                <i class="fa fa-external-link"></i>
+                <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+              </a>
+            <?php endif; ?>
+          <? endforeach; ?>
+        <? endif; ?>
+
         <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
           <span class="status ajax-availability hidden">
           <span class="label label-default"><?=$this->transEsc('Loading')?>...</span>
         </span>
         <? endif; ?>
 
-        <?php if ($openUrlActive || !empty($urls) || $doiActive): ?>
-          <div class="flex-center">
+        <div class="flex-center action-row">
+          <?php if ($openUrlActive || !empty($urls) || $doiActive): ?>
             <? if ($openUrlActive): ?>
               <br/>
               <?=$openUrl->renderTemplate()?>
@@ -99,20 +110,24 @@
             <?php endif; ?>
             <? if (!is_array($urls)) $urls = array(); ?>
             <? if(!$this->driver->isCollection()):
-              $fto = $this->transEsc('Get full text');
               foreach ($urls as $current):
-                $btn = $current['desc'] == $this->transEsc('Get full text'); ?>
-                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext <?php if($btn): ?>btn btn-primary btn-small<?php endif; ?>" target="new">
-                  <i class="fa fa-external-link"></i>
-                  <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-                </a>
+                $asBtn = $current['desc'] == $this->transEsc('Get full text');
+                if($asBtn): ?>
+                  <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
+                    <i class="fa fa-external-link"></i>
+                    <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                  </a>
+                <?php endif; ?>
               <? endforeach; ?>
             <? endif; ?>
-          </div>
-        <? endif; ?>
+          <? endif; ?>
+
+          <?=$this->record($this->driver)->getCitationReferences() ?>
+        </div>
 
         <?=$this->record($this->driver)->getPreviews()?>
       </div>
+
       <div class="col-xs-1 right hidden-print favorite-action">
         <? /* Display qrcode if appropriate: */ ?>
         <? if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>

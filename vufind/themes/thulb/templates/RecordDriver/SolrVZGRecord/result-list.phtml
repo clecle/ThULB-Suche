@@ -81,16 +81,12 @@
         <?=$this->record($this->driver)->getFormatList() ?>
         <?=$this->record($this->driver)->getOpenAccess() ?>
 
-        <? if(!$this->driver->isCollection()):
-          foreach ($urls as $current):
-            $asBtn = $current['desc'] == $this->transEsc('Get full text');
-            if(!$asBtn): ?>
-              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
-                <i class="fa fa-external-link"></i>
-                <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-              </a>
-            <?php endif; ?>
-          <? endforeach; ?>
+        <? if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
+            $current = $urls['inhaltsverzeichnis']; ?>
+            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
+              <i class="fa fa-external-link"></i>
+              <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+            </a>
         <? endif; ?>
 
         <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>

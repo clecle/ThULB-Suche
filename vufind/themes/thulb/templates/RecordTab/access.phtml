@@ -75,10 +75,9 @@
         <td>
           <dl class="dl-horizontal">
             <dt>
-              <?php $asBtn = $row['remotedesc'] != $this->transEsc('get_citation'); ?>
-              <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="<?php if($asBtn) echo 'btn btn-primary'; ?>">
+              <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary">
                 <i class="fa fa-external-link" aria-hidden="true"></i>
-                <?= $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
+                <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Get full text'); ?>
               </a>
             </dt>
             <dd>

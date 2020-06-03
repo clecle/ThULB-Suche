@@ -78,22 +78,26 @@
           $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         ?>
 
-        <?=$this->record($this->driver)->getFormatList() ?>
-        <?=$this->record($this->driver)->getOpenAccess() ?>
+        <div clasS="badges-row">
+          <?=$this->record($this->driver)->getFormatList() ?>
+          <?=$this->record($this->driver)->getOpenAccess() ?>
 
-        <? if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
+          <? if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
             $current = $urls['inhaltsverzeichnis']; ?>
             <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
               <i class="fa fa-external-link"></i>
               <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
             </a>
-        <? endif; ?>
+          <? endif; ?>
 
-        <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
-          <span class="status ajax-availability hidden">
-          <span class="label label-default"><?=$this->transEsc('Loading')?>...</span>
-        </span>
-        <? endif; ?>
+          <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
+            <span class="status ajax-availability hidden">
+              <span class="label label-default"><?=$this->transEsc('Loading')?>...</span>
+            </span>
+          <? endif; ?>
+
+          <?=$this->record($this->driver)->getThuringiaBibliography() ?>
+        </div>
 
         <div class="flex-center action-row">
           <?php if ($openUrlActive || !empty($urls) || $doiActive): ?>

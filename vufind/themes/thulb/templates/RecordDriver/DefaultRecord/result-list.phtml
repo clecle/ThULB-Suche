@@ -86,8 +86,8 @@
               $asBtn = $current['desc'] == $this->transEsc('Get full text');
               if(!$asBtn): ?>
                 <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
-                  <i class="fa fa-external-link"></i>
                   <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                  <i class="fa fa-external-link"></i>
                 </a>
               <?php endif; ?>
             <? endforeach; ?>
@@ -115,8 +115,8 @@
                 $asBtn = $current['desc'] == $this->transEsc('Get full text');
                 if($asBtn): ?>
                   <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
-                    <i class="fa fa-external-link"></i>
                     <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                    <i class="fa fa-external-link"></i>
                   </a>
                 <?php endif; ?>
               <? endforeach; ?>

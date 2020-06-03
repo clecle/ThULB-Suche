@@ -59,7 +59,7 @@
 
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding)): ?>
+<?php if(!empty($onlineHolding) || !empty($doiHtml)): ?>
   <table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">
     <?php if(!empty($doiHtml)): ?>
       <tr vocab="http://schema.org/" typeof="Offer">
@@ -70,70 +70,72 @@
         </td>
       </tr>
     <?php endif; ?>
-    <? foreach ($onlineHolding['items'] as $row): ?>
-      <tr vocab="http://schema.org/" typeof="Offer">
-        <td>
-          <dl class="dl-horizontal">
-            <dt>
-              <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary">
-                <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Get full text'); ?>
-                <i class="fa fa-external-link" aria-hidden="true"></i>
-              </a>
-            </dt>
-            <dd>
-              <?php if(!empty($row['remotetitle'])):?>
-                [<?php echo $row['remotetitle']; ?>]
-              <?php endif; ?>
+    <? if(!empty($onlineHolding)):
+      foreach ($onlineHolding['items'] as $row): ?>
+        <tr vocab="http://schema.org/" typeof="Offer">
+          <td>
+            <dl class="dl-horizontal">
+              <dt>
+                <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary">
+                  <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Get full text'); ?>
+                  <i class="fa fa-external-link" aria-hidden="true"></i>
+                </a>
+              </dt>
+              <dd>
+                <?php if(!empty($row['remotetitle'])):?>
+                  [<?php echo $row['remotetitle']; ?>]
+                <?php endif; ?>
 
-              <?php /* BESTANDSANGABEN */ ?>
-              <? $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
-              <? if (!empty($chron)) : ?>
-                <div class="item-notes">
-                  <? if (is_array($chron) && count($chron) > 0): ?>
-                    <? foreach ($chron as $chron): ?>
-                      <? if (!empty($chron)): ?>
-                        <p><?=$chron ?></p>
-                      <? endif; ?>
-                    <? endforeach; ?>
-                  <? endif; ?>
-                </div>
-              <? endif; ?>
+                <?php /* BESTANDSANGABEN */ ?>
+                <? $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
+                <? if (!empty($chron)) : ?>
+                  <div class="item-notes">
+                    <? if (is_array($chron) && count($chron) > 0): ?>
+                      <? foreach ($chron as $chron): ?>
+                        <? if (!empty($chron)): ?>
+                          <p><?=$chron ?></p>
+                        <? endif; ?>
+                      <? endforeach; ?>
+                    <? endif; ?>
+                  </div>
+                <? endif; ?>
 
-              <? /* ANMERKGUNGEN */ ?>
-              <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-              <? if (!empty($comments)) : ?>
-                <div class="item-notes">
-                  <? if (is_array($comments) && count($comments) > 0): ?>
-                    <? foreach ($comments as $comment): ?>
-                      <? if (!empty($comment)): ?>
-                        <p><?=$comment ?></p>
-                      <? endif; ?>
-                    <? endforeach; ?>
-                  <? endif; ?>
-                </div>
-              <? endif; ?>
+                <? /* ANMERKGUNGEN */ ?>
+                <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
+                <? if (!empty($comments)) : ?>
+                  <div class="item-notes">
+                    <? if (is_array($comments) && count($comments) > 0): ?>
+                      <? foreach ($comments as $comment): ?>
+                        <? if (!empty($comment)): ?>
+                          <p><?=$comment ?></p>
+                        <? endif; ?>
+                      <? endforeach; ?>
+                    <? endif; ?>
+                  </div>
+                <? endif; ?>
 
-              <? if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
-                <div class="item-notes">
-                  <?= $this->transEsc('explain_reference') ?>
-                </div>
-              <?php endif; ?>
+                <? if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
+                  <div class="item-notes">
+                    <?= $this->transEsc('explain_reference') ?>
+                  </div>
+                <?php endif; ?>
 
-              <? if ($citesLink && $citesCount > 0) : ?>
-                <div class="citations">
-                  <?=$citesCount?>
-                  <a href="<?=$citesLink?>" target="_blank">
-                    <?=$this->transEsc('Web of Science Scites Link')?>
-                    <i class="fa fa-external-link" aria-hidden="true"></i>
-                  </a>
-                  <?=$this->translate('Web of Science Scites Ref')?>
-                </div>
-              <? endif; ?>
-            </dd>
-          </dl>
-        </td>
-      </tr>
-    <?php endforeach; ?>
+                <? if ($citesLink && $citesCount > 0) : ?>
+                  <div class="citations">
+                    <?=$citesCount?>
+                    <a href="<?=$citesLink?>" target="_blank">
+                      <?=$this->transEsc('Web of Science Scites Link')?>
+                      <i class="fa fa-external-link" aria-hidden="true"></i>
+                    </a>
+                    <?=$this->translate('Web of Science Scites Ref')?>
+                  </div>
+                <? endif; ?>
+              </dd>
+            </dl>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+    <?php endif; ?>
   </table>
 <?php endif; ?>
 

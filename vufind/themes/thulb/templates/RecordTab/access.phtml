@@ -85,6 +85,20 @@
                 [<?php echo $row['remotetitle']; ?>]
               <?php endif; ?>
 
+              <?php /* BESTANDSANGABEN */ ?>
+              <? $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
+              <? if (!empty($chron)) : ?>
+                <div class="item-notes">
+                  <? if (is_array($chron) && count($chron) > 0): ?>
+                    <? foreach ($chron as $chron): ?>
+                      <? if (!empty($chron)): ?>
+                        <p><?=$chron ?></p>
+                      <? endif; ?>
+                    <? endforeach; ?>
+                  <? endif; ?>
+                </div>
+              <? endif; ?>
+
               <? /* ANMERKGUNGEN */ ?>
               <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
               <? if (!empty($comments)) : ?>

@@ -19,7 +19,9 @@
     $offlineMode = 'ils-offline';
   }
 
-  $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
+  if(!$this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord || !$this->driver->isFormat('eBook')) {
+    $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
+  }
 ?>
 
 <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
@@ -58,7 +60,6 @@
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
 <?php if(!empty($onlineHolding)): ?>
-  <h3><?=$this->thulb_holdingHelper()->getLocation($onlineHolding);?></h3>
   <table class="table table-striped" summary="<?=$this->transEsc('Holdings details from')?> <?=$this->transEsc('Remote')?>">
     <?php if(!empty($doiHtml)): ?>
       <tr vocab="http://schema.org/" typeof="Offer">
@@ -83,11 +84,27 @@
               <?php if(!empty($row['remotetitle'])):?>
                 [<?php echo $row['remotetitle']; ?>]
               <?php endif; ?>
+
+              <? /* ANMERKGUNGEN */ ?>
+              <? $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
+              <? if (!empty($comments)) : ?>
+                <div class="item-notes">
+                  <? if (is_array($comments) && count($comments) > 0): ?>
+                    <? foreach ($comments as $comment): ?>
+                      <? if (!empty($comment)): ?>
+                        <p><?=$comment ?></p>
+                      <? endif; ?>
+                    <? endforeach; ?>
+                  <? endif; ?>
+                </div>
+              <? endif; ?>
+
               <? if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
                 <div class="item-notes">
                   <?= $this->transEsc('explain_reference') ?>
                 </div>
               <?php endif; ?>
+
               <? if ($citesLink && $citesCount > 0) : ?>
                 <div class="citations">
                   <?=$citesCount?>

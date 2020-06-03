@@ -200,7 +200,14 @@ function removeHashFromLocation() {
 }
 
 function fillEmptyHoldingsTab() {
-  var tabContent = $('.holdings-tab').text();
+  var tabContent = $('.access-tab').text();
+
+  if (($.trim(tabContent)).length === 0) {
+    $('.access-tab').html(VuFind.translate('noHoldings'));
+  }
+
+  // @TODO: Remove after testing:
+  tabContent = $('.holdings-tab').text();
 
   if (($.trim(tabContent)).length === 0) {
     $('.holdings-tab').html(VuFind.translate('noHoldings'));
@@ -227,6 +234,7 @@ ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl, sortType
     data: postData
   })
     .always(function ajaxLoadTabDone(data) {
+      data = data.trim();
       if (typeof data === 'object') {
         $newTab.html(data.responseText ? data.responseText : VuFind.translate('error_occurred'));
       } else {

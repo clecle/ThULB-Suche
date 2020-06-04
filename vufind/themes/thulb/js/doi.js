@@ -53,6 +53,9 @@ VuFind.register('doi', function Doi() {
                         }
                     }
                 }
+                else {
+                    $(doiEl).parent().hide();
+                }
             });
         });
     }

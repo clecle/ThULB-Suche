@@ -104,13 +104,11 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\OnlineAccess' => 'Zend\ServiceManager\Factory\InvokableFactory',
                     'ThULB\RecordTab\Access' => 'Zend\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-                    'onlineaccess' => 'ThULB\RecordTab\OnlineAccess',
                     'access' => 'ThULB\RecordTab\Access'
                 ),
                 'invokables' => array(

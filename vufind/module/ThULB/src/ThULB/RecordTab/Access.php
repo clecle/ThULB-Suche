@@ -14,7 +14,7 @@ class Access extends AbstractTab
      * @return string
      */
     public function getDescription() {
-        return 'New Access';
+        return 'Access';
     }
 
     /**

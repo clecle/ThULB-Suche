@@ -81,17 +81,6 @@
         <div clasS="badges-row">
           <?=$this->record($this->driver)->getFormatList() ?>
           <?=$this->record($this->driver)->getOpenAccess() ?>
-          <? if(!$this->driver->isCollection()):
-            foreach ($urls as $current):
-              $asBtn = $current['desc'] == $this->transEsc('Get full text');
-              if(!$asBtn): ?>
-                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
-                  <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-                  <i class="fa fa-external-link"></i>
-                </a>
-              <?php endif; ?>
-            <? endforeach; ?>
-          <? endif; ?>
 
           <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
             <span class="status ajax-availability hidden">
@@ -111,14 +100,11 @@
             <?php endif; ?>
             <? if (!is_array($urls)) $urls = array(); ?>
             <? if(!$this->driver->isCollection()):
-              foreach ($urls as $current):
-                $asBtn = $current['desc'] == $this->transEsc('Get full text');
-                if($asBtn): ?>
-                  <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
-                    <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-                    <i class="fa fa-external-link"></i>
-                  </a>
-                <?php endif; ?>
+              foreach ($urls as $current): ?>
+                <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
+                  <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                  <i class="fa fa-external-link"></i>
+                </a>
               <? endforeach; ?>
             <? endif; ?>
           <? endif; ?>

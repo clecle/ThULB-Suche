@@ -82,14 +82,6 @@
           <?=$this->record($this->driver)->getFormatList() ?>
           <?=$this->record($this->driver)->getOpenAccess() ?>
 
-          <? if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
-            $current = $urls['inhaltsverzeichnis']; ?>
-            <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xxs" target="new">
-              <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-              <i class="fa fa-external-link"></i>
-            </a>
-          <? endif; ?>
-
           <? if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
             <span class="status ajax-availability hidden">
               <span class="label label-default"><?=$this->transEsc('Loading')?>...</span>
@@ -109,16 +101,12 @@
               <?=$doi->renderTemplate()?>
             <?php endif; ?>
             <? if (!is_array($urls)) $urls = array(); ?>
-            <? if(!$this->driver->isCollection()):
-              foreach ($urls as $current):
-                $asBtn = $current['desc'] == $this->transEsc('Get full text');
-                if($asBtn): ?>
-                  <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
-                    <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
-                    <i class="fa fa-external-link"></i>
-                  </a>
-                <?php endif; ?>
-              <? endforeach; ?>
+            <? if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
+              $current = $urls['inhaltsverzeichnis']; ?>
+              <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs" target="new">
+                <?=($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                <i class="fa fa-external-link"></i>
+              </a>
             <? endif; ?>
           <? endif; ?>
 

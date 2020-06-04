@@ -1,3 +1,9 @@
+<?php
+  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && $this->driver->isFormat('eBook')) {
+    return;
+  }
+?>
+
 <?=$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'doi.js', 'SET');?>
 
 <div class="flex-center center-text">

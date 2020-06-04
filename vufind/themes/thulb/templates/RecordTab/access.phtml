@@ -19,9 +19,7 @@
     $offlineMode = 'ils-offline';
   }
 
-  if(!$this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord || !$this->driver->isFormat('eBook')) {
-    $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
-  }
+  $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>
 
 <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>

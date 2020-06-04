@@ -2,6 +2,10 @@
   if(!$this->driver ?? null) {
     return;
   }
+  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && $this->driver->isFormat('eBook')) {
+    return;
+  }
+
   $cleanDoi = $this->driver->getCleanDOI();
   $doi = $this->doi($this->driver, $this->location ?? '');
   $doiActive = $doi->isActive();

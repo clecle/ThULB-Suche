@@ -2,6 +2,6 @@
     $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
     $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
 ?>
-<? if ($citesCount) :?>
-<span class="speech-bubble html-tooltip" title="<?=$this->translate('Web of Science Scites Tooltip')?>"><? if ($citesLink):?><a href="<?=$citesLink?>" target="_blank"><?=$citesCount?></a><? else: ?><?=$citesCount?><? endif; ?></span>
-<? endif;?>
+<?php if ($citesCount) :?>
+<span class="speech-bubble html-tooltip" title="<?= $this->translate('Web of Science Scites Tooltip')?>"><?php if ($citesLink):?><a href="<?= $citesLink?>" target="_blank"><?= $citesCount?></a><?php else: ?><?= $citesCount?><?php endif; ?></span>
+<?php endif;?>

@@ -1,16 +1,16 @@
-<? if((isset($this->showBulkOptions)  && $this->showBulkOptions)
+<?php if((isset($this->showBulkOptions)  && $this->showBulkOptions)
    || (isset($this->showCartControls) && $this->showCartControls)): ?>
   <div class="bulkActionButtons checkbox hidden-print col-sm-6 col-xs-12">
       <label>
-        <input type="checkbox" class="checkbox-select-all" name="selectAll" id="<?=$this->idPrefix?>addFormCheckboxSelectAll"<?if($this->formAttr):?> form="<?=$this->escapeHtmlAttr($this->formAttr) ?>"<? endif; ?>/> <?=$this->transEsc('select_page')?>
-        &#124; <?=$this->transEsc('with_selected')?>:
+        <input type="checkbox" class="checkbox-select-all" name="selectAll" id="<?= $this->idPrefix?>addFormCheckboxSelectAll"<?php if($this->formAttr):?> form="<?= $this->escapeHtmlAttr($this->formAttr) ?>"<?php endif; ?>/> <?= $this->transEsc('select_page')?>
+        &#124; <?= $this->transEsc('with_selected')?>:
       </label>
 
-      <? if (isset($this->showCartControls) && $this->showCartControls): ?>
-      <button id="<?=$this->idPrefix?>updateCart" type="submit" class="btn btn-thulb" name="add" title="<?=$this->transEsc('Add to Book Bag')?>">
+      <?php if (isset($this->showCartControls) && $this->showCartControls): ?>
+      <button id="<?= $this->idPrefix?>updateCart" type="submit" class="btn btn-thulb" name="add" title="<?= $this->transEsc('Add to Book Bag')?>">
         <i class="fa fa-clipboard"></i>
       </button>
-      <? endif; ?>
+      <?php endif; ?>
 
   </div>
-<? endif; ?>
+<?php endif; ?>

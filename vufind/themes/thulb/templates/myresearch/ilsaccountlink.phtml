@@ -1,4 +1,4 @@
-<?
+<?php
     // Set up page title:
     $this->headTitle($this->translate('Create New Password'));
 
@@ -6,25 +6,25 @@
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
         . '<li class="active">' . $this->transEsc('Create New Password') . '</li>';
 ?>
-<? if ($this->auth()->isLoggedIn()): ?>
+<?php if ($this->auth()->isLoggedIn()): ?>
   <div class="row">
-    <div class="<?=$this->layoutClass('mainbody')?>">
-<? endif; ?>
+    <div class="<?= $this->layoutClass('mainbody')?>">
+<?php endif; ?>
 
-<h2><?=$this->transEsc('Create New Password') ?></h2>
-<?=$this->flashmessages() ?>
+<h2><?= $this->transEsc('Create New Password') ?></h2>
+<?= $this->flashmessages() ?>
 
 <p>
-    <?=$this->transEsc('ils_pwd_change_intro')?>
+    <?= $this->transEsc('ils_pwd_change_intro')?>
 </p>
 <p>
-    <?=$this->translate('ils_pwd_change_reference');?>
+    <?= $this->translate('ils_pwd_change_reference');?>
 </p>
 
-<? if ($this->auth()->isLoggedIn()): ?>
+<?php if ($this->auth()->isLoggedIn()): ?>
     </div>
-    <div class="<?=$this->layoutClass('sidebar')?>">
-      <?=$this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'newpasswordlink'])?>
+    <div class="<?= $this->layoutClass('sidebar')?>">
+      <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'newpasswordlink'])?>
     </div>
   </div>
-<? endif; ?>
+<?php endif; ?>

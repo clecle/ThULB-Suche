@@ -4,10 +4,10 @@
   }
 ?>
 
-<?=$this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'doi.js', 'SET');?>
+<?= $this->inlineScript(\Zend\View\Helper\HeadScript::FILE, 'doi.js', 'SET');?>
 
 <div class="flex-center center-text">
   <img src="/themes/thulb/images/Ajax-loader.gif" class="doiLinkLoading">
-  <span class="doiLink" data-doi="<?=$this->escapeHtml($doi)?>">
+  <span class="doiLink" data-doi="<?= $this->escapeHtml($doi)?>">
   </span>
 </div>

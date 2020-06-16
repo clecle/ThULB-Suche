@@ -1,4 +1,4 @@
-<?
+<?php
   // Set up page title:
   $lookfor = $this->results->getUrlQuery()->isQuerySuppressed() ? '' : $this->params->getDisplayQuery();
   if (isset($this->overrideTitle)) {
@@ -45,57 +45,57 @@
   </div>
   <div class="col-xs-12">
     <div id="resultlist">
-        <? if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-          <? foreach ($this->results->getRecommendations('top') as $current): ?>
-            <?=$this->recommend($current)?>
-          <? endforeach; ?>
-        <? endif; ?>
-        <?=$this->flashmessages()?>
+        <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+          <?php foreach ($this->results->getRecommendations('top') as $current): ?>
+            <?= $this->recommend($current)?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+        <?= $this->flashmessages()?>
 
-        <? if ($recordTotal < 1): ?>
+        <?php if ($recordTotal < 1): ?>
           <p>
-            <? if (isset($this->overrideEmptyMessage)): ?>
-              <?=$this->overrideEmptyMessage?>
-            <? else: ?>
-                <? $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
-                <?=$this->layout()->srmessage ?>
-            <? endif; ?>
+            <?php if (isset($this->overrideEmptyMessage)): ?>
+              <?= $this->overrideEmptyMessage?>
+            <?php else: ?>
+                <?php $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
+                <?= $this->layout()->srmessage ?>
+            <?php endif; ?>
           </p>
-          <? if (isset($this->parseError)): ?>
-            <p class="alert alert-danger"><?=$this->transEsc('nohit_parse_error')?></p>
-          <? endif; ?>
-          <? foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
-            <?=$this->recommend($current)?>
-          <? endforeach; ?>
-          <? foreach ($this->results->getRecommendations('noresults') as $current): ?>
-            <? if (!in_array($current, $top)): ?>
-              <?=$this->recommend($current)?>
-            <? endif; ?>
-          <? endforeach; ?>
-        <? else: ?>
+          <?php if (isset($this->parseError)): ?>
+            <p class="alert alert-danger"><?= $this->transEsc('nohit_parse_error')?></p>
+          <?php endif; ?>
+          <?php foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
+            <?= $this->recommend($current)?>
+          <?php endforeach; ?>
+          <?php foreach ($this->results->getRecommendations('noresults') as $current): ?>
+            <?php if (!in_array($current, $top)): ?>
+              <?= $this->recommend($current)?>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        <?php else: ?>
         
-          <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+          <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
             <div class="row hidden-print">
               <div class="col-xs-12">
                 <div class="pull-right">
-                <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
+                <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                 </div>
               </div>
             </div>
 
-            <?=$this->render('search/list-' . $this->params->getView() . '.phtml')?>
+            <?= $this->render('search/list-' . $this->params->getView() . '.phtml')?>
 
             <div class="row hidden-print">
               <div class="col-xs-12">
                 <div class="pull-right">
-                <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
+                <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                 </div>
               </div>
             </div>
           </form>
-        <? endif; ?>
+        <?php endif; ?>
     </div>
   </div>
-  <? /* End Main Listing */ ?>
+  <?php /* End Main Listing */ ?>
 
 </div>

@@ -1,4 +1,4 @@
-<?
+<?php
   // Set page title.
   $this->headTitle($this->translate('Search Home'));
 
@@ -19,7 +19,7 @@
 ?>
 
 <div class="searchHomeContent">
-  <?
+  <?php
   $ilsStatusScript = <<<JS
       $(document).ready(function() {
         $.ajax({
@@ -35,35 +35,35 @@
       });
 JS;
   ?>
-  <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
+  <?= $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
 
   <div class="row startpage_logo">
     <div class="col-sm-4 col-sm-offset-4">
-      <img alt="welcome thulbsuche" src="<?=$this->imageLink('thulbsuche_l.png')?>">
+      <img alt="welcome thulbsuche" src="<?= $this->imageLink('thulbsuche_l.png')?>">
     </div>
   </div>
   <div class="startpage_searchbox">
-    <?=$this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
+    <?= $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
   </div>
 
   <div class="tutorial">
     <div class="col-sm-4 col-xs-12 tutorial_sub">
         <h1>1.</h1>
-        <h5><?=$this->transEsc('startpage_tutorial_title1')?></h5>
-        <div class="tutorial_txt"><?=$this->transEsc('startpage_tutorial_step1')?></div>
-        <img alt="tutorial step1" src="<?=$this->imageLink($this->transEsc('startpage_tutorial_pic1'))?>">
+        <h5><?= $this->transEsc('startpage_tutorial_title1')?></h5>
+        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step1')?></div>
+        <img alt="tutorial step1" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic1'))?>">
     </div>
     <div class="col-sm-4 col-xs-12 tutorial_sub">
         <h1>2.</h1>
-        <h5><?=$this->transEsc('startpage_tutorial_title2')?></h5>
-        <div class="tutorial_txt"><?=$this->transEsc('startpage_tutorial_step2')?></div>
-        <img alt="tutorial step2" src="<?=$this->imageLink($this->transEsc('startpage_tutorial_pic2'))?>">
+        <h5><?= $this->transEsc('startpage_tutorial_title2')?></h5>
+        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step2')?></div>
+        <img alt="tutorial step2" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic2'))?>">
     </div>
     <div class="col-sm-4 col-xs-12 tutorial_sub">
         <h1>3.</h1>
-        <h5><?=$this->transEsc('startpage_tutorial_title3')?></h5>
-        <div class="tutorial_txt"><?=$this->transEsc('startpage_tutorial_step3')?></div>
-        <img alt="tutorial step3" src="<?=$this->imageLink($this->transEsc('startpage_tutorial_pic3'))?>">
+        <h5><?= $this->transEsc('startpage_tutorial_title3')?></h5>
+        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step3')?></div>
+        <img alt="tutorial step3" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic3'))?>">
     </div>
   </div>
 </div>

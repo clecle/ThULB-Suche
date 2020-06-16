@@ -1,24 +1,24 @@
-<? $summonResult = $this->recommend->getResults(); ?>
-<? if (!empty($summonResult['best_bets'])): ?>
+<?php $summonResult = $this->recommend->getResults(); ?>
+<?php if (!empty($summonResult['best_bets'])): ?>
 <div class="authorbox">
-  <? foreach ($summonResult['best_bets'] as $current): ?>
+  <?php foreach ($summonResult['best_bets'] as $current): ?>
     <p>
-      <? if (isset($current['link']) && !empty($current['link'])):?>
-        <a href="<?=$this->escapeHtmlAttr($current['link'])?>"><?=$this->escapeHtml($current['title'])?></a>
-      <? else: ?>
-        <b><?=$this->escapeHtml($current['title'])?></b>
-      <? endif; ?>
-      <br/><?=$current['description']?>
+      <?php if (isset($current['link']) && !empty($current['link'])):?>
+        <a href="<?= $this->escapeHtmlAttr($current['link'])?>"><?= $this->escapeHtml($current['title'])?></a>
+      <?php else: ?>
+        <b><?= $this->escapeHtml($current['title'])?></b>
+      <?php endif; ?>
+      <br/><?= $current['description']?>
     </p>
-  <? endforeach; ?>
+  <?php endforeach; ?>
 </div>
-<? endif; ?>
+<?php endif; ?>
 
-<? if (!empty($summonResult['databases'])): ?>
+<?php if (!empty($summonResult['databases'])): ?>
 <div class="authorbox">
-  <p><?=$this->transEsc('summon_database_recommendations')?></p>
-  <? foreach ($summonResult['databases'] as $current): ?>
-    <p><a href="<?=$this->escapeHtmlAttr($current['link'])?>"><?=$this->escapeHtml($current['title'])?></a><br/><?=$this->escapeHtml($current['description'])?></p>
-  <? endforeach; ?>
+  <p><?= $this->transEsc('summon_database_recommendations')?></p>
+  <?php foreach ($summonResult['databases'] as $current): ?>
+    <p><a href="<?= $this->escapeHtmlAttr($current['link'])?>"><?= $this->escapeHtml($current['title'])?></a><br/><?= $this->escapeHtml($current['description'])?></p>
+  <?php endforeach; ?>
 </div>
-<? endif; ?>
+<?php endif; ?>

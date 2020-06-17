@@ -33,7 +33,16 @@ $fa-font-path: "../../bootstrap3/css/fonts";
  * = Breakpoint of <=530px also used to target phones specifically
  */
 
-html { font-size: 14px; } // Root font size from Bootstrap, allows consistent use of rem units
+html {
+  font-size: 14px; // Root font size from Bootstrap, allows consistent use of rem units
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
 a,
 label { cursor: pointer; }
 .alert.alert-info a { text-decoration: underline; }
@@ -97,9 +106,19 @@ h3 { font-size: 16px; }
 
 /* ------ Layout ------ */
 footer {
-  @extend .container;
-  padding: 1rem;
+  margin-top: auto;
+
+  ul {
+    display: flex;
+    justify-content: space-evenly;
+    float: none !important;
+  }
+
+  .navbar {
+    margin-bottom: 0;
+  }
 }
+
 @media (min-width: 768px) {
   .footer-container {
     display: flex;

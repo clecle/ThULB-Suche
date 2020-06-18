@@ -2046,6 +2046,27 @@ class SolrVZGRecord extends SolrMarc
         return parent::getRealTimeHoldings();
     }
 
+    /**
+     * Return first ISMN found for this record, or false if no one fonund
+     *
+     * @return mixed
+     */
+    public function getCleanISMN()
+    {
+        // Fix for cases where 024 $a is not set
+        $fields024 = $this->getMarcRecord()->getFields('024');
+        $ismn = null;
+        foreach ($fields024 as $field) {
+            if ($field->getIndicator(1) == 2) {
+                if($data = $field->getSubfield('a')) {
+                    $ismn = $data->getData();
+                    break;
+                }
+            }
+        }
+        return $ismn ?? false;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

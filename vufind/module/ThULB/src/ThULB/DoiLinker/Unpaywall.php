@@ -90,7 +90,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
             }
         }
         catch (\Exception $e) {
-            $this->logError($e);
+            $this->logWarning($e);
         }
 
         return null;

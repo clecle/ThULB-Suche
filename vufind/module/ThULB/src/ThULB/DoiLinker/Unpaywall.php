@@ -81,7 +81,6 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
      */
     protected function callApi($doi) {
         try {
-            throw new \Zend\Http\Client\Adapter\Exception\TimeoutException('timeout test');
             $url = $this->apiUrl . "/" . urlencode($doi) . "?"
                 . http_build_query(['email' => $this->email]);
             $client = $this->httpService->createClient($url);

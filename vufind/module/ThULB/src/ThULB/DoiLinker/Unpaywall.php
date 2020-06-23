@@ -28,6 +28,7 @@
 namespace ThULB\DoiLinker;
 
 use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\Log\Logger;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface;
 use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
@@ -80,6 +81,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
      */
     protected function callApi($doi) {
         try {
+            throw new \Zend\Http\Client\Adapter\Exception\TimeoutException('timeout test');
             $url = $this->apiUrl . "/" . urlencode($doi) . "?"
                 . http_build_query(['email' => $this->email]);
             $client = $this->httpService->createClient($url);
@@ -90,7 +92,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
             }
         }
         catch (\Exception $e) {
-            $this->logWarning($e);
+            $this->logWarning($e->getMessage());
         }
 
         return null;

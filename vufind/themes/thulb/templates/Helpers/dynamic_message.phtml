@@ -1,8 +1,9 @@
 <?php $message = $this->thulb_removeZWNJ($this->translate($this->tag)); ?>
+
 <?php if(!empty($message)): ?>
-    <div id="<?= $this->tag; ?>" class="alert alert-info text-center flex-center">
-        <div><?= $message; ?></div>
-        <i onclick="hideMessage('<?= $this->tag; ?>')" class="fa fa-close"></i>
-    </div>
+  <div id="<?= $this->tag; ?>" class="alert alert-info text-center flex-center">
+    <div><?= $message; ?></div>
+    <i onclick="hideMessage('<?= $this->tag; ?>')" class="fa fa-close"></i>
+  </div>
 <?php endif; ?>
 

@@ -673,6 +673,15 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   }
 }
 
+#dynmessage-preview-de,
+#dynmessage-preview-en {
+  &:extend(#message_under_search_box);
+}
+
+#dynmessage-preview-container {
+  display: none;
+}
+
 #searchForm #searchForm_type {
   border-bottom-right-radius: 0 !important;
   border-top-right-radius: 0 !important;

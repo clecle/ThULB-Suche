@@ -43,16 +43,15 @@ function setupTruncations() {
  * Setup facets
  */
 function setupThulbFacets() {
-  $('ul[class=pagination] li,select[name=sort] option,.authorLink,.langOption,.facetAND,.facetOR,.facetTAB,.facetRANGE,.checkbox-filter').click(function resultlistOverlay() {
-    $("#searchcontent").css('pointer-events', 'none');
-    $("#searchcontent").css('opacity', '0.5');
+  $('ul[class=pagination] li,select[name=sort] option,.authorLink,.langOption,.facetAND,.facetOR,.facetTAB,.facetRANGE,.checkbox-filter, #renewSelected, #renewAll').click(function resultlistOverlay() {
+    $("#content").css('pointer-events', 'none');
+    $("#content").css('opacity', '0.5');
 
     $("#img-load").css({
       top   : '50%',
       left  : '50%'
     });
-    
-    $("#overlay").fadeIn();
+
     $("#img-load").fadeIn();
   });
 

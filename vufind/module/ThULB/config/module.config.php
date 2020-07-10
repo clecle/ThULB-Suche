@@ -138,6 +138,11 @@ $config = array(
                     'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
                     'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr'
                 )
+            ),
+            'search_backend' => array(
+                'factories' => array(
+                    'Solr' => \ThULB\Search\Factory\SolrDefaultBackendFactory::class
+                )
             )
         ),
     ),

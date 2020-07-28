@@ -28,9 +28,9 @@
 namespace ThULB\Controller;
 use VuFind\Controller\MyResearchController as OriginalController;
 use VuFind\RecordDriver\AbstractBase;
-use Zend\Mvc\MvcEvent;
-use Zend\Paginator\Adapter\ArrayAdapter;
-use Zend\Paginator\Paginator;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 
 
 /**

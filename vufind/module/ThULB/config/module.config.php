@@ -22,7 +22,7 @@ $config = array(
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
             'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
@@ -104,7 +104,7 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\Access' => 'Zend\ServiceManager\Factory\InvokableFactory',
+                    'ThULB\RecordTab\Access' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
@@ -158,7 +158,7 @@ $config = array(
     ),
 
     // Authorization configuration:
-    'zfc_rbac' => array(
+    'lmc_rbac' => array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
                 'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',

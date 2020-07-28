@@ -36,7 +36,7 @@ use File_MARC_Data_Field;
 use File_MARC_Exception;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale

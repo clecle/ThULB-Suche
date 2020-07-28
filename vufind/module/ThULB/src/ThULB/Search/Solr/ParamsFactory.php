@@ -30,8 +30,8 @@ namespace ThULB\Search\Solr;
 use Exception;
 use Interop\Container\ContainerInterface;
 use VuFind\Search\Params\ParamsFactory as OriginalParamsFactory;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class ParamsFactory extends OriginalParamsFactory
 {

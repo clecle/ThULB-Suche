@@ -27,9 +27,9 @@
 
 namespace ThULB\Search\Results;
 use VuFind\Search\Solr\SpellingProcessor;
-use Zend\ServiceManager\ServiceManager,
-    ThULB\Search\Summon\Results as SummonResults,
-    ThULB\Search\Solr\Results as SolrResults;
+use Laminas\ServiceManager\ServiceManager;
+use ThULB\Search\Summon\Results as SummonResults;
+use ThULB\Search\Solr\Results as SolrResults;
 
 /**
  * Factory

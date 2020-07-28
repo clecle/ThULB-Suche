@@ -29,11 +29,11 @@ namespace ThULBTest\View\Helper;
 use ThULB\RecordDriver\SolrVZGRecord;
 use VuFind\I18n\Translator\Loader\ExtendedIni;
 use VuFind\Service\Factory as ServiceFactory;
-use Zend\Config\Config;
-use Zend\Http\Client;
-use Zend\I18n\Translator\Translator;
-use Zend\Config\Reader\Ini as IniReader;
-use Zend\Mvc\I18n\Translator as MvcTranslator;
+use Laminas\Config\Config;
+use Laminas\Http\Client;
+use Laminas\I18n\Translator\Translator;
+use Laminas\Config\Reader\Ini as IniReader;
+use Laminas\Mvc\I18n\Translator as MvcTranslator;
 
 /**
  * General view helper test class that provides usually used operations.
@@ -57,11 +57,11 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      * @param array  $plugins Custom VuFind plug-ins to register
      * @param string $theme   Theme directory to load from
      *
-     * @return \Zend\View\Renderer\PhpRenderer
+     * @return \Laminas\View\Renderer\PhpRenderer
      */
     protected function getPhpRenderer($plugins = [], $theme = 'thulb')
     {
-        $resolver = new \Zend\View\Resolver\TemplatePathStack();
+        $resolver = new \Laminas\View\Resolver\TemplatePathStack();
 
         $resolver->setPaths(
             [
@@ -70,7 +70,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
                 $this->getPathForTheme($theme)
             ]
         );
-        $renderer = new \Zend\View\Renderer\PhpRenderer();
+        $renderer = new \Laminas\View\Renderer\PhpRenderer();
         $renderer->setResolver($resolver);
         if (!empty($plugins)) {
             $pluginManager = $renderer->getHelperPluginManager();

@@ -32,7 +32,7 @@
 namespace ThULB\View\Helper\Root;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
-use Zend\View\Exception\RuntimeException;
+use Laminas\View\Exception\RuntimeException;
 
 /**
  * Description of Record

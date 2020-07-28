@@ -6,7 +6,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Search\Base\Params;
 use VuFindSearch\Backend\Solr\Response\Json\NamedList;
-use Zend\Config\Config;
+use Laminas\Config\Config;
 
 class ThBIBFacet implements IFacet, TranslatorAwareInterface
 {

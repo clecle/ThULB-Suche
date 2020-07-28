@@ -25,7 +25,7 @@
 
 namespace ThULB\View\Helper\Root;
 
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Helper class to provide the VUFIND_ENV superglobal content

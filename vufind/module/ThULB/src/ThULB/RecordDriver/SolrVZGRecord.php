@@ -2018,6 +2018,10 @@ class SolrVZGRecord extends SolrMarc
                     . " " . $recordLink['link']['value'];
                 $recordLinks[$index]['link'] = null;
             }
+            elseif ($recordLink['link']['type'] != 'bib') {
+                $recordLinks[$index]['link'] = null;
+
+            }
         }
 
         $recordLinks = $this->checkListForAvailability($recordLinks);

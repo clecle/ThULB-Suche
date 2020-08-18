@@ -26,6 +26,7 @@
 
 namespace ThULBTest\View\Helper;
 
+use Exception;
 use ThULB\RecordDriver\SolrVZGRecord;
 use VuFind\I18n\Translator\Loader\ExtendedIni;
 use VuFind\Service\Factory as ServiceFactory;
@@ -44,7 +45,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
 {
 //    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
 //    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
-    const FINDEX_REQUEST_PATH = '/index/test/k10plus/31/GBV_ILN_31/select';
+    const FINDEX_REQUEST_PATH = '/31/GBV_ILN_31/select';
     const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_KXP"&q=id:';
 
     protected $translationLocale = 'de';
@@ -86,18 +87,18 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      * 
      * @param string $ppn Pica production number of a record
      * @return SolrVZGRecord|null
-     * @throws \HttpException
+     * @throws Exception
      */
     protected function getRecordFromFindex($ppn)
     {
-        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . $ppn;
+        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
         $client = new Client($url, array(
             'maxredirects' => 3,
             'timeout' => 10
         ));
         $response = $client->send();
         if ($response->getStatusCode() > 299) {
-            throw new \HttpException("Status code " . $response->getStatusCode() . " for $url.");
+            throw new Exception("Status code " . $response->getStatusCode() . " for $url.");
         }
         $jsonString = trim($response->getBody());
         $jsonObject = json_decode($jsonString, true);

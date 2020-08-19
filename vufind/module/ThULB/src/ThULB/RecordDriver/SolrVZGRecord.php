@@ -860,8 +860,8 @@ class SolrVZGRecord extends SolrMarc
 
         $invalidISBNs = array();
         foreach($fields as $field) {
-            if($field->getSubfield('z') && $field->getSubfield('9')) {
-                $invalidISBNs[] = $field->getSubfield('9')->getData();
+            if($field->getSubfield('z')) {
+                $invalidISBNs[] = $field->getSubfield('z')->getData();
             }
         }
 
@@ -2017,6 +2017,10 @@ class SolrVZGRecord extends SolrMarc
                 $recordLinks[$index]['value'] = strtoupper($recordLink['link']['type'])
                     . " " . $recordLink['link']['value'];
                 $recordLinks[$index]['link'] = null;
+            }
+            elseif ($recordLink['link']['type'] != 'bib') {
+                $recordLinks[$index]['link'] = null;
+
             }
         }
 

@@ -97,7 +97,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         $defaultCallnumber = count($inventory) == 1 ? array_shift($inventory)['callnumber'] : '';
 
         return array (
-            'name'       => $params->fromPost('name', $user['firstname'] . ' ' . $user['lastname']),
+            'name'       => $params->fromPost('name', $user['lastname'] . ', ' . $user['firstname']),
             'username'   => $params->fromPost('username', $user['cat_id']),
             'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
             'callnumber' => $params->fromPost('callnumber', $defaultCallnumber),

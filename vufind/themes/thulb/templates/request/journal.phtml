@@ -52,23 +52,23 @@
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_year'); ?>:</span>
-        <span class="form-data"><input id="edition" name="year" type="text" value="<?= $formData['year']; ?>"/></span>
+        <span class="form-data"><input id="edition" name="year" type="text" value="<?= $formData['year']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_volume'); ?>:</span>
-        <span class="form-data"><input id="year" name="volume" type="text" value="<?= $formData['volume']; ?>"/></span>
+        <span class="form-data"><input id="year" name="volume" type="text" value="<?= $formData['volume']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Issue'); ?>:</span>
-        <span class="form-data"><input id="year" name="issue" type="text" value="<?= $formData['issue']; ?>"/></span>
+        <span class="form-data"><input id="year" name="issue" type="text" value="<?= $formData['issue']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_page(s)'); ?>:</span>
-        <span class="form-data"><input id="edition" name="pages" type="text" value="<?= $formData['pages'] ?? ''; ?>"/></span>
+        <span class="form-data"><input id="edition" name="pages" type="text" value="<?= $formData['pages'] ?? ''; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Note'); ?>:</span>
-        <span class="form-data"><textarea id="comment" name="comment" rows="7" placeholder="<?= $this->transEsc('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
+        <span class="form-data"><textarea id="comment" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEsc('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
       </div>
     </div>
     <div class="form-submit">

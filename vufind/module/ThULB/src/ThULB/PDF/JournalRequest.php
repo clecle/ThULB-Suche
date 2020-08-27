@@ -4,7 +4,6 @@ namespace ThULB\PDF;
 
 use FPDF;
 use VuFind\View\Helper\Root\Translate;
-use Zend\Mvc\I18n\Translator;
 
 class JournalRequest extends FPDF
 {
@@ -13,8 +12,8 @@ class JournalRequest extends FPDF
     protected $dinA4height = 297;
     protected $printBorder = 5;
     protected $widthCallNumberCard = 50;
-    protected $heightCallNumberCard = 100;
-    protected $heightUserCard = 120;
+    protected $heightCallNumberCard = 105;
+    protected $heightUserCard = 150;
     protected $widthBookCard = 50;
 
     // Form data
@@ -90,6 +89,7 @@ class JournalRequest extends FPDF
      * Add vertical and horizontal separation lines to the pdf.
      */
     protected function addLines() {
+        $this->SetDrawColor(240);
         // card for books
         $this->Line(
             $this->widthBookCard, 0,
@@ -104,13 +104,14 @@ class JournalRequest extends FPDF
 
         // card for callnumbers
         $this->Line(
-            $this->dinA4width - $this->widthCallNumberCard, $this->dinA4height - $this->heightCallNumberCard,
-            $this->dinA4width, $this->dinA4height - $this->heightCallNumberCard
+            $this->dinA4width - $this->widthCallNumberCard, $this->heightUserCard + $this->heightCallNumberCard,
+            $this->dinA4width, $this->heightUserCard + $this->heightCallNumberCard
         );
         $this->line(
-            $this->dinA4width - $this->widthCallNumberCard, $this->dinA4height - $this->heightCallNumberCard,
+            $this->dinA4width - $this->widthCallNumberCard, $this->heightUserCard,
             $this->dinA4width - $this->widthCallNumberCard, $this->dinA4height
         );
+        $this->SetDrawColor(0);
     }
 
     /**
@@ -137,7 +138,7 @@ class JournalRequest extends FPDF
     protected function addCardUser() {
         $availableTextWidth = $this->dinA4width - $this->widthCallNumberCard - $this->printBorder * 2;
 
-        $title = $this->shortenTextForWidth($this->title, $availableTextWidth - 35);
+        $title = $this->shortenTextForWidth($this->title, $availableTextWidth - 25);
 
         $x = $this->widthCallNumberCard + $this->printBorder;
         $this->addHeadLine('Begleitzettel (freie Bestellbarkeit)', $x, $this->printBorder, $availableTextWidth, 16);
@@ -165,7 +166,7 @@ class JournalRequest extends FPDF
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
 
         $x = $this->dinA4width - $this->widthCallNumberCard + $this->printBorder;
-        $y = $this->dinA4height - $this->heightCallNumberCard + $this->printBorder;
+        $y = $this->heightUserCard + $this->printBorder;
         $this->SetXY($x, $y);
 
         $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth,
@@ -201,7 +202,8 @@ class JournalRequest extends FPDF
 
         $this->addText("Leihfrist",           null,                $availableTextWidth);
         $this->addText("Benutzernr.",         $this->username,     $availableTextWidth);
-        $this->addText($this->descName,       $this->name,         $availableTextWidth, false, 'B');
+        $this->addText($this->descName,       $this->name,         $availableTextWidth,
+                       false, 'B', self::DEFAULT_FONT_SIZE + 2);
     }
 
     /**
@@ -235,8 +237,6 @@ class JournalRequest extends FPDF
             !$asTable ? $x : $x + $tableOffset,
             !$asTable ? $this->GetY() : $y
         );
-
-        $stringWidth = $this->GetStringWidth($text);
 
         $this->SetFont($this->FontFamily, $textFontStyle, $textFontSize);
         $this->MultiCell($cellWidth - $tableOffset, $this->FontSize + $spaceBetweenLines, utf8_decode($text), 0, 'L');

@@ -311,6 +311,10 @@ class JournalRequest extends FPDF
             else {
                 $indexString++;
             }
+
+            if($indexString >= $numberBytes && $length <= $widthMax) {
+                $result .= substr($string, $j, $indexString - $j);
+            }
         }
 
         // Replace the last three chars with 3 dots if the text was shortened.

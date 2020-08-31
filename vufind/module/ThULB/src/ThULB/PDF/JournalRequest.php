@@ -89,7 +89,7 @@ class JournalRequest extends FPDF
      * Add vertical and horizontal separation lines to the pdf.
      */
     protected function addLines() {
-        $this->SetDrawColor(240);
+        $this->SetDrawColor(180);
         // card for books
         $this->Line(
             $this->widthBookCard, 0,

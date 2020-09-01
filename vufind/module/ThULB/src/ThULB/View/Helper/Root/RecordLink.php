@@ -54,9 +54,7 @@ class RecordLink extends OriginalRecordLink
         $baseUrl = $urlHelper($this->getSearchActionForSource($source));
         switch ($link['type']) {
         case 'bib':
-            $url = $baseUrl
-                . '?lookfor=' . urlencode($link['value'])
-                . '&type=id&jumpto=1';
+            $url = '/Record/' . urlencode($link['value']);
             break;
         case 'isbn':
             $url = $baseUrl

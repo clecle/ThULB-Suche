@@ -9,6 +9,7 @@ return array(
             'ThULB\View\Helper\Root\ServerType' => 'Zend\ServiceManager\Factory\InvokableFactory',
             'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
             'ThULB\View\Helper\Root\RemoveThBibFilter' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            \ThULB\View\Helper\Root\DoiLinker::class => 'ThULB\View\Helper\Root\Factory::getDoiLinker',
         ],
         'aliases' => array (
             'record' => 'ThULB\View\Helper\Root\Record',
@@ -16,6 +17,7 @@ return array(
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_session' => 'ThULB\View\Helper\Root\Session',
             'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
+            'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ],
     'favicon' => 'thulb_favicon.ico',

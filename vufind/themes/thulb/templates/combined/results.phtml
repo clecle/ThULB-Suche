@@ -1,4 +1,4 @@
-<?
+<?php
   // Set up page title:
   $lookfor = $this->params->getDisplayQuery();
   if (isset($this->overrideTitle)) {
@@ -17,7 +17,7 @@
       'searchId' => $this->results->getSearchId(),
       'searchClassId' => $this->params->getSearchClassId(),
       'checkboxFilters' => $this->params->getCheckboxFacets(),
-      'filterList' => $this->params->getFilters(),
+        'filterList' => $this->params->getFilterList(true),
       'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
       'selectedShards' => $this->params->getSelectedShards()
     ]
@@ -46,19 +46,19 @@
   // Style
   $this->headLink()->appendStylesheet('combined-search.css');
 ?>
-<?=$this->flashmessages()?>
-<form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
-  <? $recs = $combinedResults->getRecommendations('top'); if (!empty($recs)): ?>
+<?= $this->flashmessages()?>
+<form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
+  <?php $recs = $combinedResults->getRecommendations('top'); if (!empty($recs)): ?>
     <div>
-      <? foreach ($recs as $current): ?>
-        <?=$this->recommend($current)?>
-      <? endforeach; ?>
+      <?php foreach ($recs as $current): ?>
+        <?= $this->recommend($current)?>
+      <?php endforeach; ?>
     </div>
-  <? endif; ?>
-  <? if ($this->showBulkOptions) : ?>
-    <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => ''])?>
-  <? endif; ?>
-  <?
+  <?php endif; ?>
+  <?php if ($this->showBulkOptions) : ?>
+    <?= $this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => ''])?>
+  <?php endif; ?>
+  <?php
     $viewParams = [
       'searchClassId' => $searchClassId,
       'combinedResults' => $this->combinedResults,
@@ -67,12 +67,12 @@
       'showBulkOptions' => $this->showBulkOptions
     ];
   ?>
-  <?=$this->context($this)->renderInContext('combined/stack-'.$placement.'.phtml', $viewParams)?>
-  <? $recs = $combinedResults->getRecommendations('bottom'); if (!empty($recs)): ?>
+  <?= $this->context($this)->renderInContext('combined/stack-'.$placement.'.phtml', $viewParams)?>
+  <?php $recs = $combinedResults->getRecommendations('bottom'); if (!empty($recs)): ?>
     <div>
-      <? foreach ($recs as $current): ?>
-        <?=$this->recommend($current)?>
-      <? endforeach; ?>
+      <?php foreach ($recs as $current): ?>
+        <?= $this->recommend($current)?>
+      <?php endforeach; ?>
     </div>
-  <? endif; ?>
+  <?php endif; ?>
 </form>

@@ -1,5 +1,5 @@
-<?=$this->layout()->content?>
-<? if ($this->layout()->templateName && !($this->layout()->templateName === 'ajaxtab' && !$this->layout()->content)) : ?>
-  <?=$this->piwik(['lightbox' => true])?>
-  <?=$this->googleanalytics($this->serverUrl(true))?>
-<? endif; ?>
+<?= $this->layout()->content?>
+<?php if ($this->layout()->templateName && !($this->layout()->templateName === 'ajaxtab' && !$this->layout()->content)) : ?>
+  <?= $this->piwik(['lightbox' => true])?>
+  <?= $this->googleanalytics($this->serverUrl(true))?>
+<?php endif; ?>

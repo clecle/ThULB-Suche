@@ -144,7 +144,7 @@ class DynMessagesController extends AbstractBase
                 $file = fopen($fileName, 'w');
                 foreach ($values as $tag => $text) {
                     $tag = trim($tag);
-                    $text = strip_tags($text, '<a><i>');
+                    $text = strip_tags($text, '<a><i><strong><em>');
                     $text = trim($text);
                     $text = str_replace(["\r\n", "\n"], '<br>', $text);
                     $line = "$tag = \"$text\"\n";

@@ -443,6 +443,24 @@ body.rtl {
   }
 }
 
+.search-schedule-header {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  cursor: pointer;
+}
+
+/* Break early to prevent table overflow */
+@media (max-width: 991px) {
+  .template-dir-search.template-name-history {
+    .mainbody,
+    .sidebar {
+      float: none;
+      width: auto;
+      padding: 0;
+    }
+  }
+}
+
 .truncate(@bgColor : white) {
     display: block;
     overflow: hidden;

@@ -34,16 +34,20 @@
     <?php if ($filter['selected']): ?>
       <span class="filter-value">
         <?php
-          $removeLink = isset($urlQuery) ? $urlQuery->removeFilter($filter['filter']) : '';
+          $removeLink = isset($urlQuery)
+              ? $urlQuery->removeFilter($filter['filter'])
+              : $this->searchMemory()->getEditLink(
+                  $this->searchClassId, 'removeFilter', $filter['filter']
+              );
           if($filter['desc'] == 'Th_Biblio') {
             $removeLink = $this->thulb_removeThBibFilter($removeLink);
           }
           $desc = $this->translate($filter['desc']);
           $ariaLabel = $this->translate('Remove filter') . ' ' . $this->escapeHtmlAttr($desc);
         ?>
-        <?=$desc?>
+        <?= $desc?>
         <?php if($removeLink): ?>
-          <a class="search-filter-remove" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>"><!--icon from css --></a>
+          <a class="search-filter-remove" aria-label="<?= $ariaLabel?>" href="<?= $removeLink?>"><!--icon from css --></a>
         <?php endif; ?>
       </span>
     <?php endif ?>
@@ -51,15 +55,15 @@
 
   <?php foreach ($filterList as $field => $data): ?>
     <div class="title-value-pair">
-      <span class="filters-title"><?=$this->transEsc($field)?>:</span>
+      <span class="filters-title"><?= $this->transEsc($field)?>:</span>
       <?php if (count($data) > 5): ?>
         <div class="search-filter-dropdown dropdown">
           <?php $dropdown = true; ?>
           <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $field); ?>
-          <button id="dropdown-toggle-<?=$safeId?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-            <?=$this->transEsc('filter_toggle_entries', ['%%count%%' => count($data)])?>
+          <button id="dropdown-toggle-<?= $safeId?>" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+            <?= $this->transEsc('filter_toggle_entries', ['%%count%%' => count($data)])?>
           </button>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-toggle-<?=$safeId?>">
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-toggle-<?= $safeId?>">
       <?php else: ?>
         <?php $dropdown = false; ?>
       <?php endif; ?>
@@ -86,14 +90,16 @@
           }
           $operatorClass = $this->escapeHtmlAttr(strtolower($value['operator']));
         ?>
-        <span class="filter-value filters-<?=$operatorClass?>">
+        <span class="filter-value filters-<?= $operatorClass?>">
           <span class="text">
-            <?=$this->escapeHtml($value['displayText'])?>
+            <?= $this->escapeHtml($value['displayText'])?>
           </span>
-          <?php if (isset($this->urlQuery)): ?>
-            <?php $removeLink = $urlQuery->removeFacet($value['field'], $value['value'], $value['operator'])?>
-            <a class="search-filter-remove" aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>"><!--icon from css --></a>
-          <?php endif; ?>
+          <?php
+          $removeLink = isset($this->urlQuery)
+              ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator'])
+              : $this->searchMemory()->getEditLink($this->searchClassId, 'removeFacet', $value);
+          ?>
+          <a class="search-filter-remove" aria-label="<?= $this->translate('Remove filter') ?>" href="<?= $removeLink?>"><!--icon from css --></a>
         </span>
         <?php if ($dropdown): ?>
           </li>
@@ -110,21 +116,23 @@
 
 <?php if ($hasDefaultsApplied || $filterCount > 0): ?>
   <?php
-    $resetLink = !$onlyDefaultsApplied && isset($urlQuery)
-      ? $urlQuery->removeAllFilters()->resetDefaultFilters() : false;
+    $resetLink = null;
+    if (!$onlyDefaultsApplied) {
+      $resetLink = isset($urlQuery)
+        ? $urlQuery->removeAllFilters()->resetDefaultFilters()
+        : $this->searchMemory()->getEditLink($this->searchClassId, 'removeAllFilters', 1);
+    }
   ?>
   <?php if(!$this->showOnMobile): ?>
     <?php // Normal view ?>
     <div class="active-filters hidden-xs">
-      <?php if ($advancedSearch): ?>
-        <p class="adv_search_filters"><?=$this->transEsc('adv_search_filters')?>:</p>
-      <?php else: ?>
-        <?php if ($resetLink && $options->getRetainFilterSetting()): ?>
-          <a class="reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
-        <?php endif; ?>
+      <?php if ($resetLink && $options->getRetainFilterSetting()): ?>
+        <a class="reset-filters-btn" href="<?= $resetLink?>"><?= $this->transEsc('reset_filters_button')?></a>
+      <?php elseif ($advancedSearch): ?>
+        <p class="adv_search_filters"><?= $this->transEsc('adv_search_filters')?>:</p>
       <?php endif; ?>
       <div class="filters">
-        <?=$filters ?>
+        <?= $filters ?>
       </div>
       <div class="clearfix"></div>
     </div>
@@ -133,14 +141,14 @@
     <div class="active-filters visible-xs">
       <div class="filters-toggle-bar">
         <?php if ($resetLink && $options->getRetainFilterSetting()): ?>
-          <a class="reset-filters-btn btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
+          <a class="reset-filters-btn btn" href="<?= $resetLink?>"><?= $this->transEsc('reset_filters_button')?></a>
         <?php endif; ?>
         <div class="filters-toggle collapsed btn toolbar-btn" data-toggle="collapse" data-target=".active-filters-mobile">
-          <?=$this->transEsc('show_filters_html', ['%%count%%' => $filterCount])?>
+          <?= $this->transEsc('show_filters_html', ['%%count%%' => $filterCount])?>
         </div>
       </div>
       <div id="" class="filters filters-bar collapse active-filters-mobile">
-        <?=$filters ?>
+        <?= $filters ?>
       </div>
       <div class="clearfix"></div>
     </div>

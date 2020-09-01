@@ -163,4 +163,22 @@ class Record extends OriginalRecord
 
         return '';
     }
+
+    /**
+     * Render the contents of the specified record tab.
+     *
+     * @param \VuFind\RecordTab\TabInterface $tab Tab to display
+     *
+     * @return string
+     */
+    public function getTab(\VuFind\RecordTab\TabInterface $tab)
+    {
+        $context = ['driver' => $this->driver, 'tab' => $tab];
+        $classParts = explode('\\', get_class($tab));
+        $template = 'RecordTab/' . strtolower(array_pop($classParts)) . '.phtml';
+        $oldContext = $this->contextHelper->apply($context);
+        $html = $this->view->render($template);
+        $this->contextHelper->restore($oldContext);
+        return trim($html);
+    }
 }

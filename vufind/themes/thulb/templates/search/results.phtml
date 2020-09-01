@@ -1,4 +1,4 @@
-<?
+<?php
   // Set up page title:
   $lookfor = $this->results->getUrlQuery()->isQuerySuppressed() ? '' : $this->params->getDisplayQuery();
   if (isset($this->overrideTitle)) {
@@ -17,7 +17,7 @@
         'searchId' => $this->results->getSearchId(),
         'searchClassId' => $this->params->getSearchClassId(),
         'checkboxFilters' => $this->params->getCheckboxFacets(),
-        'filterList' => $this->params->getFilters(),
+        'filterList' => $this->params->getFilterList(true),
         'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
         'selectedShards' => $this->params->getSelectedShards(),
         'ignoreHiddenFiltersInRequest' => isset($this->ignoreHiddenFiltersInRequest) ? $this->ignoreHiddenFiltersInRequest : false,
@@ -52,125 +52,120 @@
   $this->headScript()->appendFile("check_save_statuses.js");
 ?>
 
-<img src="/themes/thulb/images/Ajax-loader.gif"
-     id="img-load" />
 <div id="searchcontent"<?= isset($searchClassId) ? 'class="search-' . $searchClassId . '";' : '';?>>
-  <div id="overlay" class="col-xs-12">
-    <p>&nbsp;</p>
-  </div>
-  <div class="<?=$this->layoutClass('mainbody')?>">
+  <div class="<?= $this->layoutClass('mainbody')?>">
     <div id="resultlist">
-        <? if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-          <? foreach ($this->results->getRecommendations('top') as $current): ?>
-            <?=$this->recommend($current)?>
-          <? endforeach; ?>
-        <? endif; ?>
-        <?=$this->flashmessages()?>
+        <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+          <?php foreach ($this->results->getRecommendations('top') as $current): ?>
+            <?= $this->recommend($current)?>
+          <?php endforeach; ?>
+        <?php endif; ?>
+        <?= $this->flashmessages()?>
 
-        <? if ($recordTotal < 1): ?>
-          <? if(isset($this->exception)): ?>
+        <?php if ($recordTotal < 1): ?>
+          <?php if(isset($this->exception)): ?>
             <?= $this->render('error/index.phtml'); ?>
-          <? else: ?>
+          <?php else: ?>
             <p>
-              <? if (isset($this->overrideEmptyMessage)): ?>
-                <?=$this->overrideEmptyMessage?>
-              <? else: ?>
-                <? $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
-                <?=$this->layout()->srmessage ?>
-              <? endif; ?>
+              <?php if (isset($this->overrideEmptyMessage)): ?>
+                <?= $this->overrideEmptyMessage?>
+              <?php else: ?>
+                <?php $this->layout()->srmessage = $this->translate('nohit_lookfor_html', ['%%lookfor%%' => $this->escapeHtml($lookfor)]); ?>
+                <?= $this->layout()->srmessage ?>
+              <?php endif; ?>
             </p>
-            <? if (isset($this->parseError)): ?>
-              <p class="alert alert-danger"><?=$this->transEsc('nohit_parse_error')?></p>
-            <? endif; ?>
-            <? foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
-              <?=$this->recommend($current)?>
-            <? endforeach; ?>
-            <? foreach ($this->results->getRecommendations('noresults') as $current): ?>
-              <? if (!in_array($current, $top)): ?>
-                <?=$this->recommend($current)?>
-              <? endif; ?>
-            <? endforeach; ?>
-          <? endif; ?>
-        <? else: ?>
+            <?php if (isset($this->parseError)): ?>
+              <p class="alert alert-danger"><?= $this->transEsc('nohit_parse_error')?></p>
+            <?php endif; ?>
+            <?php foreach (($top = $this->results->getRecommendations('top')) as $current): ?>
+              <?= $this->recommend($current)?>
+            <?php endforeach; ?>
+            <?php foreach ($this->results->getRecommendations('noresults') as $current): ?>
+              <?php if (!in_array($current, $top)): ?>
+                <?= $this->recommend($current)?>
+              <?php endif; ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        <?php else: ?>
         
         <div class="visible-xs">
           <a id="gotoFacets" class="btn btn-primary hidden-lg hidden-md hidden-sm hidden-print" href="#FacetFilterSection">
-              <?=$this->transEsc('jumpTofilterResults') ?> <i class="fa fa-filter" aria-hidden="true"></i>
+              <?= $this->transEsc('jumpTofilterResults') ?> <i class="fa fa-filter" aria-hidden="true"></i>
           </a>
         </div>
-            <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+            <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
                 <div class="col-xs-12 hidden-print">
                   <div class="pull-right">
-                    <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
+                    <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                   </div>
                 </div>
                 <div class="searchtools col-xs-12 hidden-print">
-                  <!--strong><?=$this->transEsc('Search Tools')?>:</strong-->
+                  <!--strong><?= $this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
-                    <li><a title="<?=$this->transEsc('Get RSS Feed')?>" href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
+                    <li><a title="<?= $this->transEsc('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
                     </li>
-                    <li><a title="<?=$this->transEsc('Email this Search')?>" href="<?=$this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>">
+                    <li><a title="<?= $this->transEsc('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
                       <i class="fa fa-envelope" aria-hidden="true"></i>
                     </a>
                     </li>
-                    <? if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>
-                      <? if (is_numeric($this->results->getSearchId())): ?>
+                    <?php if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>
+                      <?php if (is_numeric($this->results->getSearchId())): ?>
                         <li>
-                        <? if ($this->results->isSavedSearch()): ?>
-                          <a title="<?=$this->transEsc('save_search_remove')?>" href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
-                        <? else: ?>
-                          <a title="<?=$this->transEsc('save_search')?>" href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
-                        <? endif; ?>
+                        <?php if ($this->results->isSavedSearch()): ?>
+                          <a title="<?= $this->transEsc('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
+                        <?php else: ?>
+                          <a title="<?= $this->transEsc('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
+                        <?php endif; ?>
                         </li>
-                      <? endif; ?>
-                    <? endif; ?>
+                      <?php endif; ?>
+                    <?php endif; ?>
                   </ul>
                 </div>
 
-                <?=$this->render('search/list-' . $this->params->getView() . '.phtml')?>
+                <?= $this->render('search/list-' . $this->params->getView() . '.phtml')?>
 
                 <div class="col-xs-12 hidden-print">
                   <div class="pull-right">
-                  <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
+                  <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results, 'options' => isset($this->paginationOptions) ? $this->paginationOptions : []])?>
                   </div>
                 </div>
                 <div class="searchtools col-xs-12 hidden-print">
-                  <!--strong><?=$this->transEsc('Search Tools')?>:</strong-->
+                  <!--strong><?= $this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
-                    <li><a title="<?=$this->transEsc('Get RSS Feed')?>" href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
+                    <li><a title="<?= $this->transEsc('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
                     </li>
-                    <li><a title="<?=$this->transEsc('Email this Search')?>" href="<?=$this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>">
+                    <li><a title="<?= $this->transEsc('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
                       <i class="fa fa-envelope" aria-hidden="true"></i>
                     </a>
                     </li>
-                    <? if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>
-                      <? if (is_numeric($this->results->getSearchId())): ?>
+                    <?php if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>
+                      <?php if (is_numeric($this->results->getSearchId())): ?>
                         <li>
-                        <? if ($this->results->isSavedSearch()): ?>
-                          <a title="<?=$this->transEsc('save_search_remove')?>" href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
-                        <? else: ?>
-                          <a title="<?=$this->transEsc('save_search')?>" href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
-                        <? endif; ?>
+                        <?php if ($this->results->isSavedSearch()): ?>
+                          <a title="<?= $this->transEsc('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
+                        <?php else: ?>
+                          <a title="<?= $this->transEsc('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
+                        <?php endif; ?>
                         </li>
-                      <? endif; ?>
-                    <? endif; ?>
+                      <?php endif; ?>
+                    <?php endif; ?>
                   </ul>
               </div>
             </form>
-        <? endif; ?>
+        <?php endif; ?>
     </div>
   </div>
-  <? /* End Main Listing */ ?>
+  <?php /* End Main Listing */ ?>
 
-  <? /* Narrow Search Options */ ?>
-  <div class="<?=$this->layoutClass('sidebar')?>">
+  <?php /* Narrow Search Options */ ?>
+  <div class="<?= $this->layoutClass('sidebar')?>">
     <div class="visible-xs">
       <a id="FacetFilterSection" class="btn btn-primary input-lg hidden-lg hidden-md hidden-sm hidden-print" href="#gotoFacets">
         <i class="fa fa-chevron-up" aria-hidden="true"></i>
       </a>
     </div>
     <div id="moduletab">
-      <?
+      <?php
         $ignoreHiddenFilterMemory = isset($this->ignoreHiddenFilterMemory) ? $this->ignoreHiddenFilterMemory : false;
         $ignoreHiddenFiltersInRequest = isset($this->ignoreHiddenFiltersInRequest) ? $this->ignoreHiddenFiltersInRequest : false;
         $hiddenFilters = $this->searchTabs()->getHiddenFilters($this->searchClassId, $ignoreHiddenFilterMemory, $ignoreHiddenFiltersInRequest);
@@ -181,7 +176,7 @@
           }
         }
       ?>
-      <?=$this->context($this)->renderInContext('search/searchTabs', 
+      <?= $this->context($this)->renderInContext('search/searchTabs',
               ['searchClassId' => $this->params->getSearchClassId(),
                'lookfor'       => $lookfor,
                'searchIndex'   => $this->params->getSearchHandler(),
@@ -189,7 +184,7 @@
                'hiddenFilters' => $hiddenFilters]); ?>
     </div>
 
-    <?=$this->context($this)->renderInContext(
+    <?= $this->context($this)->renderInContext(
         'search/filters.phtml',
         [
             'params' => $params ?? null,
@@ -197,15 +192,15 @@
         ]
     );?>
 
-    <? if ($recordTotal > 0): ?>
-      <?=$this->render('search/controls/searchSort.phtml')?>
-      <?=$this->render('search/controls/limit.phtml')?>
-      <?=$this->render('search/controls/view.phtml')?>
-    <? endif; ?>
+    <?php if ($recordTotal > 0): ?>
+      <?= $this->render('search/controls/searchSort.phtml')?>
+      <?= $this->render('search/controls/limit.phtml')?>
+      <?= $this->render('search/controls/view.phtml')?>
+    <?php endif; ?>
 
-    <? foreach ($this->results->getRecommendations('side') as $current): ?>
-      <?=$this->recommend($current)?>
-    <? endforeach; ?>
+    <?php foreach ($this->results->getRecommendations('side') as $current): ?>
+      <?= $this->recommend($current)?>
+    <?php endforeach; ?>
   </div>
-  <? /* End Narrow Search Options */ ?>
+  <?php /* End Narrow Search Options */ ?>
 </div>

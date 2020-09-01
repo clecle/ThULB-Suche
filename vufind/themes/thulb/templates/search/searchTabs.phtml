@@ -1,15 +1,15 @@
-<? $searchTabs = $this->searchTabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $this->hiddenFilters); ?>
-<? if (count($searchTabs['tabs']) > 0): ?>
+<?php $searchTabs = $this->searchTabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $this->hiddenFilters); ?>
+<?php if (count($searchTabs['tabs']) > 0): ?>
   <ul class="list-unstyled">
-    <? foreach ($searchTabs['tabs'] as $tab): ?>
-      <a <?=$tab['selected'] ? '' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?> title="<?=$this->transEsc($tab['label'].'_hover'); ?>">
-        <li class="<?=$tab['selected'] ? 'show' : 'facetTAB'?>">
-            <?=$this->transEsc($tab['label']); ?>
-            <span class="pull-right badge<?=$tab['selected'] ? '' : ' resultNum' . $tab['id']?>">
-                <?=$tab['selected'] ? $this->localizedNumber($this->results->getResultTotal()) : '...' ?>
+    <?php foreach ($searchTabs['tabs'] as $tab): ?>
+      <a <?= $tab['selected'] ? '' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?> title="<?= $this->transEsc($tab['label'].'_hover'); ?>">
+        <li class="<?= $tab['selected'] ? 'show' : 'facetTAB'?>">
+            <?= $this->transEsc($tab['label']); ?>
+            <span class="pull-right badge<?= $tab['selected'] ? '' : ' resultNum' . $tab['id']?>">
+                <?= $tab['selected'] ? $this->localizedNumber($this->results->getResultTotal()) : '...' ?>
             </span>
         </li>
       </a>
-    <? endforeach; ?>
+    <?php endforeach; ?>
   </ul>
-<? endif; ?>
+<?php endif; ?>

@@ -71,7 +71,8 @@ class Results extends OriginalResults
             $limit = 50;
         }
         $params->resetFacetConfig();
-        if (null !== $facetSort && 'count' !== $facetSort) {
+        $sortOptions = array_keys($this->getOptions()->getFacetSortOptions());
+        if (null !== $facetSort && !in_array($facetSort, $sortOptions)) {
             throw new Exception("$facetSort facet sort not supported by Summon.");
         }
         foreach ($facetFields as $facet) {

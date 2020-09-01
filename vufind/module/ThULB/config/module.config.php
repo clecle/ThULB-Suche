@@ -9,7 +9,6 @@ $config = array(
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
-            \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             'ThULB\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
         ),
@@ -19,7 +18,6 @@ $config = array(
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
             'VuFind\Controller\SearchController' => 'ThULB\Controller\SearchController',
-            \VuFind\Controller\RecordController::class => \ThULB\Controller\RecordController::class,
         )
     ),
     'service_manager' => [
@@ -56,6 +54,14 @@ $config = array(
                 'factories' => array(
                     'VuFind\Db\Row\User' => 'ThULB\Db\Row\Factory'
                 ),
+            ),
+            'doilinker' => array(
+                'factories' => array (
+                    'ThULB\DoiLinker\Unpaywall' => 'VuFind\DoiLinker\UnpaywallFactory',
+                ),
+                'aliases' => array (
+                    'VuFind\DoiLinker\Unpaywall' => 'ThULB\DoiLinker\Unpaywall',
+                )
             ),
             'hierarchy_treedataformatter' => array(
                 'invokables' => array(
@@ -101,12 +107,12 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\OnlineAccess' => 'Zend\ServiceManager\Factory\InvokableFactory',
+                    'ThULB\RecordTab\Access' => 'Zend\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-                    'onlineaccess' => 'ThULB\RecordTab\OnlineAccess'
+                    'access' => 'ThULB\RecordTab\Access'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
@@ -135,6 +141,11 @@ $config = array(
                     'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
                     'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr'
                 )
+            ),
+            'search_backend' => array(
+                'factories' => array(
+                    'Solr' => \ThULB\Search\Factory\SolrDefaultBackendFactory::class
+                )
             )
         ),
     ),
@@ -144,7 +155,8 @@ $config = array(
             'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
-            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter'
+            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
+            'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ),
 

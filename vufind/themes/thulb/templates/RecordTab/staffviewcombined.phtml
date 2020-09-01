@@ -1,23 +1,23 @@
-<?
+<?php
     // Set page title.
     $this->headTitle($this->translate('Staff View') . ': ' . $this->driver->getBreadcrumb());
 ?>
 <?php if($xml = $this->driver->getXML('marc21')): ?>
-  <h3><?=$this->transEsc('Full Marc record')?></h3>
-  <?=\VuFind\XSLT\Processor::process('record-marc.xsl', $xml)?>
+  <h3><?= $this->transEsc('Full Marc record')?></h3>
+  <?= \VuFind\XSLT\Processor::process('record-marc.xsl', $xml)?>
 <?php endif; ?>
 
-<h3><?=$this->transEsc('Solr Index fields')?></h3>
+<h3><?= $this->transEsc('Solr Index fields')?></h3>
 <table class="citation table table-striped">
-  <? foreach ($this->driver->getRawData() as $field => $values): ?>
+  <?php foreach ($this->driver->getRawData() as $field => $values): ?>
     <tr>
-      <th><?=$this->escapeHtml($field)?></th>
+      <th><?= $this->escapeHtml($field)?></th>
       <td>
-        <? if (!is_array($values)) { $values = [$values]; } ?>
-        <? foreach ($values as $value): ?>
-          <?=$this->escapeHtml(is_array($value) ? print_r($value, true) : $value)?><br />
-        <? endforeach; ?>
+        <?php if (!is_array($values)) { $values = [$values]; } ?>
+        <?php foreach ($values as $value): ?>
+          <?= $this->escapeHtml(is_array($value) ? print_r($value, true) : $value)?><br />
+        <?php endforeach; ?>
       </td>
     </tr>
-  <? endforeach; ?>
+  <?php endforeach; ?>
 </table>

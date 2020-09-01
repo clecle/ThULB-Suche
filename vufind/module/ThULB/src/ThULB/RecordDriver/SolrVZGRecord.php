@@ -869,8 +869,8 @@ class SolrVZGRecord extends SolrMarc
 
         $invalidISBNs = array();
         foreach($fields as $field) {
-            if($field->getSubfield('z') && $field->getSubfield('9')) {
-                $invalidISBNs[] = $field->getSubfield('9')->getData();
+            if($field->getSubfield('z')) {
+                $invalidISBNs[] = $field->getSubfield('z')->getData();
             }
         }
 
@@ -1462,8 +1462,9 @@ class SolrVZGRecord extends SolrMarc
             if ($address && $description) {
                 $address = $address->getData();
                 $description = $description->getData();
-                if(!in_array(strtolower($description), ['cover', 'volltext'])) {
-                    $retVal[strtolower($description)] = [
+                $lowerDescription = strtolower($description);
+                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover', 'volltext'])) {
+                    $retVal[$lowerDescription] = [
                         'url' => $address,
                         'desc' => $description
                     ];
@@ -2049,6 +2050,10 @@ class SolrVZGRecord extends SolrMarc
                     . " " . $recordLink['link']['value'];
                 $recordLinks[$index]['link'] = null;
             }
+            elseif ($recordLink['link']['type'] != 'bib') {
+                $recordLinks[$index]['link'] = null;
+
+            }
         }
 
         $recordLinks = $this->checkListForAvailability($recordLinks);
@@ -2070,6 +2075,32 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         return false;
+    }
+
+    public function getHoldings()
+    {
+        return parent::getRealTimeHoldings();
+    }
+
+    /**
+     * Return first ISMN found for this record, or false if no one fonund
+     *
+     * @return mixed
+     */
+    public function getCleanISMN()
+    {
+        // Fix for cases where 024 $a is not set
+        $fields024 = $this->getMarcRecord()->getFields('024');
+        $ismn = null;
+        foreach ($fields024 as $field) {
+            if ($field->getIndicator(1) == 2) {
+                if($data = $field->getSubfield('a')) {
+                    $ismn = $data->getData();
+                    break;
+                }
+            }
+        }
+        return $ismn ?? false;
     }
 
 //    Commented out for possible future use.

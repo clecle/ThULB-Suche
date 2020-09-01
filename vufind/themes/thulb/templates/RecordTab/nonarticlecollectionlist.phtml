@@ -1,4 +1,4 @@
-<?
+<?php
   // Set page title.
   $this->headTitle($this->translate($this->tab->getDescription()) . ': ' . $this->driver->getBreadcrumb());
 
@@ -12,45 +12,45 @@
   }
   $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1];
 ?>
-<? if ($results && $params && ($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-  <? foreach ($results->getRecommendations('top') as $current): ?>
-    <?=$this->recommend($current)?>
-  <? endforeach; ?>
+<?php if ($results && $params && ($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+  <?php foreach ($results->getRecommendations('top') as $current): ?>
+    <?= $this->recommend($current)?>
+  <?php endforeach; ?>
   <div class="clearfix hidden-print">
-    <?
-    $transParams = [
-        '%%start%%' => $this->localizedNumber($results->getStartRecord()),
-        '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
-        '%%total%%' => $this->localizedNumber($recordTotal)
-    ];
+    <?php
+      $transParams = [
+          '%%start%%' => $this->localizedNumber($results->getStartRecord()),
+          '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
+          '%%total%%' => $this->localizedNumber($recordTotal)
+      ];
     ?>
     <div class="clearfix">
       <div class="pull-left flip">
-        <?=$this->render('search/controls/limit.phtml', $searchDetails)?>
-        <?=$this->render('search/controls/sort.phtml', $searchDetails)?>
+        <?= $this->render('search/controls/limit.phtml', $searchDetails)?>
+        <?= $this->render('search/controls/sort.phtml', $searchDetails)?>
       </div>
     </div>
     <div class="clearfix">
       <div class="pull-left flip">
-        <? if (!isset($this->skipTotalCount)): ?>
-          <?=$this->translate('showing_items_of_html', $transParams); ?>
-        <? else: ?>
-          <?=$this->translate('showing_items_html', $transParams); ?>
-        <? endif; ?>
+        <?php if (!isset($this->skipTotalCount)): ?>
+          <?= $this->translate('showing_items_of_html', $transParams); ?>
+        <?php else: ?>
+          <?= $this->translate('showing_items_html', $transParams); ?>
+        <?php endif; ?>
       </div>
       <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
         <div class="journal-not-found pull-right flip">
           <span style="margin-right: 15px"><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
           <strong>
-            <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+            <a href="/Request/Journal/<?= $this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
           </strong>
         </div>
       <?php endif; ?>
     </div>
   </div>
-  <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
-    <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
-    <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
+  <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
+    <?= $this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
+    <?= $this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
   </form>
 <?php elseif($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
   <div class="journal-not-found flex-center center-text">
@@ -59,4 +59,4 @@
       <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
     </strong>
   </div>
-<? endif; ?>
+<?php endif; ?>

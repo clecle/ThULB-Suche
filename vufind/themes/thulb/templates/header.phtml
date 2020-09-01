@@ -1,4 +1,4 @@
-<? $account = $this->auth()->getManager(); ?>
+<?php $account = $this->auth()->getManager(); ?>
 <div class="thulb-topline"></div>
 
 <nav class="navbar navbar-default">
@@ -9,75 +9,76 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand lang-<?=$this->layout()->userLang ?>" href="http://www.thulb.uni-jena.de/"><img class="homeLogo" alt="ThULB-Homepage" src="<?=$this->imageLink('thulblogo.png')?>" height="22"></a>
+        <a class="navbar-brand lang-<?= $this->layout()->userLang ?>" href="http://www.thulb.uni-jena.de/"><img class="homeLogo" alt="ThULB-Homepage" src="<?= $this->imageLink('thulblogo.png')?>" height="22"></a>
       </div>
       <div class="collapse navbar-collapse" id="tsnavbar">
         <ul class="nav navbar-nav">
-          <li><a href="http://www.thulb.uni-jena.de/ThULBSuche" target="_blank"><?=$this->transEsc('Header_new')?></a></li>
-          <li><a href="http://www.thulb.uni-jena.de/A+_+Z/Suchtipps.html" target="_blank"><?=$this->transEsc('Header_searchtipps')?></a></li>
-          <li><a href="http://www.thulb.uni-jena.de/Mailformulare/Discovery.html" target="_blank"><?=$this->transEsc("Header_contact")?></a></li>
-          <li><a href="http://kataloge.thulb.uni-jena.de" target="_blank"><?=$this->transEsc('Header_catalog')?></a></li>
+          <li><a href="http://www.thulb.uni-jena.de/ThULBSuche" target="_blank"><?= $this->transEsc('Header_new')?></a></li>
+          <li><a href="http://www.thulb.uni-jena.de/A+_+Z/Suchtipps.html" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+          <li><a href="http://www.thulb.uni-jena.de/Mailformulare/Discovery.html" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+          <li class="visible-xs"><a href="https://www.thulb.uni-jena.de/impressum.html" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
+          <li><a href="http://kataloge.thulb.uni-jena.de" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
-        <? if (!isset($this->layout()->renderingError)): ?>
-          <? $cart = $this->cart(); if ($cart->isActive()): ?>
+        <?php if (!isset($this->layout()->renderingError)): ?>
+          <?php $cart = $this->cart(); if ($cart->isActive()): ?>
             <li id="cartSummary">
-              <a id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>">
-                <?=$this->transEsc('Book Bag')?> <i class="fa fa-clipboard" aria-hidden="true"></i> <strong><?=count($cart->getItems())?></strong>
-                <span class="full<?=!$cart->isFull() ? ' hidden' : '' ?>">(<?=$this->transEsc('bookbag_full') ?>)</span>
+              <a id="cartItems" data-lightbox title="<?= $this->transEsc('View Book Bag')?>" href="<?= $this->url('cart-home')?>">
+                <?= $this->transEsc('Book Bag')?> <i class="fa fa-clipboard" aria-hidden="true"></i> <strong><?= count($cart->getItems())?></strong>
+                <span class="full<?= !$cart->isFull() ? ' hidden' : '' ?>">(<?= $this->transEsc('bookbag_full') ?>)</span>
               </a>
             </li>
-          <? endif; ?>
-          <? if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
-            <li class="logoutOptions<? if(!$account->isLoggedIn()): ?> hidden<? endif ?>">
-              <a title="<?=$this->transEsc("Your Account")?>" href="<?=$this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>"><?=$this->transEsc("Useraccount")?> <i class="fa fa-user" aria-hidden="true"></i></a>
+          <?php endif; ?>
+          <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
+            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+              <a title="<?= $this->transEsc("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>"><?= $this->transEsc("Useraccount")?> <i class="fa fa-user" aria-hidden="true"></i></a>
             </li>
-            <li class="logoutOptions<? if(!$account->isLoggedIn()): ?> hidden<? endif ?>">
-              <a title="<?=$this->transEsc("Log Out")?>" href="<?=$this->url('myresearch-logout')?>" class="logout"><?=$this->transEsc("Log Out")?> <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+              <a title="<?= $this->transEsc("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout"><?= $this->transEsc("Log Out")?> <i class="fa fa-sign-out" aria-hidden="true"></i></a>
             </li>
-            <li id="loginOptions"<? if($account->isLoggedIn()): ?> class="hidden"<? endif ?>>
-              <? if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-                <a href="<?=$this->url('myresearch-userlogin')?>" title="<?=$this->transEsc("Institutional Login")?>"><?=$this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
-              <? else: ?>
-                <a href="<?=$this->url('myresearch-userlogin')?>" title="<?=$this->transEsc("Userlogin")?>"><?=$this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
-              <? endif; ?>
+            <li id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
+              <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEsc("Institutional Login")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
+              <?php else: ?>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEsc("Userlogin")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
+              <?php endif; ?>
             </li>
-          <? endif; ?>
+          <?php endif; ?>
 
-          <? if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
+          <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
             <li class="theme dropdown">
               <form method="post" name="themeForm" id="themeForm">
                 <input type="hidden" name="ui"/>
               </form>
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc("Theme")?> <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Theme")?> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <? foreach ($this->layout()->themeOptions as $current): ?>
-                  <li<?=$current['selected'] ? ' class="active"' : ''?>><a href="#" onClick="document.themeForm.ui.value='<?=$this->escapeHtmlAttr($current['name'])?>';document.themeForm.submit()"><?=$this->transEsc($current['desc'])?></a></li>
-                <? endforeach; ?>
+                <?php foreach ($this->layout()->themeOptions as $current): ?>
+                  <li<?= $current['selected'] ? ' class="active"' : ''?>><a href="#" onClick="document.themeForm.ui.value='<?= $this->escapeHtmlAttr($current['name'])?>';document.themeForm.submit()"><?= $this->transEsc($current['desc'])?></a></li>
+                <?php endforeach; ?>
               </ul>
             </li>
-          <? endif; ?>
+          <?php endif; ?>
 
-          <? if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+          <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
             <li class="language dropdown">
               <form method="post" name="langForm" id="langForm">
                 <input type="hidden" name="mylang"/>
               </form>
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?=$this->transEsc("Language")?> <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Language")?> <b class="caret"></b></a>
               <ul class="dropdown-menu">
-                <? foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-                  <li  class="langOption<?=$this->layout()->userLang == $langCode ? ' active' : ''?>"><a href="#" onClick="document.langForm.mylang.value='<?=$langCode?>';document.langForm.submit()"><?=$this->displayLanguageOption($langName)?></a></li>
-                <? endforeach; ?>
+                <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+                  <li  class="langOption<?= $this->layout()->userLang == $langCode ? ' active' : ''?>"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
+                <?php endforeach; ?>
               </ul>
             </li>
-          <? endif; ?>
-        <? endif; ?>
+          <?php endif; ?>
+        <?php endif; ?>
         </ul>
       </div><!-- /.navbar-collapse -->
   </div>
 </nav>
 
 <div class="container hidden-print">
-    <?=$this->layout()->searchbox ?>
+    <?= $this->layout()->searchbox ?>
 </div>
 

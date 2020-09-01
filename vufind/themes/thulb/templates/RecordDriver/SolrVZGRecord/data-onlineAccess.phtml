@@ -1,20 +1,21 @@
-<?
+<?php
   $openUrl = $this->openUrl($this->driver, 'record');
   $openUrlActive = $openUrl->isActive();
+
   // Account for replace_other_urls setting
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
   $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
   $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 ?>
-<? if (!empty($urls) || $openUrlActive): ?>
-    <? foreach ($urls as $current): ?>
-        <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a>
+<?php if (!empty($urls) || $openUrlActive): ?>
+    <?php foreach ($urls as $current): ?>
+        <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?= $this->escapeHtml($current['desc'])?></a>
         <br />
-    <? endforeach; ?>
-  <? if ($openUrlActive): ?>
-    <?=$openUrl->renderTemplate()?><br />
-  <? endif; ?>
-<? endif; ?>
-<? if ($citesLink && $citesCount > 0) : ?>
-  <?=$citesCount?> <a href="<?=$citesLink?>" target="_blank"><?=$this->transEsc('Web of Science Scites Link')?></a> <?=$this->translate('Web of Science Scites Ref')?>
-<? endif; ?>
+    <?php endforeach; ?>
+  <?php if ($openUrlActive): ?>
+    <?= $openUrl->renderTemplate()?><br />
+  <?php endif; ?>
+<?php endif; ?>
+<?php if ($citesLink && $citesCount > 0) : ?>
+  <?= $citesCount?> <a href="<?= $citesLink?>" target="_blank"><?= $this->transEsc('Web of Science Scites Link')?></a> <?= $this->translate('Web of Science Scites Ref')?>
+<?php endif; ?>

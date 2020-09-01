@@ -31,7 +31,16 @@
  * = Breakpoint of <=530px also used to target phones specifically
  */
 
-html { font-size: 14px; } // Root font size from Bootstrap, allows consistent use of rem units
+html {
+  font-size: 14px; // Root font size from Bootstrap, allows consistent use of rem units
+  height: 100%;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
 a,
 label { cursor: pointer; }
 .alert.alert-info a { text-decoration: underline; }
@@ -94,9 +103,19 @@ h3 { font-size: 16px; }
 
 /* ------ Layout ------ */
 footer {
-  &:extend(.container);
-  padding: 1rem;
+  margin-top: auto;
+
+  ul {
+    display: flex;
+    justify-content: space-evenly;
+    float: none !important;
+  }
+
+  .navbar {
+    margin-bottom: 0;
+  }
 }
+
 @media (min-width: 768px) {
   .footer-container {
     display: flex;
@@ -524,7 +543,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .openaccess {
   &:extend(.label);
   &:extend(.label-info);
-  background-color: @brand-inverted;
+  background-color: #b2b2b2;
+}
+
+.result .format {
+  background-color: #b2b2b2;
 }
 
 .delete-icon {
@@ -555,6 +578,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .vpn-warning-wrapper {
   position: sticky;
   bottom: 0;
+  z-index: 5;
 }
 
 .information {
@@ -634,10 +658,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   margin-bottom: 5px;
 }
 
-dd > div.citations {
-  padding-top: .5rem;
-}
-
 #message_under_search_box {
   width: 100%;
   margin-top: 10px;
@@ -651,6 +671,15 @@ dd > div.citations {
     cursor: pointer;
     font-size: 20px;
   }
+}
+
+#dynmessage-preview-de,
+#dynmessage-preview-en {
+  &:extend(#message_under_search_box);
+}
+
+#dynmessage-preview-container {
+  display: none;
 }
 
 #searchForm #searchForm_type {
@@ -864,6 +893,91 @@ li[data-tab="details"] {
     }
   }
 }
+
+.unpaywall {
+  background: #20e168;
+  border: none;
+
+  div {
+    color: #fff;
+    font-family: "Helvetica", "Arial", "sans-serif";
+    text-align: center;
+    width: 20px;
+    height: 20px;
+    float: left;
+    margin-right: 10px;
+    padding-left: 3px;
+    border-radius: 40px 0 0 40px;
+    cursor: pointer;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: none;
+    background: #fff;
+  }
+
+  i {
+    color: #20e168;
+  }
+
+  &.btn-primary:hover,
+  &.btn-primary:focus,
+  &.btn-primary:active {
+    background-color: #02c34a;
+  }
+}
+
+.doiLinkLoading {
+  height: 15px;
+  padding-right: 5px;
+}
+
+.btn-small {
+  padding: 1px 3px;
+}
+
+#resultlist .unpaywall.btn-xs {
+  padding: 2px 5px;
+
+  div {
+    margin-top: 2px;
+    height: 15px;
+    width: 15px;
+
+    i {
+      font-size: 12px;
+    }
+  }
+}
+
+.media .result-body .action-row {
+  padding-top: 5px;
+}
+
+.btn-xxs {
+  padding: .15em .6em .15em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#resultlist .speech-bubble {
+  font-size: 100%;
+  font-weight: unset;
+  height: 22px;
+  padding: .2em .6em .2em;
+}
+
+.badges-row span, .badges-row a {
+  font-weight: unset !important;
+}
+
+.action-row > * + * {
+  margin-right: 5px;
+}
+
 
 .flex-group {
   display: flex;

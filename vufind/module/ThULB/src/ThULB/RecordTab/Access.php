@@ -6,7 +6,7 @@ use Exception;
 use VuFind\RecordDriver\AbstractBase;
 use VuFind\RecordTab\AbstractBase as AbstractTab;
 
-class OnlineAccess extends AbstractTab
+class Access extends AbstractTab
 {
     /**
      * Get the on-screen description for this tab.

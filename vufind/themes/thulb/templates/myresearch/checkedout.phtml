@@ -170,7 +170,10 @@
             <?php endif; ?>
             
             <?php if (!isset($ilsDetails['renewable']) || !$ilsDetails['renewable']) : ?>
-                <?php if (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
+                <?php if (strpos($ilsDetails['callnumber'] ?? '', 'EDV:Laptop') !== false): ?>
+                  <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
+                  <br />
+                <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
                   <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>
                   <br />
                 <?php elseif (isset($ilsDetails['queue']) && $ilsDetails['queue'] > 0): ?>

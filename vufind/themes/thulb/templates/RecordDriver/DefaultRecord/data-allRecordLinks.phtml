@@ -3,7 +3,7 @@
     foreach ($data as $recordLink) {
       $singleLine = $this->transEsc($recordLink['title']) . ': ';
       if(isset($recordLink['link'])) {
-          $singleLine .= '<a href="/Record/' . $recordLink['link']['value'] . '">' .
+        $singleLine .= '<a href="' . $this->recordLink()->related($recordLink['link']) . '">' .
               $this->escapeHtml($recordLink['value']) . '</a>';
       }
       else {

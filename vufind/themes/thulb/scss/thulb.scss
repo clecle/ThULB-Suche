@@ -361,6 +361,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   #moduletab li:hover::after {
     border: 0 none;
   }
+
+  .result .checkbox,
+  .record-checkbox {
+    display: block !important;
+  }
 }
 
 .thulb-topline {
@@ -416,10 +421,15 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .tab-pane {
   padding: 10px 15px;
-}
 
-.tab-pane > h3 {
-  margin-top: 10px;
+  & > h3 {
+    margin-top: 10px;
+
+    i.fa-external-link {
+      font-size: small;
+      margin-right: 3px;
+    }
+  }
 }
 
 .pager li > a {

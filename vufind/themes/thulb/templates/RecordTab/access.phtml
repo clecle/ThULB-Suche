@@ -142,9 +142,8 @@
 <?php if (!empty($holdings)): ?>
   <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
     <?php if($holdingKey == 'Remote') continue; ?>
-    <?php $holding_location = $this->thulb_holdingHelper()->getLocation($holding); ?>
     <h3>
-      <?= $this->thulb_holdingHelper()->getLocation($holding);?>
+      <?= $this->thulb_holdingHelper()->getLocation($holding, true);?>
     </h3>
     <table class="table table-striped" summary="<?= $this->transEsc('Holdings details from')?> <?= $this->transEsc($holding['location'])?>">
       <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>

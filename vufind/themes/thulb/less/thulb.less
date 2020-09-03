@@ -363,6 +363,20 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   .record-checkbox {
     display: block !important;
   }
+
+  .list-header {
+    .sort {
+      width: 100%;
+    }
+
+    .item-count {
+      order: -1;
+    }
+  }
+
+  .favourite-list-sort {
+    width: 100% !important;
+  }
 }
 
 .thulb-topline {
@@ -825,16 +839,21 @@ span.service_presentation {
 .favourite-list {
   font-size: 13px;
 
-  .cart-controls .checkbox {
-    line-height: 1.1rem;
-    margin: 5px 0 0 0;
+  .cart-controls {
+    justify-content: space-between;
 
-    input[type="checkbox"] {
-      position: relative;
-      margin: -1px 5px 0 0;
+    .checkbox {
+      line-height: 1.1rem;
+      margin: 5px 0 0 0;
+
+      input[type="checkbox"] {
+        position: relative;
+        margin: -1px 5px 0 0;
+      }
     }
   }
 }
+
 span.filters-title {
   font-weight: bold;
 }
@@ -1038,4 +1057,31 @@ li[data-tab="details"] {
 
 .journal-not-found a {
   font-weight: bold;
+}
+
+.list-header {
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  & > * {
+    margin-bottom: 5px;
+  }
+
+  .journal-not-found,
+  .sort {
+    min-width: 150px;
+  }
+}
+
+.favourite-header {
+  margin-top: 20px;
+  margin-bottom: 15px;
+  h2 {
+    margin: 0;
+  }
+}
+
+.favourite-list-sort {
+  width: fit-content;
+  margin-bottom: 10px;
 }

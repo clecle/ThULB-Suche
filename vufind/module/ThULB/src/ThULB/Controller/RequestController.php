@@ -67,11 +67,12 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
             $email = $this->getEmailForCallnumber($formData['callnumber']);
             $borrowCounter = $this->getBorrowCounterForCallnumber($formData['callnumber']);
+            $locationUrl = $this->getLocationUrlForCallnumber($formData['callnumber']);
 
             if ($this->createPDF($formData, $fileName) &&
                     $this->sendRequestEmail($fileName, $email)) {
                 $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
-                    ['%%location%%' => $borrowCounter]);
+                    ['%%location%%' => $borrowCounter, '%%url%%' => $locationUrl]);
             }
             else {
                 $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
@@ -269,6 +270,25 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             if ($archive['callnumber'] == $callnumber) {
                 if (isset($this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']])) {
                     return $this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']];
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the configured email for the given email.
+     *
+     * @param string $callnumber
+     *
+     * @return string|null
+     */
+    protected function getLocationUrlForCallnumber($callnumber) {
+        foreach($this->getInventoryForRequest() as $archive) {
+            if ($archive['callnumber'] == $callnumber) {
+                if (isset($this->departmentsConfig->DepartmentLocationUrl[$archive['departmentId']])) {
+                    return $this->departmentsConfig->DepartmentLocationUrl[$archive['departmentId']];
                 }
             }
         }

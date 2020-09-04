@@ -870,11 +870,10 @@ span.service_presentation {
 
     .checkbox {
       line-height: 1.1rem;
-      margin: 5px 0 0 0;
 
       input[type="checkbox"] {
         position: relative;
-        margin: -1px 5px 0 0;
+        margin: -1px 7px 0 0;
       }
     }
   }
@@ -1098,6 +1097,7 @@ li[data-tab="details"] {
 .favourite-header {
   margin-top: 20px;
   margin-bottom: 15px;
+
   h2 {
     margin: 0;
   }
@@ -1107,4 +1107,27 @@ li[data-tab="details"] {
   width: max-content;
   width: -moz-max-content;
   margin-bottom: 10px;
+}
+
+.item-count {
+  white-space: nowrap;
+}
+
+@media (max-width: 449px) {
+  .favourite-list .cart-controls {
+    .checkbox {
+      width: 35%;
+
+      span {
+        text-align: left;
+      }
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      width: 25%;
+    }
+  }
 }

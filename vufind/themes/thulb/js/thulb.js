@@ -230,6 +230,13 @@ $(document).ready(function thulbDocReady() {
     $('.searchFormKeepFilters').click(function retainFiltersInSessionStorage() {
         $('.applied-filter').prop('checked', this.checked);
     });
+
+    // open cart when full
+    $('.cart-add').on('click', function (event){
+        if(VuFind.cart.getFullItems().length >= parseInt(VuFind.translate('bookbagMax'), 10)) {
+            $('#cartItems').click();
+        }
+    });
 });
 
 document.addEventListener('VuFind.lightbox.rendered', function(event) {

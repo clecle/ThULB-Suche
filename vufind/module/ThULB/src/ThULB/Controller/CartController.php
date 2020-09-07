@@ -37,6 +37,10 @@ class CartController extends OriginalCartController
 {
     public function homeAction()
     {
+        if($this->getCart()->isFull()) {
+           $this->flashMessenger()->addMessage($this->translate('bookbag_full_info'), 'info');
+        }
+
         $this->layout()->setVariable('showBreadcrumbs', false);        
         return parent::homeAction();
     }

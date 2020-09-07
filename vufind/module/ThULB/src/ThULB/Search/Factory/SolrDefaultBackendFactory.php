@@ -2,12 +2,20 @@
 
 namespace ThULB\Search\Factory;
 
+use ThULB\Backend\Solr\Backend;
 use VuFind\Search\Factory\SolrDefaultBackendFactory as OriginalFactory;
 use VuFindSearch\Backend\Solr\LuceneSyntaxHelper;
 use ThULB\Backend\Solr\QueryBuilder;
 
 class SolrDefaultBackendFactory extends OriginalFactory
 {
+    /**
+     * Solr backend class
+     *
+     * @var string
+     */
+    protected $backendClass = Backend::class;
+
     /**
      * Create the query builder.
      *

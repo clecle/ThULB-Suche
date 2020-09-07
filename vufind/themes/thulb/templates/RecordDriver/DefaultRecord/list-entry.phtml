@@ -35,8 +35,8 @@
       <?= $thumbnail ?>
     <?php endif; ?>
     <div class="media-body">
-      <div class="row short-view">
-        <div class="col-sm-<?= $editable ? '10' : '12'?>">
+      <div class="short-view">
+        <div class="result-body">
           <div class="resultItemLine1">
             <?php $missing = $this->driver instanceof \VuFind\RecordDriver\Missing; ?>
             <?php if (!$missing): ?><a href="<?= $this->recordLink()->getUrl($this->driver)?>" class="getFull title truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>"><?php endif; ?>
@@ -146,7 +146,7 @@
         </div>
 
         <?php if ($editable) : ?>
-          <div class="col-sm-2 right hidden-print">
+          <div class="hidden-print edit-list-entry">
             <a href="<?= $this->url('myresearch-edit')?>?id=<?= urlencode($id)?>&amp;source=<?= urlencode($source)?><?php if (!is_null($list_id)):?>&amp;list_id=<?= urlencode($list_id)?><?php endif; ?>" class="edit tool"><i class="fa fa-fw fa-edit" aria-hidden="true"></i> <?= $this->transEsc('Edit')?></a><br/>
             <?php /* Use a different delete URL if we're removing from a specific list or the overall favorites: */
               $deleteUrl = null === $list_id

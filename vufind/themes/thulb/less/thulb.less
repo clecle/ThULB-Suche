@@ -834,6 +834,39 @@ span.service_presentation {
       margin: -1px 5px 0 0;
     }
   }
+
+  .media-body .short-view {
+    display: flex;
+    flex-wrap: nowrap;
+
+    .result-body {
+      flex-grow: 1;
+    }
+
+    .edit-list-entry {
+      flex-shrink: 1;
+      padding-left: 15px;
+      padding-right: 15px;
+
+      a {
+        white-space: nowrap;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .favourite-list .media-body .short-view {
+    flex-wrap: wrap;
+
+    .result-body {
+      width: 100%;
+    }
+
+    .edit-list-entry {
+      padding-left: 0;
+    }
+  }
 }
 span.filters-title {
   font-weight: bold;

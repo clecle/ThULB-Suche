@@ -26,13 +26,14 @@
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_select_location'); ?>:</span>
         <div class="form-data">
           <table class="table table-striped">
-            <thead>
-            <tr>
-              <th>&nbsp;</th>
-              <th class="table-location"><?= $this->transEsc('Location'); ?></th>
-              <th class="table-callnumber"><?= $this->transEsc('Call Number'); ?></th>
-              <th class="table-item-chronology"><?= $this->transEsc('Item Chronology'); ?></th>
-            </tr>
+            <thead class="hidden-xs">
+              <tr>
+                <th>&nbsp;</th>
+                <th class="visible-xs">&nbsp;</th>
+                <th class="table-location hidden-xs"><?= $this->transEsc('Location'); ?></th>
+                <th class="table-callnumber hidden-xs"><?= $this->transEsc('Call Number'); ?></th>
+                <th class="table-item-chronology hidden-xs"><?= $this->transEsc('Item Chronology'); ?></th>
+              </tr>
             </thead>
             <tbody>
             <?php foreach ($inventory as $item): ?>
@@ -41,9 +42,17 @@
                 <td>
                   <input type="radio" name="callnumber" value="<?= $item['callnumber']; ?>"<?= $checked ? ' checked="checked"' : ''; ?> />
                 </td>
-                <td class="table-location"><?= $item['location']; ?></td>
-                <td class="table-callnumber"><?= $item['callnumber']; ?></td>
-                <td class="table-item-chronology"><?= $item['chronology']; ?></td>
+                <td class="visible-xs">
+                  <strong><?= $this->transEsc('Location'); ?></strong>
+                  <p><?= $item['location']; ?></p>
+                  <strong><?= $this->transEsc('Call Number'); ?></strong>
+                  <p><?= $item['callnumber']; ?></p>
+                  <strong><?= $this->transEsc('Item Chronology'); ?></strong>
+                  <p><?= $item['chronology']; ?></p>
+                </td>
+                <td class="table-location hidden-xs"><?= $item['location']; ?></td>
+                <td class="table-callnumber hidden-xs"><?= $item['callnumber']; ?></td>
+                <td class="table-item-chronology hidden-xs"><?= $item['callnumber']; ?></td>
               </tr>
             <?php endforeach; ?>
             </tbody>
@@ -52,23 +61,23 @@
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_year'); ?>:</span>
-        <span class="form-data"><input id="edition" name="year" type="text" value="<?= $formData['year']; ?>" autocomplete="off" /></span>
+        <span class="form-data"><input id="edition" class="form-control" name="year" type="text" value="<?= $formData['year']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_volume'); ?>:</span>
-        <span class="form-data"><input id="year" name="volume" type="text" value="<?= $formData['volume']; ?>" autocomplete="off" /></span>
+        <span class="form-data"><input id="year" class="form-control" name="volume" type="text" value="<?= $formData['volume']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Issue'); ?>:</span>
-        <span class="form-data"><input id="year" name="issue" type="text" value="<?= $formData['issue']; ?>" autocomplete="off" /></span>
+        <span class="form-data"><input id="year" class="form-control" name="issue" type="text" value="<?= $formData['issue']; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('storage_retrieval_request_page(s)'); ?>:</span>
-        <span class="form-data"><input id="edition" name="pages" type="text" value="<?= $formData['pages'] ?? ''; ?>" autocomplete="off" /></span>
+        <span class="form-data"><input id="edition" class="form-control" name="pages" type="text" value="<?= $formData['pages'] ?? ''; ?>" autocomplete="off" /></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Note'); ?>:</span>
-        <span class="form-data"><textarea id="comment" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEsc('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
+        <span class="form-data"><textarea id="comment" class="form-control" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEsc('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
       </div>
     </div>
     <div class="form-submit">

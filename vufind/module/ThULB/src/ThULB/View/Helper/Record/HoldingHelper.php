@@ -115,7 +115,7 @@ class HoldingHelper extends AbstractHelper
 
     if ($includeHTML && isset($holding['locationhref']) && $holding['locationhref']) {
       $locationText = '<a href="' . $holding['locationhref'] . '" target="_blank">' .
-                        '<i class="fa fa-external-link"></i>' . $locationText . '</a>';
+                        $locationText . '<i class="fa fa-external-link"></i></a>';
     }
 
     return $locationText;

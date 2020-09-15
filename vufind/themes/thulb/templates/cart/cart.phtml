@@ -1,11 +1,13 @@
 <?php
+  $bookBagFull = $this->isFull ? ' (' . $this->transEsc('bookbag_full') . ')' : '';
+
   // Set page title.
-  $this->headTitle($this->translate('Book Bag'));
+  $this->headTitle($this->translate('Book Bag') . $bookBagFull);
 
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li>' . $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '', '</li> ')
 ?>
-<h2><?= $this->transEsc('Book Bag') ?></h2>
+<h2><?= $this->transEsc('Book Bag') . $bookBagFull; ?></h2>
 <?= $this->flashmessages()?>
 <form class="form-inline" action="<?= $this->url('cart-processor')?>" method="post"  name="cartForm" data-lightbox-onsubmit="cartFormHandler">
   <input type="hidden" id="dropdown_value"/>

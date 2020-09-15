@@ -25,8 +25,8 @@
  */
 
 namespace ThULB\Controller;
-use Zend\ServiceManager\ServiceManager;
-use Zend\Session\Container;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Session\Container;
 
 /**
  * Factory to load our controllers.

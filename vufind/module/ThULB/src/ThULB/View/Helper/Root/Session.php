@@ -2,8 +2,8 @@
 
 namespace ThULB\View\Helper\Root;
 
-use Zend\Session\SessionManager;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Session\SessionManager;
+use Laminas\View\Helper\AbstractHelper;
 
 class Session extends AbstractHelper
 {

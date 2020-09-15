@@ -24,7 +24,7 @@
  * @author   Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 namespace ThULB\Role\PermissionProvider;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Permission Provider Factory Class

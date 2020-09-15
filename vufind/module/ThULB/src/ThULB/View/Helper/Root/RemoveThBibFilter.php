@@ -3,7 +3,7 @@
 namespace ThULB\View\Helper\Root;
 
 use VuFind\Search\UrlQueryHelper;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class RemoveThBibFilter extends AbstractHelper
 {

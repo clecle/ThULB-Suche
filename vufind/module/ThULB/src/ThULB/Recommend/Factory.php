@@ -26,7 +26,7 @@
 
 namespace ThULB\Recommend;
 
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Factory methods for Recommender modules

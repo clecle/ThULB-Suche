@@ -5,10 +5,10 @@ namespace ThULB\Controller;
 use Exception;
 use VuFind\Controller\AbstractBase;
 use VuFind\Log\LoggerAwareTrait;
-use Zend\Http\Response;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use Laminas\Http\Response;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 
 class DynMessagesController extends AbstractBase
 {

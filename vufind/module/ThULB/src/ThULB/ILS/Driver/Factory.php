@@ -25,7 +25,7 @@
  */
 
 namespace ThULB\ILS\Driver;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * A class to provide factory methods for custom ils drivers.

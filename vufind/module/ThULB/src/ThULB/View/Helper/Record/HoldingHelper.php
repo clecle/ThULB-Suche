@@ -28,7 +28,7 @@
 
 namespace ThULB\View\Helper\Record;
 
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class HoldingHelper extends AbstractHelper
 {  

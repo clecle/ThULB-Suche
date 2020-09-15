@@ -4,8 +4,8 @@ namespace ThULB\Mailer;
 
 use Interop\Container\ContainerInterface;
 use VuFind\Mailer\Factory as OriginalFactory;
-use Zend\ServiceManager\Exception\ServiceNotCreatedException;
-use Zend\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 class Factory extends OriginalFactory
 {

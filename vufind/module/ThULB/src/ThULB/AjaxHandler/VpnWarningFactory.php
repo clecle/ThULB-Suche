@@ -7,7 +7,7 @@ use Interop\Container\ContainerInterface;
 use VuFind\Auth\Manager;
 use VuFind\Role\PermissionDeniedManager;
 use VuFind\Role\PermissionManager;
-use Zend\ServiceManager\Factory\FactoryInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class VpnWarningFactory implements FactoryInterface
 {

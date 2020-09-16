@@ -1015,8 +1015,13 @@ li[data-tab="details"] {
   margin-right: 5px;
 }
 
+.summonbox {
+  &:extend(.alert);
+  &:extend(.alert-info);
+}
+
 a.external-link:after,
-.authorbox a:after {
+.summonbox a:after {
   &:extend(.fa);
   &:extend(.fa-external-link:before);
   font-size: 13px;

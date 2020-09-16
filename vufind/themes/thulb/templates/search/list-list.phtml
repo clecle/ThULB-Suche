@@ -6,7 +6,7 @@
     $recordNumber = $this->results->getStartRecord()+$i-$this->indexStart; ?>
     <tr><td>
     <div id="result<?= $i++ ?>" class="result<?= $current->supportsAjaxStatus()?' ajaxItem':''?>">
-      <div class="checkbox hidden-print">
+      <div class="record-number hidden-print">
         <?= $recordNumber ?>
       </div>
       <?= $this->record($current)->getSearchResult('list')?>

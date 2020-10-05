@@ -2,6 +2,7 @@
 
 namespace ThULB\Search\Solr;
 
+use VuFind\I18n\TranslatableString;
 use VuFind\Search\UrlQueryHelper;
 use VuFind\Search\Solr\HierarchicalFacetHelper as OriginalFacetHelper;
 
@@ -58,5 +59,27 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
         $item['children'] = [];
 
         return $item;
+    }
+
+    /**
+     * Format a filter string in parts suitable for displaying or translation
+     *
+     * @param string $filter Filter value
+     *
+     * @return array
+     */
+    public function getFilterStringParts($filter)
+    {
+        $parts = explode('/', $filter);
+        if (count($parts) <= 1 || !is_numeric($parts[0])) {
+            return [new TranslatableString($filter, $filter)];
+        }
+        $result = [];
+        for ($level = 0; $level <= $parts[0]; $level++) {
+            $str = $level . '/' . implode('/', array_slice($parts, 1, $level + 1))
+                . '/';
+            $result[] = new TranslatableString($str, $parts[$level + 1]);
+        }
+        return $result;
     }
 }

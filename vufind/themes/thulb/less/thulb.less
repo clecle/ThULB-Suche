@@ -1023,9 +1023,10 @@ li[data-tab="details"] {
 a.external-link:after,
 .summonbox a:after {
   &:extend(.fa);
-  &:extend(.fa-external-link:before);
+
   font-size: 13px;
   margin-left: 3px;
+  content: @fa-var-external-link;
 
   &.btn-xs {
     font-size: 12px;

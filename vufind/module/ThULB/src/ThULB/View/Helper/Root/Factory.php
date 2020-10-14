@@ -25,7 +25,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Description of Factory

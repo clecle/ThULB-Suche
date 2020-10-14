@@ -27,7 +27,7 @@
 namespace ThULB\RecordDriver;
 
 use VuFind\RecordDriver\SolrMarc;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 class Factory
 {

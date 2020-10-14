@@ -4,14 +4,16 @@ return array(
     'helpers' => [
         'factories' => [
             'VuFind\View\Helper\Root\RecordDataFormatter' => 'ThULB\View\Helper\Root\RecordDataFormatterFactory',
+            \ThULB\View\Helper\Root\Flashmessages::class => \VuFind\View\Helper\Root\FlashmessagesFactory::class,
             'ThULB\View\Helper\Root\RecordLink' => 'ThULB\View\Helper\Root\Factory::getRecordLink',
             'ThULB\View\Helper\Root\Record' => 'ThULB\View\Helper\Root\Factory::getRecord',
-            'ThULB\View\Helper\Root\ServerType' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
-            'ThULB\View\Helper\Root\RemoveThBibFilter' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'ThULB\View\Helper\Root\RemoveThBibFilter' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             \ThULB\View\Helper\Root\DoiLinker::class => 'ThULB\View\Helper\Root\Factory::getDoiLinker',
         ],
         'aliases' => array (
+            'flashmessages' => 'ThULB\View\Helper\Root\Flashmessages',
             'record' => 'ThULB\View\Helper\Root\Record',
             'recordLink' => 'ThULB\View\Helper\Root\RecordLink',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',

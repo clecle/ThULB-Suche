@@ -360,7 +360,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   }
 
   .result .checkbox,
-  .record-checkbox {
+  .favourite-list .record-checkbox {
     display: block !important;
   }
 
@@ -434,11 +434,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   padding: 10px 15px;
   & > h3 {
     margin-top: 10px;
-
-    i.fa-external-link {
-      font-size: small;
-      margin-right: 3px;
-    }
   }
 }
 
@@ -1038,6 +1033,23 @@ li[data-tab="details"] {
   margin-right: 5px;
 }
 
+.summonbox {
+  &:extend(.alert);
+  &:extend(.alert-info);
+}
+
+a.external-link:after,
+.summonbox a:after {
+  &:extend(.fa);
+
+  font-size: 13px;
+  margin-left: 3px;
+  content: @fa-var-external-link;
+
+  &.btn-xs {
+    font-size: 12px;
+  }
+}
 
 .flex-group {
   display: flex;

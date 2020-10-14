@@ -8,8 +8,8 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Role\PermissionDeniedManager;
 use VuFind\Role\PermissionManager;
-use Zend\Mvc\Controller\Plugin\Params;
-use Zend\View\Renderer\RendererInterface;
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\View\Renderer\RendererInterface;
 
 class VpnWarning extends AbstractBase
     implements TranslatorAwareInterface

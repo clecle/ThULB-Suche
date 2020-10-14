@@ -25,10 +25,11 @@ $config = array(
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Zend\ServiceManager\Factory\InvokableFactory',
+            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
             'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
+            'VuFind\Search\Solr\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Record\Loader' => 'ThULB\Record\Loader',
@@ -48,6 +49,14 @@ $config = array(
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
                     'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
                     \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
+                )
+            ),
+            'content_covers' => array(
+                'factories' => array(
+                    \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                ),
+                'aliases' => array(
+                    'google' => \ThULB\Content\Covers\Google::class
                 )
             ),
             'db_row' => array(
@@ -107,7 +116,7 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-                    'ThULB\RecordTab\Access' => 'Zend\ServiceManager\Factory\InvokableFactory',
+                    'ThULB\RecordTab\Access' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
@@ -161,7 +170,7 @@ $config = array(
     ),
 
     // Authorization configuration:
-    'zfc_rbac' => array(
+    'lmc_rbac' => array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
                 'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',

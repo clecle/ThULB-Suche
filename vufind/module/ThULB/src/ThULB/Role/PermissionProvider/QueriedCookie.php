@@ -33,8 +33,8 @@ namespace ThULB\Role\PermissionProvider;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Role\PermissionProvider\PermissionProviderInterface;
 use Vufind\Cookie\CookieManager;
-use Zend\Http\PhpEnvironment\Request;
-use Zend\Log\LoggerAwareInterface;
+use Laminas\Http\PhpEnvironment\Request;
+use Laminas\Log\LoggerAwareInterface;
 
 /**
  * Queried cookie permission provider for VuFind.

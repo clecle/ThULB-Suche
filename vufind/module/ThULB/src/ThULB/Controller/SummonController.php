@@ -26,9 +26,9 @@
  */
 
 namespace ThULB\Controller;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 use VuFind\Controller\SummonController as OriginalSummonController;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Overrides the standard version in VuFind\Controller\SummonController and

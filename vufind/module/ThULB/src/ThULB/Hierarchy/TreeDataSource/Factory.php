@@ -28,7 +28,7 @@
  * @link     https://vufind.org/wiki/development:plugins:hierarchy_components Wiki
  */
 namespace ThULB\Hierarchy\TreeDataSource;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Hierarchy Data Source Factory Class

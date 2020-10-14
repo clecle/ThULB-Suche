@@ -274,10 +274,10 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         $view = $this->getPhpRenderer($helpers);
 
         // Mock out the router to avoid errors:
-        $match = new \Zend\Router\RouteMatch([]);
+        $match = new \Laminas\Router\RouteMatch([]);
         $match->setMatchedRouteName('foo');
         $view->plugin('url')
-            ->setRouter($this->createMock('Zend\Router\RouteStackInterface'))
+            ->setRouter($this->createMock('Laminas\Router\RouteStackInterface'))
             ->setRouteMatch($match);
 
         // Inject the view object into all of the helpers:

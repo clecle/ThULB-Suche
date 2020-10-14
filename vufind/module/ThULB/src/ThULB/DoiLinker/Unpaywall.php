@@ -32,7 +32,7 @@ use VuFind\Log\Logger;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface;
 use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
-use Zend\Log\LoggerAwareInterface;
+use Laminas\Log\LoggerAwareInterface;
 
 /**
  * Unpaywall DOI linker

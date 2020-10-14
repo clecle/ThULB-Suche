@@ -30,7 +30,7 @@ namespace ThULB\Controller;
 use VuFind\Controller\SearchController as OriginalController;
 use VuFind\Search\Results\PluginManager as ResultsPluginManager;
 use VuFindSearch\Backend\Exception\BackendException;
-use Zend\View\Model\ViewModel;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Redirects the user to the appropriate default VuFind action.

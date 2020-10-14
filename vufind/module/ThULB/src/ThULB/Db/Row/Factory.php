@@ -27,8 +27,8 @@
 
 namespace ThULB\Db\Row;
 use Interop\Container\ContainerInterface;
-use Zend\ServiceManager\ServiceManager,
-    VuFind\Db\Row\UserFactory as OriginalFactory;
+use Laminas\ServiceManager\ServiceManager;
+use VuFind\Db\Row\UserFactory as OriginalFactory;
 
 /**
  * Description of Factory
@@ -48,8 +48,8 @@ class Factory extends OriginalFactory
         $prototype = parent::__invoke($container, $rowClass, $options);
         $prototype->setConfig($config);
         if ($privacy) {
-            $sessionManager = $container->get('Zend\Session\SessionManager');
-            $session = new \Zend\Session\Container('Account', $sessionManager);
+            $sessionManager = $container->get('Laminas\Session\SessionManager');
+            $session = new \Laminas\Session\Container('Account', $sessionManager);
             $prototype->setSession($session);
         }
         return $prototype;

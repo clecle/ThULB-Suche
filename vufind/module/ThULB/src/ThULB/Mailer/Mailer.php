@@ -5,9 +5,9 @@ namespace ThULB\Mailer;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Mailer\Mailer as OriginalMailer;
 use VuFind\RecordDriver\AbstractBase;
-use Zend\Mail\Address;
-use Zend\Mail\AddressList;
-use Zend\View\Renderer\PhpRenderer;
+use Laminas\Mail\Address;
+use Laminas\Mail\AddressList;
+use Laminas\View\Renderer\PhpRenderer;
 
 class Mailer extends OriginalMailer {
 

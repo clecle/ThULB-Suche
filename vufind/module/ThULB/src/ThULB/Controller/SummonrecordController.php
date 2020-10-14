@@ -26,9 +26,9 @@
  */
 
 namespace ThULB\Controller;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
+use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Controller\SummonrecordController as OriginalSummonrecordController;
-use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Overrides the standard version in VuFind\Controller\SummonrecordController

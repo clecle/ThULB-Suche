@@ -1,14 +1,14 @@
 <?php $summonResult = $this->recommend->getResults(); ?>
 <?php if (!empty($summonResult['best_bets'])): ?>
-<div class="authorbox">
+<div class="summonbox">
   <?php foreach ($summonResult['best_bets'] as $current): ?>
     <p>
-      <?php if (isset($current['link']) && !empty($current['link'])):?>
-        <a href="<?= $this->escapeHtmlAttr($current['link'])?>"><?= $this->escapeHtml($current['title'])?></a>
+      <?php if (isset($current['link']) && !empty($current['link'])): ?>
+        <a href="<?= $this->escapeHtmlAttr($current['link']) ?>"><?= $this->escapeHtml($current['title']) ?></a>
       <?php else: ?>
-        <b><?= $this->escapeHtml($current['title'])?></b>
+        <b><?= $this->escapeHtml($current['title']) ?></b>
       <?php endif; ?>
-      <br/><?= $current['description']?>
+      <br/><?= $current['description'] ?>
     </p>
   <?php endforeach; ?>
 </div>
@@ -16,9 +16,9 @@
 
 <?php if (!empty($summonResult['databases'])): ?>
 <div class="authorbox">
-  <p><?= $this->transEsc('summon_database_recommendations')?></p>
+  <p><?= $this->transEsc('summon_database_recommendations') ?></p>
   <?php foreach ($summonResult['databases'] as $current): ?>
-    <p><a href="<?= $this->escapeHtmlAttr($current['link'])?>"><?= $this->escapeHtml($current['title'])?></a><br/><?= $this->escapeHtml($current['description'])?></p>
+    <p><a href="<?= $this->escapeHtmlAttr($current['link']) ?>"><?= $this->escapeHtml($current['title']) ?></a><br/><?= $this->escapeHtml($current['description']) ?></p>
   <?php endforeach; ?>
 </div>
 <?php endif; ?>

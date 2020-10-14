@@ -48,6 +48,14 @@ $config = array(
                     \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
                 )
             ),
+            'content_covers' => array(
+                'factories' => array(
+                    \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                ),
+                'aliases' => array(
+                    'google' => \ThULB\Content\Covers\Google::class
+                )
+            ),
             'db_row' => array(
                 'factories' => array(
                     'VuFind\Db\Row\User' => 'ThULB\Db\Row\Factory'

@@ -808,7 +808,7 @@ class SolrVZGRecord extends SolrMarc
 
             // Set links to NULL if not available
             foreach($recordLinkList as $index => $recordLink) {
-                if (!in_array($recordLink['link']['value'], $availablePPNs)) {
+                if (!is_array($recordLink['link']) || !in_array($recordLink['link']['value'], $availablePPNs)) {
                     $recordLinkList[$index]['link'] = null;
                 }
             }
@@ -2051,7 +2051,7 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Return first ISMN found for this record, or false if no one fonund
+     * Return first ISMN found for this record, or false if none is found
      *
      * @return mixed
      */

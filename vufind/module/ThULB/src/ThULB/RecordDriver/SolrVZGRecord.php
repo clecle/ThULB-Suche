@@ -817,7 +817,7 @@ class SolrVZGRecord extends SolrMarc
 
             // Set links to NULL if not available
             foreach($recordLinkList as $index => $recordLink) {
-                if (!in_array($recordLink['link']['value'], $availablePPNs)) {
+                if (!is_array($recordLink['link']) || !in_array($recordLink['link']['value'], $availablePPNs)) {
                     $recordLinkList[$index]['link'] = null;
                 }
             }
@@ -2083,7 +2083,7 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Return first ISMN found for this record, or false if no one fonund
+     * Return first ISMN found for this record, or false if none is found
      *
      * @return mixed
      */
@@ -2101,6 +2101,33 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         return $ismn ?? false;
+    }
+
+    /**
+     * Return first ISMN found for this record, or false if no one fonund
+     *
+     * @return array
+     */
+    public function getLegalInformation()
+    {
+        // Fix for cases where 024 $a is not set
+        $fields540 = $this->getMarcRecord()->getFields('540');
+        $data = array();
+        foreach ($fields540 as $field) {
+            $description = $link = null;
+            if($subfield = $field->getSubfield('f')) {
+                $description = $subfield->getData();
+            }
+
+            if($subfield = $field->getSubfield('u')) {
+                $link = $subfield->getData();
+            }
+            $data[] = array(
+                'desc' => $description ?? $link,
+                'link' => $link
+            );
+        }
+        return $data;
     }
 
 //    Commented out for possible future use.

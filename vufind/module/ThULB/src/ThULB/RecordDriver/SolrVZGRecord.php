@@ -2086,14 +2086,19 @@ class SolrVZGRecord extends SolrMarc
             if($subfield = $field->getSubfield('f')) {
                 $description = $subfield->getData();
             }
+            elseif($subfield = $field->getSubfield('a')) {
+                $description = $subfield->getData();
+            }
 
             if($subfield = $field->getSubfield('u')) {
                 $link = $subfield->getData();
             }
-            $data[] = array(
-                'desc' => $description ?? $link,
-                'link' => $link
-            );
+            if($description || $link) {
+                $data[] = array(
+                    'desc' => $description ?? $link,
+                    'link' => $link
+                );
+            }
         }
         return $data;
     }

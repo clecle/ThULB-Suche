@@ -98,7 +98,8 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         $defaultCallnumber = count($inventory) == 1 ? array_shift($inventory)['callnumber'] : '';
 
         return array (
-            'name'       => $params->fromPost('name', $user['lastname'] . ', ' . $user['firstname']),
+            'firstname'  => $params->fromPost('firstname', $user['firstname']),
+            'lastname'   => $params->fromPost('lastname', $user['lastname']),
             'username'   => $params->fromPost('username', $user['cat_id']),
             'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
             'callnumber' => $params->fromPost('callnumber', $defaultCallnumber),
@@ -170,7 +171,8 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $pdf->setVolume($formData['volume']);
             $pdf->setIssue($formData['issue']);
             $pdf->setPages($formData['pages']);
-            $pdf->setName($formData['name']);
+            $pdf->setFirstName($formData['firstname']);
+            $pdf->setLastName($formData['lastname']);
             $pdf->setUserName($formData['username']);
             $pdf->setWorkTitle($formData['title']);
             $pdf->setYear($formData['year']);

@@ -20,7 +20,8 @@ class JournalRequest extends FPDF
     protected $callNumber;
     protected $comment;
     protected $issue;
-    protected $name;
+    protected $firstname;
+    protected $lastname;
     protected $requestPages;
     protected $title;
     protected $username;
@@ -97,21 +98,45 @@ class JournalRequest extends FPDF
         );
 
         // card for users
-        $this->line(
+        $this->Line(
             $this->widthBookCard, $this->heightUserCard,
             $this->dinA4width, $this->heightUserCard
         );
 
         // card for callnumbers
-        $this->Line(
-            $this->dinA4width - $this->widthCallNumberCard, $this->heightUserCard + $this->heightCallNumberCard,
-            $this->dinA4width, $this->heightUserCard + $this->heightCallNumberCard
+        $this->stripedLine(
+            $this->dinA4width - $this->widthCallNumberCard, $this->heightCallNumberCard,
+            $this->dinA4width, $this->heightCallNumberCard
         );
-        $this->line(
-            $this->dinA4width - $this->widthCallNumberCard, $this->heightUserCard,
-            $this->dinA4width - $this->widthCallNumberCard, $this->dinA4height
+        $this->Line(
+            $this->dinA4width - $this->widthCallNumberCard, 0,
+            $this->dinA4width - $this->widthCallNumberCard, $this->heightUserCard
         );
         $this->SetDrawColor(0);
+    }
+
+    /**
+     * Draw a dotted line.
+     *
+     * @param int $x1     X coordinate of the start point.
+     * @param int $y1     Y coordinate of the start point.
+     * @param int $x2     X coordinate of the end point.
+     * @param int $y2     Y coordinate of the end point.
+     * @param int $dashes Amount of dashes in this line, affects width of dashes
+     */
+    protected function stripedLine($x1, $y1, $x2, $y2, $dashes = 10) {
+        $segmentWidth = ($x2 - $x1) / ($dashes * 2 - 1);
+        for($segment = 0; $segment < ($dashes * 2 - 1); $segment++) {
+            if($segment % 2) {
+                continue;
+            }
+
+            $segmentOffset = $segment * $segmentWidth;
+            $this->Line(
+                $x1 + $segmentOffset, $y1,
+                $x1 + $segmentOffset + $segmentWidth, $y2
+            );
+        }
     }
 
     /**
@@ -136,14 +161,16 @@ class JournalRequest extends FPDF
      * Write information for the user card to the pdf.
      */
     protected function addCardUser() {
-        $availableTextWidth = $this->dinA4width - $this->widthCallNumberCard - $this->printBorder * 2;
+        $availableTextWidth =
+            $this->dinA4width - $this->widthCallNumberCard - $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth - 25);
+        $name = $this->lastname . ', ' . $this->firstname;
 
         $x = $this->widthCallNumberCard + $this->printBorder;
         $this->addHeadLine('Begleitzettel (freie Bestellbarkeit)', $x, $this->printBorder, $availableTextWidth, 16);
 
-        $this->addText($this->descName,       $this->name,         $availableTextWidth, true);
+        $this->addText($this->descName,       $name,               $availableTextWidth, true);
         $this->addText("Benutzernr.",         $this->username,     $availableTextWidth, true);
 
         $this->SetXY($x, $this->GetY() + 10);
@@ -164,14 +191,15 @@ class JournalRequest extends FPDF
         $availableTextWidth = $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
+        $name = $this->lastname . ', ' . $this->firstname;
 
         $x = $this->dinA4width - $this->widthCallNumberCard + $this->printBorder;
-        $y = $this->heightUserCard + $this->printBorder;
+        $y = $this->printBorder;
         $this->SetXY($x, $y);
 
         $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth,
                       false, 'B', self::DEFAULT_FONT_SIZE + 2);
-        $this->addText($this->descName,       $this->name,         $availableTextWidth);
+        $this->addText($this->descName,       $name,               $availableTextWidth);
         $this->addText("Benutzernr.",         $this->username,     $availableTextWidth);
         $this->addText($this->descTitle,      $title,              $availableTextWidth);
         $this->addText($this->descYear,       $this->year,         $availableTextWidth);
@@ -187,6 +215,7 @@ class JournalRequest extends FPDF
         $availableTextWidth = $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
+        $name = $this->firstname . ' ' . $this->lastname;
 
         $this->SetXY($this->printBorder, $this->printBorder);
 
@@ -198,11 +227,12 @@ class JournalRequest extends FPDF
         $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
         $this->addText("bearbeitet am",       null,                $availableTextWidth);
 
-        $this->SetXY($this->printBorder, $this->dinA4height - 50);
+        $this->SetXY($this->printBorder, $this->dinA4height - 60);
 
         $this->addText("Leihfrist",           null,                $availableTextWidth);
+        $this->SetXY($this->GetX(), $this->GetY() + 5);
         $this->addText("Benutzernr.",         $this->username,     $availableTextWidth);
-        $this->addText($this->descName,       $this->name,         $availableTextWidth,
+        $this->addText($this->descName,       $name,               $availableTextWidth,
                        false, 'B', self::DEFAULT_FONT_SIZE + 2);
     }
 
@@ -344,12 +374,21 @@ class JournalRequest extends FPDF
     }
 
     /**
-     * Set name data.
+     * Set firstname data.
      *
-     * @param string $username
+     * @param string $firstname
      */
-    public function setName($username) {
-        $this->name = $username;
+    public function setFirstName($firstname) {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * Set lastname data.
+     *
+     * @param string $lastname
+     */
+    public function setLastName($lastname) {
+        $this->lastname = $lastname;
     }
 
     /**

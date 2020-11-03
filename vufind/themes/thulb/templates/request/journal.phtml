@@ -7,8 +7,12 @@
     <h4><?= $this->transEsc('User data'); ?></h4>
     <div class="user-data">
       <div class="flex-group">
-        <span class="form-description"><?= $this->transEsc('Name'); ?>:</span>
-        <span class="form-information"><?= $formData['name']; ?></span>
+        <span class="form-description"><?= $this->transEsc('First Name'); ?>:</span>
+        <span class="form-information"><?= $formData['firstname']; ?></span>
+      </div>
+      <div class="flex-group">
+        <span class="form-description"><?= $this->transEsc('Last Name'); ?>:</span>
+        <span class="form-information"><?= $formData['lastname']; ?></span>
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Username'); ?>:</span>

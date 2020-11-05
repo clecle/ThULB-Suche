@@ -197,6 +197,8 @@ class JournalRequest extends FPDF
         $y = $this->printBorder;
         $this->SetXY($x, $y);
 
+        $this->addText("Leihfrist",           null,                $availableTextWidth);
+        $this->SetXY($this->GetX(), $this->GetY() + 5);
         $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth,
                       false, 'B', self::DEFAULT_FONT_SIZE + 2);
         $this->addText($this->descName,       $name,               $availableTextWidth);
@@ -205,7 +207,6 @@ class JournalRequest extends FPDF
         $this->addText($this->descYear,       $this->year,         $availableTextWidth);
         $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
         $this->addText($this->descIssue,      $this->issue,        $availableTextWidth);
-        $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
     }
 
     /**
@@ -224,7 +225,6 @@ class JournalRequest extends FPDF
         $this->addText($this->descYear,       $this->year,         $availableTextWidth);
         $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
         $this->addText($this->descIssue,      $this->issue,        $availableTextWidth);
-        $this->addText($this->descPages,      $this->requestPages, $availableTextWidth);
         $this->addText("bearbeitet am",       null,                $availableTextWidth);
 
         $this->SetXY($this->printBorder, $this->dinA4height - 60);

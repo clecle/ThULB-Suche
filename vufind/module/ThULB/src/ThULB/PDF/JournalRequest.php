@@ -175,7 +175,7 @@ class JournalRequest extends FPDF
 
         $this->SetXY($x, $this->GetY() + 10);
 
-        $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth, true);
+        $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth, true, 'B');
         $this->addText($this->descTitle,      $title,              $availableTextWidth, true);
         $this->addText($this->descYear,       $this->year,         $availableTextWidth, true);
         $this->addText($this->descVolume,     $this->volume,       $availableTextWidth, true);

@@ -789,8 +789,6 @@ class SolrVZGRecord extends SolrMarc
      * @param $recordLinkList
      *
      * @return array The list with unavailable links set to NULL.
-     *
-     * @throws Exception
      */
     protected function checkListForAvailability($recordLinkList) {
         if(!is_array($recordLinkList)) {
@@ -807,13 +805,7 @@ class SolrVZGRecord extends SolrMarc
 
         // Check if the PPNs are available in ThULB
         if(count($linkedPPNs) > 0) {
-            $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
-
-            $availablePPNs = array();
-            /* @var $record SolrVZGRecord */
-            foreach($result->getRecords() as $record) {
-                $availablePPNs[] = $record->getUniqueID();
-            }
+            $availablePPNs = $this->checkAvailabilityOfPPNs($linkedPPNs);
 
             // Set links to NULL if not available
             foreach($recordLinkList as $index => $recordLink) {
@@ -824,6 +816,33 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $recordLinkList;
+    }
+
+    /**
+     * Checks the availability of a list of PPNs.
+     *
+     * @param array $ppnList PPNs to check.
+     *
+     * @return array List of available PPNs.
+     *
+     */
+    protected function checkAvailabilityOfPPNs ($ppnList) {
+
+        if(!is_array($ppnList) || empty($ppnList)) {
+            return $ppnList;
+        }
+        $result = $this->searchService->retrieveBatch('Solr', $ppnList);
+
+        $availablePPNs = array();
+        /* @var $record SolrVZGRecord */
+        foreach($result->getRecords() as $record) {
+            try {
+                $availablePPNs[] = $record->getUniqueID();
+            }
+            catch (Exception $ignored){}
+        }
+
+        return $availablePPNs;
     }
 
     /**
@@ -1429,6 +1448,20 @@ class SolrVZGRecord extends SolrMarc
                     // Save the current match:
                     $matches[] = $currentArray;
                 }
+            }
+        }
+
+        $ppnList = array();
+        foreach($matches as $match) {
+            if(!empty($match['id'])) {
+                $ppnList[] = $match['id'];
+            }
+        }
+        $ppnList = $this->checkAvailabilityOfPPNs($ppnList);
+        unset($ppnList[0]);
+        for ($i = 0; $i < count($matches); $i++) {
+            if(!empty($matches[$i]['id']) && !in_array($matches[$i]['id'], $ppnList)) {
+                $matches[$i]['id'] = null;
             }
         }
 
@@ -2118,14 +2151,19 @@ class SolrVZGRecord extends SolrMarc
             if($subfield = $field->getSubfield('f')) {
                 $description = $subfield->getData();
             }
+            elseif($subfield = $field->getSubfield('a')) {
+                $description = $subfield->getData();
+            }
 
             if($subfield = $field->getSubfield('u')) {
                 $link = $subfield->getData();
             }
-            $data[] = array(
-                'desc' => $description ?? $link,
-                'link' => $link
-            );
+            if($description || $link) {
+                $data[] = array(
+                    'desc' => $description ?? $link,
+                    'link' => $link
+                );
+            }
         }
         return $data;
     }

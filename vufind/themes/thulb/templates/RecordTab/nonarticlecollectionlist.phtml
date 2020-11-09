@@ -37,7 +37,8 @@
         <?php endif; ?>
       </div>
       <div class="journal-not-found">
-        <?php if($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+        <?php if($this->permission()->allowDisplay('access.JournalRequest') &&
+                 $this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
           <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
           <strong>
             <a href="/Request/Journal/<?= $this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>

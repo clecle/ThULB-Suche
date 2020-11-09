@@ -40,6 +40,8 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         $this->mainConfig = $config;
         $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
         $this->setLogger($sm->get('VuFind\Logger'));
+
+        $this->accessPermission = "access.JournalRequest";
     }
 
     /**

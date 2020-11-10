@@ -225,8 +225,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
-//                $recipient,
-                'discovery_thulb@uni-jena.de',
+                $recipient,
                 $this->mainConfig->Mail->default_from,
                 $this->translate('storage_retrieval_request_email_subject'),
                 $mimeMessage

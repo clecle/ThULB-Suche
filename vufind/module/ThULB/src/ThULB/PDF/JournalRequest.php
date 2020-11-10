@@ -69,14 +69,6 @@ class JournalRequest extends FPDF
         $this->SetMargins($this->printBorder, $this->printBorder);
         $this->SetAutoPageBreak(true, 0);
 
-        // Add 'test' as text.
-        $this->SetTextColor(240);
-        $this->SetFontSize(100);
-        $this->SetXY(0, 0);
-        $this->Cell($this->dinA4width, $this->dinA4height, 'T E S T ', 0, 0, 'C');
-        $this->SetFont('Arial', '', self::DEFAULT_FONT_SIZE);
-        $this->SetTextColor(0);
-
         $this->addLines();
         $this->addCardBook();
         $this->addCardUser();

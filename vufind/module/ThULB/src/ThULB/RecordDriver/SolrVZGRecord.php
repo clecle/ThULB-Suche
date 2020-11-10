@@ -1449,7 +1449,6 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         $ppnList = $this->checkAvailabilityOfPPNs($ppnList);
-        unset($ppnList[0]);
         for ($i = 0; $i < count($matches); $i++) {
             if(!empty($matches[$i]['id']) && !in_array($matches[$i]['id'], $ppnList)) {
                 $matches[$i]['id'] = null;

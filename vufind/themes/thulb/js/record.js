@@ -187,7 +187,7 @@ function registerTabEvents() {
   handleAjaxJumpMenus();
   handleAjaxTabLinks();
 
-  VuFind.lightbox.bind('.tab-pane.active');
+  VuFind.lightbox.bind('.tab-pane');
 }
 
 function removeHashFromLocation() {

@@ -59,7 +59,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         }
 
         $savePath = $this->mainConfig->JournalRequest->request_save_path;
-        if (!file_exists($savePath) || !is_readable($savePath) || !is_writable($savePath)) {
+        if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
             throw new IOException('File not writable: "' . $savePath . '"');
         }
 
@@ -225,7 +225,8 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
-                $recipient,
+//                $recipient,
+                'tobias.groth@uni-jena.de',
                 $this->mainConfig->Mail->default_from,
                 $this->translate('storage_retrieval_request_email_subject'),
                 $mimeMessage

@@ -65,6 +65,7 @@
         "ppito/laminas-whoops": "2.0.0",
         "scssphp/scssphp": "1.1.1",
         "serialssolutions/summon": "1.3.0",
+        "setasign/fpdf": "^1.8",
         "symfony/console": "4.4.11",
         "symfony/yaml": "3.4.43",
         "swagger-api/swagger-ui": "3.31.1",
@@ -75,8 +76,7 @@
         "webfontkit/open-sans": "^1.0",
         "wikimedia/composer-merge-plugin": "1.4.1",
         "wikimedia/less.php": "2.0.0",
-        "yajra/laravel-pdo-via-oci8": "2.1.1",
-        "setasign/fpdf": "^1.8"
+        "yajra/laravel-pdo-via-oci8": "2.1.1"
     },
     "require-dev": {
         "behat/mink": "1.8.1",

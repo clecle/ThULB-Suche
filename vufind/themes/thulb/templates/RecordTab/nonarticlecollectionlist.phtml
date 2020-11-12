@@ -51,7 +51,8 @@
     <?= $this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
     <?= $this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
   </form>
-<?php elseif($this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+<?php elseif($this->permission()->allowDisplay('access.JournalRequest') &&
+    $this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
   <div class="journal-not-found">
     <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
     <strong>

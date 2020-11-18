@@ -64,7 +64,7 @@
         <td>
           <dl class="dl-horizontal">
             <dt><?= $doiHtml; ?></dt>
-            <dd><?= $this->transEsc('explain_unpaywall'); ?></dd>
+            <dd><?= $this->translate('explain_unpaywall'); ?></dd>
           </dl>
         </td>
       </tr>
@@ -197,6 +197,7 @@
                 <?php endif; ?>
               <?php endif; ?>
 
+              <!-- @TODO needed? -->
               <?php if(!empty($doiHtml)): ?>
                 <dd><?= $doiHtml; ?></dd>
               <?php endif; ?>

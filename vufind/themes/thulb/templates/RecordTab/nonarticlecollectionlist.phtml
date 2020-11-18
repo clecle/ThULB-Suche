@@ -17,27 +17,46 @@
     <?= $this->recommend($current)?>
   <?php endforeach; ?>
   <div class="clearfix hidden-print">
-    <div class="pull-left flip">
-      <?php
-        $transParams = [
+    <?php
+      $transParams = [
           '%%start%%' => $this->localizedNumber($results->getStartRecord()),
           '%%end%%'   => $this->localizedNumber($results->getEndRecord()),
           '%%total%%' => $this->localizedNumber($recordTotal)
-        ];
-      ?>
-      <?php if (!isset($this->skipTotalCount)): ?>
-        <?= $this->translate('showing_items_of_html', $transParams); ?>
-      <?php else: ?>
-        <?= $this->translate('showing_items_html', $transParams); ?>
-      <?php endif; ?>
-    </div>
-    <div class="pull-right flip">
-      <?= $this->render('search/controls/limit.phtml', $searchDetails)?>
-      <?= $this->render('search/controls/sort.phtml', $searchDetails)?>
+      ];
+    ?>
+    <div class="list-header flex-center center-text">
+      <div class="sort">
+        <?= $this->render('search/controls/limit.phtml', $searchDetails)?>
+        <?= $this->render('search/controls/sort.phtml', $searchDetails)?>
+      </div>
+      <div class="item-count">
+        <?php if (!isset($this->skipTotalCount)): ?>
+          <?= $this->translate('showing_items_of_html', $transParams); ?>
+        <?php else: ?>
+          <?= $this->translate('showing_items_html', $transParams); ?>
+        <?php endif; ?>
+      </div>
+      <div class="journal-not-found">
+        <?php if($this->permission()->allowDisplay('access.JournalRequest') &&
+                 $this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+          <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
+          <strong>
+            <a href="/Request/Journal/<?= $this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+          </strong>
+        <?php endif; ?>
+      </div>
     </div>
   </div>
   <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
     <?= $this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
     <?= $this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
   </form>
+<?php elseif($this->permission()->allowDisplay('access.JournalRequest') &&
+    $this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
+  <div class="journal-not-found">
+    <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
+    <strong>
+      <a href="/Request/Journal/<?=$this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+    </strong>
+  </div>
 <?php endif; ?>

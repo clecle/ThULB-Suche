@@ -104,9 +104,18 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $marcFormatConfig;
 
-    public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null, $marcFormatConfig = null)
+    /**
+     * DAIA departments configuration
+     *
+     * @var Config
+     */
+    protected $departmentConfig;
+
+    public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
+                                $marcFormatConfig = null, $departmentConfig = null)
     {
         $this->marcFormatConfig = $marcFormatConfig;
+        $this->departmentConfig = $departmentConfig;
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
@@ -780,8 +789,6 @@ class SolrVZGRecord extends SolrMarc
      * @param $recordLinkList
      *
      * @return array The list with unavailable links set to NULL.
-     *
-     * @throws Exception
      */
     protected function checkListForAvailability($recordLinkList) {
         if(!is_array($recordLinkList)) {
@@ -798,23 +805,44 @@ class SolrVZGRecord extends SolrMarc
 
         // Check if the PPNs are available in ThULB
         if(count($linkedPPNs) > 0) {
-            $result = $this->searchService->retrieveBatch('Solr', $linkedPPNs);
-
-            $availablePPNs = array();
-            /* @var $record SolrVZGRecord */
-            foreach($result->getRecords() as $record) {
-                $availablePPNs[] = $record->getUniqueID();
-            }
+            $availablePPNs = $this->checkAvailabilityOfPPNs($linkedPPNs);
 
             // Set links to NULL if not available
             foreach($recordLinkList as $index => $recordLink) {
-                if (!in_array($recordLink['link']['value'], $availablePPNs)) {
+                if (!is_array($recordLink['link']) || !in_array($recordLink['link']['value'], $availablePPNs)) {
                     $recordLinkList[$index]['link'] = null;
                 }
             }
         }
 
         return $recordLinkList;
+    }
+
+    /**
+     * Checks the availability of a list of PPNs.
+     *
+     * @param array $ppnList PPNs to check.
+     *
+     * @return array List of available PPNs.
+     *
+     */
+    protected function checkAvailabilityOfPPNs ($ppnList) {
+
+        if(!is_array($ppnList) || empty($ppnList)) {
+            return $ppnList;
+        }
+        $result = $this->searchService->retrieveBatch('Solr', $ppnList);
+
+        $availablePPNs = array();
+        /* @var $record SolrVZGRecord */
+        foreach($result->getRecords() as $record) {
+            try {
+                $availablePPNs[] = $record->getUniqueID();
+            }
+            catch (Exception $ignored){}
+        }
+
+        return $availablePPNs;
     }
 
     /**
@@ -1423,6 +1451,19 @@ class SolrVZGRecord extends SolrMarc
             }
         }
 
+        $ppnList = array();
+        foreach($matches as $match) {
+            if(!empty($match['id'])) {
+                $ppnList[] = $match['id'];
+            }
+        }
+        $ppnList = $this->checkAvailabilityOfPPNs($ppnList);
+        for ($i = 0; $i < count($matches); $i++) {
+            if(!empty($matches[$i]['id']) && !in_array($matches[$i]['id'], $ppnList)) {
+                $matches[$i]['id'] = null;
+            }
+        }
+
         return $matches;
     }
 
@@ -1555,6 +1596,29 @@ class SolrVZGRecord extends SolrMarc
             if (($pcre && preg_match("/$format/", $formats[0]))
                 || (!$pcre && $formats[0] === $format)
             ) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Checks, if there are copies in archives of the ThULB.
+     *
+     * @return bool
+     *
+     * @throws File_MARC_Exception
+     */
+    public function isInArchive() {
+        $archiveCodes = array_keys($this->departmentConfig->DepartmentEmails->toArray());
+
+        $conditions = array(['subfield' => '2', 'operator' => '==', 'value' => '31']);
+        $recordArchiveCodes = $this->getFormattedData(['980' => ['f']], ['980' => '980f'], $conditions);
+        $recordArchiveCodes = array_unique($recordArchiveCodes);
+
+        foreach($recordArchiveCodes as $code) {
+            if(in_array($code, $archiveCodes)) {
                 return true;
             }
         }
@@ -2051,7 +2115,7 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Return first ISMN found for this record, or false if no one fonund
+     * Return first ISMN found for this record, or false if none is found
      *
      * @return mixed
      */
@@ -2069,6 +2133,38 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         return $ismn ?? false;
+    }
+
+    /**
+     * Return first ISMN found for this record, or false if no one fonund
+     *
+     * @return array
+     */
+    public function getLegalInformation()
+    {
+        // Fix for cases where 024 $a is not set
+        $fields540 = $this->getMarcRecord()->getFields('540');
+        $data = array();
+        foreach ($fields540 as $field) {
+            $description = $link = null;
+            if($subfield = $field->getSubfield('f')) {
+                $description = $subfield->getData();
+            }
+            elseif($subfield = $field->getSubfield('a')) {
+                $description = $subfield->getData();
+            }
+
+            if($subfield = $field->getSubfield('u')) {
+                $link = $subfield->getData();
+            }
+            if($description || $link) {
+                $data[] = array(
+                    'desc' => $description ?? $link,
+                    'link' => $link
+                );
+            }
+        }
+        return $data;
     }
 
 //    Commented out for possible future use.

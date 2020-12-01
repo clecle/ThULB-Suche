@@ -2,7 +2,7 @@
   if(!$this->driver ?? null) {
     return;
   }
-  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && ($this->driver->isFormat('eBook') || $this->driver->isFormat('Book'))) {
+  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && ($this->driver->isFormat('Book|eBook', true))) {
     return;
   }
 

@@ -1,5 +1,5 @@
 <?php
-  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && $this->driver->isFormat('eBook')) {
+  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord && $this->driver->isFormat('Book|eBook', true)) {
     return;
   }
 ?>

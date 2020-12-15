@@ -1495,7 +1495,7 @@ class SolrVZGRecord extends SolrMarc
                 $address = $address->getData();
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
-                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover', 'volltext'])) {
+                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover'])) {
                     $retVal[$lowerDescription] = [
                         'url' => $address,
                         'desc' => $description

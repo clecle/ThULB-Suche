@@ -30,6 +30,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
 use Laminas\View\Exception\RuntimeException;
@@ -42,6 +43,20 @@ use Laminas\View\Exception\RuntimeException;
  */
 class Record extends OriginalRecord
 {
+    protected $nonArticleCollection;
+
+    /**
+     * Constructor
+     *
+     * @param null $config VuFind configuration
+     * @param NonArticleCollectionList $nonArticleCollection
+     */
+    public function __construct($config = null, $nonArticleCollection = null)
+    {
+        parent::__construct($config);
+        $this->nonArticleCollection = $nonArticleCollection;
+    }
+
     /**
      * Get HTML to render a title. Maximum length limitation is not applied
      * anymore - it happens in javascript code.
@@ -180,5 +195,20 @@ class Record extends OriginalRecord
         $html = $this->view->render($template);
         $this->contextHelper->restore($oldContext);
         return trim($html);
+    }
+
+    /**
+     * Checks if the record has related non-articles and the respective tab will be shown.
+     *
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function hasNonArticleTab() {
+        if($this->nonArticleCollection == null) {
+            return false;
+        }
+
+        return $this->nonArticleCollection->getResults()->getResultTotal() > 0;
     }
 }

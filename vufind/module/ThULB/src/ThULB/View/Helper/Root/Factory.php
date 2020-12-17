@@ -44,7 +44,8 @@ class Factory
     public static function getRecord(ServiceManager $sm)
     {
         $helper = new Record(
-            $sm->get('VuFind\Config')->get('config')
+            $sm->get('VuFind\Config')->get('config'),
+            $sm->get(\VuFind\RecordTab\PluginManager::class)->get(\ThULB\RecordTab\NonArticleCollectionList::class)
         );
         $helper->setCoverRouter(
             $sm->get('VuFind\Cover\Router')

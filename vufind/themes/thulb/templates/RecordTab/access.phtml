@@ -285,6 +285,6 @@
   </table>
 <?php endif; ?>
 
-<?php if($this->driver->isFormat('Journal')): ?>
+<?php if($this->driver->isFormat('Journal') && $this->record($this->driver)->hasNonArticleTab()): ?>
     <?= $this->transEsc('see volumes tab for listing and ordering of volumes'); ?>
 <?php endif; ?>

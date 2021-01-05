@@ -30,6 +30,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use Laminas\View\Renderer\PhpRenderer;
 use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
@@ -200,15 +201,22 @@ class Record extends OriginalRecord
     /**
      * Checks if the record has related non-articles and the respective tab will be shown.
      *
+     * @param PhpRenderer $renderer
      * @return bool
      *
      * @throws \Exception
      */
-    public function hasNonArticleTab() {
+    public function hasNonArticleTab(PhpRenderer $renderer) {
+        // journal request feature activated and order link shown?
+        if($renderer->permission()->allowDisplay('access.JournalRequest') &&
+                $this->driver->isFormat('Journal') && $this->driver->isInArchive()) {
+            return true;
+        }
+
+        // has non-articles?
         if($this->nonArticleCollection == null) {
             return false;
         }
-
         return $this->nonArticleCollection->getResults()->getResultTotal() > 0;
     }
 }

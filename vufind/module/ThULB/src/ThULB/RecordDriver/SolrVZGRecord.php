@@ -1486,7 +1486,8 @@ class SolrVZGRecord extends SolrMarc
     public function getURLs()
     {
         $retVal = [];
-        
+        $unknownLicence = null;
+
         $urls = $this->getMarcRecord()->getFields('856');
         foreach ($urls as $url) {
             $address = $url->getSubfield('u');
@@ -1496,20 +1497,25 @@ class SolrVZGRecord extends SolrMarc
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
-                if($lowerDescription == 'volltext') {
-                    if($licence = $url->getSubfield('z')) {
-                        $description .= ' (' . $licence->getData() . ')';
-                        $lowerDescription = strtolower($description);
-                    }
-                }
-
                 if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover'])) {
                     $retVal[$lowerDescription] = [
                         'url' => $address,
                         'desc' => $description
                     ];
                 }
-            }  
+            }
+            elseif(!$unknownLicence && $address && $licence = $url->getSubfield('z')) {
+                if(strtolower($licence->getData()) == 'kostenfrei') {
+                    $unknownLicence = [
+                        'url' => $address,
+                        'desc' => 'Volltext'
+                    ];
+                }
+            }
+        }
+
+        if($unknownLicence && !isset($retVal['volltext'])) {
+            $retVal['volltext'] = $unknownLicence;
         }
 
         return $retVal;

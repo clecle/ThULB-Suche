@@ -1493,13 +1493,12 @@ class SolrVZGRecord extends SolrMarc
             $address = $url->getSubfield('u');
             $description = $url->getSubfield('3');
             if ($address && $description) {
-                $address = $address->getData();
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
                 if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover'])) {
                     $retVal[$lowerDescription] = [
-                        'url' => $address,
+                        'url' => $address->getData(),
                         'desc' => $description
                     ];
                 }
@@ -1507,7 +1506,7 @@ class SolrVZGRecord extends SolrMarc
             elseif(!$unknownLicence && $address && $licence = $url->getSubfield('z')) {
                 if(strtolower($licence->getData()) == 'kostenfrei') {
                     $unknownLicence = [
-                        'url' => $address,
+                        'url' => $address->getData(),
                         'desc' => 'Volltext'
                     ];
                 }

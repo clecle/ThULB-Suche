@@ -1496,6 +1496,10 @@ class SolrVZGRecord extends SolrMarc
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
+                if($this->isFormat('eBook|eJournal', true) && $lowerDescription == 'volltext') {
+                    continue;
+                }
+
                 if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover'])) {
                     $retVal[$lowerDescription] = [
                         'url' => $address->getData(),

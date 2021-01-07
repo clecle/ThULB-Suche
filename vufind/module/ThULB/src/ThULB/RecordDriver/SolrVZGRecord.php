@@ -1503,7 +1503,7 @@ class SolrVZGRecord extends SolrMarc
                     ];
                 }
             }
-            elseif($this->isFormat('electronic article') && !$unknownLicence && $address
+            elseif($this->isFormat('electronic Article') && !$unknownLicence && $address
                     && $licence = $url->getSubfield('z')) {
                 if(strtolower($licence->getData()) == 'kostenfrei') {
                     $unknownLicence = [

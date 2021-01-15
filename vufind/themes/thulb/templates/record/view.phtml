@@ -17,8 +17,8 @@
   }
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li>' . $this->searchMemory()->getLastSearchLink($this->transEsc('Search results'), '', '</li> ') .
-                                 '<li class="active">' . $this->recordLink()->getBreadcrumb($this->driver) . '</li> ';
+  $this->layout()->breadcrumbs = $this->searchMemory()
+              ->getLastSearchLink('<span>' . $this->transEsc('Search results') . '</span>', '<li>', '</li>');
   $this->layout()->title = $this->driver->getShortTitle();
 
   $this->layout()->ignoreHiddenFiltersInRequest = true;
@@ -104,7 +104,6 @@
                 $tab_classes[] = 'active';
               }
               $tab_classes[] = 'initiallyActive';
-              $this->layout()->breadcrumbs .= '<li class="active">' . $this->transEsc($desc) . '</li>';
               $activeTabObj = $obj;
             }
             if (!$obj->isVisible()) { $tab_classes[] = 'hidden'; }

@@ -108,6 +108,29 @@
               <strong><?= $this->transEsc('sort_callnumber')?>:</strong> <?= $this->escapeHtml($ilsDetails['callnumber'])?>
               <br />
             <?php endif; ?>
+
+            <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
+             value to display... */ ?>
+            <?php $pickupDisplay = ''; ?>
+            <?php $pickupTranslate = false; ?>
+            <?php if (isset($ilsDetails['location'])): ?>
+              <?php if ($this->pickup): ?>
+                <?php foreach ($this->pickup as $library): ?>
+                  <?php if ($library['locationID'] == $ilsDetails['location']): ?>
+                    <?php $pickupDisplay = $library['locationDisplay']; ?>
+                    <?php $pickupTranslate = true; ?>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              <?php endif; ?>
+              <?php if (empty($pickupDisplay)): ?>
+                <?php $pickupDisplay = $ilsDetails['location']; ?>
+              <?php endif; ?>
+            <?php endif; ?>
+            <?php if (!empty($pickupDisplay)): ?>
+              <strong><?= $this->transEsc('pick_up_location') ?>:</strong>
+                <?= $pickupTranslate ? $this->transEscWithPrefix('location_', $pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
+              <br />
+            <?php endif; ?>
             
             <?php if (isset($ilsDetails['renew']) && $ilsDetails['renew'] > 0): ?>
               <strong><?= $this->transEsc('Renewed')?>:</strong> <?= $this->transEsc($ilsDetails['renew'])?>
@@ -129,10 +152,10 @@
               <?php if (isset($renewDetails['success']) && $renewDetails['success']): ?>
                 <?php $showStatus = false; ?>
                 <strong><?= $this->transEsc('Due Date')?>: <?= $this->escapeHtml($renewDetails['new_date'])?></strong> <?php if (isset($renewDetails['new_time'])): ?><?= $this->escapeHtml($renewDetails['new_time'])?><?php endif; ?>
-                <div class="alert alert-success"><?= $this->transEsc('renew_success')?></div><br />
+                <div class="alert alert-success"><?= $this->transEsc('renew_success')?></div>
               <?php else: ?>
                 <strong><?= $this->transEsc('Due Date')?>: <?= $this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?></strong><?= $this->escapeHtml($ilsDetails['dueTime'])?><?php endif; ?>
-                <div class="alert alert-danger"><?= $this->transEsc('renew_fail')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?= $this->escapeHtml($renewDetails['sysMessage'])?><?php endif; ?></div><br />
+                <div class="alert alert-danger"><?= $this->transEsc('renew_fail')?><?php if (isset($renewDetails['sysMessage'])): ?>: <?= $this->escapeHtml($renewDetails['sysMessage'])?><?php endif; ?></div>
               <?php endif; ?>
             <?php else: ?>
               <strong><?= $this->transEsc('Due Date')?>: <?= $this->escapeHtml($ilsDetails['duedate'])?><?php if (isset($ilsDetails['dueTime'])): ?></strong><?= $this->escapeHtml($ilsDetails['dueTime'])?><?php endif; ?>
@@ -145,47 +168,24 @@
                 <br />
               <?php endif; ?>
             <?php endif; ?>
-            
-            <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
-               value to display... */ ?>
-            <?php $pickupDisplay = ''; ?>
-            <?php $pickupTranslate = false; ?>
-            <?php if (isset($ilsDetails['location'])): ?>
-              <?php if ($this->pickup): ?>
-                <?php foreach ($this->pickup as $library): ?>
-                  <?php if ($library['locationID'] == $ilsDetails['location']): ?>
-                    <?php $pickupDisplay = $library['locationDisplay']; ?>
-                    <?php $pickupTranslate = true; ?>
-                  <?php endif; ?>
-                <?php endforeach; ?>
-              <?php endif; ?>
-              <?php if (empty($pickupDisplay)): ?>
-                <?php $pickupDisplay = $ilsDetails['location']; ?>
-              <?php endif; ?>
-            <?php endif; ?>
-            <?php if (!empty($pickupDisplay)): ?>
-              <strong><?= $this->transEsc('pick_up_location') ?>:</strong>
-              <?= $pickupTranslate ? $this->transEscWithPrefix('location_', $pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
-              <br />
-            <?php endif; ?>
-            
+
             <?php if (!isset($ilsDetails['renewable']) || !$ilsDetails['renewable']) : ?>
-                <?php if (strpos($ilsDetails['callnumber'] ?? '', 'EDV:Laptop') !== false): ?>
-                  <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
-                  <br />
-                <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
-                  <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>
-                  <br />
-                <?php elseif (isset($ilsDetails['queue']) && $ilsDetails['queue'] > 0): ?>
-                  <span class="text-danger"><?= $this->transEsc('No renewal bacause of reservations')?></span>
-                  <br />
-                <?php elseif (isset($ilsDetails['renew']) && $ilsDetails['renew'] > 2): ?>
-                  <span class="text-danger"><?= $this->transEsc('Maximum number of renewals reached')?></span>
-                  <br />
-                <?php else: ?>
-                  <span class="text-danger"><?= $this->transEsc('Renewal not possible')?></span>
-                  <br />
-                <?php endif; ?>
+              <?php if (strpos($ilsDetails['callnumber'] ?? '', 'EDV:Laptop') !== false): ?>
+                <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
+                <br />
+              <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
+                <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>
+                <br />
+              <?php elseif (isset($ilsDetails['queue']) && $ilsDetails['queue'] > 0): ?>
+                <span class="text-danger"><?= $this->transEsc('No renewal bacause of reservations')?></span>
+                <br />
+              <?php elseif (isset($ilsDetails['renew']) && $ilsDetails['renew'] > 2): ?>
+                <span class="text-danger"><?= $this->transEsc('Maximum number of renewals reached')?></span>
+                <br />
+              <?php else: ?>
+                <span class="text-danger"><?= $this->transEsc('Renewal not possible')?></span>
+                <br />
+              <?php endif; ?>
             <?php endif; ?>
 
             <?php if ($showStatus && isset($ilsDetails['message']) && !empty($ilsDetails['message'])): ?>

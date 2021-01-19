@@ -4,7 +4,7 @@
 
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' .  $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-    . '<li class="active">' . $this->transEsc('History') . '</li>';
+    . '<li class="active">' . $this->transEsc('Search History') . '</li>';
 
   $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enabled';
 ?>

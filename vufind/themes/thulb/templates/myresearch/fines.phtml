@@ -1,9 +1,9 @@
 <?php
     // Set up page title:
-    $this->headTitle($this->translate('My Fines'));
+    $this->headTitle($this->translate('Your Fines'));
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Fines') . '</li>';
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Your Fines') . '</li>';
 ?>
 <div class="<?= $this->layoutClass('mainbody')?>">
   <h2><?= $this->transEsc('Your Fines')?></h2>

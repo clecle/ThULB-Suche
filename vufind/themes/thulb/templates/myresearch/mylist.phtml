@@ -3,11 +3,11 @@
   $list = $this->results->getListObject();
 
   // Set up page title:
-  $this->headTitle(isset($list) ? $list->title : $this->translate('Favorites'));
+  $this->headTitle($currPage = isset($list) ? $list->title : $this->translate('Favorites'));
 
   // Set up breadcrumbs:
-  $currPage = isset($list) ? 'List' : 'Favorites';
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+//  $currPage = isset($list) ? 'Favorite list' : $this->transEsc('Favorites');
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $currPage . '</li>';
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile("check_item_statuses.js");

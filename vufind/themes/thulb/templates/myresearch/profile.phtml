@@ -1,9 +1,9 @@
 <?php
     // Set up page title:
-    $this->headTitle($this->translate('My Profile'));
+    $this->headTitle($this->translate('Your Profile'));
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Your Profile') . '</li>';
 
     // Only display home library form if we have multiple pickup locations:
     $showHomeLibForm = (isset($this->pickup) && count($this->pickup) > 1);

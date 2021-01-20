@@ -1625,23 +1625,47 @@ class SolrVZGRecord extends SolrMarc
      * Checks, if there are copies in archives of the ThULB.
      *
      * @return bool
-     *
-     * @throws File_MARC_Exception
      */
     public function isInArchive() {
         $archiveCodes = array_keys($this->departmentConfig->DepartmentEmails->toArray());
+        $holdingsLocations = $this->getHoldingsLocations();
 
-        $conditions = array(['subfield' => '2', 'operator' => '==', 'value' => '31']);
-        $recordArchiveCodes = $this->getFormattedData(['980' => ['f']], ['980' => '980f'], $conditions);
-        $recordArchiveCodes = array_unique($recordArchiveCodes);
-
-        foreach($recordArchiveCodes as $code) {
-            if(in_array($code, $archiveCodes)) {
+        foreach($holdingsLocations as $location) {
+            if(in_array($location['departmentId'], $archiveCodes)) {
                 return true;
             }
         }
 
         return false;
+    }
+
+    /**
+     * Get locations of holdings. Locations are gathered from DAIA.
+     * Return format:
+     *   array (
+     *     array (
+     *       'departmentId' => id,
+     *       'desc' => description
+     *     ),
+     *     ...
+     *   )
+     *
+     * @return array
+     */
+    protected function getHoldingsLocations() {
+        $locations = array();
+        $holdings = $this->getHoldings();
+
+        foreach ($holdings['holdings'] as $holding) {
+            foreach ($holding['items'] as $item) {
+                $locations[] = array(
+                    'departmentId' => $item['departmentId'],
+                    'desc' => $item['location']
+                );
+            }
+        }
+
+        return $locations;
     }
 
     /**

@@ -12,7 +12,7 @@
   <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
 
   <?php if (empty($this->fines)): ?>
-    <?= $this->transEsc('You do not have any fines')?>.
+    <?= $this->transEsc('You do not have any fines')?>
   <?php else: ?>
     <table class="table table-striped" summary="<?= $this->transEsc('Your Fines')?>">
     <tr>

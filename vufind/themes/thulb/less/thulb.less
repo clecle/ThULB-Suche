@@ -1157,6 +1157,13 @@ a.external-link:after,
 
 .breadcrumb {
   padding: 0;
+  display: flex;
+
+  & > li + li:before {
+    padding: 0 8px;
+    color: #ccc;
+    content: "/";
+  }
 
   a {
     &:extend(.flex-center, .center-text);

@@ -1492,6 +1492,11 @@ class SolrVZGRecord extends SolrMarc
         foreach ($urls as $url) {
             $address = $url->getSubfield('u');
             $description = $url->getSubfield('3');
+
+            if(!$description) {
+                $description = $url->getSubfield('y');
+            }
+
             if ($address && $description) {
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);

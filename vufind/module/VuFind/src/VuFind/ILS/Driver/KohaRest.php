@@ -32,6 +32,7 @@ namespace VuFind\ILS\Driver;
 
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\View\Helper\Root\SafeMoneyFormat;
 
 /**
  * VuFind Driver for Koha, using REST API
@@ -79,6 +80,13 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      * @var Callable
      */
     protected $sessionFactory;
+
+    /**
+     * Money formatting view helper
+     *
+     * @var SafeMoneyFormat
+     */
+    protected $safeMoneyFormat;
 
     /**
      * Session cache
@@ -180,15 +188,17 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Constructor
      *
-     * @param \VuFind\Date\Converter $dateConverter  Date converter object
-     * @param Callable               $sessionFactory Factory function returning
+     * @param \VuFind\Date\Converter $dateConverter   Date converter object
+     * @param Callable               $sessionFactory  Factory function returning
      * SessionContainer object
+     * @param SafeMoneyFormat        $safeMoneyFormat Money formatting view helper
      */
     public function __construct(\VuFind\Date\Converter $dateConverter,
-        $sessionFactory
+        $sessionFactory, SafeMoneyFormat $safeMoneyFormat
     ) {
         $this->dateConverter = $dateConverter;
         $this->sessionFactory = $sessionFactory;
+        $this->safeMoneyFormat = $safeMoneyFormat;
     }
 
     /**
@@ -397,7 +407,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
 
         $result = $this->makeRequest(
             [
-                'path' => 'v1/contrib/kohasuomi/patrons/validation',
+                'path' => 'v1/contrib/kohasuomi/auth/patrons/validation',
                 'json' => ['userid' => $username, 'password' => $password],
                 'method' => 'POST',
                 'errors' => true,
@@ -593,7 +603,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 'path' => 'v1/holds',
                 'query' => [
                     'patron_id' => $patron['id'],
-                    '_match' => 'exact'
+                    '_match' => 'exact',
+                    '_per_page' => -1
                 ]
             ]
         );
@@ -613,7 +624,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             }
             $holds[] = [
                 'id' => $entry['biblio_id'],
-                'item_id' => $entry['item_id'] ?? null,
+                'item_id' => $entry['hold_id'],
                 'requestId' => $entry['hold_id'],
                 'location' => $this->getLibraryName(
                     $entry['pickup_library_id'] ?? null
@@ -649,7 +660,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
     public function getCancelHoldDetails($holdDetails)
     {
         return $holdDetails['available'] || $holdDetails['in_transit'] ? ''
-            : $holdDetails['requestId'] . '|' . $holdDetails['item_id'];
+            : $holdDetails['requestId'];
     }
 
     /**
@@ -669,8 +680,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $count = 0;
         $response = [];
 
-        foreach ($details as $detail) {
-            list($holdId, $itemId) = explode('|', $detail, 2);
+        foreach ($details as $holdId) {
             $result = $this->makeRequest(
                 [
                     'path' => ['v1', 'holds', $holdId],
@@ -679,14 +689,14 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                 ]
             );
 
-            if (200 === $result['code']) {
-                $response[$itemId] = [
+            if (200 === $result['code'] || 204 === $result['code']) {
+                $response[$holdId] = [
                     'success' => true,
                     'status' => 'hold_cancel_success'
                 ];
                 ++$count;
             } else {
-                $response[$itemId] = [
+                $response[$holdId] = [
                     'success' => false,
                     'status' => 'hold_cancel_fail',
                     'sysMessage' => false
@@ -718,19 +728,18 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function getPickUpLocations($patron = false, $holdDetails = null)
     {
-        $bibId = $holdDetails['id'];
+        $bibId = $holdDetails['id'] ?? null;
         $itemId = $holdDetails['item_id'] ?? false;
-        $level = isset($holdDetails['level']) && !empty($holdDetails['level'])
-            ? $holdDetails['level'] : 'copy';
-        if ('copy' === $level && false === $itemId) {
-            return [];
-        }
         $requestType
             = array_key_exists('StorageRetrievalRequest', $holdDetails ?? [])
                 ? 'StorageRetrievalRequests' : 'Holds';
         $included = null;
-        if ('Holds' === $requestType) {
+        if ($bibId && 'Holds' === $requestType) {
             // Collect library codes that are to be included
+            $level = !empty($holdDetails['level']) ? $holdDetails['level'] : 'title';
+            if ('copy' === $level && false === $itemId) {
+                return [];
+            }
             if ('copy' === $level) {
                 $result = $this->makeRequest(
                     [
@@ -1523,7 +1532,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         // valid JSON that the caller can handle
         $decodedResult = json_decode($result, true);
         if (empty($request['errors']) && !$response->isSuccess()
-            && (null === $decodedResult || !empty($decodedResult['error']))
+            && (null === $decodedResult || !empty($decodedResult['error'])
+            || !empty($decodedResult['errors']))
         ) {
             $params = $method == 'GET'
                 ? $client->getRequest()->getQuery()->toString()
@@ -1680,8 +1690,8 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
                     $result['data']['hold_queue_length']]
                 )
             ];
-            if (!empty($item['itemnotes'])) {
-                $entry['item_notes'] = [$item['itemnotes']];
+            if (!empty($item['public_notes'])) {
+                $entry['item_notes'] = [$item['public_notes']];
             }
 
             if ($patron && $this->itemHoldAllowed($item)) {
@@ -1907,7 +1917,7 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
         $cacheKey = 'libraries';
         $libraries = $this->getCachedData($cacheKey);
         if (null === $libraries) {
-            $result = $this->makeRequest('v1/libraries');
+            $result = $this->makeRequest('v1/libraries?_per_page=-1');
             $libraries = [];
             foreach ($result['data'] as $library) {
                 $libraries[$library['library_id']] = $library;
@@ -1986,12 +1996,14 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getItem($id)
     {
-        static $cachedRecords = [];
-        if (!isset($cachedRecords[$id])) {
+        $cacheId = "items|$id";
+        $item = $this->getCachedData($cacheId);
+        if (null === $item) {
             $result = $this->makeRequest(['v1', 'items', $id]);
-            $cachedRecords[$id] = $result['data'] ?? false;
+            $item = $result['data'] ?? false;
+            $this->putCachedData($cacheId, $item, 300);
         }
-        return $cachedRecords[$id];
+        return $item ?: null;
     }
 
     /**
@@ -2347,9 +2359,15 @@ class KohaRest extends \VuFind\ILS\Driver\AbstractBase implements
             break;
         case 'Patron::Debt':
         case 'Patron::DebtGuarantees':
+            $count = isset($details['current_outstanding'])
+                ? $this->safeMoneyFormat->__invoke($details['current_outstanding'])
+                : '-';
+            $limit = isset($details['max_outstanding'])
+                ? $this->safeMoneyFormat->__invoke($details['max_outstanding'])
+                : '-';
             $params = [
-                '%%blockCount%%' => $details['current_outstanding'] ?? '-',
-                '%%blockLimit%%' => $details['max_outstanding'] ?? '-'
+                '%%blockCount%%' => $count,
+                '%%blockLimit%%' => $limit,
             ];
             break;
         }

@@ -185,7 +185,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         /* ZDB Id */
         $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');
         $spec->setLine('DOI', 'getCleanDOI');
-        $spec->setLine('Access', 'getAccessRestrictions');
+        $spec->setLine('Access Status', 'getAccessRestrictions');
         $spec->setTemplateLine('Legal information', 'getLegalInformation', 'data-legalInformation.phtml');
         $spec->setLine('Finding Aid', 'getFindingAids');
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');

@@ -1486,7 +1486,6 @@ class SolrVZGRecord extends SolrMarc
     public function getURLs()
     {
         $retVal = [];
-        $unknownLicence = null;
 
         $urls = $this->getMarcRecord()->getFields('856');
         foreach ($urls as $url) {
@@ -1501,30 +1500,13 @@ class SolrVZGRecord extends SolrMarc
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
-                if($this->isFormat('eBook|eJournal', true) && $lowerDescription == 'volltext') {
-                    continue;
-                }
-
-                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover'])) {
+                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover', 'volltext'])) {
                     $retVal[$lowerDescription] = [
                         'url' => $address->getData(),
                         'desc' => $description
                     ];
                 }
             }
-            elseif($this->isFormat('electronic Article') && !$unknownLicence && $address
-                    && $licence = $url->getSubfield('z')) {
-                if(strtolower($licence->getData()) == 'kostenfrei') {
-                    $unknownLicence = [
-                        'url' => $address->getData(),
-                        'desc' => 'Volltext'
-                    ];
-                }
-            }
-        }
-
-        if($unknownLicence && !isset($retVal['volltext'])) {
-            $retVal['volltext'] = $unknownLicence;
         }
 
         return $retVal;

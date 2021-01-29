@@ -1536,6 +1536,87 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Return an array of associative URL arrays with one or more of the following
+     * keys:
+     *
+     * <li>
+     *   <ul>desc: URL description text to display (optional)</ul>
+     *   <ul>url: fully-formed URL (required if 'route' is absent)</ul>
+     *   <ul>route: VuFind route to build URL with (required if 'url' is absent)</ul>
+     *   <ul>routeParams: Parameters for route (optional)</ul>
+     *   <ul>queryString: Query params to append after building route (optional)</ul>
+     * </li>
+     *
+     * @return bool|array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getFullTextURL()
+    {
+        if(!$this->isFormat('electronic Article')) {
+            return false;
+        }
+
+        $retVal = false;
+        $unknownLicence = null;
+        $basicConditions = array(
+            array(
+                'indicator' => 1,
+                'operator' => '==',
+                'value' => 4
+            ),
+            array(
+                'indicator' => 2,
+                'operator' => '==',
+                'value' => 0
+            ),
+            array(
+                'subfield' => 'u',
+                'operator' => '!=',
+                'value' => false
+            ),
+            array(
+                'subfield' => 'z',
+                'operator' => '==',
+                'value' => 'Kostenfrei'
+            )
+        );
+        $fulltextCondition = array(
+            array(
+                'subfield' => 3,
+                'operator' => '==',
+                'value' => 'Volltext'
+            )
+        );
+        $freeCondition = array(
+            array(
+                'subfield' => 3,
+                'operator' => '==',
+                'value' => false
+            )
+        );
+
+        $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $fulltextCondition));
+        if(is_array($urls) && count($urls) >= 1) {
+            $retVal = array(
+                'url' => $urls[0]->getSubfield('u')->getData(),
+                'desc' => $urls[0]->getSubfield('3')->getData()
+            );
+        }
+        else {
+            $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $freeCondition));
+            if(is_array($urls) && count($urls) >= 1) {
+                $retVal = array(
+                    'url' => $urls[0]->getSubfield('u')->getData(),
+                    'desc' => 'Volltext'
+                );
+            }
+        }
+
+        return $retVal;
+    }
+
+    /**
      * Get all fields that meet the specified conditions.
      * For conditions @see conditionMet
      *

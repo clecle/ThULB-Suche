@@ -19,6 +19,8 @@
     $offlineMode = 'ils-offline';
   }
 
+  $fullTextLink = $this->driver->tryMethod('getFullTextURL');
+
   $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>
 
@@ -57,7 +59,7 @@
 
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding) || !empty($doiHtml)): ?>
+<?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink): ?>
   <table class="table table-striped" summary="<?= $this->transEsc('Holdings details from')?> <?= $this->transEsc('Remote')?>">
     <?php if(!empty($doiHtml)): ?>
       <tr vocab="http://schema.org/" typeof="Offer">
@@ -68,6 +70,19 @@
           </dl>
         </td>
       </tr>
+    <?php endif; ?>
+    <?php if($fullTextLink): ?>
+        <tr vocab="http://schema.org/" typeof="Offer">
+          <td>
+            <dl class="dl-horizontal">
+              <dt>
+                <a href="<?php echo $fullTextLink['url']; ?>" target="_blank" class="btn btn-primary external-link">
+                  <?= $this->transEsc($fullTextLink['desc'] ?? 'Get full text'); ?>
+                </a>
+              </dt>
+            </dl>
+          </td>
+        </tr>
     <?php endif; ?>
     <?php if(!empty($onlineHolding)):
       foreach ($onlineHolding['items'] as $row): ?>

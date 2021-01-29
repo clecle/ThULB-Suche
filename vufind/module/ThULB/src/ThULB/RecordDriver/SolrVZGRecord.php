@@ -992,17 +992,23 @@ class SolrVZGRecord extends SolrMarc
         $valueToMatch = null;
         if(array_key_exists('subfield', $condition)) {
             $conditionSubField = $field->getSubfield($condition['subfield']);
-            $valueToMatch = $conditionSubField ? $conditionSubField->getData() : null;
+            $valueToMatch = $conditionSubField ? $conditionSubField->getData() : false;
         }
         if(array_key_exists('indicator', $condition)) {
             $valueToMatch = $field->getIndicator($condition['indicator']);
         }
 
         switch ($condition['operator']) {
+            case 'eq':
             case '==':
                 return $valueToMatch == $condition['value'];
+            case 'neq':
             case '!=':
                 return $valueToMatch != $condition['value'];
+            case 'in':
+                return is_array($condition['value']) && in_array($valueToMatch, $condition['value']);
+            case 'nin':
+                return is_array($condition['value']) && !in_array($valueToMatch, $condition['value']);
             default:
                 return false;
         }
@@ -1486,8 +1492,25 @@ class SolrVZGRecord extends SolrMarc
     public function getURLs()
     {
         $retVal = [];
+        $conditions = array(
+            array(
+                'indicator' => 1,
+                'operator' => '==',
+                'value' => 4
+            ),
+            array(
+                'indicator' => 2,
+                'operator' => '==',
+                'value' => 2
+            ),
+            array(
+                'subfield' => 3,
+                'operator' => 'nin',
+                'value' => ['Volltext', 'Cover']
+            )
+        );
 
-        $urls = $this->getMarcRecord()->getFields('856');
+        $urls = $this->getFieldsConditional('856', false, $conditions);
         foreach ($urls as $url) {
             $address = $url->getSubfield('u');
             $description = $url->getSubfield('3');
@@ -1500,7 +1523,7 @@ class SolrVZGRecord extends SolrMarc
                 $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
-                if(!isset($retVal[$lowerDescription]) && !in_array($lowerDescription, ['cover', 'volltext'])) {
+                if(!isset($retVal[$lowerDescription])) {
                     $retVal[$lowerDescription] = [
                         'url' => $address->getData(),
                         'desc' => $description
@@ -1510,6 +1533,36 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $retVal;
+    }
+
+    /**
+     * Get all fields that meet the specified conditions.
+     * For conditions @see conditionMet
+     *
+     * @param string $spec tag name
+     * @param bool   $prce if true, then match tag name as a regular expression
+     * @param array  $conditions
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    protected function getFieldsConditional($spec, $prce = false, $conditions = []) {
+        $retFields = [];
+        $fields = $this->getMarcRecord()->getFields($spec, $prce);
+
+        foreach ($fields as $field) {
+            // Check if all conditions are met
+            foreach($conditions as $condition) {
+                if(!$this->conditionMet($field, $condition)) {
+                    continue 2;
+                }
+            }
+
+            $retFields[] = $field;
+        }
+
+        return $retFields;
     }
 
     /**

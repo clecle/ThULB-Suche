@@ -37,4 +37,5 @@ class AccessStatusMetadataTest extends AbstractRecordDataFormatterTest
     protected $sheetName = 'Access status';
     protected $metadataKey = 'Access Status';
     protected $recordDriverFunction = 'getAccessRestrictions';
+    protected $template = 'data-accessStatus.phtml';
 }

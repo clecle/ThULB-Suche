@@ -32,19 +32,19 @@ namespace ThULBTest\View\Helper\Root;
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 
-class AuthorMetadataTest extends AbstractRecordDataFormatterTest
+class PersonMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = '1. Verfasser';
-    protected $metadataKey = 'Main Authors';
+    protected $sheetName = 'Personen';
+    protected $metadataKey = 'Persons';
     protected $recordDriverFunction = 'getDeduplicatedAuthors';
     protected $template = 'data-authors.phtml';
     protected $options = [
-                    'context' => [
-                        'type' => 'primary',
-                        'schemaLabel' => 'author',
-                        'requiredDataFields' => [
-                            ['name' => 'detail'],
-                            ['name' => 'role', 'prefix' => 'CreatorRoles::']
-                        ]]
-                ];
+        'context' => [
+            'types' => ['primary', 'secondary'],
+            'schemaLabel' => 'author',
+            'requiredDataFields' => [
+                ['name' => 'detail'],
+                ['name' => 'role', 'prefix' => 'CreatorRoles::']
+            ]]
+    ];
 }

@@ -71,14 +71,15 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Other Titles', 'getOtherTitles');
         $spec->setLine('PartInfo', 'getPartInfo');
         $spec->setTemplateLine(
-            'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
+            'Persons', 'getDeduplicatedAuthors', 'data-authors.phtml',
             [
                 'useCache' => true,
                 'labelFunction' => function ($data) {
-                    return count($data['primary']) > 1
-                        ? 'Main Authors' : 'Main Author';
+                    return (count($data['primary']) + count($data['secondary'])) > 1
+                        ? 'Persons' : 'Person';
                 },
-                'context' => ['type' => 'primary',
+                'context' => [
+                    'types' => ['primary', 'secondary'],
                     'schemaLabel' => 'author',
                     'requiredDataFields' => [
                         ['name' => 'detail'],
@@ -99,20 +100,6 @@ class RecordDataFormatterFactory extends OriginalFactory
                     'type' => 'corporate',
                     'schemaLabel' => 'creator',
                     'requiredDataFields' => [
-                        ['name' => 'role', 'prefix' => 'CreatorRoles::']
-                    ]
-                ],
-            ]
-        );
-        $spec->setTemplateLine(
-            'Other Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
-            [
-                'useCache' => true,
-                'context' => [
-                    'type' => 'secondary',
-                    'schemaLabel' => 'contributor',
-                    'requiredDataFields' => [
-                        ['name' => 'detail'],
                         ['name' => 'role', 'prefix' => 'CreatorRoles::']
                     ]
                 ],

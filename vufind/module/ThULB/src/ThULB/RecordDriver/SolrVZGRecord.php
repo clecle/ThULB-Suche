@@ -2298,6 +2298,26 @@ class SolrVZGRecord extends SolrMarc
         return $data;
     }
 
+    /**
+     * Get access restriction notes for the record.
+     *
+     * @return array
+     */
+    public function getAccessRestrictions()
+    {
+        $retValue = [];
+        $fields = $this->getFieldsConditional('506', false, [$this->createFieldCondition('subfield', 'a', '!=', false)]);
+        foreach ($fields as $field) {
+            $link = $field->getSubfield('u');
+            $retValue[] = array(
+                'desc' => $field->getSubfield('a')->getData(),
+                'link' => $link ? $link->getData() : false
+            );
+        }
+
+        return $retValue;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

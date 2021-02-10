@@ -1,0 +1,8 @@
+<?php if(!is_array($data)) $data = []; ?>
+<?php foreach ($data as $status): ?>
+  <?php if($status['link'] != false): ?>
+    <a href="<?= $status['link']; ?>" target="_blank"><?= $status['desc']; ?></a><br>
+  <?php else: ?>
+    <?= $status['desc']; ?><br>
+  <?php endif; ?>
+<?php endforeach; ?>

@@ -1,0 +1,14 @@
+<?php
+  if($this->driver instanceof \ThULB\RecordDriver\SolrVZGRecord &&
+      !$this->driver->isFormat('eBook|eJournal|electronic Article', true)) {
+    return;
+  }
+?>
+
+<?= $test = $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'fulltext.js', 'SET');?>
+
+<div class="flex-center center-text">
+  <img src="/themes/thulb/images/Ajax-loader.gif" class="doiLinkLoading">
+  <span class="fulltextLink" data-fulltext="<?= $this->escapeHtml($this->driver->getUniqueID()); ?>">
+  </span>
+</div>

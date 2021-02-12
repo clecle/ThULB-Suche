@@ -39,12 +39,14 @@ $config = array(
         'plugin_managers' => array(
             'ajaxhandler' => array(
                 'factories' => array(
+                    \ThULB\AjaxHandler\FulltextLookup::class => \ThULB\AjaxHandler\FulltextLookupFactory::class,
+                    \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                     'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
                     'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
                     \ThULB\AjaxHandler\VpnWarning::class => \ThULB\AjaxHandler\VpnWarningFactory::class,
-                    \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                 ),
                 'aliases' => array(
+                    'fulltextLookup' => \ThULB\AjaxHandler\FulltextLookup::class,
                     'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
                     'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,

@@ -105,7 +105,7 @@
             <?php if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
               $current = $urls['inhaltsverzeichnis']; ?>
               <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs external-link" target="new">
-                <?= ($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                <?= ($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->escapeHtml($current['desc'])?>
               </a>
             <?php endif; ?>
           <?php endif; ?>

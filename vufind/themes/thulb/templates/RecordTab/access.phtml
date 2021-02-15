@@ -77,7 +77,7 @@
             <dl class="dl-horizontal">
               <dt>
                 <a href="<?php echo $fullTextLink['url']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $this->transEsc($fullTextLink['desc'] ?? 'Get full text'); ?>
+                  <?= $this->transEsc($fullTextLink['desc'] ?? 'Full text online'); ?>
                 </a>
               </dt>
             </dl>
@@ -91,7 +91,7 @@
             <dl class="dl-horizontal">
               <dt>
                 <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Get full text'); ?>
+                  <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
                 </a>
               </dt>
               <dd>

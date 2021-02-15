@@ -130,7 +130,7 @@
                 if(!$this->driver->isCollection()):
                   foreach ($urls as $current): ?>
                     <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext external-link" target="new">
-                      <?= ($current['url'] == $current['desc']) ? $this->transEsc('Get full text') : $this->escapeHtml($current['desc'])?>
+                      <?= ($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->escapeHtml($current['desc'])?>
                     </a>
                   <?php endforeach; ?>
                   <br/>

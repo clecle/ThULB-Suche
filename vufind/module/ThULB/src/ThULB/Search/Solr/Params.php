@@ -83,55 +83,12 @@ class Params extends OriginalParams
         $facetSet = parent::getFacetSettings();
 
         if (!empty($this->facetConfig)) {
-
-            $facetSet = $this->checkForThbibFilter($facetSet);
-
             // add facet prefixes if declared
             $config = $this->configLoader->get($this->getOptions()->getFacetsIni());
             if ($config->FacetFieldPrefixes != null) {
                 foreach ($config->FacetFieldPrefixes as $field => $prefix) {
                     $facetSet["f.{$field}.facet.prefix"] = $prefix;
                 }
-            }
-        }
-
-        return $facetSet;
-    }
-
-    /**
-     * Removes the ThBIB facet from the facetSet if the ThBIB filter is not used in
-     * normal Filters or RawHiddenFilters.
-     *
-     * @param array $facetSet
-     *
-     * @return array
-     */
-    public function checkForThbibFilter($facetSet) {
-
-        $removeFilter = true;
-
-        $config = $this->configLoader->get($this->getOptions()->getFacetsIni());
-        $thbibFilter = str_replace('#:', '', $config->CheckboxFacets->Th_Biblio);
-
-        // Look for thbib filter in active filters
-        if(!empty($this->filterList)) {
-            foreach($this->filterList as $filter) {
-                if(in_array($thbibFilter, $filter)) {
-                    $removeFilter = false;
-                    break;
-                }
-            }
-        }
-
-        // Remove filter
-        if($removeFilter) {
-            $facetField = 'class_local_iln';
-            if($this->getFacetOperator($facetField) == 'OR') {
-                $facetField = "{!ex={$facetField}_filter}$facetField";
-            }
-            $index = array_keys($facetSet['field'], $facetField);
-            if(is_array($index) && count($index) > 0) {
-                unset($facetSet['field'][$index[0]]);
             }
         }
 

@@ -849,6 +849,7 @@ span.th-bibliography {
   height: 16px;
   border-radius: 3px;
   border: solid 1px #ccc;
+
 }
 
 span.service_loan,
@@ -1215,4 +1216,14 @@ form#renewals .alert {
 form#renewals span.text-danger {
   display: inline-block;
   margin-top: 15px;
+}
+
+div.modal-body .facet-tree-container {
+  border-top: 1px solid #ddd;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+}
+
+#more-narrowGroupHidden-class_local_iln {
+  display: block;
 }

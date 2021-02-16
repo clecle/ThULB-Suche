@@ -27,6 +27,7 @@
  */
 namespace ThULB\Controller;
 
+use ThULB\Search\Solr\HierarchicalFacetHelper;
 use VuFind\Controller\SearchController as OriginalController;
 use VuFind\Search\Results\PluginManager as ResultsPluginManager;
 use VuFindSearch\Backend\Exception\BackendException;
@@ -55,14 +56,26 @@ class SearchController extends OriginalController
     public function facetListAction() {
         $view = parent::facetListAction();
 
-        // only sort by display text if the list is sorted by index(alphabetically)
-        if($view->getVariable('sort') == 'index') {
-            $list = $view->getVariable('data');
+        $list = $view->getVariable('data');
+        $facet = $view->getVariable('facet');
+        $results = $view->getVariable('results');
+
+        if(in_array($facet, $results->getOptions()->getHierarchicalFacets())) {
+            // format list as hierarchical facet
+            $hierarchicalFacetHelper = $this->serviceLocator->get(HierarchicalFacetHelper::class);
+            $facetArray = $hierarchicalFacetHelper->buildFacetArray(
+                $facet, $list, $results->getUrlQuery(), true, $results
+            );
+            $list = $hierarchicalFacetHelper->flattenFacetHierarchy($facetArray);
+        }
+        elseif($view->getVariable('sort') == 'index') {
+            // only sort by display text if the list is sorted by index(alphabetically)
             usort($list, function ($facet1, $facet2) {
                 return strcasecmp($facet1['displayText'], $facet2['displayText']);
             });
-            $view->setVariable('data', $list);
         }
+
+        $view->setVariable('data', $list);
 
         return $view;
     }

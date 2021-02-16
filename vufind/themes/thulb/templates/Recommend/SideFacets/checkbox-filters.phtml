@@ -2,9 +2,6 @@
   <div class="facet">
     <?php $urlAddFilter = $results->getUrlQuery()->addFilter($current['filter']); ?>
     <?php $urlRemoveFilter = $results->getUrlQuery()->removeFilter($current['filter']); ?>
-    <?php if($current['desc'] == 'Th_Biblio'): ?>
-        <?php $urlRemoveFilter = $this->thulb_removeThBibFilter($urlRemoveFilter); ?>
-    <?php endif; ?>
     <a class="checkbox-filter<?php if (!($results->getResultTotal() > 0 || $current['selected'] || $current['alwaysVisible'])): ?> hidden<?php endif; ?>"
        href="<?= $current['selected'] ? $urlRemoveFilter : $urlAddFilter; ?>"
        data-facet="<?= $this->escapeHtmlAttr($current['filter']) ?>"
@@ -16,9 +13,6 @@
         <i class="fa fa-<?= $current['selected'] ? 'check-square-o' : 'square-o' ?>"></i>
         <?= $this->transEsc($current['desc']) ?>
       </span>
-      <?php if($current['desc'] == 'Th_Biblio'): ?>
-        <img alt="<?= $this->translate($current['desc'])?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" />
-      <?php endif; ?>
       <?php if (!$current['selected']): ?>
         <span class="badge avail-count"></span>
       <?php endif; ?>

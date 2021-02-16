@@ -1,13 +1,33 @@
+<?php $idAndClass = 'id="more-narrowGroupHidden-'.$this->escapeHtmlAttr($this->title).'" class="facet narrow-toggle"'; ?>
+<?php $moreClass  = 'narrowGroupHidden-'.$this->escapeHtmlAttr($this->title).' hidden'; ?>
 <?php $list  = $cluster['list'] ?? []; ?>
 <?php $facet = $facet ?? ''; ?>
+<?php $parentCount = 0; ?>
+<?php $isLightBox = $isLightBox ?? false; ?>
+<?php $idPrefix = $isLightBox ? 'lightbox-' : ''; ?>
 
 <ul class="facet-tree-container">
   <?php for ($i = 0; $i < count($list); $i++) : ?>
+    <?php if($parentCount++ === $this->facets_before_more): ?>
+      <?php /* MORE link */ ?>
+      <?php if ($facetLightbox = $this->options->getFacetListAction()): ?>
+        <?php $moreUrl = $this->url($facetLightbox) . $results->getUrlQuery()->getParams() . '&amp;facet=' . $this->title . '&amp;facetop=OR&amp;facetexclude=' . ($this->allowExclude ? 1 : 0); ?>
+      <?php else: ?>
+        <?php $moreUrl = '#'; ?>
+      <?php endif; ?>
+      <?php if (($this->showMoreInLightbox && $this->showMoreInLightbox !== 'more') && $facetLightbox): ?>
+        <a <?= $idAndClass ?> data-lightbox href="<?= $moreUrl ?>" rel="nofollow"><?= $this->transEsc('more')?> ...</a>
+      <?php else: ?>
+        <a <?= $idAndClass ?> href="<?= $moreUrl ?>" onclick="return moreFacets('narrowGroupHidden-<?= $this->escapeHtmlAttr($this->title) ?>')" rel="nofollow"><?= $this->transEsc('more')?> ...</a>
+      <?php endif; ?>
+      <?php break; ?>
+    <?php endif; ?>
+
     <li>
       <?php $parent = $list[$i]; ?>
       <div class="facet-tree-parent flex-center collapsed<?php if ($parent['isApplied']): ?> active<?php endif; ?>"
-           data-toggle="collapse" href="#<?php echo "$facet-parent-$i"; ?>">
-        <a href="<?php echo $parent['href']; ?>" class="facet flex-center">
+           data-toggle="collapse" href="#<?php echo "$idPrefix$facet-parent-$i"; ?>">
+        <a href="<?php echo $parent['href']; ?>" class="facet flex-center" <?= $isLightBox ? 'data-lightbox-ignore' : ''; ?>>
           <span class="main text" role="menuitem" title="<?php echo $parent['displayText']; ?>"><?php echo $parent['displayText']; ?></span>
           <?php if ($parent['isApplied']): ?>
             <span class="status"><i class="fa fa-check" aria-hidden="true"></i></span>
@@ -15,14 +35,14 @@
         </a>
       </div>
 
-      <ul id="<?php echo "$facet-parent-$i"; ?>" aria-expanded="false" class="collapsed collapse">
+      <ul id="<?php echo "$idPrefix$facet-parent-$i"; ?>" aria-expanded="false" class="collapsed collapse">
         <?php for ($i = $i + 1; $i < count($list); $i++) : ?>
           <?php $child = $list[$i]; ?>
           <?php if ($parent['value'] !== $child['parent']): ?>
             <?php $i--; break; ?>
           <?php endif; ?>
           <li role="treeitem" class="facet-tree-child">
-            <a href="<?php echo $child['href']; ?>" class="facet<?php if ($child['isApplied']): ?> active<?php endif; ?> flex-center">
+            <a href="<?php echo $child['href']; ?>" class="facet<?php if ($child['isApplied']): ?> active<?php endif; ?> flex-center" <?= $isLightBox ? 'data-lightbox-ignore' : ''; ?>>
               <span class="child text" role="menuitem" title="<?php echo $child['displayText']; ?>"><?php echo $child['displayText']; ?></span>
               <?php if ($child['isApplied']): ?>
                 <span class="status"><i class="fa fa-check" aria-hidden="true"></i></span>
@@ -36,3 +56,12 @@
     </li>
   <?php endfor; ?>
 </ul>
+
+<?php if($isLightBox): ?>
+<script>
+  // prevent parent facets from being selected at the second click only
+  $('div.modal-body div.facet-tree-parent a').on('click', function(event) {
+    event.stopImmediatePropagation();
+  });
+</script>
+<?php endif; ?>

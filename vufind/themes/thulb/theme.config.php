@@ -9,7 +9,6 @@ return array(
             'ThULB\View\Helper\Root\Record' => 'ThULB\View\Helper\Root\Factory::getRecord',
             'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
-            'ThULB\View\Helper\Root\RemoveThBibFilter' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             \ThULB\View\Helper\Root\DoiLinker::class => 'ThULB\View\Helper\Root\Factory::getDoiLinker',
         ],
         'aliases' => array (
@@ -18,7 +17,6 @@ return array(
             'recordLink' => 'ThULB\View\Helper\Root\RecordLink',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_session' => 'ThULB\View\Helper\Root\Session',
-            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ],

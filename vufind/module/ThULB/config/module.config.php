@@ -190,6 +190,8 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
+$routeGenerator->addDynamicRoute($config, 'DynMessages', 'DynMessages', 'home');
+$routeGenerator->addDynamicRoute($config, 'ReassignUserdata', 'ReassignUserdata', 'home');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
 
 return $config;

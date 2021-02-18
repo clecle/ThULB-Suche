@@ -6,6 +6,14 @@
   $flash = $this->flashmessages();
 ?>
 
+<nav class="breadcrumbs">
+  <div class="container">
+    <ul class="breadcrumb hidden-print">
+      <li><a href="<?=$this->url('admin')?>">Zurück zum Admin-Bereich</a></li>
+    </ul>
+  </div>
+</nav>
+
 <div class="tag-information">
   <span>Information:</span> Zeilenumbrüche die durch die Enter-Taste eingefügt wurden werden automatisch in HTML-Zeilenumbrüche umgewandelt.
   Zudem werden alle HTML-Tags, außer dem &lt;a&gt;-Tag, automatisch aus dem Text entfernt.

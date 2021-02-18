@@ -27,7 +27,7 @@ class ReassignUserdataController extends AbstractBase {
     public function __construct(ServiceLocatorInterface $sm) {
         parent::__construct($sm);
 
-        $this->accessPermission = 'access.ReassignUserdata';
+        $this->accessPermission = 'access.AdminModule';
 
         $this->dbTables = $sm->get('VuFind\Db\Table\PluginManager');
         $this->resultPluginManager = $sm->get(\VuFind\Search\Results\PluginManager::class);
@@ -59,6 +59,10 @@ class ReassignUserdataController extends AbstractBase {
     }
 
     public function homeAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         $checkData = [];
 
         if($this->getRequest()->isPost()) {
@@ -117,6 +121,10 @@ class ReassignUserdataController extends AbstractBase {
      * @return Response
      */
     public function saveAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         if($this->getRequest()->isPost()) {
             $oldUserNumber = $this->getRequest()->getPost('oldUserNumber');
             $newUserNumber = $this->getRequest()->getPost('newUserNumber');

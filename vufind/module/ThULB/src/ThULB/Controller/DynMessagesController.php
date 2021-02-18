@@ -32,7 +32,7 @@ class DynMessagesController extends AbstractBase
 
         $this->setLogger($sm->get('VuFind\Logger'));
 
-        $this->accessPermission = 'access.DynamicMessages';
+        $this->accessPermission = 'access.AdminModule';
 
         // File paths
         $this->_basePath = APPLICATION_PATH . '/local_thulb';
@@ -46,8 +46,11 @@ class DynMessagesController extends AbstractBase
         );
     }
 
-    public function homeAction()
-    {
+    public function homeAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         $german = $this->readLanguageFile($this->_iniGerman);
         $english = $this->readLanguageFile($this->_iniEnglish);
 
@@ -63,8 +66,11 @@ class DynMessagesController extends AbstractBase
      *
      * @return Response
      */
-    public function saveAction()
-    {
+    public function saveAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         $english = $this->params()->fromPost('english');
         $german = $this->params()->fromPost('german');
 

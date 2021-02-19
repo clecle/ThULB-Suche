@@ -6,5 +6,7 @@ use VuFind\Search\Summon\Options as OriginalOptions;
 
 class Options extends OriginalOptions
 {
-    // Only needed for overriding params
+    public function setResultLimit(int $limit) {
+        $this->resultLimit = $limit;
+    }
 }

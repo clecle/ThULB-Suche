@@ -20,16 +20,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Search_Solr
+ * @package  Search_Params
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace ThULB\Search\Solr;
+namespace ThULB\Search\Params;
 
 use Exception;
 use Interop\Container\ContainerInterface;
-use ThULB\Search\Params\ParamsFactory as OriginalParamsFactory;
+use VuFind\Http\PhpEnvironment\Request;
+use VuFind\Search\Params\ParamsFactory as OriginalParamsFactory;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
@@ -52,15 +53,14 @@ class ParamsFactory extends OriginalParamsFactory
     public function __invoke(ContainerInterface $container, $requestedName,
                              array $options = null
     ) {
-        if (!empty($options)) {
-            throw new Exception('Unexpected options sent to factory.');
+        $params = parent::__invoke($container, $requestedName, $options);
+
+        $lookfor = $container->get(Request::class)->getQuery('lookfor')
+            ?? $container->get(Request::class)->getPost('lookfor');
+
+        if(empty(trim($lookfor)) && is_callable([$params->getOptions(), 'setResultLimit'])) {
+            $params->getOptions()->setResultLimit(400);
         }
-
-        $hierarchicalHelper = $container
-            ->get(\VuFind\Search\Solr\HierarchicalFacetHelper::class);
-        $facetManager = $container
-            ->get(\ThULB\Search\Facets\PluginManager::class);
-
-        return parent::__invoke($container, $requestedName, [$hierarchicalHelper, $facetManager]);
+        return $params;
     }
 }

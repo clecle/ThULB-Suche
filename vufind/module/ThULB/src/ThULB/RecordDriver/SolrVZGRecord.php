@@ -1546,7 +1546,7 @@ class SolrVZGRecord extends SolrMarc
         $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $fulltextCondition));
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(
-                'url' => $urls[0]->getSubfield('u')->getData(),
+                'link' => $urls[0]->getSubfield('u')->getData(),
                 'desc' => $urls[0]->getSubfield('3')->getData()
             );
         }
@@ -1554,8 +1554,8 @@ class SolrVZGRecord extends SolrMarc
             $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $freeCondition));
             if(is_array($urls) && count($urls) >= 1) {
                 $retVal = array(
-                    'url' => $urls[0]->getSubfield('u')->getData(),
-                    'desc' => 'Volltext'
+                    'link' => $urls[0]->getSubfield('u')->getData(),
+                    'desc' => $this->translate('Full text online')
                 );
             }
         }

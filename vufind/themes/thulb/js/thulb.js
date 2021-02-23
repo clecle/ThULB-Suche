@@ -78,21 +78,27 @@ function setupThulbFacets() {
 }
 
 /**
+ * Show or hide the delete search icon and add 'with-delete-icon'-class to search field.
+ * @param show Boolean to show or hide the icon.
+ */
+function toggleDeleteSearchIcon(show) {
+    $('#searchForm_lookfor').toggleClass('with-delete-icon', show);
+    $('#search-delete-icon').toggle(show);
+}
+
+/**
  * Setup search box and icon to remove the content
  */
 function setupRemoveSearchText() {
     var search = $('#searchForm_lookfor');
-    var icon = $('#search-delete-icon');
-
-    if (search.val() !== '') {
-        icon.show();
-    }
-    icon.click(function () {
-        search.val('').focus();
-        icon.hide();
-    });
+    toggleDeleteSearchIcon(search.val() !== '');
     search.on('input', function () {
-        search.val() === '' ? icon.hide() : icon.show();
+        toggleDeleteSearchIcon(search.val() !== '');
+    });
+
+    $('#search-delete-icon').click(function () {
+        search.val('').focus();
+        toggleDeleteSearchIcon(false);
     });
 }
 

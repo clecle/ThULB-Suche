@@ -9,7 +9,5 @@ use VuFind\Search\Solr\Options as OriginalOptions;
  */
 class Options extends OriginalOptions
 {
-    public function setResultLimit(int $limit) {
-        $this->resultLimit = $limit;
-    }
+    // Needed to override VuFind\Search\Solr\Params
 }

@@ -29,7 +29,7 @@ namespace ThULB\Search\Solr;
 
 use Exception;
 use Interop\Container\ContainerInterface;
-use ThULB\Search\Params\ParamsFactory as OriginalParamsFactory;
+use VuFind\Search\Params\ParamsFactory as OriginalParamsFactory;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 

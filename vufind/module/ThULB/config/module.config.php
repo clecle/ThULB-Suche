@@ -140,7 +140,7 @@ $config = array(
             'search_params' => array(
                 'factories' => array(
                     'ThULB\Search\Solr\Params' => \ThULB\Search\Solr\ParamsFactory::class,
-                    'ThULB\Search\Summon\Params' => \ThULB\Search\Params\ParamsFactory::class
+                    'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
                 ),
                 'aliases' => array(
                     'solr' => 'ThULB\Search\Solr\Params',

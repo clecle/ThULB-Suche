@@ -1156,6 +1156,36 @@ a.external-link:after,
       width: 25%;
     }
   }
+
+  #searchForm > div {
+    flex-wrap: wrap !important;
+
+    & > * {
+      flex-grow: 1;
+      min-width: 250px;
+    }
+
+    #searchForm_type, button[type="submit"] {
+      width: 100%;
+    }
+
+    #searchForm_type {
+      border-radius: 4px 4px 0 0 !important;
+    }
+
+    button[type="submit"] {
+      border-radius: 0 0 4px 4px !important;
+    }
+  }
+}
+
+#searchForm > div {
+  display: flex;
+  flex-wrap: nowrap;
+
+  div.delete-icon {
+    flex-grow: 1;
+  }
 }
 
 .breadcrumb {

@@ -52,24 +52,20 @@
   <form id="searchForm" class="searchForm" method="get" action="<?= $this->url($basicSearch)?>" name="searchForm" autocomplete="off">
     <div class="col-lg-12 input-group">
     <?php $placeholder = $this->searchbox()->getPlaceholderText(isset($searchTabs['selected']['id']) ? $searchTabs['selected']['id'] : null); ?>
-      <div class="input-group-btn">
-        <?php if ($handlerCount > 1): ?>
-          <select id="searchForm_type" class="btn btn-default dropdown input-lg" type="button" name="type" data-native-menu="false">
-            <?php foreach ($handlers as $handler): ?>
-              <option value="<?= $this->escapeHtmlAttr($handler['value'])?>"<?= $handler['selected'] ? ' selected="selected"' : ''?>><?= $handler['indent'] ? '-- ' : ''?><?= $this->transEsc($handler['label'])?></option>
-            <?php endforeach; ?>
-          </select>
-        <?php elseif ($handlerCount == 1): ?>
-          <input type="hidden" name="type" value="<?= $this->escapeHtmlAttr($handlers[0]['value'])?>" />
-        <?php endif; ?>
-      </div>
+      <?php if ($handlerCount > 1): ?>
+        <select id="searchForm_type" class="btn btn-default dropdown input-lg" type="button" name="type" data-native-menu="false">
+          <?php foreach ($handlers as $handler): ?>
+            <option value="<?= $this->escapeHtmlAttr($handler['value'])?>"<?= $handler['selected'] ? ' selected="selected"' : ''?>><?= $handler['indent'] ? '-- ' : ''?><?= $this->transEsc($handler['label'])?></option>
+          <?php endforeach; ?>
+        </select>
+      <?php elseif ($handlerCount == 1): ?>
+        <input type="hidden" name="type" value="<?= $this->escapeHtmlAttr($handlers[0]['value'])?>" />
+      <?php endif; ?>
       <div class="delete-icon flex-center">
         <input id="searchForm_lookfor" class="searchForm_lookfor form-control input-lg search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete searcher:<?= $this->escapeHtmlAttr($this->searchClassId) ?><?php endif ?>" type="text" name="lookfor" value="<?= $this->escapeHtmlAttr($this->lookfor)?>" <?php if ($placeholder): ?> placeholder="<?= $this->transEsc($placeholder) ?>"<?php else: ?> placeholder="<?= $this->transEsc("searchform_placeholder")?>"<?php endif ?>/>
         <div class="flex-center"><i id="search-delete-icon" class="fa fa-times-circle"></i></div>
       </div>
-      <div class="input-group-btn">
-        <button title="<?= $this->transEsc("Find")?>" class="btn btn-primary input-lg" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
-      </div>
+      <button title="<?= $this->transEsc("Find")?>" class="btn btn-primary input-lg" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
 
     <?php if (false/*$advSearch*/): ?>

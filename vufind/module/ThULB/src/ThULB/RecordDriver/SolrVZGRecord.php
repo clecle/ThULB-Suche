@@ -1537,10 +1537,10 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('subfield', 'z', '==', 'Kostenfrei')
         );
         $fulltextCondition = array(
-            $this->createFieldCondition('subfield', '3', '!=', 'Volltext')
+            $this->createFieldCondition('subfield', '3', '==', 'Volltext')
         );
         $freeCondition = array(
-            $this->createFieldCondition('subfield', '3', '!=', false)
+            $this->createFieldCondition('subfield', '3', '==', false)
         );
 
         $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $fulltextCondition));

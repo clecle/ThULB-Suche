@@ -1547,7 +1547,7 @@ class SolrVZGRecord extends SolrMarc
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(
                 'link' => $urls[0]->getSubfield('u')->getData(),
-                'desc' => $urls[0]->getSubfield('3')->getData()
+                'desc' => $this->translate('Full text online')
             );
         }
         else {

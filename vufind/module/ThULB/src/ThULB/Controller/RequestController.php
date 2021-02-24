@@ -9,13 +9,13 @@ use VuFind\Exception\Mail as MailException;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Mailer\Mailer;
 use Whoops\Exception\ErrorException;
-use Zend\Config\Config;
-use Zend\Log\LoggerAwareInterface;
-use Zend\Mime\Message;
-use Zend\Mime\Mime;
-use Zend\Mime\Part;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\View\Model\ViewModel;
+use Laminas\Config\Config;
+use Laminas\Log\LoggerAwareInterface;
+use Laminas\Mime\Message;
+use Laminas\Mime\Mime;
+use Laminas\Mime\Part;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Model\ViewModel;
 
 class RequestController extends OriginalRecordController implements LoggerAwareInterface
 {

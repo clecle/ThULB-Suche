@@ -11,7 +11,7 @@
     $searchAction .= urlencode($this->baseUriExtra);
     $urlBase .= '&amp;baseUriExtra=' . urlencode($this->baseUriExtra);
   }
-  $isHierarchicalFacet = in_array($facet, $options->getHierarchicalFacets());
+  $isHierarchicalFacet = is_callable([$options, 'getHierarchicalFacets']) && in_array($facet, $options->getHierarchicalFacets());
   $this->headTitle($this->translate('facet_list_for', ['%%field%%' => $this->facetLabel]));
 ?>
 <h2><?=$this->transEsc($this->facetLabel) ?></h2>

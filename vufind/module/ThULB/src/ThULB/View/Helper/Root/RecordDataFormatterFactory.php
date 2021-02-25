@@ -164,7 +164,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Audience', 'getTargetAudienceNotes');
         $spec->setLine('Awards', 'getAwards');
         $spec->setLine('Production Credits', 'getProductionCredits');
-        $spec->setLine('Bibliography', 'getBibliographyNotes');
+        $spec->setLine('Notes', 'getBibliographyNotes');
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('Invalid ISBN', 'getInvalidISBNs');
         $spec->setLine('ISSN', 'getISSNs');

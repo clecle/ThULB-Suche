@@ -81,11 +81,11 @@
       </div>
       <div class="flex-group">
         <span class="form-description"><?= $this->transEsc('Note'); ?>:</span>
-        <span class="form-data"><textarea id="comment" class="form-control" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEsc('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
+        <span class="form-data"><textarea id="comment" class="form-control" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEscAttr('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
       </div>
     </div>
     <div class="form-submit">
-      <input type="submit" class="btn btn-primary" value="<?= $this->transEsc('Submit'); ?>">
+      <input type="submit" class="btn btn-primary" value="<?= $this->transEscAttr('Submit'); ?>">
     </div>
   </form>
 </div>

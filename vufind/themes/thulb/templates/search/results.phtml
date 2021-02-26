@@ -102,9 +102,9 @@
                 <div class="searchtools col-xs-12 hidden-print">
                   <!--strong><?= $this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
-                    <li><a title="<?= $this->transEsc('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
+                    <li><a title="<?= $this->transEscAttr('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
                     </li>
-                    <li><a title="<?= $this->transEsc('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
+                    <li><a title="<?= $this->transEscAttr('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
                       <i class="fa fa-envelope" aria-hidden="true"></i>
                     </a>
                     </li>
@@ -112,9 +112,9 @@
                       <?php if (is_numeric($this->results->getSearchId())): ?>
                         <li>
                         <?php if ($this->results->isSavedSearch()): ?>
-                          <a title="<?= $this->transEsc('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
+                          <a title="<?= $this->transEscAttr('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
                         <?php else: ?>
-                          <a title="<?= $this->transEsc('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
+                          <a title="<?= $this->transEscAttr('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
                         <?php endif; ?>
                         </li>
                       <?php endif; ?>
@@ -132,9 +132,9 @@
                 <div class="searchtools col-xs-12 hidden-print">
                   <!--strong><?= $this->transEsc('Search Tools')?>:</strong-->
                   <ul class="nav nav-pills pull-right">
-                    <li><a title="<?= $this->transEsc('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
+                    <li><a title="<?= $this->transEscAttr('Get RSS Feed')?>" href="<?= $this->results->getUrlQuery()->setViewParam('rss')?>" target="_blank"><i class="fa fa-rss" aria-hidden="true"></i></a>
                     </li>
-                    <li><a title="<?= $this->transEsc('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
+                    <li><a title="<?= $this->transEscAttr('Email this Search')?>" href="<?= $this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?= $this->escapeHtmlAttr($this->results->getSearchId())?>">
                       <i class="fa fa-envelope" aria-hidden="true"></i>
                     </a>
                     </li>
@@ -142,9 +142,9 @@
                       <?php if (is_numeric($this->results->getSearchId())): ?>
                         <li>
                         <?php if ($this->results->isSavedSearch()): ?>
-                          <a title="<?= $this->transEsc('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
+                          <a title="<?= $this->transEscAttr('save_search_remove')?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-remove" aria-hidden="true"></i> </a>
                         <?php else: ?>
-                          <a title="<?= $this->transEsc('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
+                          <a title="<?= $this->transEscAttr('save_search')?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($this->results->getSearchId())?>"><i class="fa fa-save" aria-hidden="true"></i></a>
                         <?php endif; ?>
                         </li>
                       <?php endif; ?>

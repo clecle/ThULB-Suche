@@ -52,7 +52,7 @@
 
 <?php // unused ??? ?>
 <?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
-  <a class="placehold" data-lightbox title="<?= $this->transEsc('request_place_text')?>" href="<?= $this->recordLink()->getRequestUrl($holdingTitleHold)?>">
+  <a class="placehold" data-lightbox title="<?= $this->transEscAttr('request_place_text')?>" href="<?= $this->recordLink()->getRequestUrl($holdingTitleHold)?>">
     <i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?= $this->transEsc('title_hold_place')?>
   </a>
 <?php endif; ?>
@@ -60,7 +60,7 @@
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
 <?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink): ?>
-  <table class="table table-striped" summary="<?= $this->transEsc('Holdings details from')?> <?= $this->transEsc('Remote')?>">
+  <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
     <?php if(!empty($doiHtml)): ?>
       <tr vocab="http://schema.org/" typeof="Offer">
         <td>
@@ -158,7 +158,7 @@
     <h3>
       <?= $this->thulb_holdingHelper()->getLocation($holding, true);?>
     </h3>
-    <table class="table table-striped" summary="<?= $this->transEsc('Holdings details from')?> <?= $this->transEsc($holding['location'])?>">
+    <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
       <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
         <tr>
             <?php // Translation for summary is a special case for backwards-compatibility ?>

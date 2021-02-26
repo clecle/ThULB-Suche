@@ -10,17 +10,17 @@
 ?>
 <ul class="nav nav nav-pills hidden-print pull-right" style="padding-top: 15px;">
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
-    <li><a title="<?= $this->transEsc('Cite this')?>" class="cite-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'Cite')?>" rel="nofollow"><i class="fa fa-quote-left" aria-hidden="true"></i></a></li>
+    <li><a title="<?= $this->transEscAttr('Cite this')?>" class="cite-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'Cite')?>" rel="nofollow"><i class="fa fa-quote-left" aria-hidden="true"></i></a></li>
   <?php endif; ?>
   <?php if ($this->accountCapabilities()->getSmsSetting() !== 'disabled'): ?>
-    <li><a title="<?= $this->transEsc('Text this')?>" class="sms-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'SMS')?>" rel="nofollow"><i class="fa fa-mobile" aria-hidden="true"></i></a></li>
+    <li><a title="<?= $this->transEscAttr('Text this')?>" class="sms-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'SMS')?>" rel="nofollow"><i class="fa fa-mobile" aria-hidden="true"></i></a></li>
   <?php endif; ?>
-  <li><a title="<?= $this->transEsc('Email this')?>" class="mail-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'Email')?>" rel="nofollow"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
+  <li><a title="<?= $this->transEscAttr('Email this')?>" class="mail-record" data-lightbox href="<?= $this->recordLink()->getActionUrl($this->driver, 'Email')?>" rel="nofollow"><i class="fa fa-envelope" aria-hidden="true"></i></a></li>
 
   <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
   <?php if(count($exportFormats) > 0): ?>
     <li class="dropdown">
-      <a title="<?= $this->transEsc('Export Record') ?>" class="export-toggle dropdown-toggle" data-toggle="dropdown" href="<?= $this->recordLink()->getActionUrl($this->driver, 'Export')?>" rel="nofollow"><i class="fa fa-share" aria-hidden="true"></i></a>
+      <a title="<?= $this->transEscAttr('Export Record') ?>" class="export-toggle dropdown-toggle" data-toggle="dropdown" href="<?= $this->recordLink()->getActionUrl($this->driver, 'Export')?>" rel="nofollow"><i class="fa fa-share" aria-hidden="true"></i></a>
       <ul class="dropdown-menu" role="menu">
         <?php foreach ($exportFormats as $exportFormat): ?>
           <li><a <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?= $this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?= $this->recordLink()->getActionUrl($this->driver, 'Export')?>?style=<?= $this->escapeHtmlAttr($exportFormat)?>" rel="nofollow"><?= $this->transEsc($this->export()->getLabelForFormat($exportFormat))?></a></li>

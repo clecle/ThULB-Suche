@@ -14,7 +14,7 @@
   <?php if (empty($this->fines)): ?>
     <?= $this->transEsc('You do not have any fines')?>
   <?php else: ?>
-    <table class="table table-striped" summary="<?= $this->transEsc('Your Fines')?>">
+    <table class="table table-striped" summary="<?= $this->transEscAttr('Your Fines')?>">
     <tr>
       <th colspan="4"><?= $this->transEsc('Title')?></th>
       <th><?= $this->transEsc('Fine')?></th>

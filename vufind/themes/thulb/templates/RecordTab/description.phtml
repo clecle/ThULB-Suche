@@ -5,7 +5,7 @@
     $formatter = $this->recordDataFormatter();
     $mainFields = $formatter->getData($driver, $formatter->getDefaults('description'));
 ?>
-<table class="table table-striped" summary="<?= $this->transEsc('Description')?>">
+<table class="table table-striped" summary="<?= $this->transEscAttr('Description')?>">
   <?php if (!empty($mainFields)): ?>
     <?php foreach ($mainFields as $key => $value): ?>
       <?php if ($key === 'DOI') : ?>

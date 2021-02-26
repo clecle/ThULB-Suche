@@ -7,7 +7,7 @@
       </label>
 
       <?php if (isset($this->showCartControls) && $this->showCartControls): ?>
-      <button id="<?= $this->idPrefix?>updateCart" type="submit" class="btn btn-thulb" name="add" title="<?= $this->transEsc('Add to Book Bag')?>">
+      <button id="<?= $this->idPrefix?>updateCart" type="submit" class="btn btn-thulb" name="add" title="<?= $this->transEscAttr('Add to Book Bag')?>">
         <i class="fa fa-clipboard"></i>
       </button>
       <?php endif; ?>

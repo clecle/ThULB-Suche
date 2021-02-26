@@ -2,7 +2,7 @@
 <?php if (count($searchTabs['tabs']) > 0): ?>
   <ul class="list-unstyled">
     <?php foreach ($searchTabs['tabs'] as $tab): ?>
-      <a <?= $tab['selected'] ? '' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?> title="<?= $this->transEsc($tab['label'].'_hover'); ?>">
+      <a <?= $tab['selected'] ? '' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?> title="<?= $this->transEscAttr($tab['label'].'_hover'); ?>">
         <li class="<?= $tab['selected'] ? 'show' : 'facetTAB'?>">
             <?= $this->transEsc($tab['label']); ?>
             <span class="pull-right badge<?= $tab['selected'] ? '' : ' resultNum' . $tab['id']?>">

@@ -10,7 +10,7 @@
     <?php foreach ($urls as $current): ?>
         <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank" class="btn btn-primary"><?= $this->escapeHtml($current['desc'])?></a>
         <?php if($current['desc'] === $this->transEsc('get_citation')): ?>
-            <a class="hint" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" data-trigger="focus hover" title="<?= $this->transEsc('explain_reference') ?>"><i class="fa fa-question-circle"></i></a>
+            <a class="hint" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window" data-trigger="focus hover" title="<?= $this->transEscAttr('explain_reference') ?>"><i class="fa fa-question-circle"></i></a>
         <?php endif; ?>
         <br />
     <?php endforeach; ?>

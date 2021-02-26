@@ -23,7 +23,7 @@
         <?php if (!isset($this->layout()->renderingError)): ?>
           <?php $cart = $this->cart(); if ($cart->isActive()): ?>
             <li id="cartSummary">
-              <a id="cartItems" data-lightbox title="<?= $this->transEsc('View Book Bag')?>" href="<?= $this->url('cart-home')?>">
+              <a id="cartItems" data-lightbox title="<?= $this->transEscAttr('View Book Bag')?>" href="<?= $this->url('cart-home')?>">
                 <?= $this->transEsc('Book Bag')?> <i class="fa fa-clipboard" aria-hidden="true"></i> <strong><?= count($cart->getItems())?></strong>
                 <span class="full<?= !$cart->isFull() ? ' hidden' : '' ?>">(<?= $this->transEsc('bookbag_full') ?>)</span>
               </a>
@@ -31,16 +31,16 @@
           <?php endif; ?>
           <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
             <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
-              <a title="<?= $this->transEsc("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>"><?= $this->transEsc("Useraccount")?> <i class="fa fa-user" aria-hidden="true"></i></a>
+              <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>"><?= $this->transEsc("Useraccount")?> <i class="fa fa-user" aria-hidden="true"></i></a>
             </li>
             <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
-              <a title="<?= $this->transEsc("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout"><?= $this->transEsc("Log Out")?> <i class="fa fa-sign-out" aria-hidden="true"></i></a>
+              <a title="<?= $this->transEscAttr("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout"><?= $this->transEsc("Log Out")?> <i class="fa fa-sign-out" aria-hidden="true"></i></a>
             </li>
             <li id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
               <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEsc("Institutional Login")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
               <?php else: ?>
-                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEsc("Userlogin")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
               <?php endif; ?>
             </li>
           <?php endif; ?>

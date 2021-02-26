@@ -62,10 +62,10 @@
         <input type="hidden" name="type" value="<?= $this->escapeHtmlAttr($handlers[0]['value'])?>" />
       <?php endif; ?>
       <div class="delete-icon flex-center">
-        <input id="searchForm_lookfor" class="searchForm_lookfor form-control input-lg search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete searcher:<?= $this->escapeHtmlAttr($this->searchClassId) ?><?php endif ?>" type="text" name="lookfor" value="<?= $this->escapeHtmlAttr($this->lookfor)?>" <?php if ($placeholder): ?> placeholder="<?= $this->transEsc($placeholder) ?>"<?php else: ?> placeholder="<?= $this->transEsc("searchform_placeholder")?>"<?php endif ?>/>
+        <input id="searchForm_lookfor" class="searchForm_lookfor form-control input-lg search-query<?php if($this->searchbox()->autocompleteEnabled($this->searchClassId)):?> autocomplete searcher:<?= $this->escapeHtmlAttr($this->searchClassId) ?><?php endif ?>" type="text" name="lookfor" value="<?= $this->escapeHtmlAttr($this->lookfor)?>" <?php if ($placeholder): ?> placeholder="<?= $this->transEscAttr($placeholder) ?>"<?php else: ?> placeholder="<?= $this->transEscAttr("searchform_placeholder")?>"<?php endif ?>/>
         <div class="flex-center"><i id="search-delete-icon" class="fa fa-times-circle"></i></div>
       </div>
-      <button title="<?= $this->transEsc("Find")?>" class="btn btn-primary input-lg" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+      <button title="<?= $this->transEscAttr("Find")?>" class="btn btn-primary input-lg" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
     </div>
 
     <?php if (false/*$advSearch*/): ?>

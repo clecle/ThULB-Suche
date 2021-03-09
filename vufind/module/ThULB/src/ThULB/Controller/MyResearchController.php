@@ -290,4 +290,22 @@ class MyResearchController extends OriginalController
 
         return parent::onDispatch($event);
     }
+
+    /**
+     * Send user's saved favorites from a particular list to the view
+     *
+     * @return mixed
+     */
+    public function mylistAction()
+    {
+        $this->flashMessenger()->addMessage(
+            array (
+                'html' => true,
+                'msg' => 'favorites_questions',
+                'tokens' => ['%%address%%' => $this->getConfig()->Site->email]
+            ), 'warning'
+        );
+
+        return parent::mylistAction();
+    }
 }

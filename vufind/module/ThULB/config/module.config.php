@@ -22,12 +22,14 @@ $config = array(
     ),
     'service_manager' => [
         'factories' => [
+            \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
+            \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
             'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
@@ -51,6 +53,15 @@ $config = array(
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
                     'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
                     \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
+                )
+            ),
+            'auth' => array(
+                'factories' => array(
+                    \ThULB\Auth\ILS::class => \VuFind\Auth\ILSFactory::class,
+                ),
+                'aliases' => array(
+                    'ils' => \ThULB\Auth\ILS::class,
+                    \VuFind\Auth\ILS::class => \ThULB\Auth\ILS::class,
                 )
             ),
             'content_covers' => array(

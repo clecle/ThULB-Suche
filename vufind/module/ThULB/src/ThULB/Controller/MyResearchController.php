@@ -43,6 +43,23 @@ class MyResearchController extends OriginalController
     const ID_URI_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
 
     /**
+     * Prepare and direct the home page where it needs to go
+     *
+     * @return mixed
+     */
+    public function homeAction() {
+        $return = parent::homeAction();
+        if($this->getAuthManager()->isFirstLogin()) {
+            $this->flashMessenger()->addMessage(
+                ['html' => true, 'msg' => 'first_login_message'],
+                'warning'
+            );
+        }
+
+        return $return;
+    }
+
+    /**
      * User login action -- clear any previous follow-up information prior to
      * triggering a login process. This is used for explicit login links within
      * the UI to differentiate them from contextual login links that are triggered

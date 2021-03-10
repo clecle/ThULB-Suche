@@ -1402,10 +1402,10 @@ class SolrVZGRecord extends SolrMarc
 
                 // Do we have IDs to link the field to
                 $secondaryFields = $this->getFieldsConditional('800|810|830', true, [
-                    $this->createFieldCondition('subfield', 'v', '==', $number),
+                    $this->createFieldCondition('subfield', 'v', '==', $number->getData()),
                     $this->createFieldCondition('subfield', 'w', '!=', false)
                 ]);
-                if(count($secondaryFields) > 1) {
+                if(count($secondaryFields) > 0) {
                     $rawId = $secondaryFields[0]->getSubfield('w')->getData();
                     if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                         $currentArray['id'] = substr($rawId, 8);

@@ -48,7 +48,7 @@ class ILS extends OriginalILS
      *
      * @var boolean
      */
-    protected $isFirstLogin = true;
+    protected $isFirstLogin = false;
 
     /**
      * Update the database using details from the ILS, then return the User object.

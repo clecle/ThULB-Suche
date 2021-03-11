@@ -315,13 +315,15 @@ class MyResearchController extends OriginalController
      */
     public function mylistAction()
     {
-        $this->flashMessenger()->addMessage(
-            array (
-                'html' => true,
-                'msg' => 'favorites_questions',
-                'tokens' => ['%%address%%' => $this->getConfig()->Site->email]
-            ), 'warning'
-        );
+        if($this->getAuthManager()->isLoggedIn()) {
+            $this->flashMessenger()->addMessage(
+                array(
+                    'html' => true,
+                    'msg' => 'favorites_questions',
+                    'tokens' => ['%%address%%' => $this->getConfig()->Site->email]
+                ), 'warning'
+            );
+        }
 
         return parent::mylistAction();
     }

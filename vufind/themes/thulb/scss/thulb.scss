@@ -1269,3 +1269,15 @@ div.modal-body .facet-tree-container {
 .ml-2 {
   margin-left: 10px !important;
 }
+
+form#newpassword .form-group.flex-center {
+  .control-label {
+    margin: 0;
+  }
+
+  .form-control-static {
+    min-height: unset;
+    padding: 0;
+    margin: 0 10px;
+  }
+}

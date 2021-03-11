@@ -882,4 +882,20 @@ class PAIA extends OriginalPAIA
 
         return $responseArray;
     }
+
+    /**
+     * Public Function which changes the password in the library system
+     * (not supported prior to VuFind 2.4)
+     *
+     * @param array $details Array with patron information, newPassword and
+     *                       oldPassword.
+     *
+     * @return array An array with patron information.
+     */
+    public function changePassword($details) {
+        $details = parent::changePassword($details);
+        $details['status'] = $this->translate($details['status']);
+
+        return $details;
+    }
 }

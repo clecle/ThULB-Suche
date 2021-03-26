@@ -51,7 +51,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
             // Create list with keys/internal values,
             foreach($this->tbClassification->TB_Classification_Groups as $groupKey => $groupValue) {
                 $this->filterValueList[$groupKey] = $this->getGroupInternalValue($groupKey);
-                foreach($this->tbClassification->$groupKey as $child) {
+                foreach($this->tbClassification->$groupKey ?? [] as $child) {
                     $this->filterValueList[$child] = $this->getChildInternalValue($child);
                 }
             }
@@ -91,12 +91,18 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
                 'count' => 0,
                 'operator' => $operator,
                 'isApplied' => $params->hasFilter("$fieldWithOperator:$groupKey"),
-                'children' => array()
+                'children' => array(),
+                'hasChildren' => false
             );
+
+            // Always show facet groups with defined values
+            if(isset($this->tbClassification->Group_Values->$groupKey)) {
+                $parentFacet['count'] = 1;
+            }
 
             // Create children facets
             $childFacetList = array();
-            foreach ($this->tbClassification->$groupKey as $child) {
+            foreach ($this->tbClassification->$groupKey ?? [] as $child) {
                 $internalValue = $this->filterValueList[$child];
                 if(!isset($data[$internalValue]) || $data[$internalValue] < 1) {
                     continue;
@@ -113,6 +119,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
                 );
 
                 $parentFacet['count'] += $data[$internalValue];
+                $parentFacet['hasChildren'] = true;
             }
             usort($childFacetList, [$this, 'compareTBChildFacets']);
 
@@ -164,9 +171,13 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      * @return string
      */
     private function getGroupInternalValue($group) {
-        if ($this->tbClassification) {
+        if ($this->tbClassification->Group_Values->$group ?? false) {
+            return $this->tbClassification->Group_Values->$group;
+        }
+
+        if ($this->tbClassification->$group ?? false) {
             $queryParts = array();
-            foreach($this->tbClassification->$group as $child) {
+            foreach ($this->tbClassification->$group ?? [] as $child) {
                 $queryParts[] = $this->getChildInternalValue($child);
             }
             return '("' . implode('" OR "', $queryParts) . '")';

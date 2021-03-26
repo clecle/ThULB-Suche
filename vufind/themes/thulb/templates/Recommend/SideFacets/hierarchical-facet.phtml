@@ -25,8 +25,8 @@
 
     <li>
       <?php $parent = $list[$i]; ?>
-      <div class="facet-tree-parent flex-center collapsed<?php if ($parent['isApplied']): ?> active<?php endif; ?>"
-           data-toggle="collapse" href="#<?php echo "$idPrefix$facet-parent-$i"; ?>">
+      <div class="facet-tree-parent flex-center<?php if($parent['hasChildren']): ?> collapsed<?php endif; ?><?php if ($parent['isApplied']): ?> active<?php endif; ?>"
+          <?php if($parent['hasChildren']): ?> data-toggle="collapse"<?php endif; ?> href="#<?php echo "$idPrefix$facet-parent-$i"; ?>">
         <a href="<?php echo $parent['href']; ?>" class="facet flex-center" <?= $isLightBox ? 'data-lightbox-ignore' : ''; ?>>
           <span class="main text" role="menuitem" title="<?php echo $parent['displayText']; ?>"><?php echo $parent['displayText']; ?></span>
           <?php if ($parent['isApplied']): ?>

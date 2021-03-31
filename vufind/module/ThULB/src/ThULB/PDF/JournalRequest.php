@@ -27,6 +27,7 @@ class JournalRequest extends FPDF
     protected $username;
     protected $volume;
     protected $year;
+    protected $orderedAt;
 
     // Description keys
     protected $descCallNumber = 'Call Number';
@@ -37,6 +38,8 @@ class JournalRequest extends FPDF
     protected $descTitle = 'Title';
     protected $descVolume = 'storage_retrieval_request_volume';
     protected $descYear = 'storage_retrieval_request_year';
+    protected $descUserNumber = "Benutzernr.";
+    protected $descOrderedAt = "bestellt am";
 
     protected const DEFAULT_FONT_SIZE = 10;
 
@@ -54,6 +57,8 @@ class JournalRequest extends FPDF
         parent::__construct($orientation, $unit, $size);
 
         $this->translator = $translator;
+
+        $this->orderedAt = date('d.m.Y');
     }
 
     /**
@@ -163,7 +168,8 @@ class JournalRequest extends FPDF
         $this->addHeadLine('Begleitzettel (freie Bestellbarkeit)', $x, $this->printBorder, $availableTextWidth, 16);
 
         $this->addText($this->descName,       $name,               $availableTextWidth, true);
-        $this->addText("Benutzernr.",         $this->username,     $availableTextWidth, true);
+        $this->addText($this->descUserNumber, $this->username,     $availableTextWidth, true);
+        $this->addText($this->descOrderedAt,  $this->orderedAt,    $availableTextWidth, true);
 
         $this->SetXY($x, $this->GetY() + 10);
 
@@ -194,7 +200,8 @@ class JournalRequest extends FPDF
         $this->addText($this->descCallNumber, $this->callNumber,   $availableTextWidth,
                       false, 'B', self::DEFAULT_FONT_SIZE + 2);
         $this->addText($this->descName,       $name,               $availableTextWidth);
-        $this->addText("Benutzernr.",         $this->username,     $availableTextWidth);
+        $this->addText($this->descUserNumber, $this->username,     $availableTextWidth);
+        $this->addText($this->descOrderedAt,  $this->orderedAt,    $availableTextWidth);
         $this->addText($this->descTitle,      $title,              $availableTextWidth);
         $this->addText($this->descYear,       $this->year,         $availableTextWidth);
         $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
@@ -217,13 +224,14 @@ class JournalRequest extends FPDF
         $this->addText($this->descYear,       $this->year,         $availableTextWidth);
         $this->addText($this->descVolume,     $this->volume,       $availableTextWidth);
         $this->addText($this->descIssue,      $this->issue,        $availableTextWidth);
+        $this->addText($this->descOrderedAt,  $this->orderedAt,    $availableTextWidth);
         $this->addText("bearbeitet am",       null,                $availableTextWidth);
 
         $this->SetXY($this->printBorder, $this->dinA4height - 60);
 
         $this->addText("Leihfrist",           null,                $availableTextWidth);
         $this->SetXY($this->GetX(), $this->GetY() + 5);
-        $this->addText("Benutzernr.",         $this->username,     $availableTextWidth);
+        $this->addText($this->descUserNumber, $this->username,     $availableTextWidth);
         $this->addText($this->descName,       $name,               $availableTextWidth,
                        false, 'B', self::DEFAULT_FONT_SIZE + 2);
     }

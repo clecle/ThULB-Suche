@@ -43,5 +43,17 @@ use VuFind\Exception\Auth as AuthException;
  */
 class ILS extends OriginalILS
 {
-
+    /**
+     * Verify that a password fulfills the password policy. Throws exception if
+     * the password is invalid.
+     *
+     * @param string $password Password to verify
+     *
+     * @return void
+     * @throws AuthException
+     */
+    public function validatePasswordAgainstPolicy($password) {
+        // Make function public
+        parent::validatePasswordAgainstPolicy($password);
+    }
 }

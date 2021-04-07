@@ -35,6 +35,8 @@ use VuFind\Controller\CartController as OriginalCartController;
  */
 class CartController extends OriginalCartController
 {
+    use ChangePasswordTrait;
+
     public function homeAction()
     {
         if($this->getCart()->isFull()) {

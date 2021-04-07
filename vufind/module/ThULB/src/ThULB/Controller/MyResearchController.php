@@ -26,6 +26,8 @@
  */
 
 namespace ThULB\Controller;
+
+use Laminas\View\Model\ViewModel;
 use VuFind\Controller\MyResearchController as OriginalController;
 use VuFind\RecordDriver\AbstractBase;
 use Laminas\Mvc\MvcEvent;
@@ -41,6 +43,10 @@ use Laminas\Paginator\Paginator;
 class MyResearchController extends OriginalController
 {
     const ID_URI_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
+
+    use ChangePasswordTrait {
+        onDispatch as public trait_onDispatch;
+    }
 
     /**
      * User login action -- clear any previous follow-up information prior to
@@ -288,7 +294,7 @@ class MyResearchController extends OriginalController
             return $this->redirect()->toRoute($routeName);
         }
 
-        return parent::onDispatch($event);
+        return $this->trait_onDispatch($event);
     }
 
     /**
@@ -309,5 +315,55 @@ class MyResearchController extends OriginalController
         }
 
         return parent::mylistAction();
+    }
+
+    /**
+     * Handling submission of a new password for a user.
+     *
+     * @return ViewModel
+     */
+    public function changePasswordAction() {
+        /* @var $view ViewModel */
+        $view =  parent::changePasswordAction();
+
+        if($this->getAuthManager()->isLoggedIn()) {
+            $pw = $this->getAuthManager()->getIdentity()->getCatPassword();
+            if (!$this->getAuthManager()->validatePasswordAgainstPolicy($pw)) {
+                $this->layout()->setVariable('showBreadcrumbs', false);
+                $this->layout()->setVariable('searchbox', false);
+                $view->setVariable('forced', true);
+
+                $this->flashMessenger()->addMessage('force new PW', 'error');
+            }
+        }
+
+        return $view;
+    }
+
+    /**
+     * Handling submission of a new password for a user.
+     *
+     * @return view
+     */
+    public function newPasswordAction()
+    {
+        $view = parent::newPasswordAction();
+
+        $fm = $this->flashMessenger();
+        if($fm->hasCurrentSuccessMessages()) {
+            $messages = $fm->getCurrentSuccessMessages();
+            $fm->clearCurrentMessagesFromNamespace('success');
+
+            foreach ($messages as $message) {
+                if(!is_array($message)) {
+                    $message = ['msg' => $message];
+                }
+
+                $message['dataset']['lightbox-ignore'] = true;
+                $fm->addSuccessMessage($message);
+            }
+        }
+
+        return $view;
     }
 }

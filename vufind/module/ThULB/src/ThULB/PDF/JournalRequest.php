@@ -2,10 +2,10 @@
 
 namespace ThULB\PDF;
 
-use FPDF;
+use tFPDF;
 use VuFind\View\Helper\Root\Translate;
 
-class JournalRequest extends FPDF
+class JournalRequest extends tFPDF
 {
     // All Dimensions in 'mm'
     protected $dinA4width = 210;
@@ -70,7 +70,10 @@ class JournalRequest extends FPDF
         $this->translator->getTranslator()->setLocale('de');
 
         $this->AddPage();
-        $this->SetFont('Arial', '', self::DEFAULT_FONT_SIZE);
+        $this->AddFont('DejaVu', '',  'DejaVuSansCondensed.ttf',true);
+        $this->AddFont('DejaVu', 'B', 'DejaVuSansCondensed-Bold.ttf',true);
+        $this->SetFont('DejaVu', '',  self::DEFAULT_FONT_SIZE);
+
         $this->SetMargins($this->printBorder, $this->printBorder);
         $this->SetAutoPageBreak(true, 0);
 
@@ -262,14 +265,14 @@ class JournalRequest extends FPDF
         $tmpFontStyle = $this->FontStyle;
 
         $this->SetFont($this->FontFamily, 'B');
-        $this->MultiCell($cellWidth, $this->FontSize + $spaceBetweenLines, utf8_decode($description));
+        $this->MultiCell($cellWidth, $this->FontSize + $spaceBetweenLines, $description);
         $this->SetXY(
             !$asTable ? $x : $x + $tableOffset,
             !$asTable ? $this->GetY() : $y
         );
 
         $this->SetFont($this->FontFamily, $textFontStyle, $textFontSize);
-        $this->MultiCell($cellWidth - $tableOffset, $this->FontSize + $spaceBetweenLines, utf8_decode($text), 0, 'L');
+        $this->MultiCell($cellWidth - $tableOffset, $this->FontSize + $spaceBetweenLines, $text, 0, 'L');
         $this->SetXY($x, $this->GetY());
 
         // restore font style and size
@@ -296,11 +299,17 @@ class JournalRequest extends FPDF
      */
     protected function shortenTextForWidth($string, $widthInMM, $wantedLines = 1) {
         // Base functionality taken from fpdf::MultiCell
-        $widthMax = ($widthInMM - 2 * $this->cMargin) * 1000 / $this->FontSize;
+        $widthMax = ($widthInMM - 2 * $this->cMargin);
         $charWidth = &$this->CurrentFont['cw'];
         $result = "";
 
-        $numberBytes = strlen($string);
+        // Get string length
+        $string = str_replace("\r", '', (string) $string);
+        $numberBytes = mb_strlen($string, 'utf-8');
+        while($numberBytes > 0 && mb_substr($string, $numberBytes - 1, 1, 'utf-8') == "\n") {
+            $numberBytes--;
+        }
+
         $indexSeparator = -1;
         $indexString = 0;
         $j = 0;
@@ -313,13 +322,14 @@ class JournalRequest extends FPDF
             }
 
             // Get next character
-            $char = $string[$indexString];
+            $char = mb_substr($string, $indexString, 1, 'UTF-8');
             if($numberLines < $wantedLines && $char == ' ') {
                 $indexSeparator = $indexString;
                 $numberSeparators++;
             }
 
-            $length += $charWidth[$char];
+            $length += $this->GetStringWidth($char);
+
             if($length > $widthMax) {
                 // Automatic line break
                 if($indexSeparator == -1) {

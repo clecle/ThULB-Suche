@@ -253,6 +253,10 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * @return string|null
      */
     protected function getEmailForCallnumber($callnumber) {
+        if(APPLICATION_ENV == 'development' || APPLICATION_ENV == 'testing') {
+            return $this->departmentsConfig->JournalRequestTest->email;
+        }
+
         foreach($this->getInventoryForRequest() as $archive) {
             if ($archive['callnumber'] == $callnumber) {
                 if (isset($this->departmentsConfig->DepartmentEmails[$archive['departmentId']])) {

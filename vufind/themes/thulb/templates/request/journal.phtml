@@ -40,11 +40,11 @@
               </tr>
             </thead>
             <tbody>
-            <?php foreach ($inventory as $item): ?>
-              <?php $checked = $item['callnumber'] == $formData['callnumber'] ?>
+            <?php foreach ($inventory as $itemIndex => $item): ?>
+              <?php $checked = $itemIndex == $formData['item'] ?>
               <tr>
                 <td>
-                  <input type="radio" name="callnumber" value="<?= $item['callnumber']; ?>"<?= $checked ? ' checked="checked"' : ''; ?> />
+                  <input type="radio" name="item" value="<?= $itemIndex; ?>"<?= $checked ? ' checked="checked"' : ''; ?> />
                 </td>
                 <td class="visible-xs">
                   <strong><?= $this->transEsc('Location'); ?></strong>

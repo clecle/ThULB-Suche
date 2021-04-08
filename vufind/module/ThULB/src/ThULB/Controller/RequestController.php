@@ -68,9 +68,10 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
         if ($this->getRequest()->isPost() && $this->validateFormData($formData)) {
             $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
-            $email = $this->getEmailForCallnumber($formData['callnumber']);
-            $borrowCounter = $this->getBorrowCounterForCallnumber($formData['callnumber']);
-            $locationUrl = $this->getLocationUrlForCallnumber($formData['callnumber']);
+            $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
+            $email = $this->getEmailForCallnumber($callNumber);
+            $borrowCounter = $this->getBorrowCounterForCallnumber($callNumber);
+            $locationUrl = $this->getLocationUrlForCallnumber($callNumber);
 
             if ($this->createPDF($formData, $fileName) &&
                     $this->sendRequestEmail($fileName, $email)) {
@@ -98,19 +99,19 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         $params = $this->params();
         $user = $this->getUser();
         $inventory = $this->getInventoryForRequest();
-        $defaultCallnumber = count($inventory) == 1 ? array_shift($inventory)['callnumber'] : '';
+        $defaultItem = count($inventory) == 1 ? array_key_first($inventory) : '';
 
         return array (
             'firstname'  => $params->fromPost('firstname', $user['firstname']),
             'lastname'   => $params->fromPost('lastname', $user['lastname']),
             'username'   => $params->fromPost('username', $user['cat_id']),
             'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
-            'callnumber' => $params->fromPost('callnumber', $defaultCallnumber),
             'year'       => $params->fromPost('year', ''),
             'volume'     => $params->fromPost('volume', ''),
             'issue'      => $params->fromPost('issue', ''),
             'pages'      => $params->fromPost('pages', ''),
-            'comment'    => $params->fromPost('comment', '')
+            'comment'    => $params->fromPost('comment', ''),
+            'item'       => $params->fromPost('item', $defaultItem),
         );
     }
 
@@ -136,16 +137,17 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $archiveIds = array_keys($this->departmentsConfig->DepartmentEmails->toArray());
             $holdings = $this->loadRecord()->getRealTimeHoldings();
             foreach ($holdings['holdings'] as $location => $holding) {
-                foreach ($holding['items'] as $item) {
+                foreach ($holding['items'] as $index => $item) {
                     if (!in_array($item['departmentId'], $archiveIds)) {
                         continue;
                     }
 
-                    $this->inventory[$location . $item['callnumber']] = array(
+                    $key = sprintf("%s_%s_%02d", $location, $item['callnumber'], $index);
+                    $this->inventory[$key] = array(
                         'departmentId' => $item['departmentId'],
-                        'callnumber' => $item['callnumber'],
-                        'location' => $location,
-                        'chronology' => !empty($item['chronology_about']) ? $item['chronology_about'] : $item['about']
+                        'callnumber'   => $item['callnumber'],
+                        'location'     => $location,
+                        'chronology'   => !empty($item['chronology_about']) ? $item['chronology_about'] : $item['about']
                     );
                 }
             }
@@ -169,7 +171,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
 
             $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
 
-            $pdf->setCallNumber($formData['callnumber']);
+            $pdf->setCallNumber($this->getInventoryForRequest()[$formData['item']]['callnumber']);
             $pdf->setComment($formData['comment']);
             $pdf->setVolume($formData['volume']);
             $pdf->setIssue($formData['issue']);
@@ -309,7 +311,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function validateFormData($formData) {
         $error = false;
-        if(empty($formData['callnumber'])) {
+        if(!array_key_exists($formData['item'] ?? null, $this->getInventoryForRequest())) {
             $this->addFlashMessage(
                 false, 'storage_retrieval_request_error_field_empty',
                 ['%%field%%' => 'storage_retrieval_request_select_location']

@@ -20,6 +20,7 @@ use Laminas\View\Model\ViewModel;
 class RequestController extends OriginalRecordController implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
+    use ChangePasswordTrait;
 
     protected $departmentsConfig;
     protected $mainConfig;

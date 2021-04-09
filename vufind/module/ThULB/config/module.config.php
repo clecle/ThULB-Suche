@@ -9,6 +9,7 @@ $config = array(
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
+            \ThULB\Controller\ReassignUserdataController::class => 'ThULB\Controller\Factory::getReassignUserdataController',
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             'ThULB\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -16,6 +17,9 @@ $config = array(
         'aliases' => array(
             'dynMessages' => 'ThULB\Controller\DynMessagesController',
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
+            'ReassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
+            'reassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
+            'reassignuserdata' => \ThULB\Controller\ReassignUserdataController::class,
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
             'VuFind\Controller\SearchController' => 'ThULB\Controller\SearchController',
@@ -201,6 +205,8 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
+$routeGenerator->addDynamicRoute($config, 'DynMessages', 'DynMessages', 'home');
+$routeGenerator->addDynamicRoute($config, 'ReassignUserdata', 'ReassignUserdata', 'home');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
 
 return $config;

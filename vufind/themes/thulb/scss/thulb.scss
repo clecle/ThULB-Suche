@@ -1256,6 +1256,34 @@ form#renewals span.text-danger {
   margin-top: 15px;
 }
 
+div.dataCheck table {
+  margin: 0 15px;
+
+  thead, th {
+    border-bottom: solid #000 1px;
+  }
+
+  thead, th, .bold {
+    font-weight: bold;
+  }
+
+  tbody tr:nth-child(odd) {
+    background-color: $table-bg-accent;
+  }
+
+  td {
+    padding: 5px 10px;
+  }
+
+  td + td {
+    border-left: solid #000 1px;
+  }
+
+  span.alert {
+    color: red;
+  }
+}
+
 div.modal-body .facet-tree-container {
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;

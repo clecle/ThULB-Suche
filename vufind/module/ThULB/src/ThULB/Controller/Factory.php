@@ -100,4 +100,16 @@ class Factory
     {
         return new DynMessagesController($sm);
     }
+
+    /**
+     * Construct the ReassignUserdataController.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return ReassignUserdataController
+     */
+    public function getReassignUserdataController(ServiceManager $sm)
+    {
+        return new ReassignUserdataController($sm);
+    }
 }

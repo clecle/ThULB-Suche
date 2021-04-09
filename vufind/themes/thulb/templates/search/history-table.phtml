@@ -39,7 +39,7 @@ $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enab
           <?php if (isset($this->schedule[$info->getSearchId()])): ?>
             <?php $schedule = $this->schedule[$info->getSearchId()]; ?>
             <form class="form-inline jumpMenuForm" action="<?= $this->url('myresearch-savesearch')?>" method="get" name="schedule">
-              <select name="schedule" class="jumpMenu form-control" aria-haspopup="true" title="<?= $this->transEsc("history_schedule")?>">
+              <select name="schedule" class="jumpMenu form-control" aria-haspopup="true" title="<?= $this->transEscAttr("history_schedule")?>">
                 <?php foreach ($scheduleOptions as $scheduleValue => $scheduleLabel): ?>
                   <option value="<?= $this->escapeHtmlAttr($scheduleValue)?>"<?= ($schedule == $scheduleValue) ? (' selected') : ('')?>><?= $this->transEsc($scheduleLabel)?></option>
                 <?php endforeach; ?>
@@ -54,9 +54,9 @@ $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enab
       <?php if ($saveSupported): ?>
         <td>
           <?php if ($this->showSaved): ?>
-            <a title="<?= $this->transEsc("history_delete_link")?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($info->getSearchId())?>&amp;mode=history"><i class="fa fa-remove" aria-hidden="true"></i></a>
+            <a title="<?= $this->transEscAttr("history_delete_link")?>" href="<?= $this->url('myresearch-savesearch')?>?delete=<?= urlencode($info->getSearchId())?>&amp;mode=history"><i class="fa fa-remove" aria-hidden="true"></i></a>
           <?php else: ?>
-            <a title="<?= $this->transEsc("history_save_link")?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($info->getSearchId())?>&amp;mode=history"><i class="fa fa-save" aria-hidden="true"></i></a>
+            <a title="<?= $this->transEscAttr("history_save_link")?>" href="<?= $this->url('myresearch-savesearch')?>?save=<?= urlencode($info->getSearchId())?>&amp;mode=history"><i class="fa fa-save" aria-hidden="true"></i></a>
           <?php endif; ?>
         </td>
       <?php endif; ?>

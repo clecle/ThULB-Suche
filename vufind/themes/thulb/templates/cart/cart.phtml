@@ -20,36 +20,36 @@
         </label>
       </div>
       <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-        <button type="submit" class="btn btn-thulb" name="saveCart" title="<?= $this->transEsc('bookbag_save')?>" value="1">
+        <button type="submit" class="btn btn-thulb" name="saveCart" title="<?= $this->transEscAttr('bookbag_save')?>" value="1">
           <i class="fa fa-save" aria-hidden="true"></i>
         </button>
       <?php endif; ?>
-      <button type="submit" class="btn btn-thulb" name="email" title="<?= $this->transEsc('bookbag_email')?>" value="1">
+      <button type="submit" class="btn btn-thulb" name="email" title="<?= $this->transEscAttr('bookbag_email')?>" value="1">
         <i class="fa fa-envelope" aria-hidden="true"></i>
       </button>
       <?php $exportOptions = $this->export()->getActiveFormats('bulk'); if (count($exportOptions) > 0): ?>
-        <button type="submit" class="btn btn-thulb" name="export" title="<?= $this->transEsc('bookbag_export')?>" value="1">
+        <button type="submit" class="btn btn-thulb" name="export" title="<?= $this->transEscAttr('bookbag_export')?>" value="1">
           <i class="fa fa-share" aria-hidden="true"></i>
         </button>
       <?php endif; ?>
-      <button type="submit" class="btn btn-thulb dropdown-toggle" name="print" title="<?= $this->transEsc('print_selected')?>" value="1">
+      <button type="submit" class="btn btn-thulb dropdown-toggle" name="print" title="<?= $this->transEscAttr('print_selected')?>" value="1">
         <i class="fa fa-printer" aria-hidden="true"></i>
       </button>
       <div class="btn-group" id="cartDelete">
-        <button type="submit" name="delete" class="btn btn-thulb dropdown-toggle" title="<?= $this->transEsc('bookbag_delete')?>" data-toggle="dropdown" id="cart-delete-label" value="1">
+        <button type="submit" name="delete" class="btn btn-thulb dropdown-toggle" title="<?= $this->transEscAttr('bookbag_delete')?>" data-toggle="dropdown" id="cart-delete-label" value="1">
           <i class="fa fa-trash" aria-hidden="true"></i>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="cart-delete-label">
-          <li><a id="cart-confirm-delete" onClick="submitFormWithButton(this, 'delete')" title="<?= $this->transEsc('confirm_delete')?>"><?= $this->transEsc('confirm_dialog_yes')?></a></li>
+          <li><a id="cart-confirm-delete" onClick="submitFormWithButton(this, 'delete')" title="<?= $this->transEscAttr('confirm_delete')?>"><?= $this->transEsc('confirm_dialog_yes')?></a></li>
           <li><a><?= $this->transEsc('confirm_dialog_no')?></a></li>
         </ul>
       </div>
       <div class="btn-group">
-        <button type="submit" class="btn btn-thulb dropdown-toggle" title="<?= $this->transEsc('Empty Book Bag')?>" name="empty" data-toggle="dropdown" id="cart-empty-label" value="1">
+        <button type="submit" class="btn btn-thulb dropdown-toggle" title="<?= $this->transEscAttr('Empty Book Bag')?>" name="empty" data-toggle="dropdown" id="cart-empty-label" value="1">
           <i class="fa fa-close" aria-hidden="true"></i>
         </button>
         <ul class="dropdown-menu" role="menu" aria-labelledby="cart-empty-label">
-          <li><a id="cart-confirm-empty" onClick="submitFormWithButton(this, 'empty')" title="<?= $this->transEsc('bookbag_confirm_empty')?>"><?= $this->transEsc('confirm_dialog_yes')?></a></li>
+          <li><a id="cart-confirm-empty" onClick="submitFormWithButton(this, 'empty')" title="<?= $this->transEscAttr('bookbag_confirm_empty')?>"><?= $this->transEsc('confirm_dialog_yes')?></a></li>
           <li><a onClick="$('.fa.fa-spinner').remove()"><?= $this->transEsc('confirm_dialog_no')?></a></li>
         </ul>
       </div>

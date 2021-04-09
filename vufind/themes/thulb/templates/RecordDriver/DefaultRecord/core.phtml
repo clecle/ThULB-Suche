@@ -27,7 +27,7 @@
       <?php /* Display qrcode if appropriate: */ ?>
       <?php if($QRCode): ?>
         <span class="hidden-xs">
-          <br/><img alt="<?= $this->transEsc('QR Code')?>" class="qrcode" src="<?= $this->escapeHtmlAttr($QRCode);?>"/>
+          <br/><img alt="<?= $this->transEscAttr('QR Code')?>" class="qrcode" src="<?= $this->escapeHtmlAttr($QRCode);?>"/>
         </span>
       <?php endif; ?>
     </div>
@@ -69,7 +69,7 @@
       $metadataFields = $formatter->getData($driver, $formatter->getDefaults('full'));
     ?>
     <?php if (!empty($metadataFields)): ?>
-      <table class="table table-responsive" summary="<?= $this->transEsc('Bibliographic Details')?>">
+      <table class="table table-responsive" summary="<?= $this->transEscAttr('Bibliographic Details')?>">
           <colgroup>
             <col class="col-xs-4 col-sm-3 col-md-3">
             <col class="col-xs-8 col-sm-9 col-md-10">

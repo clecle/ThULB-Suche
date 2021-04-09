@@ -38,20 +38,20 @@
           <label>
             <input id="list_public_1" type="radio" name="public" value="1"<?php if ($this->list->isPublic()): ?> checked="checked"<?php endif; ?>/> <?= $this->transEsc('Public') ?>
           </label>
-          <a title="<?= $this->transEsc('explain_publicList') ?>">?</a>
+          <a title="<?= $this->transEscAttr('explain_publicList') ?>">?</a>
         </div>
         <div class="radio inline">
           <label>
             <input id="list_public_0" type="radio" name="public" value="0"<?php if (!$this->list->isPublic()): ?> checked="checked"<?php endif; ?>/> <?= $this->transEsc('Private') ?>
           </label>
-          <a title="<?= $this->transEsc('explain_privateList') ?>">?</a>
+          <a title="<?= $this->transEscAttr('explain_privateList') ?>">?</a>
         </div>
       </div>
     </div>
   <?php endif; ?>
   <div class="form-group">
     <div class="col-sm-9 col-sm-offset-3">
-      <input class="btn btn-primary" type="submit" name="submit" value="<?= $this->transEsc('Save') ?>"/>
+      <input class="btn btn-primary" type="submit" name="submit" value="<?= $this->transEscAttr('Save') ?>"/>
     </div>
   </div>
 </form>

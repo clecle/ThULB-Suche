@@ -34,7 +34,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class AccessStatusMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Access status';
+    protected $sheetName = 'Access Status';
     protected $metadataKey = 'Access Status';
     protected $recordDriverFunction = 'getAccessRestrictions';
     protected $template = 'data-accessStatus.phtml';

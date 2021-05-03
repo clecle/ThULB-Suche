@@ -58,7 +58,18 @@ trait ChangePasswordTrait
         return parent::onDispatch($event);
     }
 
+    /**
+     * Checks if the enforcing of the password policy is activated and if the current
+     * password is valid.
+     *
+     * @return bool
+     *
+     * @throws \VuFind\Exception\PasswordSecurity
+     */
     protected function isPasswordChangeNeeded() {
+        if(!($this->getConfig()->Authentication->enforce_valid_password ?? false)) {
+            return false;
+        }
         if(!$this->getAuthManager()->isLoggedIn()) {
             return false;
         }

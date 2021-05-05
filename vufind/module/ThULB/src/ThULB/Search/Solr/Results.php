@@ -26,7 +26,13 @@
 
 namespace ThULB\Search\Solr;
 
+use ThULB\Search\Facets\PluginManager;
+use ThULB\Search\Results\SortedFacetsTrait;
+use VuFind\Record\Loader;
+use VuFind\Search\Base\Params;
 use VuFind\Search\Solr\Results as OriginalResults;
+use VuFindSearch\Backend\Solr\Response\Json\Facets;
+use VuFindSearch\Service as SearchService;
 
 /**
  * Results
@@ -35,5 +41,107 @@ use VuFind\Search\Solr\Results as OriginalResults;
  */
 class Results extends OriginalResults
 {
-    use \ThULB\Search\Results\SortedFacetsTrait;
+    use SortedFacetsTrait {
+        getFacetList as public trait_getFacetList;
+    }
+
+    /* @var Facets */
+    protected $responseFacets;
+
+    /**
+     * Facet PluginManager.
+     *
+     * @var PluginManager
+     */
+    private $facetManager;
+
+    public function __construct(Params $params, SearchService $searchService,
+                                Loader $recordLoader, PluginManager $facetManager)
+    {
+        $this->facetManager = $facetManager;
+        parent::__construct($params, $searchService, $recordLoader);
+    }
+
+    /**
+     * Returns the stored list of facets for the last search
+     *
+     * @param array $filter Array of field => on-screen description listing
+     * all of the desired facet fields; set to null to get all configured values.
+     *
+     * @return array        Facets data arrays
+     */
+    public function getFacetList($filter = null)
+    {
+        // Make sure we have processed the search before proceeding:
+        if (null === $this->responseFacets) {
+            $this->performAndProcessSearch();
+        }
+
+        // If there is no filter, we'll use all facets as the filter:
+        if (null === $filter) {
+            $filter = $this->getParams()->getFacetConfig();
+        }
+
+        // Start building the facet list:
+        $list = [];
+
+        // Loop through every field returned by the result set
+        $fieldFacets = $this->responseFacets->getFieldFacets();
+        $translatedFacets = $this->getOptions()->getTranslatedFacets();
+        foreach (array_keys($filter) as $field) {
+            $data = $fieldFacets[$field] ?? [];
+            // Skip empty arrays:
+            if (count($data) < 1) {
+                continue;
+            }
+            // Initialize the settings for the current field
+            $list[$field] = [];
+            // Add the on-screen label
+            $list[$field]['label'] = $filter[$field];
+            // Build our array of values for this field
+            $list[$field]['list']  = [];
+            // Should we translate values for the current facet?
+            if ($translate = in_array($field, $translatedFacets)) {
+                $translateTextDomain = $this->getOptions()
+                    ->getTextDomainForTranslatedFacet($field);
+            }
+            else {
+                $translateTextDomain = '';
+            }
+
+            // Use custom facet class if available
+            if($this->facetManager->has($field)) {
+                $facet = $this->facetManager->get($field);
+                $list[$field]['list'] =
+                    $facet->getFacetList($field, $data, $this->getParams());
+
+                continue;
+            }
+
+            // Loop through values:
+            foreach ($data as $value => $count) {
+                // Initialize the array of data about the current facet:
+                $currentSettings = [];
+                $currentSettings['value'] = $value;
+
+                $displayText = $this->getParams()
+                    ->checkForDelimitedFacetDisplayText($field, $value);
+
+                $currentSettings['displayText'] = $translate
+                    ? $this->translate("$translateTextDomain::$displayText")
+                    : $displayText;
+                $currentSettings['count'] = $count;
+                $currentSettings['operator']
+                    = $this->getParams()->getFacetOperator($field);
+                $currentSettings['isApplied']
+                    = $this->getParams()->hasFilter("$field:" . $value)
+                    || $this->getParams()->hasFilter("~$field:" . $value);
+
+                // Store the collected values:
+                $list[$field]['list'][] = $currentSettings;
+            }
+        }
+
+        return $this->sortFacets($list);
+    }
 }

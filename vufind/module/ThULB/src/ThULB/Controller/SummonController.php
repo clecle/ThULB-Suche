@@ -26,8 +26,9 @@
  */
 
 namespace ThULB\Controller;
-use Zend\Mvc\MvcEvent;
+use Laminas\Mvc\MvcEvent;
 use VuFind\Controller\SummonController as OriginalSummonController;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Overrides the standard version in VuFind\Controller\SummonController and
@@ -49,5 +50,29 @@ class SummonController extends OriginalSummonController
     public function injectSummonMessage(MvcEvent $e)
     {
         $this->layout()->poweredBy = '';
+    }
+
+    /**
+     * Returns a list of all items associated with one facet for the lightbox
+     *
+     * Parameters:
+     * facet        The facet to retrieve
+     * searchParams Facet search params from $results->getUrlQuery()->getParams()
+     *
+     * @return ViewModel
+     */
+    public function facetListAction() {
+        $view = parent::facetListAction();
+
+        // only sort by display text if the list is sorted by index(alphabetically)
+        if($view->getVariable('sort') == 'index') {
+            $list = $view->getVariable('data');
+            usort($list, function ($facet1, $facet2) {
+                return strcasecmp($facet1['displayText'], $facet2['displayText']);
+            });
+            $view->setVariable('data', $list);
+        }
+
+        return $view;
     }
 }

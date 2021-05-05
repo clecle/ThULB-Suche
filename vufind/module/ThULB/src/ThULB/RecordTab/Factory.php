@@ -28,8 +28,7 @@
  * @link     https://vufind.org/wiki/development:plugins:hierarchy_components Wiki
  */
 namespace ThULB\RecordTab;
-use Zend\ServiceManager\ServiceManager;
-use VuFind\RecordTab\Factory as OriginalFactory;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Record Tab Factory Class
@@ -43,7 +42,7 @@ use VuFind\RecordTab\Factory as OriginalFactory;
  *
  * @codeCoverageIgnore
  */
-class Factory extends OriginalFactory
+class Factory
 {
     /**
      * Factory for CollectionList tab plugin.

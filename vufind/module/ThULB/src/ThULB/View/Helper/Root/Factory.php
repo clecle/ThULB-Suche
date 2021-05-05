@@ -25,7 +25,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Description of Factory
@@ -44,7 +44,8 @@ class Factory
     public static function getRecord(ServiceManager $sm)
     {
         $helper = new Record(
-            $sm->get('VuFind\Config')->get('config')
+            $sm->get('VuFind\Config')->get('config'),
+            $sm->get(\VuFind\RecordTab\PluginManager::class)->get(\ThULB\RecordTab\NonArticleCollectionList::class)
         );
         $helper->setCoverRouter(
             $sm->get('VuFind\Cover\Router')
@@ -74,5 +75,20 @@ class Factory
     public static function getSession(ServiceManager $sm)
     {
         return new Session($sm->get('VuFind\SessionManager'));
+    }
+
+    /**
+     * Construct the Unpaywall helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return DoiLinker
+     */
+    public static function getDoiLinker(ServiceManager $sm)
+    {
+        $config = $sm->get(\VuFind\Config\PluginManager::class)
+            ->get('config');
+        $pluginManager = $sm->get(\VuFind\DoiLinker\PluginManager::class);
+        return new DoiLinker($pluginManager, $config->DOI->resolver ?? null);
     }
 }

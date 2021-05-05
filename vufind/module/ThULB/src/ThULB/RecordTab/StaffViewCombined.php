@@ -30,7 +30,7 @@
 
 namespace ThULB\RecordTab;
 
-use VuFind\RecordTab\StaffViewMARC;
+use VuFind\RecordTab\AbstractBase;
 
 /**
  * A staff view tab that combines the marc record view with the array view of
@@ -38,6 +38,9 @@ use VuFind\RecordTab\StaffViewMARC;
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class StaffViewCombined extends StaffViewMARC {
-    // dummy class that inherits everything else (look in the view template)
+class StaffViewCombined extends AbstractBase {
+    public function getDescription()
+    {
+        return '.';
+    }
 }

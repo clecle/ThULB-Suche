@@ -26,6 +26,9 @@
 
 namespace ThULB\RecordDriver;
 
+use VuFind\RecordDriver\SolrMarc;
+use Laminas\ServiceManager\ServiceManager;
+
 class Factory
 {
     /**
@@ -35,12 +38,14 @@ class Factory
      *
      * @return SolrMarc
      */
-    public static function getSolrMarc(\Zend\ServiceManager\ServiceManager $sm)
+    public static function getSolrMarc(ServiceManager $sm)
     {
-        $driver = new \ThULB\RecordDriver\SolrVZGRecord(
+        $driver = new SolrVZGRecord(
             $sm->get('VuFind\Config')->get('config'),
             null,
-            $sm->get('VuFind\Config')->get('searches')
+            $sm->get('VuFind\Config')->get('searches'),
+            $sm->get('VuFind\Config')->get('marcFormat'),
+            $sm->get('VuFind\Config')->get('DepartmentsDAIA')
         );
         $driver->attachILS(
             $sm->get('VuFind\ILSConnection'),
@@ -58,7 +63,7 @@ class Factory
      *
      * @return Summon
      */
-    public static function getSummon(\Zend\ServiceManager\ServiceManager $sm)
+    public static function getSummon(ServiceManager $sm)
     {
         $summon = $sm->get('VuFind\Config')->get('Summon');
         $driver = new Summon(

@@ -4,9 +4,11 @@
 namespace ThULB\AjaxHandler;
 
 
+use Exception;
 use Interop\Container\ContainerInterface;
+use Laminas\ServiceManager\Factory\FactoryInterface;
 
-class GetResultCountFactory implements \Zend\ServiceManager\Factory\FactoryInterface
+class GetResultCountFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -17,14 +19,14 @@ class GetResultCountFactory implements \Zend\ServiceManager\Factory\FactoryInter
      *
      * @return object
      *
-     * @throws \Exception
+     * @throws Exception
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
                              array $options = null
     ) {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
+            throw new Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
             $container->get('VuFind\SearchRunner'),

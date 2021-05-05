@@ -28,10 +28,10 @@
  */
 namespace VuFind\ILS\Driver;
 
+use Laminas\Log\LoggerAwareInterface;
 use PDO;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Log\LoggerAwareTrait;
-use Zend\Log\LoggerAwareInterface;
 
 /**
  * Horizon ILS Driver
@@ -145,8 +145,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      */
     protected function parseStatus($status)
     {
-        $statuses = isset($this->config['Statuses'][$status])
-            ? $this->config['Statuses'][$status] : null;
+        $statuses = $this->config['Statuses'][$status] ?? null;
 
         // query the config file for the item status if there are
         // config values, use the configuration otherwise execute the switch
@@ -332,16 +331,19 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      * This is responsible for retrieving the holding information of a certain
      * record.
      *
-     * @param string $id     The record id to retrieve the holdings for
-     * @param array  $patron Patron data
+     * @param string $id      The record id to retrieve the holdings for
+     * @param array  $patron  Patron data
+     * @param array  $options Extra options (not currently used)
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array         On success, an associative array with the following
      * keys: id, availability (boolean), status, location, reserve, callnumber,
      * duedate, number, barcode.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null)
+    public function getHolding($id, array $patron = null, array $options = [])
     {
         $sqlArray = $this->getHoldingSql($id);
         $sql = $this->buildSqlFromArray($sqlArray);
@@ -632,7 +634,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      *
      * @param array $row An sql row
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @return array Keyed data
      */
     protected function processHoldsRow($row)
@@ -690,7 +692,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array        Array of the patron's holds on success.
      */
@@ -724,7 +726,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return mixed        Array of the patron's fines on success.
      */
@@ -935,7 +937,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      *
      * @param array $row An array of keyed data
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @return array Keyed data for display by template files
      */
     protected function processTransactionsRow($row)
@@ -981,7 +983,7 @@ class Horizon extends AbstractBase implements LoggerAwareInterface
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */

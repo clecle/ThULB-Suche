@@ -7,7 +7,9 @@ $formatProperty = function ($datafield, $name, $label) {
     $translate = function ($str) use ($that, $label) {
         return $that->transEsc($label . $str);
     };
-    return '<span class="author-property-' . $name . '">(' . implode(', ', array_unique(array_map($translate, $datafield))) . ')</span>';
+
+    $text = implode(', ', array_unique(array_map($translate, $datafield)));
+    return '<span class="author-property-' . $name . '">' . ($name == 'role' ? ' [' . $text . ']' : $text) . '</span>';
 };
 $formattedAuthors = [];
 ?>
@@ -16,7 +18,7 @@ $formattedAuthors = [];
     <?php ob_start(); ?>
     <span class="author-data" property="<?=$this->escapeHtml($schemaLabel)?>">
       <a href="<?=$this->record($this->driver)->getLink('author', $author)?>">
-        <?=$this->escapeHtml($author)?>
+        <?=$this->escapeHtml(rtrim($author, ','))?>
       </a>
       <?php
         // Display additional data using the appropriate translation prefix

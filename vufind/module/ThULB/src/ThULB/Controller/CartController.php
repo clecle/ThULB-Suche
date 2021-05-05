@@ -35,8 +35,14 @@ use VuFind\Controller\CartController as OriginalCartController;
  */
 class CartController extends OriginalCartController
 {
+    use ChangePasswordTrait;
+
     public function homeAction()
     {
+        if($this->getCart()->isFull()) {
+           $this->flashMessenger()->addMessage($this->translate('bookbag_full_info'), 'warning');
+        }
+
         $this->layout()->setVariable('showBreadcrumbs', false);        
         return parent::homeAction();
     }

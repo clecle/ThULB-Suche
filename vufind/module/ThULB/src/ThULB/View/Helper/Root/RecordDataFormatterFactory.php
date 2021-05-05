@@ -45,6 +45,10 @@ class RecordDataFormatterFactory extends OriginalFactory
     /**
      * Create the helper.
      *
+     * @param ContainerInterface $container
+     * @param string             $requestedName
+     * @param array|null         $options
+     *
      * @return RecordDataFormatter
      */
     public function __invoke(ContainerInterface $container, $requestedName,
@@ -67,16 +71,18 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Other Titles', 'getOtherTitles');
         $spec->setLine('PartInfo', 'getPartInfo');
         $spec->setTemplateLine(
-            'Main Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
+            'Persons', 'getDeduplicatedAuthors', 'data-authors.phtml',
             [
                 'useCache' => true,
                 'labelFunction' => function ($data) {
-                    return count($data['primary']) > 1
-                        ? 'Main Authors' : 'Main Author';
+                    return (count($data['primary']) + count($data['secondary'])) > 1
+                        ? 'Persons' : 'Person';
                 },
-                'context' => ['type' => 'primary',
+                'context' => [
+                    'types' => ['primary', 'secondary'],
                     'schemaLabel' => 'author',
                     'requiredDataFields' => [
+                        ['name' => 'detail'],
                         ['name' => 'role', 'prefix' => 'CreatorRoles::']
                     ]
                 ],
@@ -99,20 +105,13 @@ class RecordDataFormatterFactory extends OriginalFactory
                 ],
             ]
         );
-        $spec->setTemplateLine(
-            'Other Authors', 'getDeduplicatedAuthors', 'data-authors.phtml',
+        $spec->setLine('Conference', 'getMeetingNames', null,
             [
-                'useCache' => true,
-                'context' => [
-                    'type' => 'secondary',
-                    'schemaLabel' => 'contributor',
-                    'requiredDataFields' => [
-                        ['name' => 'role', 'prefix' => 'CreatorRoles::']
-                    ]
-                ],
+                'labelFunction' => function ($data) {
+                    return count($data) > 1 ? 'Conferences' : 'Conference';
+                },
             ]
         );
-        $spec->setLine('Conference', 'getMeetingNames');
         $spec->setLine(
             'Format', 'getFormats', 'RecordHelper',
             ['helperMethod' => 'getFormatList']
@@ -125,6 +124,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine(
             'Publication Metadata', 'getPublicationDetails', 'data-publicationDetails.phtml'
         );
+        $spec->setLine('Production', 'getProduction');
         $spec->setLine('Printing places', 'getPrintingPlaces');
         $spec->setLine('Dissertation', 'getDissertationNote');
         $spec->setLine('Map Scale', 'getCartographicScale');
@@ -146,7 +146,6 @@ class RecordDataFormatterFactory extends OriginalFactory
             'child_records', 'getChildRecordCount', 'data-childRecords.phtml',
             ['allowZero' => false]
         );
-        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         $spec->setTemplateLine(
             'Related Items', 'getAllRecordLinks', 'data-allRecordLinks.phtml'
         );
@@ -165,19 +164,21 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Audience', 'getTargetAudienceNotes');
         $spec->setLine('Awards', 'getAwards');
         $spec->setLine('Production Credits', 'getProductionCredits');
-        $spec->setLine('Bibliography', 'getBibliographyNotes');
+        $spec->setLine('Notes', 'getBibliographyNotes');
         $spec->setLine('ISBN', 'getISBNs');
         $spec->setLine('Invalid ISBN', 'getInvalidISBNs');
         $spec->setLine('ISSN', 'getISSNs');
+        $spec->setLine('ISMN', 'getISMNs');
         /* ZDB Id */
         $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');
         $spec->setLine('DOI', 'getCleanDOI');
-        $spec->setLine('Access', 'getAccessRestrictions');
+        $spec->setTemplateLine('Access Status', 'getAccessRestrictions', 'data-accessStatus.phtml');
+        $spec->setTemplateLine('Legal information', 'getLegalInformation', 'data-legalInformation.phtml');
         $spec->setLine('Finding Aid', 'getFindingAids');
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
-        $spec->setTemplateLine('ThuBiblio Classification', true, 'data-thuBiblioClassification.phtml');
+        $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
         $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
             [
                 'useCache' => true,
@@ -186,6 +187,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                 }
             ]
         );
+        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         return $spec->getArray();
     }
 }

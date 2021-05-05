@@ -49,12 +49,14 @@ use VuFindSearch\Query\Query;
  */
 class BackendTest extends TestCase
 {
+    use \VuFindTest\Unit\FixtureTrait;
+
     /**
      * Setup method.
      *
      * @return void
      */
-    protected function setup()
+    protected function setUp(): void
     {
         if (!class_exists('SerialsSolutions_Summon_Exception', true)) {
             $this->markTestIncomplete('Unable to autoload class: SerialsSolutions\Summon\Exception');
@@ -120,12 +122,12 @@ class BackendTest extends TestCase
      * Test retrieve exception handling.
      *
      * @return void
-     *
-     * @expectedException VuFindSearch\Backend\Exception\BackendException
      */
     public function testRetrieveWrapsSummonException()
     {
-        $fact = $this->createMock('VuFindSearch\Response\RecordCollectionFactoryInterface');
+        $this->expectException(\VuFindSearch\Backend\Exception\BackendException::class);
+
+        $fact = $this->createMock(\VuFindSearch\Response\RecordCollectionFactoryInterface::class);
         $conn = $this->getConnectorMock(['getRecord']);
         $conn->expects($this->once())
             ->method('getRecord')
@@ -172,12 +174,12 @@ class BackendTest extends TestCase
      * Test search exception handling.
      *
      * @return void
-     *
-     * @expectedException VuFindSearch\Backend\Exception\BackendException
      */
     public function testSearchWrapsSummonException()
     {
-        $fact = $this->createMock('VuFindSearch\Response\RecordCollectionFactoryInterface');
+        $this->expectException(\VuFindSearch\Backend\Exception\BackendException::class);
+
+        $fact = $this->createMock(\VuFindSearch\Response\RecordCollectionFactoryInterface::class);
         $conn = $this->getConnectorMock(['query']);
         $conn->expects($this->once())
             ->method('query')
@@ -211,7 +213,7 @@ class BackendTest extends TestCase
      */
     public function testConstructorSetters()
     {
-        $fact = $this->createMock('VuFindSearch\Response\RecordCollectionFactoryInterface');
+        $fact = $this->createMock(\VuFindSearch\Response\RecordCollectionFactoryInterface::class);
         $conn = $this->getConnectorMock();
         $back = new Backend($conn, $fact);
         $this->assertEquals($fact, $back->getRecordCollectionFactory());
@@ -244,11 +246,9 @@ class BackendTest extends TestCase
      */
     protected function loadResponse($fixture)
     {
-        $file = realpath(sprintf('%s/summon/response/%s', PHPUNIT_SEARCH_FIXTURES, $fixture));
-        if (!is_string($file) || !file_exists($file) || !is_readable($file)) {
-            throw new InvalidArgumentException(sprintf('Unable to load fixture file: %s', $fixture));
-        }
-        return unserialize(file_get_contents($file));
+        return unserialize(
+            $this->getFixture("summon/response/$fixture", 'VuFindSearch')
+        );
     }
 
     /**
@@ -260,7 +260,7 @@ class BackendTest extends TestCase
      */
     protected function getConnectorMock(array $mock = [])
     {
-        return $this->getMockBuilder('SerialsSolutions\Summon\Zend2')
+        return $this->getMockBuilder(\SerialsSolutions\Summon\Laminas::class)
             ->setMethods($mock)
             ->setConstructorArgs(['id', 'key'])
             ->getMock();

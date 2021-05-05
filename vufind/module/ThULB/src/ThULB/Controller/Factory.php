@@ -25,7 +25,8 @@
  */
 
 namespace ThULB\Controller;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
+use Laminas\Session\Container;
 
 /**
  * Factory to load our controllers.
@@ -45,7 +46,7 @@ class Factory
     {
         return new CartController(
             $sm,
-            new \Zend\Session\Container(
+            new Container(
                 'cart_followup',
                 $sm->get('VuFind\SessionManager')
             )
@@ -98,5 +99,17 @@ class Factory
     public function getDynMessagesController(ServiceManager $sm)
     {
         return new DynMessagesController($sm);
+    }
+
+    /**
+     * Construct the ReassignUserdataController.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return ReassignUserdataController
+     */
+    public function getReassignUserdataController(ServiceManager $sm)
+    {
+        return new ReassignUserdataController($sm);
     }
 }

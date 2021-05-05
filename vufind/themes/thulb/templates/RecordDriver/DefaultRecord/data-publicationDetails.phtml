@@ -2,14 +2,14 @@
     $publications = [];
     $i = 0;
 ?>
-<? foreach ($data as $field): ?>
-  <? $publications[$i] = '<span property="publisher" typeof="Organization">'; ?>
-  <? $publications[$i] .= (!empty($field->getPlace())) ? '<span property="location">' . $field->getPlace() . '</span>' : ''; ?>
-  <? $publications[$i] .= (!empty($field->getPlace()) && !empty($field->getName())) ? ' : ' : ''; ?>
-  <? $publications[$i] .= (!empty($field->getName())) ? '<span property="name">' . $field->getName() . '</span>' : ''; ?>
-  <? $publications[$i] .= '</span>'; ?>
-  <? $publications[$i] .= ((!empty($field->getPlace()) || !empty($field->getName())) && !empty($field->getDate())) ? ', ' : ''; ?>
-  <? $publications[$i] .= (!empty($field->getDate())) ? '<span property="publicationDate">' . $field->getDate() . '</span>' : ''; ?>
-  <? $i++; ?>
-<? endforeach; ?>
-<?=implode("<br />", $publications)?>
+<?php foreach ($data as $field): ?>
+  <?php $publications[$i] = '<span property="publisher" typeof="Organization">'; ?>
+  <?php $publications[$i] .= (!empty($field->getPlace())) ? '<span property="location">' . $field->getPlace() . '</span>' : ''; ?>
+  <?php $publications[$i] .= (!empty($field->getPlace()) && !empty($field->getName())) ? ' : ' : ''; ?>
+  <?php $publications[$i] .= (!empty($field->getName())) ? '<span property="name">' . $field->getName() . '</span>' : ''; ?>
+  <?php $publications[$i] .= '</span>'; ?>
+  <?php $publications[$i] .= ((!empty($field->getPlace()) || !empty($field->getName())) && !empty($field->getDate())) ? ', ' : ''; ?>
+  <?php $publications[$i] .= (!empty($field->getDate())) ? '<span property="publicationDate">' . $field->getDate() . '</span>' : ''; ?>
+  <?php $i++; ?>
+<?php endforeach; ?>
+<?= implode("<br />", $publications)?>

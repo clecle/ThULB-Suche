@@ -30,9 +30,11 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use Laminas\View\Renderer\PhpRenderer;
+use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
-use Zend\View\Exception\RuntimeException;
+use Laminas\View\Exception\RuntimeException;
 
 /**
  * Description of Record
@@ -42,6 +44,20 @@ use Zend\View\Exception\RuntimeException;
  */
 class Record extends OriginalRecord
 {
+    protected $nonArticleCollection;
+
+    /**
+     * Constructor
+     *
+     * @param null $config VuFind configuration
+     * @param NonArticleCollectionList $nonArticleCollection
+     */
+    public function __construct($config = null, $nonArticleCollection = null)
+    {
+        parent::__construct($config);
+        $this->nonArticleCollection = $nonArticleCollection;
+    }
+
     /**
      * Get HTML to render a title. Maximum length limitation is not applied
      * anymore - it happens in javascript code.
@@ -91,6 +107,16 @@ class Record extends OriginalRecord
     }
 
     /**
+     * Is this Record part of the thuringia bibliography?
+     *
+     * @return string
+     */
+    public function getThuringiaBibliography()
+    {
+        return $this->renderTemplate('isThuBibliography.phtml');
+    }
+
+    /**
      * Recursively locate and render a template that matches the provided class
      * name (or one of its parent classes); throw an exception if no match is
      * found.
@@ -135,5 +161,62 @@ class Record extends OriginalRecord
         return $this->resolveClassTemplate(
             $template, $parentClass, $topClassName ?? $className
         );
+    }
+
+    /**
+     * Get the detail information of the given author.
+     *
+     * @param string $author
+     *
+     * @return string
+     */
+    public function getAuthorDetails($author) {
+        foreach ($this->driver->getDeduplicatedAuthors() as $type):
+            if(isset($type[$author])):
+                return isset($type[$author]['detail']) ? $type[$author]['detail'][0] : '';
+            endif;
+        endforeach;
+
+        return '';
+    }
+
+    /**
+     * Render the contents of the specified record tab.
+     *
+     * @param \VuFind\RecordTab\TabInterface $tab Tab to display
+     *
+     * @return string
+     */
+    public function getTab(\VuFind\RecordTab\TabInterface $tab)
+    {
+        $context = ['driver' => $this->driver, 'tab' => $tab];
+        $classParts = explode('\\', get_class($tab));
+        $template = 'RecordTab/' . strtolower(array_pop($classParts)) . '.phtml';
+        $oldContext = $this->contextHelper->apply($context);
+        $html = $this->view->render($template);
+        $this->contextHelper->restore($oldContext);
+        return trim($html);
+    }
+
+    /**
+     * Checks if the record has related non-articles and the respective tab will be shown.
+     *
+     * @param PhpRenderer $renderer
+     * @return bool
+     *
+     * @throws \Exception
+     */
+    public function hasNonArticleTab(PhpRenderer $renderer) {
+        // journal request feature activated and order link shown?
+        if($renderer->permission()->allowDisplay('access.JournalRequest') &&
+                $this->driver->isFormat('Journal') && $this->driver->isInArchive()) {
+            return true;
+        }
+
+        // has non-articles?
+        if($this->nonArticleCollection == null) {
+            return false;
+        }
+        return $this->nonArticleCollection->getResults()->getResultTotal() > 0;
     }
 }

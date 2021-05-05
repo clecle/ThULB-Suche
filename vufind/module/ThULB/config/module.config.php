@@ -9,37 +9,87 @@ $config = array(
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
+            \ThULB\Controller\ReassignUserdataController::class => 'ThULB\Controller\Factory::getReassignUserdataController',
+            \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
+            \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
+            'ThULB\Controller\SearchController' => 'VuFind\Controller\AbstractBaseFactory',
         ),
         'aliases' => array(
             'dynMessages' => 'ThULB\Controller\DynMessagesController',
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
+            'ReassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
+            'reassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
+            'reassignuserdata' => \ThULB\Controller\ReassignUserdataController::class,
+            'request' => \ThULB\Controller\RequestController::class,
+            'Request' => \ThULB\Controller\RequestController::class,
+            'VuFind\Controller\SearchController' => 'ThULB\Controller\SearchController',
+            \VuFind\Controller\RecordController::class => \ThULB\Controller\RecordController::class,
         )
     ),
     'service_manager' => [
         'factories' => [
+            \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
             'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+            'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
+            'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
+            'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
         ],
         'aliases' => array(
+            \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
+            'VuFind\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
+            'VuFind\Search\Solr\HierarchicalFacetHelper' => 'ThULB\Search\Solr\HierarchicalFacetHelper',
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
+            'VuFind\Record\Loader' => 'ThULB\Record\Loader',
         )
     ],
     'vufind' => array(
         'plugin_managers' => array(
             'ajaxhandler' => array(
                 'factories' => array(
+                    \ThULB\AjaxHandler\FulltextLookup::class => \ThULB\AjaxHandler\FulltextLookupFactory::class,
+                    \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                     'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
                     'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
+                    \ThULB\AjaxHandler\VpnWarning::class => \ThULB\AjaxHandler\VpnWarningFactory::class,
                 ),
                 'aliases' => array(
+                    'fulltextLookup' => \ThULB\AjaxHandler\FulltextLookup::class,
                     'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
+                    'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
+                    \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
+                )
+            ),
+            'auth' => array(
+                'factories' => array(
+                    \ThULB\Auth\ILS::class => \VuFind\Auth\ILSFactory::class,
+                ),
+                'aliases' => array(
+                    'ils' => \ThULB\Auth\ILS::class,
+                    \VuFind\Auth\ILS::class => \ThULB\Auth\ILS::class,
+                )
+            ),
+            'content_covers' => array(
+                'factories' => array(
+                    \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                ),
+                'aliases' => array(
+                    'google' => \ThULB\Content\Covers\Google::class
                 )
             ),
             'db_row' => array(
                 'factories' => array(
                     'VuFind\Db\Row\User' => 'ThULB\Db\Row\Factory'
                 ),
+            ),
+            'doilinker' => array(
+                'factories' => array (
+                    'ThULB\DoiLinker\Unpaywall' => 'VuFind\DoiLinker\UnpaywallFactory',
+                ),
+                'aliases' => array (
+                    'VuFind\DoiLinker\Unpaywall' => 'ThULB\DoiLinker\Unpaywall',
+                )
             ),
             'hierarchy_treedataformatter' => array(
                 'invokables' => array(
@@ -59,9 +109,11 @@ $config = array(
             'recommend' => array(
                 'factories' => array(
                     'ThULB\Recommend\SummonCombined' => 'ThULB\Recommend\Factory::getSummonCombined',
+                    'ThULB\Recommend\SideFacets' => 'ThULB\Recommend\Factory::getSideFacets',
                 ),
                 'aliases' => array(
                     'summoncombined' => 'ThULB\Recommend\SummonCombined',
+                    'sidefacets' => 'ThULB\Recommend\SideFacets',
                 ),
                 'invokables' => array(
                     'summoncombineddeferred' => 'ThULB\Recommend\SummonCombinedDeferred',
@@ -83,15 +135,33 @@ $config = array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',
                     'ThULB\RecordTab\NonArticleCollectionList' => 'ThULB\RecordTab\Factory::getNonArticleCollectionList',
-//                    'ThULB\RecordTab\RecordLinkCollectionList' => 'ThULB\RecordTab\Factory::getRecordLinkCollectionList'
+                    'ThULB\RecordTab\Access' => 'Laminas\ServiceManager\Factory\InvokableFactory',
                 ),
                 'aliases' => array(
                     'articlecl' => 'ThULB\RecordTab\ArticleCollectionList',
                     'nonarticlecl' => 'ThULB\RecordTab\NonArticleCollectionList',
-//                    'relatedcl' => 'ThULB\RecordTab\RecordLinkCollectionList'
+                    'access' => 'ThULB\RecordTab\Access'
                 ),
                 'invokables' => array(
                     'staffviewcombined' => 'ThULB\RecordTab\StaffViewCombined'
+                )
+            ),
+            'search_facets' => array(
+                'factories' => array(
+                    \ThULB\Search\Facets\ThBIBFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+                ),
+                'aliases' => array(
+                    'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class
+                )
+            ),
+            'search_params' => array(
+                'factories' => array(
+                    'ThULB\Search\Solr\Params' => \ThULB\Search\Solr\ParamsFactory::class,
+                    'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
+                ),
+                'aliases' => array(
+                    'solr' => 'ThULB\Search\Solr\Params',
+                    'summon' => 'ThULB\Search\Summon\Params'
                 )
             ),
             'search_results' => array(
@@ -99,54 +169,27 @@ $config = array(
                     'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
                     'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr'
                 )
+            ),
+            'search_backend' => array(
+                'factories' => array(
+                    'Solr' => \ThULB\Search\Factory\SolrDefaultBackendFactory::class
+                )
             )
         ),
-        'recorddriver_tabs' => array(
-            'VuFind\RecordDriver\RecordDefault' => array(
-                'tabs' => array(
-                    'Similar' => null,
-                    'ArticleCollectionList' => 'articlecl',
-                    'NonArticleCollectionList' => 'nonarticlecl',
-                    'Description'   => null,
-                    'Reviews' => null,
-                    'Excerpt' => null
-                ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList')
-            ),
-            'VuFind\RecordDriver\SolrMarc' => array(
-                'tabs' => array(
-                    'Similar' => null,
-                    'ArticleCollectionList' => 'articlecl',
-                    'NonArticleCollectionList' => 'nonarticlecl',
-//                    'RelatedResources' => 'relatedcl',
-                    'Description'   => null,
-                    'Reviews' => null,
-                    'Excerpt' => null,
-                    'Details' => 'staffviewcombined'
-                ),
-                'backgroundLoadedTabs' => array('ArticleCollectionList', 'NonArticleCollectionList' /* , 'RelatedResources' */ )
-            ),
-            'VuFind\RecordDriver\Summon' => array(
-                'tabs' => array(
-                    'Description' => null,
-                    'Reviews' => null,
-                    'Excerpt' => null
-                ),
-                'defaultTab' => null
-            )
-        )
     ),
     'view_helpers' => array(
         'invokables' => array(
             'thulb_metaDataHelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
             'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
-            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ'
+            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
+            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
+            'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ),
 
     // Authorization configuration:
-    'zfc_rbac' => array(
+    'lmc_rbac' => array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
                 'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
@@ -162,5 +205,8 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
+$routeGenerator->addDynamicRoute($config, 'DynMessages', 'DynMessages', 'home');
+$routeGenerator->addDynamicRoute($config, 'ReassignUserdata', 'ReassignUserdata', 'home');
+$routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
 
 return $config;

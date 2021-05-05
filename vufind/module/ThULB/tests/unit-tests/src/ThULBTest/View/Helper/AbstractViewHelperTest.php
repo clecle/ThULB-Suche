@@ -26,14 +26,15 @@
 
 namespace ThULBTest\View\Helper;
 
+use Exception;
 use ThULB\RecordDriver\SolrVZGRecord;
 use VuFind\I18n\Translator\Loader\ExtendedIni;
 use VuFind\Service\Factory as ServiceFactory;
-use Zend\Config\Config;
-use Zend\Http\Client;
-use Zend\I18n\Translator\Translator;
-use Zend\Config\Reader\Ini as IniReader;
-use Zend\Mvc\I18n\Translator as MvcTranslator;
+use Laminas\Config\Config;
+use Laminas\Http\Client;
+use Laminas\I18n\Translator\Translator;
+use Laminas\Config\Reader\Ini as IniReader;
+use Laminas\Mvc\I18n\Translator as MvcTranslator;
 
 /**
  * General view helper test class that provides usually used operations.
@@ -44,7 +45,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
 {
 //    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
 //    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
-    const FINDEX_REQUEST_PATH = '/index/test/k10plus/31/GBV_ILN_31/select';
+    const FINDEX_REQUEST_PATH = '/31/GBV_ILN_31/select';
     const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_KXP"&q=id:';
 
     protected $translationLocale = 'de';
@@ -57,11 +58,11 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      * @param array  $plugins Custom VuFind plug-ins to register
      * @param string $theme   Theme directory to load from
      *
-     * @return \Zend\View\Renderer\PhpRenderer
+     * @return \Laminas\View\Renderer\PhpRenderer
      */
     protected function getPhpRenderer($plugins = [], $theme = 'thulb')
     {
-        $resolver = new \Zend\View\Resolver\TemplatePathStack();
+        $resolver = new \Laminas\View\Resolver\TemplatePathStack();
 
         $resolver->setPaths(
             [
@@ -70,7 +71,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
                 $this->getPathForTheme($theme)
             ]
         );
-        $renderer = new \Zend\View\Renderer\PhpRenderer();
+        $renderer = new \Laminas\View\Renderer\PhpRenderer();
         $renderer->setResolver($resolver);
         if (!empty($plugins)) {
             $pluginManager = $renderer->getHelperPluginManager();
@@ -86,22 +87,24 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      * 
      * @param string $ppn Pica production number of a record
      * @return SolrVZGRecord|null
-     * @throws \HttpException
+     * @throws Exception
      */
     protected function getRecordFromFindex($ppn)
     {
-        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . $ppn;
+        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
         $client = new Client($url, array(
             'maxredirects' => 3,
             'timeout' => 10
         ));
         $response = $client->send();
         if ($response->getStatusCode() > 299) {
-            throw new \HttpException("Status code " . $response->getStatusCode() . " for $url.");
+            throw new Exception("Status code " . $response->getStatusCode() . " for $url.");
         }
         $jsonString = trim($response->getBody());
         $jsonObject = json_decode($jsonString, true);
         $marcObject = new SolrVZGRecord($this->getMainConfig());
+        $marcObject->attachSearchService($this->getServiceManager()->get('VuFindSearch\Service'));
+
         
         if ($jsonObject['response']['numFound'] < 1) {
             $this->markTestIncomplete("No document found with ppn \"$ppn\"...");
@@ -138,6 +141,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
         $helpers =  [
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
             'context' => $context,
+            'doi' => new \VuFind\View\Helper\Root\Doi($context),
             'openUrl' => new \VuFind\View\Helper\Root\OpenUrl($context, [], $this->getMockBuilder('VuFind\Resolver\Driver\PluginManager')->disableOriginalConstructor()->getMock()),
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
             'record' => new \VuFind\View\Helper\Root\Record(),

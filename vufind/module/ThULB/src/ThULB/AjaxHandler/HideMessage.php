@@ -5,8 +5,8 @@ namespace ThULB\AjaxHandler;
 use VuFind\AjaxHandler\AbstractBase;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
-use Zend\Mvc\Controller\Plugin\Params;
-use Zend\Session\SessionManager;
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\Session\SessionManager;
 
 class HideMessage extends AbstractBase
     implements TranslatorAwareInterface
@@ -33,5 +33,7 @@ class HideMessage extends AbstractBase
 
             $this->sessionManager->getStorage()->offsetSet($identifier, $expires);
         }
+
+        return $this->formatResponse(true);
     }
 }

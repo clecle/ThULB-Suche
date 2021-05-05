@@ -2,18 +2,24 @@
 
 namespace ThULB\View\Helper\Root;
 
-use Zend\Session\SessionManager;
-use Zend\View\Helper\AbstractHelper;
+use Laminas\Session\SessionManager;
+use Laminas\View\Helper\AbstractHelper;
 
 class Session extends AbstractHelper
 {
     private $sessionManager;
 
-    public function __construct(SessionManager $sessionManager)
-    {
+    public function __construct(SessionManager $sessionManager) {
         $this->sessionManager = $sessionManager;
     }
 
+    /**
+     * Checks if a message with the given identifier should be displayed.
+     *
+     * @param $identifier
+     *
+     * @return bool
+     */
     public function isMessageDisplayed($identifier) {
 
         $value = 0;
@@ -24,6 +30,5 @@ class Session extends AbstractHelper
         }
 
         return $value < time();
-//        return true;
     }
 }

@@ -33,6 +33,9 @@
  */
 
 namespace ThULB\ILS\Driver;
+use Exception;
+use VuFind\Exception\Forbidden as ForbiddenException;
+use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
     VuFind\I18n\Translator\TranslatorAwareInterface,
     VuFind\Exception\ILS as ILSException,
@@ -45,7 +48,7 @@ use VuFind\ILS\Driver\PAIA as OriginalPAIA,
  */
 class PAIA extends OriginalPAIA
 {
-    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use TranslatorAwareTrait;
     
     const DAIA_DOCUMENT_ID_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
     const PAIA_INVALID_CREDENTIALS_MSG = '0:access_denied (invalid patron or password)';
@@ -186,6 +189,7 @@ class PAIA extends OriginalPAIA
         foreach ($result as $index => $doc) {
             if (isset($doc['callnumber'])) {
                 $result[$index]['callnumber'] = $this->getItemCallnumber(['label' => $doc['callnumber']]);
+                $result[$index]['departmentId'] = $this->getDepIpFromItem(['label' => $doc['callnumber']], $result[$index]['callnumber']);
             }
         }
         
@@ -276,7 +280,8 @@ class PAIA extends OriginalPAIA
             // PAIA custom field
             // label (0..1) call number, shelf mark or similar item label
             $result['callnumber'] = $this->getItemCallnumber($doc);
-            
+            $result['departmentId'] = $this->getDepIpFromItem($doc, $result['callnumber']);
+
             // status: provided (the document is ready to be used by the patron)
             $result['available'] = $doc['status'] == 4 ? true : false;
             
@@ -352,12 +357,12 @@ class PAIA extends OriginalPAIA
 
         if(isset($item['available'])) {
             foreach ($item['available'] as $available) {
-                if (isset($available['service']) && $available['service'] == 'remote') {
-                    $href = $available['href'];
+                if (isset($available['service']) && in_array($available['service'], ['remote', 'openaccess'])) {
+                    $href = trim($available['href']);
                     // custom DAIA field
                     $status['remotehref'] = $href;
                     // custom DAIA field
-                    $status['remotedomain'] = parse_url($href)['host'];
+                    $status['remotedomain'] = parse_url($href)['host'] ?? $href;
                     // custom DAIA field
                     $status['remotetitle'] = isset($available['title']) ? $available['title'] : '';
 
@@ -462,6 +467,8 @@ class PAIA extends OriginalPAIA
                 $result_item['reserve'] = $this->getItemReserveStatus($item);
                 // get callnumber
                 $result_item['callnumber'] = $this->getItemCallnumber($item);
+                // get department id
+                $result_item['departmentId'] = $this->getDepIpFromItem($item, $result_item['callnumber']);
                 // get location
                 $result_item['location'] = $this->getItemDepartment($item);
                 // custom DAIA field
@@ -493,7 +500,7 @@ class PAIA extends OriginalPAIA
 
         return $result;
     }
-    
+
     /**
      * Patron Login
      *
@@ -506,6 +513,8 @@ class PAIA extends OriginalPAIA
      * null on unsuccessful login.
      *
      * @throws ILSException
+     *
+     * @throws AuthException
      */
     public function patronLogin($username, $password)
     {
@@ -609,11 +618,37 @@ class PAIA extends OriginalPAIA
         
         if ($sepPos && isset($this->config['DepartmentTitles'][substr($callNumber, 0, $sepPos)])) {
             return substr($callNumber, $sepPos + 1);
-        } else if (false === $sepPos && isset($this->config['DepartmentTitles'][$callNumber])) {
+        }
+        else if (false === $sepPos && isset($this->config['DepartmentTitles'][$callNumber])) {
             return '';
+        }
+        else if ($sepPos !== false) {
+            foreach($this->config['DepartmentRegex'] as $regex) {
+                if(preg_match($regex, $callNumber)) {
+                    return substr($callNumber, $sepPos + 1);
+                }
+            }
         }
         
         return $callNumber;
+    }
+
+    /**
+     * Get department id of an item by removing the shortened call number
+     * (without department id) from the item call number.
+     *
+     * @param array $document
+     * @param string $shortenedCallnumber
+     *
+     * @return string|null
+     */
+    protected function getDepIpFromItem($document, $shortenedCallnumber) {
+        $callnumber = $document['label'] ?? null;
+        if(!empty($callnumber) && !empty($shortenedCallnumber)) {
+            return str_replace(':' . $shortenedCallnumber, '', $callnumber);
+        }
+
+        return null;
     }
 
     /**
@@ -653,9 +688,9 @@ class PAIA extends OriginalPAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param patron $patron An array of patron data
+     * @param array $patron An array of patron data
      *
-     * @return bool True if request is valid, false if not
+     * @return array|bool True if request is valid, false if not, array if patron is blocked
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
@@ -675,7 +710,7 @@ class PAIA extends OriginalPAIA
         return false;
     }
 
-        /**
+    /**
      * PAIA authentication function
      *
      * @param string $username Username
@@ -742,7 +777,7 @@ class PAIA extends OriginalPAIA
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
-     * @param string $data_to_send POST data
+     * @param array  $data_to_send POST data
      * @param string $access_token PAIA access token for current session
      *
      * @return string POST response
@@ -766,7 +801,7 @@ class PAIA extends OriginalPAIA
                 $this->paiaTimeout,
                 $http_headers
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ILSException($e->getMessage());
         }
         if (!$result->isSuccess()) {
@@ -781,7 +816,7 @@ class PAIA extends OriginalPAIA
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
-     * @param string $data_to_send POST data
+     * @param array  $data_to_send POST data
      * @param string $access_token PAIA access token for current session
      *
      * @return string POST response
@@ -805,7 +840,7 @@ class PAIA extends OriginalPAIA
                 $this->paiaTimeout,
                 $http_headers
             );
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ILSException($e->getMessage());
         }
 
@@ -849,74 +884,18 @@ class PAIA extends OriginalPAIA
     }
 
     /**
-     * Perform an HTTP request.
+     * Public Function which changes the password in the library system
+     * (not supported prior to VuFind 2.4)
      *
-     * @param string $id id for query in daia
+     * @param array $details Array with patron information, newPassword and
+     *                       oldPassword.
      *
-     * @return xml or json object
-     * @throws ILSException
+     * @return array An array with patron information.
      */
-    protected function doHTTPRequest($id)
-    {
-        $http_headers = [
-            'Content-type: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
-            'Accept: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
-        ];
+    public function changePassword($details) {
+        $details = parent::changePassword($details);
+        $details['status'] = $this->translate($details['status']);
 
-        $params = [
-            'id' => $id,
-            'format' => $this->daiaResponseFormat,
-        ];
-
-        try {
-            $result = $this->httpService->get(
-                $this->baseUrl,
-                $params, $this->daiaTimeout, $http_headers
-            );
-        } catch (\Exception $e) {
-            throw new ILSException(
-                'HTTP request exited with Exception ' . $e->getMessage() .
-                ' for record: ' . $id
-            );
-        }
-
-        if (!$result->isSuccess()) {
-            throw new ILSException(
-                'HTTP status ' . $result->getStatusCode() .
-                ' received, retrieving availability information for record: ' . $id
-            );
-        }
-
-        // check if result matches daiaResponseFormat
-        if ($this->contentTypesResponse != null) {
-            if ($this->contentTypesResponse[$this->daiaResponseFormat]) {
-                $contentTypesResponse = array_map(
-                    'trim',
-                    explode(
-                        ',',
-                        $this->contentTypesResponse[$this->daiaResponseFormat]
-                    )
-                );
-                list($responseMediaType) = array_pad(
-                    explode(
-                        ';',
-                        $result->getHeaders()->get('Content-Type')->getFieldValue(),
-                        2
-                    ),
-                    2,
-                    null
-                ); // workaround to avoid notices if encoding is not set in header
-                if (!in_array(trim($responseMediaType), $contentTypesResponse)) {
-                    throw new ILSException(
-                        'DAIA-ResponseFormat not supported. Received: ' .
-                        $responseMediaType . ' - ' .
-                        'Expected: ' .
-                        $this->contentTypesResponse[$this->daiaResponseFormat]
-                    );
-                }
-            }
-        }
-
-        return $result->getBody();
+        return $details;
     }
 }

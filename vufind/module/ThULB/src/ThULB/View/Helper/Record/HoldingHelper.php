@@ -28,7 +28,7 @@
 
 namespace ThULB\View\Helper\Record;
 
-use Zend\View\Helper\AbstractHelper;
+use Laminas\View\Helper\AbstractHelper;
 
 class HoldingHelper extends AbstractHelper
 {  
@@ -109,12 +109,12 @@ class HoldingHelper extends AbstractHelper
     return $availabilityString;
   }
 
-  public function getLocation(&$holding)
+  public function getLocation(&$holding, $includeHTML = true)
   {
-    $locationText = $this->view->transEsc('location_' . $holding['location'], [], $holding['location']);
+    $locationText = $this->view->transEscWithPrefix('location_', $holding['location']);
 
-    if (isset($holding['locationhref']) && $holding['locationhref']) {
-      $locationText = '<a href="' . $holding['locationhref'] . '" target="_blank">' . $locationText . '</a>';
+    if ($includeHTML && isset($holding['locationhref']) && $holding['locationhref']) {
+      $locationText = '<a href="' . $holding['locationhref'] . '" class="external-link" target="_blank">' . $locationText . '</a>';
     }
 
     return $locationText;

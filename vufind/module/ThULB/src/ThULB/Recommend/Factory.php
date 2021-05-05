@@ -26,7 +26,7 @@
 
 namespace ThULB\Recommend;
 
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * Factory methods for Recommender modules
@@ -46,6 +46,21 @@ class Factory
     {
         return new SummonCombined(
             $sm->get('VuFind\SearchResultsPluginManager')
+        );
+    }
+
+    /**
+     * Factory for SideFacets module.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SideFacets
+     */
+    public static function getSideFacets(ServiceManager $sm)
+    {
+        return new SideFacets(
+            $sm->get('VuFind\Config\PluginManager'),
+            $sm->get('ThULB\Search\Solr\HierarchicalFacetHelper')
         );
     }
 }

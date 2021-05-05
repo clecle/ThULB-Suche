@@ -80,7 +80,7 @@ class Json extends OriginalJson
      * @param string $parentID The starting point for the current recursion
      * (equivalent to Solr field hierarchy_parent_id)
      *
-     * @return string
+     * @return array
      */
     protected function mapChildren($parentID)
     {

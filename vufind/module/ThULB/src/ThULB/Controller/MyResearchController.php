@@ -26,7 +26,13 @@
  */
 
 namespace ThULB\Controller;
+
+use Laminas\View\Model\ViewModel;
 use VuFind\Controller\MyResearchController as OriginalController;
+use VuFind\RecordDriver\AbstractBase;
+use Laminas\Mvc\MvcEvent;
+use Laminas\Paginator\Adapter\ArrayAdapter;
+use Laminas\Paginator\Paginator;
 
 
 /**
@@ -37,6 +43,10 @@ use VuFind\Controller\MyResearchController as OriginalController;
 class MyResearchController extends OriginalController
 {
     const ID_URI_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
+
+    use ChangePasswordTrait {
+        onDispatch as public trait_onDispatch;
+    }
 
     /**
      * User login action -- clear any previous follow-up information prior to
@@ -128,8 +138,8 @@ class MyResearchController extends OriginalController
 
         // Build paginator if needed:
         if ($limit > 0 && $limit < count($result)) {
-            $adapter = new \Zend\Paginator\Adapter\ArrayAdapter($result);
-            $paginator = new \Zend\Paginator\Paginator($adapter);
+            $adapter = new ArrayAdapter($result);
+            $paginator = new Paginator($adapter);
             $paginator->setItemCountPerPage($limit);
             $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
             $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
@@ -220,7 +230,7 @@ class MyResearchController extends OriginalController
     /**
      * Provide a link to the password change site of the ILS.
      *
-     * @return view
+     * @return mixed
      */
     public function changePasswordLinkAction()
     {
@@ -255,12 +265,105 @@ class MyResearchController extends OriginalController
      *
      * @param array $current Record information
      *
-     * @return \VuFind\RecordDriver\AbstractBase
+     * @return AbstractBase
      */
     protected function getDriverForILSRecord($current)
     {
         $current['id'] = str_replace(self::ID_URI_PREFIX, '', $current['id']);
         
         return parent::getDriverForILSRecord($current);
+    }
+
+    /**
+     * Execute the request.
+     * Logout logged in users if the ILS Driver switched to an offline mode and redirect to login screen.
+     *
+     * @param  MvcEvent $event
+     * @return mixed
+     */
+    public function onDispatch(MvcEvent $event)
+    {
+        $routeName = 'myresearch-userlogin';
+        if($this->getILS()->getOfflineMode()
+                && strtolower($event->getRouteMatch()->getMatchedRouteName()) !== $routeName
+                && $this->getAuthManager()->isLoggedIn()) {
+
+            $event->getRouteMatch()->setParam('action', 'logout');
+            parent::onDispatch($event);
+
+            return $this->redirect()->toRoute($routeName);
+        }
+
+        return $this->trait_onDispatch($event);
+    }
+
+    /**
+     * Send user's saved favorites from a particular list to the view
+     *
+     * @return mixed
+     */
+    public function mylistAction()
+    {
+        if($this->getAuthManager()->isLoggedIn()) {
+            $this->flashMessenger()->addMessage(
+                array(
+                    'html' => true,
+                    'msg' => 'favorites_questions',
+                    'tokens' => ['%%address%%' => $this->getConfig()->Site->email]
+                ), 'warning'
+            );
+        }
+
+        return parent::mylistAction();
+    }
+
+    /**
+     * Handling submission of a new password for a user.
+     *
+     * @return ViewModel
+     */
+    public function changePasswordAction() {
+        /* @var $view ViewModel */
+        $view =  parent::changePasswordAction();
+
+        if($this->getAuthManager()->isLoggedIn()) {
+            $pw = $this->getAuthManager()->getIdentity()->getCatPassword();
+            if (!$this->getAuthManager()->validatePasswordAgainstPolicy($pw)) {
+                $this->layout()->setVariable('showBreadcrumbs', false);
+                $this->layout()->setVariable('searchbox', false);
+                $view->setVariable('forced', true);
+
+                $this->flashMessenger()->addMessage('force new PW', 'error');
+            }
+        }
+
+        return $view;
+    }
+
+    /**
+     * Handling submission of a new password for a user.
+     *
+     * @return view
+     */
+    public function newPasswordAction()
+    {
+        $view = parent::newPasswordAction();
+
+        $fm = $this->flashMessenger();
+        if($fm->hasCurrentSuccessMessages()) {
+            $messages = $fm->getCurrentSuccessMessages();
+            $fm->clearCurrentMessagesFromNamespace('success');
+
+            foreach ($messages as $message) {
+                if(!is_array($message)) {
+                    $message = ['msg' => $message];
+                }
+
+                $message['dataset']['lightbox-ignore'] = true;
+                $fm->addSuccessMessage($message);
+            }
+        }
+
+        return $view;
     }
 }

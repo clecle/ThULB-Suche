@@ -27,6 +27,7 @@
 
 namespace ThULB\Db\Row;
 use VuFind\Db\Row\User as OriginalUser;
+use VuFind\Exception\PasswordSecurity;
 
 /**
  * Description of OAuthUser
@@ -44,6 +45,8 @@ class OAuthUser extends OriginalUser
      * @param string $password Password to save
      *
      * @return mixed           The output of the save method.
+     *
+     * @throws PasswordSecurity
      */
     public function saveCredentials($username, $password)
     {

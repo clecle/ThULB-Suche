@@ -1,25 +1,25 @@
 <?php $count = count($data); ?>
-<? for ($i = 0; $i < $count; $i++): ?>
-  <?/* Depending on the record driver, $field may either be an array with
+<?php for ($i = 0; $i < $count; $i++): ?>
+  <?php /* Depending on the record driver, $field may either be an array with
      "name" and "number" keys or a flat string containing only the series
      name.  We should account for both cases to maximize compatibility. */?>
   <?php $field = $data[$i]; ?>
   <?php if (is_array($field)): ?>
-    <? if (!empty($field['name'])): ?>
-      <? if (isset($field['id']) && $field['id']) : ?>
-        <? $url = $this->recordLink()->related(['type' => 'bib', 'value' => $field['id']]); ?>
-        <a href="<?=$url?>"><?=$this->escapeHtml($field['name'])?></a>
-      <? else: ?>
-        <?=$this->escapeHtml($field['name'])?>
-      <? endif; ?>
-      <? if (!empty($field['number'])): ?>
-        <?=$this->escapeHtml($field['number'])?>
-      <? endif; ?>
+    <?php if (!empty($field['name'])): ?>
+      <?php if (isset($field['id']) && $field['id']) : ?>
+        <?php $url = $this->recordLink()->related(['type' => 'bib', 'value' => $field['id']]); ?>
+        <a href="<?= $url?>"><?= $this->escapeHtml($field['name'])?></a>
+      <?php else: ?>
+        <?= $this->escapeHtml($field['name'])?>
+      <?php endif; ?>
+      <?php if (!empty($field['number'])): ?>
+        <?= $this->escapeHtml($field['number'])?>
+      <?php endif; ?>
       <?php if($count >= 1 && $i < $count - 1): ?>
         <br />
       <?php endif; ?>
-    <? endif; ?>
-  <? else: ?>
-    <a href="<?=$this->record($this->driver)->getLink('series', $field)?>"><?=$this->escapeHtml($field)?></a><br/>
-  <? endif; ?>
-<? endfor; ?>
+    <?php endif; ?>
+  <?php else: ?>
+    <a href="<?= $this->record($this->driver)->getLink('series', $field)?>"><?= $this->escapeHtml($field)?></a><br/>
+  <?php endif; ?>
+<?php endfor; ?>

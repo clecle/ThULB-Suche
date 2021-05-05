@@ -1,18 +1,18 @@
 <?php
 
-
 namespace ThULB\Controller;
-
 
 use Exception;
 use VuFind\Controller\AbstractBase;
-use Zend\ServiceManager\ServiceLocatorInterface;
-use Zend\Session\Container;
-use Zend\View\Model\ViewModel;
+use VuFind\Log\LoggerAwareTrait;
+use Laminas\Http\Response;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container;
+use Laminas\View\Model\ViewModel;
 
 class DynMessagesController extends AbstractBase
 {
-    use \VuFind\Log\LoggerAwareTrait;
+    use LoggerAwareTrait;
 
     private $_basePath;
     private $_iniGerman;
@@ -32,7 +32,7 @@ class DynMessagesController extends AbstractBase
 
         $this->setLogger($sm->get('VuFind\Logger'));
 
-        $this->accessPermission = 'access.DynamicMessages';
+        $this->accessPermission = 'access.AdminModule';
 
         // File paths
         $this->_basePath = APPLICATION_PATH . '/local_thulb';
@@ -46,8 +46,11 @@ class DynMessagesController extends AbstractBase
         );
     }
 
-    public function homeAction()
-    {
+    public function homeAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         $german = $this->readLanguageFile($this->_iniGerman);
         $english = $this->readLanguageFile($this->_iniEnglish);
 
@@ -58,8 +61,16 @@ class DynMessagesController extends AbstractBase
             ));
     }
 
-    public function saveAction()
-    {
+    /**
+     * Save message data.
+     *
+     * @return Response
+     */
+    public function saveAction() {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
         $english = $this->params()->fromPost('english');
         $german = $this->params()->fromPost('german');
 
@@ -135,11 +146,11 @@ class DynMessagesController extends AbstractBase
         if(is_file($fileName) && is_writable($fileName)) {
             ksort($values);
 
-            try{
+            try {
                 $file = fopen($fileName, 'w');
                 foreach ($values as $tag => $text) {
                     $tag = trim($tag);
-                    $text = strip_tags($text, '<a><i>');
+                    $text = strip_tags($text, '<a><i><strong><em>');
                     $text = trim($text);
                     $text = str_replace(["\r\n", "\n"], '<br>', $text);
                     $line = "$tag = \"$text\"\n";
@@ -151,10 +162,11 @@ class DynMessagesController extends AbstractBase
                 $success = false;
             }
             finally {
-                if($file !== false) {
+                if(isset($file) && $file !== false) {
                     fclose($file);
                 }
-            }        }
+            }
+        }
         else {
             $this->flashMessenger()->addErrorMessage("Die Datei '$fileName' konnte nicht geschrieben werden.<br>");
         }

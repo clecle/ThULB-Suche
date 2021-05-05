@@ -157,16 +157,19 @@ class Koha extends AbstractBase
      * This is responsible for retrieving the holding information of a certain
      * record.
      *
-     * @param string $id     The record id to retrieve the holdings for
-     * @param array  $patron Patron data
+     * @param string $id      The record id to retrieve the holdings for
+     * @param array  $patron  Patron data
+     * @param array  $options Extra options (not currently used)
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array         On success, an associative array with the following
      * keys: id, availability (boolean), status, location, reserve, callnumber,
      * duedate, number, barcode.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null)
+    public function getHolding($id, array $patron = null, array $options = [])
     {
         $holding = [];
         $available = true;
@@ -229,7 +232,7 @@ class Koha extends AbstractBase
                 //Retrieving the location (shelf types)
                 $shelf = $rowItem['LOCATION'];
                 $loc = (null != $shelf)
-                    ? $loc . ": " . $this->locCodes[$shelf]
+                    ? $loc . ": " . ($this->locCodes[$shelf] ?? $shelf)
                     : $loc . ": " . 'Unknown';
 
                 //A default value is stored for null
@@ -284,7 +287,7 @@ class Koha extends AbstractBase
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return mixed        Array of the patron's fines on success.
      */
@@ -330,7 +333,7 @@ class Koha extends AbstractBase
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array        Array of the patron's holds on success.
      */
@@ -412,7 +415,7 @@ class Koha extends AbstractBase
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
@@ -495,7 +498,7 @@ class Koha extends AbstractBase
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
      *
-     * @throws VuFind\Date\DateException;
+     * @throws VuFind\Date\DateException
      * @throws ILSException
      * @return array        Array of the patron's transactions on success.
      */
@@ -794,8 +797,6 @@ class Koha extends AbstractBase
                 'default_sort' => 'checkout desc'
             ];
         }
-        return isset($this->config[$function])
-            ? $this->config[$function]
-            : false;
+        return $this->config[$function] ?? false;
     }
 }

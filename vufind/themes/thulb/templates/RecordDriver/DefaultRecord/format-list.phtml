@@ -1,3 +1,4 @@
-<? foreach ($this->driver->getFormats() as $format): ?>
-  <span class="format <?=$this->record($this->driver)->getFormatClass($format) ?>"><?=$this->transEsc('Formats::' . $format)?></span>
-<? endforeach; ?>
+<?php $formats = $this->driver->getFormats(); ?>
+<?php if($format = array_shift($formats)): ?>
+  <span class="format <?= $this->record($this->driver)->getFormatClass($format) ?>"><?= $this->transEsc('Formats::' . $format)?></span>
+<?php endif; ?>

@@ -28,7 +28,11 @@
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 namespace ThULB\RecordTab;
+use Exception;
 use VuFind\Search\RecommendListener;
+use VuFind\Search\SearchRunner;
+use VuFind\Search\SolrCollection\Params;
+use VuFind\Search\SolrCollection\Results;
 
 /**
  * Article Collection list tab
@@ -51,11 +55,12 @@ class ArticleCollectionList extends CollectionList
     {
         return 'related_articles';
     }
-    
+
     /**
      * Get the processed search results.
      *
-     * @return \VuFind\Search\SolrCollection\Results
+     * @return Results
+     * @throws Exception
      */
     public function getResults()
     {
@@ -64,7 +69,7 @@ class ArticleCollectionList extends CollectionList
             $request = $this->getRequest()->getQuery()->toArray()
                 + $this->getRequest()->getPost()->toArray();
             $rManager = $this->recommendManager;
-            $cb = function ($runner, $params, $searchId) use ($driver, $rManager) {
+            $cb = function (SearchRunner $runner, Params $params, $searchId) use ($driver, $rManager) {
                 $params->initFromRecordDriver($driver);
                 $params->addHiddenFilter('format:Article');
                 $listener = new RecommendListener($rManager, $searchId);
@@ -74,7 +79,7 @@ class ArticleCollectionList extends CollectionList
                 $listener->attach($runner->getEventManager()->getSharedManager());
             };
             $this->results
-                = $this->runner->run($request, 'SolrCollection', $cb);
+                = $this->runner->run($request, $this->searchClassId, $cb);
         }
         return $this->results;
     }

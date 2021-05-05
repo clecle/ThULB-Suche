@@ -43,16 +43,15 @@ function setupTruncations() {
  * Setup facets
  */
 function setupThulbFacets() {
-  $('ul[class=pagination] li,select[name=sort] option,.authorLink,.langOption,.facetAND,.facetOR,.facetTAB,.facetRANGE,.checkbox-filter').click(function resultlistOverlay() {
-    $("#searchcontent").css('pointer-events', 'none');
-    $("#searchcontent").css('opacity', '0.5');
+  $('ul[class=pagination] li,select[name=sort] option,.authorLink,.langOption,.facetAND,.facetOR,.facetTAB,.facetRANGE,.checkbox-filter, #renewSelected, #renewAll').click(function resultlistOverlay() {
+    $("#content").css('pointer-events', 'none');
+    $("#content").css('opacity', '0.5');
 
     $("#img-load").css({
       top   : '50%',
       left  : '50%'
     });
-    
-    $("#overlay").fadeIn();
+
     $("#img-load").fadeIn();
   });
 
@@ -79,22 +78,35 @@ function setupThulbFacets() {
 }
 
 /**
+ * Show or hide the delete search icon and add 'with-delete-icon'-class to search field.
+ * @param show Boolean to show or hide the icon.
+ */
+function toggleDeleteSearchIcon(show) {
+    $('#searchForm_lookfor').toggleClass('with-delete-icon', show);
+    $('#search-delete-icon').toggle(show);
+}
+
+/**
  * Setup search box and icon to remove the content
  */
 function setupRemoveSearchText() {
     var search = $('#searchForm_lookfor');
-    var icon = $('#search-delete-icon');
-
-    if (search.val() !== '') {
-        icon.show();
-    }
-    icon.click(function () {
-        search.val('').focus();
-        icon.hide();
-    });
+    toggleDeleteSearchIcon(search.val() !== '');
     search.on('input', function () {
-        search.val() === '' ? icon.hide() : icon.show();
+        toggleDeleteSearchIcon(search.val() !== '');
     });
+
+    $('#search-delete-icon').click(function () {
+        search.val('').focus();
+        toggleDeleteSearchIcon(false);
+    });
+}
+
+/**
+ * Disply bootstrap for all links with the class hint and declared as tooltips
+ */
+function setupHintTooltips() {
+    $('a.hint[data-toggle="tooltip"]').tooltip();
 }
 
 function setAsyncResultNum() {
@@ -137,16 +149,39 @@ function styleHtmlTooltips()
     });
 }
 
-function setCookie(cname, cvalue, exdays) {
-    var d = new Date();
-    d.setTime(d.getTime() + (exdays*24*60*60*1000));
-    var expires = "expires="+d.toUTCString();
-    document.cookie = cname + "=" + cvalue + "; " + expires + ";path=/";
+function toggleVpnWarning(show, html) {
+    var ajaxMessage = $('.vpn-warning-wrapper');
+    if(typeof html !== 'undefined' && html !== '') {
+        ajaxMessage.html(html);
+    }
+
+    ajaxMessage.animate({
+        'opacity': show,      // animate slideUp
+        'margin-top':  show,
+        'margin-bottom':  show,
+        'padding-top': show,
+        'padding-bottom': show,
+        'height':  show
+    }, 700);
+}
+
+function checkVpnWarning(accepted) {
+    if(accepted) {
+        toggleVpnWarning('hide');
+    }
+
+    $.ajax({
+        dataType: 'json',
+        method: 'POST',
+        url: VuFind.path + '/AJAX/JSON?method=vpnWarning' + (accepted ? '&vpn-accepted=ja' : '')
+    }).done(function showVpnWarning (response) {
+        if(response.data.html) {
+            toggleVpnWarning('show', response.data.html);
+        }
+    });
 }
 
 function hideMessage(message) {
-    console.log(message);
-
     $.ajax({
         dataType: 'json',
         method: 'POST',
@@ -158,11 +193,14 @@ function hideMessage(message) {
 }
 
 $(document).ready(function thulbDocReady() {
+    setupHintTooltips();
     setupTruncations();
     setupThulbFacets();
     setupRemoveSearchText();
 	setAsyncResultNum();
     styleHtmlTooltips();
+
+    checkVpnWarning(false);
     
     $('.checkbox-select-all').change(function unsetDisabledCheckboxes() {
         var $form = this.form ? $(this.form) : $(this).closest('form');
@@ -191,6 +229,18 @@ $(document).ready(function thulbDocReady() {
             $(this).closest('form').attr('target', '_blank');
         } else {
             $(this).closest('form').attr('target', '_self');
+        }
+    });
+
+    // retain filter sessionStorage
+    $('.searchFormKeepFilters').click(function retainFiltersInSessionStorage() {
+        $('.applied-filter').prop('checked', this.checked);
+    });
+
+    // open cart when full
+    $('.cart-add').on('click', function (event){
+        if(VuFind.cart.getFullItems().length >= parseInt(VuFind.translate('bookbagMax'), 10)) {
+            $('#cartItems').click();
         }
     });
 });

@@ -28,12 +28,12 @@ namespace ThULB\Search\Results;
 
 /**
  * A trait to override the function to get a facet list with a version that
- * addiotinally sorts the facets
+ * additionally sorts the facets
  */
 trait SortedFacetsTrait
 {
     /**
-     * Returns the stored list of faceSortedFacetsTraitts for the last search with all applied
+     * Returns the stored list of faceSortedFacetsTraits for the last search with all applied
      * facet fields first.
      *
      * @param array $filter Array of field => on-screen description listing
@@ -44,22 +44,34 @@ trait SortedFacetsTrait
     public function getFacetList($filter = null)
     {
         $facetList = parent::getFacetList($filter);
-        
+        return $this->sortFacets($facetList);
+    }
+
+    /**
+     * Sorts the facet fields of a list of facets to put all applied facets on top.
+     * All the other sorting stays the same.
+     *
+     * @param array $facetList Facets data arrays
+     *
+     * @return array Facets data arrays
+     */
+    public function sortFacets($facetList) {
         foreach ($facetList as $facetLabel => $facetData) {
             $this->sortFacetList($facetData['list']);
             $facetData['counts'] = array_values($facetData['list']);
             $facetData['list'] = $facetData['counts'];
             $facetList[$facetLabel] = $facetData;
         }
-        
+
         return $facetList;
     }
-    
+
     /**
      * Sorts an array of facet fields to put all applied facets on top. All the
      * other sorting stays the same.
      * 
-     * @param type $facetFields array of facet fields
+     * @param array $facetFields array of facet fields
+     *
      * @return boolean true
      */
     protected function sortFacetList(&$facetFields)

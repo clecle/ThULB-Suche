@@ -30,9 +30,11 @@
  * @link     https://vufind.org Main Page
  */
 namespace ThULB\Role\PermissionProvider;
+use VuFind\Log\LoggerAwareTrait;
 use VuFind\Role\PermissionProvider\PermissionProviderInterface;
 use Vufind\Cookie\CookieManager;
-use Zend\Http\PhpEnvironment\Request;
+use Laminas\Http\PhpEnvironment\Request;
+use Laminas\Log\LoggerAwareInterface;
 
 /**
  * Queried cookie permission provider for VuFind.
@@ -47,9 +49,9 @@ use Zend\Http\PhpEnvironment\Request;
  * @link     https://vufind.org Main Page
  */
 class QueriedCookie implements PermissionProviderInterface,
-    \Zend\Log\LoggerAwareInterface
+    LoggerAwareInterface
 {
-    use \VuFind\Log\LoggerAwareTrait;
+    use LoggerAwareTrait;
 
     /**
      * Request object
@@ -68,7 +70,7 @@ class QueriedCookie implements PermissionProviderInterface,
     /**
      * Lifetime of a cookie to keep the information about a provided query param.
      *
-     * @var type 
+     * @var int
      */
     protected $cookieLifetime = 31536000;   // one year
 
@@ -96,7 +98,8 @@ class QueriedCookie implements PermissionProviderInterface,
     /**
      * Constructor
      *
-     * @param Request $request Request object
+     * @param Request       $request       Request object
+     * @param CookieManager $cookieManager
      */
     public function __construct(Request $request, CookieManager $cookieManager)
     {

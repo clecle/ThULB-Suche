@@ -1,4 +1,4 @@
-<?
+<?php 
   // Set page title.
   $this->headTitle($this->translate('Search Home'));
 
@@ -19,7 +19,7 @@
 ?>
 
 <div class="searchHomeContent">
-  <?
+  <?php 
   $ilsStatusScript = <<<JS
       $(document).ready(function() {
         $.ajax({
@@ -35,15 +35,15 @@
       });
 JS;
   ?>
-  <?=$this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
+  <?= $this->inlineScript(\Zend\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
 
   <div class="row startpage_logo">
     <div class="col-sm-4 col-sm-offset-4">
-      <img alt="welcome dhge-suche" src="<?=$this->imageLink('logo_DHGE.png')?>">
+      <img alt="welcome dhge-suche" src="<?= $this->imageLink('logo_DHGE.png')?>">
     </div>
   </div>
   <div class="startpage_searchbox">
-    <?=$this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
+    <?= $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
   </div>
 
 </div>

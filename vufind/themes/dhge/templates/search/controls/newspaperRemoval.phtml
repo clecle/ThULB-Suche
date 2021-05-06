@@ -1,8 +1,8 @@
-<? $filters = $this->params->getFilters(); ?>
-<form class="form-inline" action="<?=$this->currentPath()?>" method="get" name="cbfacets">
-    <input id="no-articles" name="filter[]" type="checkbox" value="-format:Article" class="jumpMenu" <?=(array_key_exists('-format', $filters))?' checked="checked"':''?>>
-    <label for="no-articles"><?=$this->transEsc('exclude articles')?></label>
+<?php $filters = $this->params->getFilters(); ?>
+<form class="form-inline" action="<?= $this->currentPath()?>" method="get" name="cbfacets">
+    <input id="no-articles" name="filter[]" type="checkbox" value="-format:Article" class="jumpMenu" <?= (array_key_exists('-format', $filters))?' checked="checked"':''?>>
+    <label for="no-articles"><?= $this->transEsc('exclude articles')?></label>
     
-    <?=$this->results->getUrlQuery()->removeAllFilters()->asHiddenFields(array('sort' => '/.*/'));?>
-    <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEsc("Set")?>" /></noscript>
+    <?= $this->results->getUrlQuery()->removeAllFilters()->asHiddenFields(array('sort' => '/.*/'));?>
+    <noscript><input type="submit" class="btn btn-default" value="<?= $this->transEsc("Set")?>" /></noscript>
 </form>

@@ -4,7 +4,7 @@
       <?php if (!isset($this->options['disableFirst']) || !$this->options['disableFirst']): ?>
         <li><a href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage(1)?>">[1]</a></li>
       <?php endif; ?>
-      <li><a class="page-prev" title="<?= $this->transEsc('Prev')?>" href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><i class="fa fa-caret-left"></i></a></li>
+      <li><a class="page-prev" title="<?= $this->transEscAttr('Prev')?>" href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage($this->previous)?>"><i class="fa fa-caret-left"></i></a></li>
     <?php endif; ?>
 
     <?php if (count($this->pagesInRange) > 1): ?>
@@ -18,7 +18,7 @@
     <?php endif; ?>
 
     <?php if (isset($this->next)): ?>
-      <li><a class="page-next" title="<?= $this->transEsc('Next');?>" href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><i class="fa fa-caret-right"></i></a></li>
+      <li><a class="page-next" title="<?= $this->transEscAttr('Next');?>" href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage($this->next)?>"><i class="fa fa-caret-right"></i></a></li>
       <?php if (!isset($this->options['disableLast']) || !$this->options['disableLast']): ?>
         <li><a href="<?= $this->currentPath() . $this->results->getUrlQuery()->setPage($this->pageCount)?>">[<?= $this->pageCount?>]</a></li>
       <?php endif; ?>

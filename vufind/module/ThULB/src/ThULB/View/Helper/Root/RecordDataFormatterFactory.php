@@ -190,4 +190,16 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         return $spec->getArray();
     }
+
+    public function getDefaultDescriptionSpecs()
+    {
+        $specs = parent::getDefaultDescriptionSpecs();
+
+        if(isset($specs['DOI']) && is_array($specs['DOI'])) {
+            unset($specs['DOI']['itemPrefix']);
+            unset($specs['DOI']['itemSuffix']);
+        }
+
+        return $specs;
+    }
 }

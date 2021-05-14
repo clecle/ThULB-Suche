@@ -2252,16 +2252,6 @@ class SolrVZGRecord extends SolrMarc
 
         // Fix for cases where 024 $a is not set
         $fields024 = $this->getFieldsConditional('024', false, $conditions);
-//        $ismn = null;
-//        foreach ($fields024 as $field) {
-//            if ($field->getIndicator(1) == 2) {
-//                if($data = $field->getSubfield('a')) {
-//                    $ismn = $data->getData();
-//                    break;
-//                }
-//            }
-//        }
-//        return $ismn ?? false;
 
         return (count($fields024) > 0) ? $fields024[0]->getSubfield('a')->getData() : false;
     }
@@ -2316,6 +2306,27 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $retValue;
+    }
+
+    /**
+     * Get the URN for the record
+     *
+     * @return string|false
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getURN () {
+        $conditions = array(
+            $this->createFieldCondition('subfield', 'a', '!=', false),
+            $this->createFieldCondition('subfield', '2', '==', 'urn')
+        );
+
+        $fields = $this->getFieldsConditional('024', false, $conditions);
+        foreach ($fields as $field) {
+            return $field->getSubfield('a')->getData();
+        }
+
+        return false;
     }
 
 //    Commented out for possible future use.

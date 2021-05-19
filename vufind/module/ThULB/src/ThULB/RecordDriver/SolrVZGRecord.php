@@ -2304,6 +2304,26 @@ class SolrVZGRecord extends SolrMarc
         return false;
     }
 
+    /**
+     * Return the first valid DOI found in the record (false if none).
+     *
+     * @return string|false
+     */
+    public function getCleanDOI()
+    {
+        $conditions = array(
+            $this->createFieldCondition('indicator', '1', '==', '7'),
+            $this->createFieldCondition('subfield', '2', '==', 'doi'),
+            $this->createFieldCondition('subfield', 'a', '!=', false),
+        );
+
+        if($fields = $this->getFieldsConditional('024', false, $conditions)) {
+            return $fields[0]->getSubfield('a')->getData();
+        }
+
+        return false;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

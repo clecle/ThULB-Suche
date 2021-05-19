@@ -2159,31 +2159,6 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Returns ppn links for this record.
-     *
-     * @return array
-     *
-     * @throws File_MARC_Exception
-     */
-    public function getPPNLink() {
-        $ppnLinks = array();
-
-        /* @var $fields File_MARC_Data_Field[] */
-        $fields = $this->getMarcRecord()->getFields('760|762|765|767|770|772|774|775|776|777|780|787', true);
-        foreach ($fields as $field) {
-            $links = $field->getSubfields('w');
-            if(is_array($links) && count($links) > 0) {
-                foreach ($links as $link) {
-                    if(strpos($link->getData(), '(' . self::PPN_LINK_ID_PREFIX . ')') !== false) {
-                        $ppnLinks[] = substr($link->getData(), 8);
-                    }
-                }
-            }
-        }
-        return $ppnLinks;
-    }
-
-    /**
      * Get all record links related to the current record. Each link is returned as
      * array.
      * Also checks if the linked resources are available through the system.

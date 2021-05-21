@@ -1,4 +1,9 @@
 <?= $this->doctype('HTML5')?>
+<?php
+  $this->headMeta()->setAutoEscape(false);
+  $this->headLink()->setAutoEscape(false);
+  $this->headScript()->setAutoEscape(false);
+?>
 <html lang="<?= $this->layout()->userLang?>">
   <head>
     <?php $this->headThemeResources()?>

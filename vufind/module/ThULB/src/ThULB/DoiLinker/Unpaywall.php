@@ -27,10 +27,7 @@
  */
 namespace ThULB\DoiLinker;
 
-use VuFind\I18n\Translator\TranslatorAwareInterface;
-use VuFind\Log\Logger;
 use VuFind\Log\LoggerAwareTrait;
-use VuFindHttp\HttpServiceAwareInterface;
 use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
 use Laminas\Log\LoggerAwareInterface;
 

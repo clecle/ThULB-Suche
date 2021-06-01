@@ -38,9 +38,15 @@ VuFind.register('doi', function Doi() {
                         var newLink = $('<a />');
                         newLink.attr('href', response.data[currentDoi][i].link);
                         newLink.attr('target', '_blank');
-                        newLink.attr('class', 'btn btn-primary btn-xs unpaywall');
+                        newLink.attr('class', 'btn btn-primary btn-xs');
                         newLink.text(' ' + response.data[currentDoi][i].label);
-                        newLink.prepend(externalIcon);
+                        if(response.data[currentDoi][i].data && response.data[currentDoi][i].data.availableThroughBrowzine) {
+                            newLink.addClass('browzine');
+                        }
+                        else {
+                            newLink.addClass('unpaywall');
+                            newLink.prepend(externalIcon);
+                        }
                         if (typeof response.data[currentDoi][i].icon !== 'undefined') {
                             var icon = $('<img />');
                             icon.attr('src', response.data[currentDoi][i].icon);

@@ -59,7 +59,7 @@ class BrowZine extends OriginalBrowZine
             if ($this->arrayKeyAvailable('browzineWebLink', $data)) {
                 $response[$doi][] = [
                     'link' => $data['browzineWebLink'],
-                    'label' => $this->translate('View Complete Issue'),
+                    'label' => $this->translate('BrowZine'),
                     'icon' => $baseIconUrl . 'browzine-open-book-icon.svg',
                     'source' => 'browzine',
                     'data' => $data,
@@ -68,7 +68,7 @@ class BrowZine extends OriginalBrowZine
             if ($this->arrayKeyAvailable('fullTextFile', $data)) {
                 $response[$doi][] = [
                     'link' => $data['fullTextFile'],
-                    'label' => $this->translate('PDF Full Text'),
+                    'label' => $this->translate('LibKey'),
                     'icon' => $baseIconUrl . 'browzine-pdf-download-icon.svg',
                     'source' => 'browzine',
                     'data' => $data,

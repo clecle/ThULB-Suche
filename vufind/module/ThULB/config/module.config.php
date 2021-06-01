@@ -85,9 +85,11 @@ $config = array(
             ),
             'doilinker' => array(
                 'factories' => array (
+                    \ThULB\DoiLinker\BrowZine::class => \VuFind\DoiLinker\BrowZineFactory::class,
                     'ThULB\DoiLinker\Unpaywall' => 'VuFind\DoiLinker\UnpaywallFactory',
                 ),
                 'aliases' => array (
+                    \VuFind\DoiLinker\BrowZine::class => \ThULB\DoiLinker\BrowZine::class,
                     'VuFind\DoiLinker\Unpaywall' => 'ThULB\DoiLinker\Unpaywall',
                 )
             ),

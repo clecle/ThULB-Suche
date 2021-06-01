@@ -32,20 +32,20 @@ VuFind.register('doi', function Doi() {
 
                 if ("undefined" !== typeof response.data[currentDoi]) {
                     $(doiEl).empty();
-                    var externalIcon = $('<div />');
-                    externalIcon.html('<i class="fa fa-unlock-alt"></i>');
+                    var unpaywallIcon = $('<div />');
+                    unpaywallIcon.html('<i class="fa fa-unlock-alt"></i>');
                     for (var i = 0; i < response.data[currentDoi].length; i++) {
                         var newLink = $('<a />');
+                        var source = response.data[currentDoi][i].source;
                         newLink.attr('href', response.data[currentDoi][i].link);
                         newLink.attr('target', '_blank');
                         newLink.attr('class', 'btn btn-primary btn-xs');
                         newLink.text(' ' + response.data[currentDoi][i].label);
-                        if(response.data[currentDoi][i].data && response.data[currentDoi][i].data.availableThroughBrowzine) {
-                            newLink.addClass('browzine');
-                        }
-                        else {
-                            newLink.addClass('unpaywall');
-                            newLink.prepend(externalIcon);
+                        if (typeof source !== 'undefined') {
+                            newLink.addClass(source);
+                            if (source === 'unpaywall') {
+                                newLink.prepend(unpaywallIcon);
+                            }
                         }
                         if (typeof response.data[currentDoi][i].icon !== 'undefined') {
                             var icon = $('<img />');

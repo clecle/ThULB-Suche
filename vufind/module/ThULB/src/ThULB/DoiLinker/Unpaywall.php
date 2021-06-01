@@ -63,6 +63,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
             foreach($response as $doi => $doiData) {
                 foreach($doiData as $index => $data) {
                     $response[$doi][$index]['label'] = 'PDF';
+                    $response[$doi][$index]['source'] = 'unpaywall';
                 }
             }
         }

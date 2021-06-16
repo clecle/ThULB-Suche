@@ -2159,31 +2159,6 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Returns ppn links for this record.
-     *
-     * @return array
-     *
-     * @throws File_MARC_Exception
-     */
-    public function getPPNLink() {
-        $ppnLinks = array();
-
-        /* @var $fields File_MARC_Data_Field[] */
-        $fields = $this->getMarcRecord()->getFields('760|762|765|767|770|772|774|775|776|777|780|787', true);
-        foreach ($fields as $field) {
-            $links = $field->getSubfields('w');
-            if(is_array($links) && count($links) > 0) {
-                foreach ($links as $link) {
-                    if(strpos($link->getData(), '(' . self::PPN_LINK_ID_PREFIX . ')') !== false) {
-                        $ppnLinks[] = substr($link->getData(), 8);
-                    }
-                }
-            }
-        }
-        return $ppnLinks;
-    }
-
-    /**
      * Get all record links related to the current record. Each link is returned as
      * array.
      * Also checks if the linked resources are available through the system.
@@ -2252,16 +2227,6 @@ class SolrVZGRecord extends SolrMarc
 
         // Fix for cases where 024 $a is not set
         $fields024 = $this->getFieldsConditional('024', false, $conditions);
-//        $ismn = null;
-//        foreach ($fields024 as $field) {
-//            if ($field->getIndicator(1) == 2) {
-//                if($data = $field->getSubfield('a')) {
-//                    $ismn = $data->getData();
-//                    break;
-//                }
-//            }
-//        }
-//        return $ismn ?? false;
 
         return (count($fields024) > 0) ? $fields024[0]->getSubfield('a')->getData() : false;
     }
@@ -2316,6 +2281,47 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $retValue;
+    }
+
+    /**
+     * Get the URN for the record
+     *
+     * @return string|false
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getURN () {
+        $conditions = array(
+            $this->createFieldCondition('subfield', 'a', '!=', false),
+            $this->createFieldCondition('subfield', '2', '==', 'urn')
+        );
+
+        $fields = $this->getFieldsConditional('024', false, $conditions);
+        foreach ($fields as $field) {
+            return $field->getSubfield('a')->getData();
+        }
+
+        return false;
+    }
+
+    /**
+     * Return the first valid DOI found in the record (false if none).
+     *
+     * @return string|false
+     */
+    public function getCleanDOI()
+    {
+        $conditions = array(
+            $this->createFieldCondition('indicator', '1', '==', '7'),
+            $this->createFieldCondition('subfield', '2', '==', 'doi'),
+            $this->createFieldCondition('subfield', 'a', '!=', false),
+        );
+
+        if($fields = $this->getFieldsConditional('024', false, $conditions)) {
+            return $fields[0]->getSubfield('a')->getData();
+        }
+
+        return false;
     }
 
 //    Commented out for possible future use.

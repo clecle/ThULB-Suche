@@ -55,8 +55,21 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     public function journalAction () {
 
         // Force login if necessary:
-        if (!($user = $this->getUser())) {
+        if (!$this->getUser()) {
             return $this->forceLogin();
+        }
+
+        // Block invalid requests:
+        $validRequest = $this->getILS()->checkStorageRetrievalRequestIsValid(
+            $this->loadRecord()->getUniqueID(), [], $this->catalogLogin()
+        );
+        if ((is_array($validRequest) && !$validRequest['valid']) || !$validRequest) {
+            $this->flashMessenger()->addErrorMessage(
+                is_array($validRequest)
+                    ? $validRequest['status']
+                    : 'storage_retrieval_request_error_blocked'
+            );
+            return;
         }
 
         $savePath = $this->mainConfig->JournalRequest->request_save_path;
@@ -84,6 +97,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         }
 
         return new ViewModel([
+            'allowed' => true,
             'formData' => $formData,
             'recordId' => $this->loadRecord()->getUniqueID(),
             'inventory' => $this->getInventoryForRequest()

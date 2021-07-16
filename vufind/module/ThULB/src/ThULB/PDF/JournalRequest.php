@@ -218,7 +218,7 @@ class JournalRequest extends tFPDF
         $availableTextWidth = $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
-        $name = $this->firstname . ' ' . $this->lastname;
+        $name = $this->lastname . ', ' . $this->firstname;
 
         $this->SetXY($this->printBorder, $this->printBorder);
 

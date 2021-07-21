@@ -84,8 +84,11 @@
           </td>
         </tr>
     <?php endif; ?>
-    <?php if(!empty($onlineHolding)):
-      foreach ($onlineHolding['items'] as $row): ?>
+    <?php if(!empty($onlineHolding)): ?>
+      <?php $listedOnlineHoldingUrls = []; ?>
+      <?php foreach ($onlineHolding['items'] as $row): ?>
+        <?php if(in_array($row['remotehref'], $listedOnlineHoldingUrls)) continue; ?>
+        <?php $listedOnlineHoldingUrls[] = $row['remotehref']; ?>
         <tr vocab="http://schema.org/" typeof="Offer">
           <td>
             <dl class="dl-horizontal">

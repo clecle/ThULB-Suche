@@ -30,7 +30,9 @@ class PAIA extends OriginalPAIA {
                 $this->baseUrl = $baseUrl;
                 $newDocs = parent::getStatus($id);
                 for ($i = 0; $i < count($newDocs); $i++) {
-                    $newDocs[$i]['location'] = $library . ": " . $newDocs[$i]['location'];
+                    if ($newDocs[$i]['location'] != 'Remote') {
+                        $newDocs[$i]['location'] = $library . ": " . $newDocs[$i]['location'];
+                    }
                 }
                 $docs = array_merge($docs, $newDocs);
             }

@@ -2,6 +2,14 @@
 namespace DHGE\Module\Configuration;
 
 $config = array(
+    'service_manager' => array(
+        'factories' => array(
+            \DHGE\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+        ),
+        'aliases' => array(
+            \ThULB\Auth\Manager::class => \DHGE\Auth\Manager::class,
+        )
+    ),
     'vufind' => array(
         'plugin_managers' => array(
             'ils_driver' => array(

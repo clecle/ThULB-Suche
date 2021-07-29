@@ -4,7 +4,6 @@ namespace DHGE\ILS\Driver;
 
 use ThULB\ILS\Driver\PAIA as OriginalPAIA;
 use VuFind\Exception\ILS as ILSException;
-use VuFind\Exception\ILS;
 
 class PAIA extends OriginalPAIA {
     /**
@@ -20,18 +19,21 @@ class PAIA extends OriginalPAIA {
      */
     public function getStatus($id) {
         // are multiple DAIA urls available?
-        if(isset($this->config['LibraryURLs']['libDaiaUrls'])) {
+        if(isset($this->config['LibraryURLs'])) {
             $originalBaseUrl = $this->baseUrl;
-            $urls = $this->config['LibraryURLs']['libDaiaUrls'];
+            $libraries = $this->config['LibraryURLs'];
 
             // Check all DAIA urls and prefix the location with the library
             $docs = array();
-            foreach ($urls as $library => $baseUrl) {
+            foreach ($libraries as $libraryName => $library) {
+                if(!$baseUrl = $library['DAIA'] ?? false) {
+                    continue;
+                }
                 $this->baseUrl = $baseUrl;
                 $newDocs = parent::getStatus($id);
                 for ($i = 0; $i < count($newDocs); $i++) {
                     if ($newDocs[$i]['location'] != 'Remote') {
-                        $newDocs[$i]['location'] = $library . ": " . $newDocs[$i]['location'];
+                        $newDocs[$i]['location'] = $libraryName . ": " . $newDocs[$i]['location'];
                     }
                 }
                 $docs = array_merge($docs, $newDocs);
@@ -43,5 +45,29 @@ class PAIA extends OriginalPAIA {
         }
 
         return $docs;
+    }
+
+    /**
+     * Initialize the driver.
+     *
+     * Validate configuration and perform all resource-intensive tasks needed to
+     * make the driver active.
+     *
+     * @throws ILSException
+     * @return void
+     */
+    public function init() {
+        parent::init();
+
+        $accountSession = new \Laminas\Session\Container('Account', $this->sessionManager);
+        $library = $accountSession->offsetGet('library');
+        $paiaURL = $this->config['LibraryURLs'][$library]['PAIA'] ?? false;
+        if($paiaURL) {
+            $this->paiaURL = $paiaURL;
+        }
+    }
+
+    public function setPaiaURL($paiURL) {
+        $this->paiaURL = $paiURL;
     }
 }

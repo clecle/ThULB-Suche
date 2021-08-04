@@ -78,13 +78,13 @@ class HoldingHelper extends AbstractHelper
             $availabilityString .= '<span class="text-danger">' . $this->view->transEsc('ils_hold_item_notavailable') . '<link property="availability" href="http://schema.org/OutOfStock" /></span>';
           }
           if (isset($itemRow['returnDate']) && $itemRow['returnDate']) {
-              $availabilityString .= '&ndash; <span class="small">' . $this->view->escapeHtml($itemRow['returnDate']) . '</span>';
+              $availabilityString .= ' &ndash; ' . $this->view->escapeHtml($itemRow['returnDate']);
           }
           if (isset($itemRow['duedate']) && $itemRow['duedate']) {
-              $availabilityString .= '&ndash; <span class="small">' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']) . '</span>';
+              $availabilityString .= ' &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']);
           }
           if (isset($itemRow['link']) && $itemRow['link']) {
-              $availabilityString .= '<a class="' . ($check ? 'checkRequest' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Recall" : "Recall This") . '</a>';
+              $availabilityString .= ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Recall" : "Recall This") . '</a>';
           }
           if (isset($itemRow['requests_placed']) && $itemRow['requests_placed'] > 0) {
               $availabilityString .= ' <span>(' . $this->view->escapeHtml($itemRow['requests_placed']) . 'x '. $this->view->transEsc("ils_hold_item_requested") . ')</span>';

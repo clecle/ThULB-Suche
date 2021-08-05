@@ -57,6 +57,7 @@ class SolrVZGRecord extends SolrMarc
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
+    const LIBRARY_ILN = '31';
 
     const SEPARATOR = '|\/|';
 
@@ -139,8 +140,8 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $leader = $this->getMarcRecord()->getLeader();
-        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31', 'e' => 'a']);
-        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31']);
+        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN, 'e' => 'a']);
+        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN]);
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && count($allCopies) !== count($ordered));
@@ -348,7 +349,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getThuBiblioClassification()
     {
-        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => '31']);
+        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => self::LIBRARY_ILN]);
         $thuBib = array();
 
         foreach($classNumbers as $classNumber) {
@@ -1481,7 +1482,7 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 2),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover'])
+            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover', 'Unbekannt'])
         );
 
         $urls = $this->getFieldsConditional('856', false, $conditions);
@@ -1774,7 +1775,8 @@ class SolrVZGRecord extends SolrMarc
       $retVal = [];
 
       /* extract all LINKS form MARC 981 */
-      $links = $this->getConditionalFieldArray('981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => '31']);
+      $links = $this->getConditionalFieldArray(
+          '981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => self::LIBRARY_ILN]);
 
       if ( !empty($links) ){
         /* what kind of LINKS do we have?
@@ -1806,11 +1808,13 @@ class SolrVZGRecord extends SolrMarc
           /* Now, we are ready to extract extra-information
            * @details for each link is common catalogisation till RDA-introduction
            */
-          $details = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31', '1' => $id]);
+          $details = $this->getConditionalFieldArray(
+              '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
 
           if ( empty($details) ) {
             /* new catalogisation rules with RDA: One Link and single Details for each part */
-            $details = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31']);
+            $details = $this->getConditionalFieldArray(
+                '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN]);
           }
           if ( !empty($details) ) {
             foreach ($details as $detail) {
@@ -1820,7 +1824,8 @@ class SolrVZGRecord extends SolrMarc
             $more = "";
           }
 
-          $corporates = $this->getConditionalFieldArray('982', ['a'], false, '', ['2' => '31', '1' => $id]);
+          $corporates = $this->getConditionalFieldArray(
+              '982', ['a'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
           if ( !empty($corporates) ) {
             foreach ($corporates as $corporate) {
               $more .= $corporate."<br>";
@@ -1866,8 +1871,10 @@ class SolrVZGRecord extends SolrMarc
       $retVal = [];
       list($txt, $epn) = explode(":epn:", $epn_str);
       /* extract all Comments form MARC 980 */
-      $comments_g = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31', 'b' => $epn] );
-      $comments_k = $this->getConditionalFieldArray('980', ['k'], false, '', ['2' => '31', 'b' => $epn] );
+      $comments_g = $this->getConditionalFieldArray(
+          '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
+      $comments_k = $this->getConditionalFieldArray(
+          '980', ['k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
 
       $comments = array($comments_g[0], $comments_k[0]);
       return $comments;

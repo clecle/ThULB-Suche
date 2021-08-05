@@ -1482,7 +1482,7 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 2),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover'])
+            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover', 'Unbekannt'])
         );
 
         $urls = $this->getFieldsConditional('856', false, $conditions);

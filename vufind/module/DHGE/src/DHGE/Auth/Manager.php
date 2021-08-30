@@ -37,6 +37,6 @@ class Manager extends OriginalManager
 
         $this->session->offsetUnset('library');
 
-        throw new AuthException('Library not selected or not available.');
+        throw new AuthException('Library not selected or not available');
     }
 }

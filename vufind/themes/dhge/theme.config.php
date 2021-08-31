@@ -1,5 +1,5 @@
 <?php
 return array(
     'extends' => 'thulb',
-    'favicon' => 'dhge_favicon.ico',
+    'favicon' => 'logo_favicon.png',
 );

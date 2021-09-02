@@ -2,6 +2,15 @@
 namespace DHGE\Module\Configuration;
 
 $config = array(
+    'controllers' => array(
+        'factories' => array(
+            \DHGE\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class
+        ),
+        'aliases' => array(
+            'MyResearch' => \DHGE\Controller\MyResearchController::class,
+            'myresearch' => \DHGE\Controller\MyResearchController::class
+        )
+    ),
     'service_manager' => array(
         'factories' => array(
             \DHGE\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,

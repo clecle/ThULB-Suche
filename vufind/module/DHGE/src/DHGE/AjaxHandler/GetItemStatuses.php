@@ -55,7 +55,9 @@ class GetItemStatuses extends OriginalGetItemStatuses
         // Check availabilities for each library
         $libAvailability = [];
         foreach ($record as $info) {
-            $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability'];
+            if(!$info['use_unknown_message']) {
+                $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability'];
+            }
         }
 
         // Sort libraries by name

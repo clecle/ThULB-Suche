@@ -268,7 +268,7 @@
                 </dd>
               <?php endif; ?>
 
-              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt" && !$row['use_unknown_message']): ?>
+              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt" && !($row['use_unknown_message'] ?? false)): ?>
                 <dt><?= $this->transEsc("Availability Status")?>:</dt>
                 <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>
               <?php endif; ?>

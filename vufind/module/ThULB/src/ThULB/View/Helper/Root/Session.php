@@ -7,7 +7,7 @@ use Laminas\View\Helper\AbstractHelper;
 
 class Session extends AbstractHelper
 {
-    private $sessionManager;
+    protected $sessionManager;
 
     public function __construct(SessionManager $sessionManager) {
         $this->sessionManager = $sessionManager;

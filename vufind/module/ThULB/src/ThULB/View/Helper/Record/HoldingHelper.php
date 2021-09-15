@@ -84,7 +84,7 @@ class HoldingHelper extends AbstractHelper
               $availabilityString .= ' &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']);
           }
           if (isset($itemRow['link']) && $itemRow['link']) {
-              $availabilityString .= ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Recall" : "Recall This") . '</a>';
+              $availabilityString .= $this->getRecallLinkString($itemRow);
           }
           if (isset($itemRow['requests_placed']) && $itemRow['requests_placed'] > 0) {
               $availabilityString .= ' <span>(' . $this->view->escapeHtml($itemRow['requests_placed']) . 'x '. $this->view->transEsc("ils_hold_item_requested") . ')</span>';
@@ -107,6 +107,21 @@ class HoldingHelper extends AbstractHelper
     }
 
     return $availabilityString;
+  }
+
+    /**
+     * Creates a string including the link to place a recall.
+     *
+     * @param array $itemRow
+     *
+     * @return string
+     */
+  protected function getRecallLinkString(array $itemRow) {
+      $check = isset($itemRow['check']) && $itemRow['check'];
+
+      return ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '">' .
+            '<i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Recall" : "Recall This") .
+          '</a>';
   }
 
   public function getLocation(&$holding, $includeHTML = true)

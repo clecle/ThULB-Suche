@@ -111,7 +111,7 @@ class PAIA extends OriginalPAIA {
         parent::init();
 
         $accountSession = new \Laminas\Session\Container('Account', $this->sessionManager);
-        $library = $accountSession->offsetGet('library');
+        $library = $accountSession->library;
         $paiaURL = $this->config['LibraryURLs'][$library]['PAIA'] ?? false;
         if($paiaURL) {
             $this->paiaURL = $paiaURL;

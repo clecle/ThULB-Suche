@@ -4,11 +4,13 @@ namespace DHGE\Module\Configuration;
 $config = array(
     'controllers' => array(
         'factories' => array(
-            \DHGE\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class
+            \DHGE\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
+            \DHGE\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class
         ),
         'aliases' => array(
             'MyResearch' => \DHGE\Controller\MyResearchController::class,
-            'myresearch' => \DHGE\Controller\MyResearchController::class
+            'myresearch' => \DHGE\Controller\MyResearchController::class,
+            \ThULB\Controller\RecordController::class => \DHGE\Controller\RecordController::class
         )
     ),
     'service_manager' => array(
@@ -48,6 +50,11 @@ $config = array(
                     \DHGE\RecordDriver\SolrVZGRecord::class => ['VuFind\RecordDriver\IlsAwareDelegatorFactory'],
                 )
             ),
+        ),
+    ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'thulb_holdingHelper' => 'DHGE\View\Helper\Record\HoldingHelper',
         ),
     ),
 );

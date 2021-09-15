@@ -11,10 +11,9 @@ class MyResearchController extends OriginalController {
      *
      * @return mixed
      */
-    public function changePasswordLinkAction()
-    {
+    public function changePasswordLinkAction() {
         $view =  parent::changePasswordLinkAction();
-        $view->setVariable('library', $this->getAuthManager()->getLibraryFromSession());
+        $view->setVariable('library', $this->getAuthManager()->getUserLibrary());
         return $view;
     }
 }

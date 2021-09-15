@@ -30,21 +30,21 @@ class Manager extends OriginalManager
         if($config[$library] ?? false) {
             $this->getAuth()->getCatalog()->setPaiaURL($config[$library]['PAIA']);
             $user = parent::login($request);
-            $this->setLibraryToSession($library);
+            $this->setUserLibrary($library);
 
             return $user;
         }
 
-        $this->session->offsetUnset('library');
+        unset($this->session->library);
 
         throw new AuthException('Library not selected or not available');
     }
 
-    public function getLibraryFromSession() {
-        return $this->session->offsetGet('library');
+    public function getUserLibrary() {
+        return $this->session->library;
     }
 
-    public function setLibraryToSession($library) {
-        $this->session->offsetSet('library', $library);
+    public function setUserLibrary($library) {
+        $this->session->library = $library;
     }
 }

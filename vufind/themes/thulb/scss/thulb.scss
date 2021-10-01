@@ -1309,3 +1309,11 @@ form#newpassword .form-group.flex-center {
     margin: 0 10px;
   }
 }
+
+.access-tab .availability-status {
+  line-height: 2.1;
+
+  .btn.btn-xs {
+    font-size: 14px;
+  }
+}

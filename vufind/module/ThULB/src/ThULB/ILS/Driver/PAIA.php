@@ -491,7 +491,7 @@ class PAIA extends OriginalPAIA
                 // information is present
                 if ($result_item['callnumber'] !== ''
                     || $result_item['about']
-                    || $result_item['storage']
+                    || $result_item['storage'] !== 'Unknown'
                     || ($result_item['remotehref'] ?? false)
                 ) {
                     $result[] = $result_item;

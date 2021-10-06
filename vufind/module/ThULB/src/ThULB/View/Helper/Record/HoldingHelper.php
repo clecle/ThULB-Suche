@@ -78,10 +78,10 @@ class HoldingHelper extends AbstractHelper
             $availabilityString .= '<span class="text-danger">' . $this->view->transEsc('ils_hold_item_notavailable') . '<link property="availability" href="http://schema.org/OutOfStock" /></span>';
           }
           if (isset($itemRow['returnDate']) && $itemRow['returnDate']) {
-              $availabilityString .= ' &ndash; ' . $this->view->escapeHtml($itemRow['returnDate']);
+              $availabilityString .= '<span> &ndash; ' . $this->view->escapeHtml($itemRow['returnDate']) . '</span>';
           }
           if (isset($itemRow['duedate']) && $itemRow['duedate']) {
-              $availabilityString .= ' &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']);
+              $availabilityString .= '<span> &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']) . '</span>';
           }
           if (isset($itemRow['link']) && $itemRow['link']) {
               $availabilityString .= $this->getRecallLinkString($itemRow);

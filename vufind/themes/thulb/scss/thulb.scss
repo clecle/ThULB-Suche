@@ -1335,19 +1335,17 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.navbar .dropdown-menu {
-  li > a:hover {
+.navbar .dropdown-menu li > a:hover {
+  background-color: $brand-primary;
+  color: white;
+}
+
+.navbar .dropdown.open .dropdown-toggle {
+  background-color: $brand-primary;
+  color: white;
+
+  &:focus {
     background-color: $brand-primary;
     color: white;
-  }
-
-  .dropdown-toggle {
-    background-color: $brand-primary;
-    color: white;
-
-    &:focus {
-      background-color: $brand-primary;
-      color: white;
-    }
   }
 }

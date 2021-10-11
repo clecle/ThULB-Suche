@@ -32,7 +32,7 @@
           <?php elseif (!isset($record['driver']) || !is_object($record['driver'])): ?>
             <?= $this->escapeHtml(trim($record['title'], '/:'))?>
           <?php else: ?>
-            <a href="<?= $this->recordLink()->getUrl($record['driver'])?>"><?= $this->escapeHtml(trim($record['title'], '/:'))?></a>
+            <a href="<?= $this->recordLinker()->getUrl($record['driver'])?>"><?= $this->escapeHtml(trim($record['title'], '/:'))?></a>
           <?php endif; ?>
         </td>
         <td><?= isset($record['fine']) ? $this->transEsc('FeeTypes::' . $this->escapeHtml($record['fine'])) : ''?></td>

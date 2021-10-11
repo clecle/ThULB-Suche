@@ -31,6 +31,7 @@
 
 namespace ThULB\View\Helper\Root;
 use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\ResolverInterface;
 use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
@@ -123,19 +124,20 @@ class Record extends OriginalRecord
      *
      * @param string $template     Template path (with %s as class name placeholder)
      * @param string $className    Name of class to apply to template.
+     * @param ResolverInterface $resolver     Resolver to use
      * @param string $topClassName Top-level parent class of $className (or null
      * if $className is already the top level; used for recursion only).
      *
      * @return string
      * @throws RuntimeException
      */
-    protected function resolveClassTemplate($template, $className,
+    protected function resolveClassTemplate($template, $className, ResolverInterface $resolver,
                                             $topClassName = null
     ) {
-        // If the template resolves, we can render it!
-        $templateWithClass = sprintf($template, $this->getBriefClass($className));
-        if ($this->getView()->resolver()->resolve($templateWithClass)) {
-            return $this->getView()->render($templateWithClass);
+        // If the template resolves, return it:
+        $templateWithClass = $this->getTemplateWithClass($template, $className);
+        if ($resolver->resolve($templateWithClass)) {
+            return $templateWithClass;
         }
 
         // If the template doesn't resolve, let's see if we can inherit a
@@ -150,16 +152,15 @@ class Record extends OriginalRecord
         }
 
         if (empty($parentClass)) {
-            // No more parent classes left to try?  Throw an exception!
-            throw new RuntimeException(
-                'Cannot find ' . $templateWithClass . ' template for class: '
-                . ($topClassName ?? $className)
-            );
+            return '';
         }
 
         // Recurse until we find a template or run out of parents...
         return $this->resolveClassTemplate(
-            $template, $parentClass, $topClassName ?? $className
+            $template,
+            $parentClass,
+            $resolver,
+            $topClassName ?? $className
         );
     }
 

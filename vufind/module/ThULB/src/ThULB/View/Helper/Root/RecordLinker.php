@@ -28,14 +28,14 @@
 
 namespace ThULB\View\Helper\Root;
 use Exception;
-use VuFind\View\Helper\Root\RecordLink as OriginalRecordLink;
+use VuFind\View\Helper\Root\RecordLinker as OriginalRecordLinker;
 
 /**
  * Description
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class RecordLink extends OriginalRecordLink
+class RecordLinker extends OriginalRecordLinker
 {
     /**
      * Given an array representing a related record (which may be a bib ID or OCLC

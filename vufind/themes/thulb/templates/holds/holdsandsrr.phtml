@@ -59,7 +59,7 @@
             // If this is a non-missing Solr record, we should display a link:
             if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
               $title = $this->record($resource)->getTitleHtml();
-              echo '<a href="' . $this->recordLink()->getUrl($resource)
+              echo '<a href="' . $this->recordLinker()->getUrl($resource)
                 . '" class="title truncate">' . $title . '</a>';
             } else if (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
               // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...

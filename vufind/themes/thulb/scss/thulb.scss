@@ -1309,3 +1309,43 @@ form#newpassword .form-group.flex-center {
     margin: 0 10px;
   }
 }
+
+.access-tab .availability-status {
+  dd {
+    margin-left: 0;
+  }
+
+  dt {
+    margin-right: 20px;
+  }
+
+  dt > *,
+  dd > * {
+    vertical-align: middle;
+  }
+
+  .btn.btn-xs {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  .access-tab .availability-status.flex-center {
+    display: block;
+  }
+}
+
+.navbar .dropdown-menu li > a:hover {
+  background-color: $brand-primary;
+  color: white;
+}
+
+.navbar .dropdown.open .dropdown-toggle {
+  background-color: $brand-primary;
+  color: white;
+
+  &:focus {
+    background-color: $brand-primary;
+    color: white;
+  }
+}

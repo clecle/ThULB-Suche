@@ -1280,7 +1280,7 @@ class SolrVZGRecord extends SolrMarc
      * into the field number where relevant to generate a note to associate
      * with a record link.
      *
-     * @param File_MARC_Data_Field $field Field to examine
+     * @param array $field Field to examine
      *
      * @return string
      *
@@ -1306,7 +1306,7 @@ class SolrVZGRecord extends SolrMarc
         }
 
         // Assign notes based on the relationship type
-        $value = $field->getTag();
+        $value = $field['tag'];
         switch ($value) {
         case '780':
             if (in_array($relationshipIndicator, range('0', '7'))) {
@@ -1413,7 +1413,7 @@ class SolrVZGRecord extends SolrMarc
             }
             $currentArray = ['name' => $name ?: $this->translate('Main entry')];
 
-            if ($number = $this->getSubfield($currentArray, 'g')) {
+            if ($number = $this->getSubfield($currentField, 'g')) {
                 $currentArray['number'] = $number;
             }
 

@@ -1407,10 +1407,9 @@ class SolrVZGRecord extends SolrMarc
 
         // Did we find any matching fields?
         $series = $this->getFieldsConditional('773', [$this->createFieldCondition('subfield', 'w', '!=', false)]);
-        /* @var $currentField File_MARC_Data_Field */
         foreach ($series as $currentField) {
-            if (($name = $this->getSubfield($currentField, 't'))) {
-                $name = $this->getFieldArray('245', ['a']);
+            if (!($name = $this->getSubfield($currentField, 't'))) {
+                $name = $this->getMarcReader()->getFieldsSubfields('245', ['a'])[0] ?? false;
             }
             $currentArray = ['name' => $name ?: $this->translate('Main entry')];
 

@@ -1530,35 +1530,33 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $retVal = false;
-        $unknownLicence = null;
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 0),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 'z', '==', 'Kostenfrei')
         );
         $fulltextCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', 'Volltext')
+            $this->createFieldCondition('subfield', '3', '==', 'Volltext'),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
         $freeCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', false)
+            $this->createFieldCondition('subfield', '3', '==', false),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
 
         $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $fulltextCondition));
+        if(!is_array($urls) || count($urls) < 1) {
+            $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $freeCondition));
+        }
+        if((!is_array($urls) || count($urls) < 1) && in_array('NL', $this->fields['collection'] ?? [])) {
+            $urls = $this->getFieldsConditional('856', false, $basicConditions);
+        }
+
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(
                 'link' => $urls[0]->getSubfield('u')->getData(),
                 'desc' => $this->translate('Full text online')
             );
-        }
-        else {
-            $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $freeCondition));
-            if(is_array($urls) && count($urls) >= 1) {
-                $retVal = array(
-                    'link' => $urls[0]->getSubfield('u')->getData(),
-                    'desc' => $this->translate('Full text online')
-                );
-            }
         }
 
         return $retVal;

@@ -265,7 +265,8 @@
                 </dd>
               <?php endif; ?>
 
-              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"): ?>
+              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                      && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
                 <div class="availability-status flex-center">
                   <dt><?= $this->transEsc("Availability Status")?>:</dt>
                   <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>

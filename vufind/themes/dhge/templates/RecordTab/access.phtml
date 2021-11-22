@@ -268,7 +268,9 @@
                 </dd>
               <?php endif; ?>
 
-              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt" && !($row['use_unknown_message'] ?? false)): ?>
+              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                  && ($row['departmentId'] ?? '') != 'DMag' && !($row['use_unknown_message'] ?? false)
+                  && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
                 <dt><?= $this->transEsc("Availability Status")?>:</dt>
                 <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>
               <?php endif; ?>

@@ -266,6 +266,7 @@
               <?php endif; ?>
 
               <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                      && ($row['departmentId'] ?? '') != 'DMag'
                       && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
                 <div class="availability-status flex-center">
                   <dt><?= $this->transEsc("Availability Status")?>:</dt>

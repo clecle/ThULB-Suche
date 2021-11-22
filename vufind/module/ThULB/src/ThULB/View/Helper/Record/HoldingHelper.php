@@ -53,13 +53,13 @@ class HoldingHelper extends AbstractHelper
           /* Begin AVAILABLE Items (Holds) */
           $availabilityString .= '<span class="text-success">' . $this->view->transEsc("Available") . '<link property="availability" href="http://schema.org/InStock" /></span>';
           if (isset($itemRow['link']) && $itemRow['link']) {
-              $availabilityString .= '<a class="' . ($check ? 'checkRequest ' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Hold" : "Place a Hold") . '</a>';
+              $availabilityString .= ' <a class="' . ($check ? 'checkRequest ' : '') . 'placehold btn btn-primary btn-xs" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '">' . $this->view->transEsc($check ? "Check Hold" : "Place a Hold") . '</a>';
           }
           if ( isset($itemRow['storageRetrievalRequestLink']) && $itemRow['storageRetrievalRequestLink'] && !($this->view->driver->isNewsPaper()) ) {
-              $availabilityString .= '<a class="' . ($checkStorageRetrievalRequest ? 'checkStorageRetrievalRequest ' : '') . 'placeStorageRetrievalRequest" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['storageRetrievalRequestLink']) . '"> <i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($checkStorageRetrievalRequest ? "storage_retrieval_request_check_text" : "storage_retrieval_request_place_text") . '</a>';
+              $availabilityString .= ' <a class="' . ($checkStorageRetrievalRequest ? 'checkStorageRetrievalRequest ' : '') . 'placeStorageRetrievalRequest btn btn-primary btn-xs" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['storageRetrievalRequestLink']) . '">' . $this->view->transEsc($checkStorageRetrievalRequest ? "storage_retrieval_request_check_text" : "storage_retrieval_request_place_text") . '</a>';
           }
           if (isset($itemRow['ILLRequestLink']) && $itemRow['ILLRequestLink']) {
-              $availabilityString .= '<a class="' . ($checkILLRequest ? 'checkILLRequest ' : '') . 'placeILLRequest" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['ILLRequestLink']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($checkILLRequest ? "ill_request_check_text" : "ill_request_place_text") . '</a>';
+              $availabilityString .= ' <a class="' . ($checkILLRequest ? 'checkILLRequest ' : '') . 'placeILLRequest" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['ILLRequestLink']) . '"><i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($checkILLRequest ? "ill_request_check_text" : "ill_request_place_text") . '</a>';
           }
           /* Nicht leihbar? Also Lesesaal! */
           if ( !in_array("loan", $itemRow['services']) ) {
@@ -78,10 +78,10 @@ class HoldingHelper extends AbstractHelper
             $availabilityString .= '<span class="text-danger">' . $this->view->transEsc('ils_hold_item_notavailable') . '<link property="availability" href="http://schema.org/OutOfStock" /></span>';
           }
           if (isset($itemRow['returnDate']) && $itemRow['returnDate']) {
-              $availabilityString .= ' &ndash; ' . $this->view->escapeHtml($itemRow['returnDate']);
+              $availabilityString .= '<span> &ndash; ' . $this->view->escapeHtml($itemRow['returnDate']) . '</span>';
           }
           if (isset($itemRow['duedate']) && $itemRow['duedate']) {
-              $availabilityString .= ' &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']);
+              $availabilityString .= '<span> &ndash; ' . $this->view->transEsc("Due") . ': ' . $this->view->escapeHtml($itemRow['duedate']) . '</span>';
           }
           if (isset($itemRow['link']) && $itemRow['link']) {
               $availabilityString .= $this->getRecallLinkString($itemRow);
@@ -119,8 +119,8 @@ class HoldingHelper extends AbstractHelper
   protected function getRecallLinkString(array $itemRow) {
       $check = isset($itemRow['check']) && $itemRow['check'];
 
-      return ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '">' .
-            '<i class="fa fa-flag" aria-hidden="true"></i>&nbsp;' . $this->view->transEsc($check ? "Check Recall" : "Recall This") .
+      return ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold btn btn-primary btn-xs" data-lightbox href="' . $this->view->recordLink()->getRequestUrl($itemRow['link']) . '">' .
+             $this->view->transEsc($check ? "Check Recall" : "Recall This") .
           '</a>';
   }
 

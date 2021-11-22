@@ -268,9 +268,13 @@
                 </dd>
               <?php endif; ?>
 
-              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"): ?>
-                <dt><?= $this->transEsc("Availability Status")?>:</dt>
-                <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>
+              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                      && ($row['departmentId'] ?? '') != 'DMag'
+                      && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
+                <div class="availability-status flex-center">
+                  <dt><?= $this->transEsc("Availability Status")?>:</dt>
+                  <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>
+                </div>
               <?php endif; ?>
             </dl>
           </td>

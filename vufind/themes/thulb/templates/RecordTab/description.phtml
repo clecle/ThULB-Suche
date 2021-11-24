@@ -5,16 +5,16 @@
     $formatter = $this->recordDataFormatter();
     $mainFields = $formatter->getData($driver, $formatter->getDefaults('description'));
 ?>
-<table class="table table-striped" summary="<?= $this->transEscAttr('Description')?>">
+<table class="table table-striped" summary="<?= $this->transEscAttr('Description') ?>">
   <?php if (!empty($mainFields)): ?>
-    <?php foreach ($mainFields as $key => $value): ?>
-      <?php if ($key === 'DOI') : ?>
-        <tr><th><?= $this->transEsc($key)?>:</th><td><a href="http://dx.doi.org/<?= $value?>" target="_blank"><?= $value?></a></td></tr>
+    <?php foreach ($mainFields as $current): ?>
+      <?php if ($current['label'] === 'DOI') : ?>
+        <tr><th><?= $this->transEsc($current['label']) ?>:</th><td><a href="http://dx.doi.org/<?= $current['value'] ?>" target="_blank"><?= $current['value'] ?></a></td></tr>
       <?php else : ?>
-        <tr><th><?= $this->transEsc($key)?>:</th><td><?= $value?></td></tr>
+        <tr><th><?= $this->transEsc($current['label']) ?>:</th><td><?= $current['value'] ?></td></tr>
       <?php endif; ?>
     <?php endforeach; ?>
   <?php else: ?>
-    <tr><td><?= $this->transEsc('no_description')?></td></tr>
+    <tr><td><?= $this->transEsc('no_description') ?></td></tr>
   <?php endif; ?>
 </table>

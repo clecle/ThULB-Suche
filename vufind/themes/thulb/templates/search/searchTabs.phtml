@@ -1,5 +1,5 @@
 <?php $searchTabs = $this->searchTabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $this->hiddenFilters); ?>
-<?php if (count($searchTabs['tabs']) > 0): ?>
+<?php if (count($searchTabs['tabs']) > 1): ?>
   <ul class="list-unstyled">
     <?php foreach ($searchTabs['tabs'] as $tab): ?>
       <a <?= $tab['selected'] ? '' : 'href="' . $this->escapeHtmlAttr($tab['url']) . '"' ?> title="<?= $this->transEscAttr($tab['label'].'_hover'); ?>">

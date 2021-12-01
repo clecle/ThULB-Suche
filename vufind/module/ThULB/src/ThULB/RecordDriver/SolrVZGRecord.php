@@ -1513,23 +1513,26 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $retVal = false;
-        $unknownLicence = null;
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 0),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 'z', '==', 'Kostenfrei')
         );
         $fulltextCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', 'Volltext')
+            $this->createFieldCondition('subfield', '3', '==', 'Volltext'),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
         $freeCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', false)
+            $this->createFieldCondition('subfield', '3', '==', false),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
 
         $urls = $this->getFieldsConditional('856', array_merge($basicConditions, $fulltextCondition));
         if(!$urls) {
             $urls = $this->getFieldsConditional('856', array_merge($basicConditions, $freeCondition));
+        }
+        if(!$urls && in_array('NL', $this->fields['collection'] ?? [])) {
+            $urls = $this->getFieldsConditional('856', false, $basicConditions);
         }
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(

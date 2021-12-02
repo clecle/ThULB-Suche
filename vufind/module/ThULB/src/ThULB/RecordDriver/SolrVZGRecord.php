@@ -1532,7 +1532,7 @@ class SolrVZGRecord extends SolrMarc
             $urls = $this->getFieldsConditional('856', array_merge($basicConditions, $freeCondition));
         }
         if(!$urls && in_array('NL', $this->fields['collection'] ?? [])) {
-            $urls = $this->getFieldsConditional('856', false, $basicConditions);
+            $urls = $this->getFieldsConditional('856', $basicConditions);
         }
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(

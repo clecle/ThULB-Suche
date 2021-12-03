@@ -71,7 +71,7 @@
         </td>
       </tr>
     <?php endif; ?>
-    <?php if($fullTextLink): ?>
+    <?php if(empty($onlineHolding) && $fullTextLink): ?>
         <tr vocab="http://schema.org/" typeof="Offer">
           <td>
             <dl class="dl-horizontal">

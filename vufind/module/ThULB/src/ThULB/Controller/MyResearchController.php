@@ -146,7 +146,7 @@ class MyResearchController extends OriginalController
 
             // Build record driver (only for the current visible page):
             if ($i >= $pageStart && $i <= $pageEnd) {
-                $transactions[] = $this->getDriverForILSRecord($current);
+                $transactions[] = $this->ilsRecords()->getDrivers([$current])[0];
             } else {
                 $hiddenTransactions[] = $current;
             }

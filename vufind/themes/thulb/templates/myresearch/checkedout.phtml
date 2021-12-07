@@ -17,6 +17,7 @@
     <?php if (!empty($this->transactions)): ?>
       <?php if ($this->renewForm): ?>
       <form name="renewals" method="post" id="renewals">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
         <div class="toolbar">
           <div class="checkbox">
             <label>

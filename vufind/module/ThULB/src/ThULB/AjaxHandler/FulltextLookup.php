@@ -81,10 +81,8 @@ class FulltextLookup extends AbstractBase
                     }
                 }
             }
-            elseif ($result->isFormat('electronic Article')) {
-                if($fulltextURL = $result->getFullTextURL()) {
-                    $response[$result->getUniqueID()] = $fulltextURL;
-                }
+            if($fulltextURL = $result->getFullTextURL()) {
+                $response[$result->getUniqueID()] = $fulltextURL;
             }
         }
         return $this->formatResponse($response);

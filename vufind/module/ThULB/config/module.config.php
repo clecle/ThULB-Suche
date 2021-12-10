@@ -3,12 +3,13 @@ namespace ThULB\Module\Configuration;
 
 $config = array(
     'controllers' => array(
-        'factories'    => array(
+        'factories' => array(
             'VuFind\Controller\CartController' => 'ThULB\Controller\Factory::getCartController',
             'VuFind\Controller\MyResearchController' => 'ThULB\Controller\Factory::getMyResearchController',
             'VuFind\Controller\SummonController' => 'ThULB\Controller\Factory::getSummonController',
             'VuFind\Controller\SummonrecordController' => 'ThULB\Controller\Factory::getSummonrecordController',
             'ThULB\Controller\DynMessagesController' => 'ThULB\Controller\Factory::getDynMessagesController',
+            \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
             \ThULB\Controller\ReassignUserdataController::class => 'ThULB\Controller\Factory::getReassignUserdataController',
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
@@ -17,6 +18,8 @@ $config = array(
         'aliases' => array(
             'dynMessages' => 'ThULB\Controller\DynMessagesController',
             'DynMessages' => 'ThULB\Controller\DynMessagesController',
+            'Holds' => \ThULB\Controller\HoldsController::class,
+            'holds' => \ThULB\Controller\HoldsController::class,
             'ReassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
             'reassignUserdata' => \ThULB\Controller\ReassignUserdataController::class,
             'reassignuserdata' => \ThULB\Controller\ReassignUserdataController::class,
@@ -24,6 +27,16 @@ $config = array(
             'Request' => \ThULB\Controller\RequestController::class,
             'VuFind\Controller\SearchController' => 'ThULB\Controller\SearchController',
             \VuFind\Controller\RecordController::class => \ThULB\Controller\RecordController::class,
+            \VuFind\Controller\HoldsController::class => \ThULB\Controller\HoldsController::class
+        )
+    ),
+    'controller_plugins' => array (
+        'factories' => array(
+            \ThULB\Controller\Plugin\IlsRecords::class => \VuFind\Controller\Plugin\IlsRecordsFactory::class
+        ),
+        'aliases' => array(
+            'ilsRecords' => \ThULB\Controller\Plugin\IlsRecords::class,
+            \VuFind\Controller\Plugin\IlsRecords::class => \ThULB\Controller\Plugin\IlsRecords::class,
         )
     ),
     'service_manager' => [
@@ -193,7 +206,7 @@ $config = array(
         'vufind_permission_provider_manager' => array(
             'factories' => array(
                 'ThULB\Role\PermissionProvider\QueriedCookie' => 'ThULB\Role\PermissionProvider\Factory::getQueriedCookie',
-                'ThULB\Role\PermissionProvider\IpRange' => 'ThULB\Role\PermissionProvider\Factory::getIpRange',
+                'ThULB\Role\PermissionProvider\IpRange' => \VuFind\Role\PermissionProvider\IpRangeFactory::class,
             ),
             'aliases' => array(
                 'queriedCookie' => 'ThULB\Role\PermissionProvider\QueriedCookie',

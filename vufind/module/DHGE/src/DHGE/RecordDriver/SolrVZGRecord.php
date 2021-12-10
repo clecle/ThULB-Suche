@@ -81,7 +81,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
             $allCopies += count($this->getConditionalFieldArray('980', ['e'], true, '', ['2' => $iln]));
         }
 
-        $leader = $this->getMarcRecord()->getLeader();
+        $leader = $this->getMarcReader()->getLeader();
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && $allCopies !== $ordered);

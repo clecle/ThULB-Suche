@@ -58,11 +58,11 @@ class Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return RecordLink
+     * @return RecordLinker
      */
-    public static function getRecordLink(ServiceManager $sm)
+    public static function getRecordLinker(ServiceManager $sm)
     {
-        return new RecordLink($sm->get('VuFind\RecordRouter'));
+        return new RecordLinker($sm->get('VuFind\RecordRouter'));
     }
 
     /**

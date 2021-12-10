@@ -42,8 +42,6 @@ use Laminas\Paginator\Paginator;
  */
 class MyResearchController extends OriginalController
 {
-    const ID_URI_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
-
     use ChangePasswordTrait {
         onDispatch as public trait_onDispatch;
     }
@@ -76,17 +74,6 @@ class MyResearchController extends OriginalController
         
         return $viewModel;
     }
-
-    /**
-     * We don't use this action anymore; it is replaced by the loans action, that
-     * combines all items held by the patron and all provided items
-     *
-     * @return mixed
-     */
-    public function holdsAction()
-    {
-        return $this->redirect()->toRoute('default', ['controller' => 'myresearch', 'action' => 'holdsAndSRR']);
-    }
     
     /**
      * We don't use this action anymore; it is replaced by the loans action, that
@@ -96,7 +83,7 @@ class MyResearchController extends OriginalController
      */
     public function storageRetrievalRequestsAction()
     {
-        return $this->redirect()->toRoute('default', ['controller' => 'myresearch', 'action' => 'holdsAndSRR']);
+        return $this->redirect()->toRoute('default', ['controller' => 'holds', 'action' => 'holdsAndSRR']);
     }
 
     /**
@@ -159,7 +146,7 @@ class MyResearchController extends OriginalController
 
             // Build record driver (only for the current visible page):
             if ($i >= $pageStart && $i <= $pageEnd) {
-                $transactions[] = $this->getDriverForILSRecord($current);
+                $transactions[] = $this->ilsRecords()->getDrivers([$current])[0];
             } else {
                 $hiddenTransactions[] = $current;
             }
@@ -171,60 +158,6 @@ class MyResearchController extends OriginalController
                 'hiddenTransactions'
             )
         );
-    }
-
-    /**
-     * Send list of holds to view
-     *
-     * @return mixed
-     */
-    public function holdsAndSRRAction()
-    {
-        // Stop now if the user does not have valid catalog credentials available:
-        if (!is_array($patron = $this->catalogLogin())) {
-            return $patron;
-        }
-
-        // Connect to the ILS:
-        $catalog = $this->getILS();
-
-        // Process cancel requests if necessary:
-        $cancelStatus = $catalog->checkFunction('cancelHolds', compact('patron'));
-        $view = $this->createViewModel();
-        $view->cancelResults = $cancelStatus
-            ? $this->holds()->cancelHolds($catalog, $patron) : [];
-        // If we need to confirm
-        if (!is_array($view->cancelResults)) {
-            return $view->cancelResults;
-        }
-
-        // We always want to display a cancel form:
-        $view->cancelForm = true;
-        $view->disableCheckboxes = $patron['status'] == 2;
-
-        // Get held item details:
-        $result = $catalog->getMyHoldsAndSRR($patron);
-        $recordList = [];
-        $this->holds()->resetValidation();
-        foreach ($result as $current) {
-            // Add cancel details if appropriate:
-            $current = $this->holds()->addCancelDetails(
-                $catalog, $current, $cancelStatus
-            );
-
-            // Build record driver:
-            $recordList[] = $this->getDriverForILSRecord($current);
-        }
-
-        // Get List of PickUp Libraries based on patron's home library
-        try {
-            $view->pickup = $catalog->getPickUpLocations($patron);
-        } catch (\Exception $e) {
-            // Do nothing; if we're unable to load information about pickup
-            // locations, they are not supported and we should ignore them.
-        }
-        $view->recordList = $recordList;
-        return $view;
     }
 
     /**
@@ -257,21 +190,6 @@ class MyResearchController extends OriginalController
     public function catalogloginAction()
     {
         return $this->forwardTo('MyResearch', 'Login');
-    }
-    
-    /**
-     * Get a record driver object corresponding to an array returned by an ILS
-     * driver's getMyHolds / getMyTransactions method.
-     *
-     * @param array $current Record information
-     *
-     * @return AbstractBase
-     */
-    protected function getDriverForILSRecord($current)
-    {
-        $current['id'] = str_replace(self::ID_URI_PREFIX, '', $current['id']);
-        
-        return parent::getDriverForILSRecord($current);
     }
 
     /**

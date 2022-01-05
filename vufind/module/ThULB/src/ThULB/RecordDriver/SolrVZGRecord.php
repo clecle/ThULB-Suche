@@ -1697,7 +1697,8 @@ class SolrVZGRecord extends SolrMarc
      * @return bool
      */
     public function isInArchive() {
-        $archiveCodes = array_keys($this->departmentConfig->DepartmentEmails->toArray());
+        $depMails = $this->departmentConfig->DepartmentEmails;
+        $archiveCodes = array_keys($depMails ? $depMails->toArray() : []);
         $holdingsLocations = $this->getHoldingsLocations();
 
         foreach($holdingsLocations as $location) {

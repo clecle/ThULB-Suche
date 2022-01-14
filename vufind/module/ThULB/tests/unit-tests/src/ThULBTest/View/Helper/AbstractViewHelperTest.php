@@ -96,7 +96,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      */
     protected function getRecordFromFindex($ppn)
     {
-        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
+        $url = $this->getFindexUrl($ppn);
         $client = new Client($url, array(
             'maxredirects' => 3,
             'timeout' => 10
@@ -121,6 +121,10 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
             return null;
         }
         return $marcObject;
+    }
+
+    protected function getFindexUrl($ppn) {
+        return FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
     }
 
     /**

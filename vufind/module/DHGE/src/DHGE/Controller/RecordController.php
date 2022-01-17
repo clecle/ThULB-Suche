@@ -2,6 +2,7 @@
 
 namespace DHGE\Controller;
 
+use Laminas\View\Model\ViewModel;
 use ThULB\Controller\RecordController as OriginalRecordController;
 
 class RecordController extends OriginalRecordController
@@ -35,7 +36,10 @@ class RecordController extends OriginalRecordController
         }
 
         $view = parent::holdAction();
-        $view->setVariable('availableInUserLibrary', $availableInUserLibrary);
+
+        if($view instanceof ViewModel) {
+            $view->setVariable('availableInUserLibrary', $availableInUserLibrary);
+        }
 
         return $view;
     }

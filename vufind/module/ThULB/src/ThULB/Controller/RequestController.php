@@ -82,12 +82,13 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         if ($this->getRequest()->isPost() && $this->validateFormData($formData)) {
             $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
             $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
-            $email = $this->getEmailForCallnumber($callNumber);
+            $archiveEmail = $this->getArchiveEmailForCallnumber($callNumber);
             $borrowCounter = $this->getBorrowCounterForCallnumber($callNumber);
             $locationUrl = $this->getLocationUrlForCallnumber($callNumber);
 
             if ($this->createPDF($formData, $fileName) &&
-                    $this->sendRequestEmail($fileName, $email)) {
+                    $this->sendRequestEmail($fileName, $archiveEmail) &&
+                    $this->sendConfirmationEmail($formData, $this->getUser()['email'])) {
                 $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
                     ['%%location%%' => $borrowCounter, '%%url%%' => $locationUrl]);
             }
@@ -148,7 +149,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getInventoryForRequest() {
         if(!$this->inventory) {
-            $archiveIds = array_keys($this->departmentsConfig->DepartmentEmails->toArray());
+            $archiveIds = array_keys($this->departmentsConfig->DepartmentArchiveEmail->toArray());
             $holdings = $this->loadRecord()->getRealTimeHoldings();
             foreach ($holdings['holdings'] as $location => $holding) {
                 foreach ($holding['items'] as $index => $item) {
@@ -260,23 +261,99 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     }
 
     /**
-     * Gets the configured email for the given email.
+     * Send an confirmation email for the request to the recipient.
+     *
+     * @param array $formData
+     * @param string $recipient
+     *
+     * @return bool
+     */
+    protected function sendConfirmationEmail($formData, $recipient) {
+        try {
+            $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
+            $text = new Part();
+            $text->type = Mime::TYPE_TEXT;
+            $text->charset = 'utf-8';
+            $text->setContent(htmlspecialchars_decode(
+                $this->getViewRenderer()->render('Email/request-confirmation', [
+                    'username' => $formData['username'],
+                    'firstname' => $formData['firstname'],
+                    'lastname' => $formData['lastname'],
+                    'title' => $formData['title'],
+                    'callnumber' => $callNumber,
+                    'year' => $formData['year'],
+                    'volume' => $formData['volume'],
+                    'issue' => $formData['issue'],
+                    'pages' => $formData['pages'],
+                    'comment' => $formData['comment'],
+                    'departmentId' => $this->getDepartmentIdForCallnumber($callNumber),
+                    'informationEmail' => $this->getInformationEmailForCallnumber($callNumber),
+                ])
+            ));
+
+            $mimeMessage = new Message();
+            $mimeMessage->setParts(array($text));
+
+            $mailer = $this->serviceLocator->get(Mailer::class);
+            $mailer->send(
+                $recipient,
+                $this->mainConfig->Mail->default_from,
+                $this->translate('storage_retrieval_request_confirmation_email_subject'),
+                $mimeMessage
+            );
+        }
+        catch (MailException $e) {
+            if($this->logger != null && is_callable($this->logger, 'logException')) {
+                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
+            }
+
+            return false;
+        }
+
+        return true;
+    }
+
+    protected function getDepartmentIdForCallnumber ($callnumber) {
+        foreach($this->getInventoryForRequest() as $archive) {
+            if ($archive['callnumber'] == $callnumber) {
+                return $archive['departmentId'];
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets the configured archive email address for the given callnumber.
      *
      * @param string $callnumber
      *
      * @return string|null
      */
-    protected function getEmailForCallnumber($callnumber) {
+    protected function getArchiveEmailForCallnumber($callnumber) {
         if(APPLICATION_ENV == 'development' || APPLICATION_ENV == 'testing') {
             return $this->departmentsConfig->JournalRequestTest->email;
         }
 
-        foreach($this->getInventoryForRequest() as $archive) {
-            if ($archive['callnumber'] == $callnumber) {
-                if (isset($this->departmentsConfig->DepartmentEmails[$archive['departmentId']])) {
-                    return $this->departmentsConfig->DepartmentEmails[$archive['departmentId']];
-                }
-            }
+        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        if (isset($this->departmentsConfig->DepartmentArchiveEmail[$departmentId])) {
+            return $this->departmentsConfig->DepartmentArchiveEmail[$departmentId];
+        }
+
+        return null;
+    }
+
+    /**
+     * Gets the configured information email address for the given callnumber.
+     *
+     * @param string $callnumber
+     *
+     * @return string|null
+     */
+    protected function getInformationEmailForCallnumber($callnumber) {
+        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        if (isset($this->departmentsConfig->DepartmentInformationEmail[$departmentId])) {
+            return $this->departmentsConfig->DepartmentInformationEmail[$departmentId];
         }
 
         return null;
@@ -290,12 +367,9 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * @return string|null
      */
     protected function getBorrowCounterForCallnumber($callnumber) {
-        foreach($this->getInventoryForRequest() as $archive) {
-            if ($archive['callnumber'] == $callnumber) {
-                if (isset($this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']])) {
-                    return $this->departmentsConfig->DepartmentBorrowCounter[$archive['departmentId']];
-                }
-            }
+        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        if (isset($this->departmentsConfig->DepartmentBorrowCounter[$departmentId])) {
+            return $this->departmentsConfig->DepartmentBorrowCounter[$departmentId];
         }
 
         return null;
@@ -309,12 +383,9 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * @return string|null
      */
     protected function getLocationUrlForCallnumber($callnumber) {
-        foreach($this->getInventoryForRequest() as $archive) {
-            if ($archive['callnumber'] == $callnumber) {
-                if (isset($this->departmentsConfig->DepartmentLocationUrl[$archive['departmentId']])) {
-                    return $this->departmentsConfig->DepartmentLocationUrl[$archive['departmentId']];
-                }
-            }
+        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        if (isset($this->departmentsConfig->DepartmentLocationUrl[$departmentId])) {
+            return $this->departmentsConfig->DepartmentLocationUrl[$departmentId];
         }
 
         return null;

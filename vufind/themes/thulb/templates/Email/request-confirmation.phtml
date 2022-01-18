@@ -25,7 +25,7 @@
 
 
 <?php if($this->departmentId == 'Mag'): ?>
-<?= $this->transEsc('Email::provisioning_mag'); ?>
+<?= $this->transEsc('Email::provisioning_via_account'); ?>
 
 
 <?= $this->transEsc('Email::please note'); ?>: <?= $this->transEsc('Email::not loanable'); ?>
@@ -37,7 +37,7 @@
 
     • <?= $this->transEsc('Email::not listed, mail', ['%%email%%' => $this->informationEmail]); ?>
 <?php else: ?>
-<?= $this->transEsc('Email::provisioning_others'); ?>
+<?= $this->transEsc('Email::provisioning_via_' . ($this->departmentId == 'Mag5' ? 'account' : 'email')); ?>
 
 
 <?= $this->transEsc('Email::questions at', ['%%email%%' => $this->informationEmail]); ?>

@@ -271,6 +271,12 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     protected function sendConfirmationEmail($formData, $recipient) {
         try {
             $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
+
+            if(strtolower($this->getDepartmentIdForCallnumber($callNumber)) == "mag6") {
+                // don't send a mail to mag6
+                return true;
+            }
+
             $text = new Part();
             $text->type = Mime::TYPE_TEXT;
             $text->charset = 'utf-8';

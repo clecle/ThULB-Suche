@@ -24,10 +24,10 @@
 <?= $this->transEsc('Email::comment', ['%%comment%%' => $this->comment]); ?>
 
 
-<?= $this->transEsc('Email::provisioning'); ?>
-
-
 <?php if($this->departmentId == 'Mag'): ?>
+<?= $this->transEsc('Email::provisioning_mag'); ?>
+
+
 <?= $this->transEsc('Email::please note'); ?>: <?= $this->transEsc('Email::not loanable'); ?>
 
 
@@ -37,6 +37,9 @@
 
     • <?= $this->transEsc('Email::not listed, mail', ['%%email%%' => $this->informationEmail]); ?>
 <?php else: ?>
+<?= $this->transEsc('Email::provisioning_others'); ?>
+
+
 <?= $this->transEsc('Email::questions at', ['%%email%%' => $this->informationEmail]); ?>
 <?php endif; ?>
 

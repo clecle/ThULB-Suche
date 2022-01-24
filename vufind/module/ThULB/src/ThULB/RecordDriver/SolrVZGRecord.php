@@ -2300,6 +2300,8 @@ class SolrVZGRecord extends SolrMarc
      * Return the first valid DOI found in the record (false if none).
      *
      * @return string|false
+     *
+     * @throws File_MARC_Exception
      */
     public function getCleanDOI()
     {

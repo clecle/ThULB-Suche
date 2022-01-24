@@ -2316,6 +2316,28 @@ class SolrVZGRecord extends SolrMarc
         return false;
     }
 
+    /**
+     * Get the RVK notations of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getRvkNotation() {
+        $fields = $this->getFieldsConditional('936', [
+            $this->createFieldCondition('indicator', '1', '==', 'r'),
+            $this->createFieldCondition('indicator', '2', '==', 'v'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

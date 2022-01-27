@@ -2340,6 +2340,28 @@ class SolrVZGRecord extends SolrMarc
         return $data;
     }
 
+    /**
+     * Get the local classification of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getLocalClassification() {
+        $fields = $this->getFieldsConditional('983', [
+            $this->createFieldCondition('subfield', '2', '==', '31'),
+            $this->createFieldCondition('subfield', '8', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

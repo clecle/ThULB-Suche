@@ -27,7 +27,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  */
-namespace ThULB\View\Helper\Root;
+namespace DHGE\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
 use VuFind\View\Helper\Root\RecordDataFormatter;
@@ -183,7 +183,6 @@ class RecordDataFormatterFactory extends OriginalFactory
                 return count($data) > 1 ? 'RVK notations' : 'RVK notation';
             }
         ]);
-        $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
         $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',

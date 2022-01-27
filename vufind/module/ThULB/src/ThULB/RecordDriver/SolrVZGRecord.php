@@ -34,7 +34,7 @@ namespace ThULB\RecordDriver;
 use Exception;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
-use ThULB\Backend\Solr\Backend;
+use ThULBSearch\Backend\Solr\Backend;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
 use Laminas\Config\Config;

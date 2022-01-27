@@ -25,7 +25,7 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org
  */
-namespace ThULB\Backend\Solr;
+namespace ThULBSearch\Backend\Solr;
 
 use VuFindSearch\Backend\Solr\Backend as OriginalBackend;
 use VuFindSearch\ParamBag;

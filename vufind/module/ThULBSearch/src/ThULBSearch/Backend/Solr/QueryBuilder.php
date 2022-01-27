@@ -1,6 +1,6 @@
 <?php
 
-namespace ThULB\Backend\Solr;
+namespace ThULBSearch\Backend\Solr;
 
 use VuFindSearch\Backend\Solr\QueryBuilder as OriginalQueryBuilder;
 use VuFindSearch\Query\Query;

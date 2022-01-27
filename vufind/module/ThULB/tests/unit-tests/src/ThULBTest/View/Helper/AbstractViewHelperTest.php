@@ -36,6 +36,7 @@ use Laminas\Mvc\I18n\Translator as MvcTranslator;
 use ThULB\Search\Factory\SolrDefaultBackendFactory;
 use VuFind\Search\BackendManager;
 use VuFindSearch\Backend\BrowZine\Connector;
+use VuFindTheme\ThemeInfo;
 
 /**
  * General view helper test class that provides usually used operations.
@@ -151,6 +152,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
             'context' => $context,
             'doi' => new \VuFind\View\Helper\Root\Doi($context),
+            'imageLink' => new \VuFindTheme\View\Helper\ImageLink((new ThemeInfo())),
             'openUrl' => new \VuFind\View\Helper\Root\OpenUrl($context, [], $this->getMockBuilder('VuFind\Resolver\Driver\PluginManager')->disableOriginalConstructor()->getMock()),
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
             'record' => new \VuFind\View\Helper\Root\Record(),

@@ -51,7 +51,7 @@ class HoldingHelper extends OriginalHoldingHelper
     public function getAvailability(&$itemRow) {
         $str = parent::getAvailability($itemRow);
 
-        if(!$this->recallAvailable($itemRow)) {
+        if($itemRow['status'] != 'available' && !$this->recallAvailable($itemRow)) {
             $str .= '<br>' . $this->view->transEsc('recall_not_available_in_your_library');
         }
 

@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class LanguageMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Sprachangaben';
+    protected $sheetName = 'Sprache';
     protected $metadataKey = 'Languages';
     protected $recordDriverFunction = 'getLanguages';
     protected $template = 'data-languages.phtml';

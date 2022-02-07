@@ -178,6 +178,12 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Finding Aid', 'getFindingAids');
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
+        $spec->setTemplateLine('RVK notation', 'getRvkNotation', 'data-rvkNotation.phtml', [
+            'labelFunction' => function ($data) {
+                return count($data) > 1 ? 'RVK notations' : 'RVK notation';
+            }
+        ]);
+        $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
         $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
@@ -190,5 +196,17 @@ class RecordDataFormatterFactory extends OriginalFactory
         );
         $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         return $spec->getArray();
+    }
+
+    public function getDefaultDescriptionSpecs()
+    {
+        $specs = parent::getDefaultDescriptionSpecs();
+
+        if(isset($specs['DOI']) && is_array($specs['DOI'])) {
+            unset($specs['DOI']['itemPrefix']);
+            unset($specs['DOI']['itemSuffix']);
+        }
+
+        return $specs;
     }
 }

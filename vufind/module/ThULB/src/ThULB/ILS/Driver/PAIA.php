@@ -189,7 +189,7 @@ class PAIA extends OriginalPAIA
         foreach ($result as $index => $doc) {
             if (isset($doc['callnumber'])) {
                 $result[$index]['callnumber'] = $this->getItemCallnumber(['label' => $doc['callnumber']]);
-                $result[$index]['departmentId'] = $this->getDepIpFromItem(['label' => $doc['callnumber']], $result[$index]['callnumber']);
+                $result[$index]['departmentId'] = $this->getDepIdFromItem(['label' => $doc['callnumber']], $result[$index]['callnumber']);
             }
         }
         
@@ -280,7 +280,7 @@ class PAIA extends OriginalPAIA
             // PAIA custom field
             // label (0..1) call number, shelf mark or similar item label
             $result['callnumber'] = $this->getItemCallnumber($doc);
-            $result['departmentId'] = $this->getDepIpFromItem($doc, $result['callnumber']);
+            $result['departmentId'] = $this->getDepIdFromItem($doc, $result['callnumber']);
 
             // status: provided (the document is ready to be used by the patron)
             $result['available'] = $doc['status'] == 4 ? true : false;
@@ -468,7 +468,7 @@ class PAIA extends OriginalPAIA
                 // get callnumber
                 $result_item['callnumber'] = $this->getItemCallnumber($item);
                 // get department id
-                $result_item['departmentId'] = $this->getDepIpFromItem($item, $result_item['callnumber']);
+                $result_item['departmentId'] = $this->getDepIdFromItem($item, $result_item['callnumber']);
                 // get location
                 $result_item['location'] = $this->getItemDepartment($item);
                 // custom DAIA field
@@ -487,11 +487,15 @@ class PAIA extends OriginalPAIA
                 if($result_item['location'] == 'Unknown' && !empty($result_item['remotehref'])) {
                     $result_item['location'] = 'Remote';
                 }
+                elseif($result_item['location'] == 'Unknown' && $result_item['departmentId'] ?? false) {
+                    $result_item['location'] = $result_item['departmentId'];
+                }
                 // add result_item to the result array, if at least one relevant
                 // information is present
                 if ($result_item['callnumber'] !== ''
                     || $result_item['about']
-                    || (isset($result_item['remotehref']) && $result_item['remotehref'])
+                    || $result_item['storage'] !== 'Unknown'
+                    || ($result_item['remotehref'] ?? false)
                 ) {
                     $result[] = $result_item;
                 }
@@ -642,10 +646,13 @@ class PAIA extends OriginalPAIA
      *
      * @return string|null
      */
-    protected function getDepIpFromItem($document, $shortenedCallnumber) {
+    protected function getDepIdFromItem($document, $shortenedCallnumber) {
         $callnumber = $document['label'] ?? null;
         if(!empty($callnumber) && !empty($shortenedCallnumber)) {
             return str_replace(':' . $shortenedCallnumber, '', $callnumber);
+        }
+        elseif (!empty($callnumber)) {
+            return $callnumber;
         }
 
         return null;

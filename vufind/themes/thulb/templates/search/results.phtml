@@ -166,8 +166,8 @@
     </div>
     <div id="moduletab">
       <?php
-        $ignoreHiddenFilterMemory = isset($this->ignoreHiddenFilterMemory) ? $this->ignoreHiddenFilterMemory : false;
-        $ignoreHiddenFiltersInRequest = isset($this->ignoreHiddenFiltersInRequest) ? $this->ignoreHiddenFiltersInRequest : false;
+        $ignoreHiddenFilterMemory = $this->ignoreHiddenFilterMemory ?? false;
+        $ignoreHiddenFiltersInRequest = $this->ignoreHiddenFiltersInRequest ?? false;
         $hiddenFilters = $this->searchTabs()->getHiddenFilters($this->searchClassId, $ignoreHiddenFilterMemory, $ignoreHiddenFiltersInRequest);
         if (empty($hiddenFilters) && !$ignoreHiddenFilterMemory) {
           $hiddenFilters = $this->searchMemory()->getLastHiddenFilters($this->searchClassId);

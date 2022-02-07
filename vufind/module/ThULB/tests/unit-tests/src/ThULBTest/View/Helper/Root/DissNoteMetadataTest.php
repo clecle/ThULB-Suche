@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class DissNoteMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Hochschulschriftenvermerk';
+    protected $sheetName = 'Hochschulschrift';
     protected $metadataKey = 'Dissertation';
     protected $recordDriverFunction = 'getDissertationNote';
 }

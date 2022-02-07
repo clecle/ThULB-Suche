@@ -157,7 +157,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             if (!is_null($this->metadataKey) && !empty($this->metadataTitles)) {
                 foreach ($this->metadataTitles as $locale => $title) {
                     $this->setTranslationLocale($locale);
-                    $viewHelpers = $this->getViewHelpers();
+                    $viewHelpers = $this->getViewHelpers($this->getMockContainer());
                     $comment = '=== Sheet: ' . $this->sheetName . ', Titel ' . $locale . ' ===';
                     $this->assertEquals(
                         $this->normalizeUtf8String($title),
@@ -267,10 +267,11 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
     {
         // Build the formatter:
         $factory = new RecordDataFormatterFactory();
-        $formatter = $factory->__invoke(new MockContainer($this), RecordDataFormatter::class);
+        $container = $this->getMockContainer();
+        $formatter = $factory($container, RecordDataFormatter::class);
 
         // Create a view object with a set of helpers:
-        $helpers = $this->getViewHelpers();
+        $helpers = $this->getViewHelpers($container);
         $view = $this->getPhpRenderer($helpers);
 
         // Mock out the router to avoid errors:
@@ -292,5 +293,27 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
     protected function getFormatterSpecBuilder()
     {
         return new SpecBuilder();
+    }
+
+    protected function getMockContainer() {
+        $container = new \VuFindTest\Container\MockContainer($this);
+        $container->set(
+            \VuFind\RecordDriver\PluginManager::class,
+            new \VuFind\RecordDriver\PluginManager($container)
+        );
+        $container->set(
+            \VuFind\Config\PluginManager::class,
+            new \VuFind\Config\PluginManager($container)
+        );
+        $container->set(
+            \VuFind\Config\SearchSpecsReader::class,
+            new \VuFind\Config\SearchSpecsReader()
+        );
+        $container->set(
+            'SharedEventManager',
+            new \Laminas\EventManager\SharedEventManager()
+        );
+
+        return $container;
     }
 }

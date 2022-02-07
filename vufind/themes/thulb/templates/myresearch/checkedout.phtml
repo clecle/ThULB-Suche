@@ -8,6 +8,8 @@
 
 <div class="<?= $this->layoutClass('mainbody')?>">
   <h2><?= $this->transEsc('Your Checked Out Items')?></h2>
+
+  <div class="flash-message alert alert-warning"><?= $this->transEsc('checked_out_information'); ?></div>
   <?= $this->flashmessages()?>
 
     <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
@@ -15,6 +17,7 @@
     <?php if (!empty($this->transactions)): ?>
       <?php if ($this->renewForm): ?>
       <form name="renewals" method="post" id="renewals">
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf"/>
         <div class="toolbar">
           <div class="checkbox">
             <label>
@@ -83,7 +86,7 @@
               // If this is a non-missing Solr record, we should display a link:
               if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
                 $title = $this->record($resource)->getTitleHtml();
-                echo '<a href="' . $this->recordLink()->getUrl($resource) .
+                echo '<a href="' . $this->recordLinker()->getUrl($resource) .
                   '" class="title truncate">' . $title . '</a>';
               } else if (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
                 // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...

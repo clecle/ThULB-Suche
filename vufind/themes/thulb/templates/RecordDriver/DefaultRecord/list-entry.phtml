@@ -12,7 +12,7 @@
   $editable = $this->user && $user_id === $this->user->id;
 
   // Thumbnail
-  $coverDetails = $this->record($this->driver)->getCoverDetails('list-entry', 'medium', $this->recordLink()->getUrl($this->driver));
+  $coverDetails = $this->record($this->driver)->getCoverDetails('list-entry', 'medium', $this->recordLinker()->getUrl($this->driver));
   $cover = $coverDetails['html'];
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('list');
@@ -39,7 +39,7 @@
         <div class="result-body">
           <div class="resultItemLine1">
             <?php $missing = $this->driver instanceof \VuFind\RecordDriver\Missing; ?>
-            <?php if (!$missing): ?><a href="<?= $this->recordLink()->getUrl($this->driver)?>" class="getFull title truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>"><?php endif; ?>
+            <?php if (!$missing): ?><a href="<?= $this->recordLinker()->getUrl($this->driver)?>" class="getFull title truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>"><?php endif; ?>
               <?= $this->record($this->driver)->getTitleHtml()?>
             <?php if (!$missing): ?></a><?php endif; ?>
           </div>

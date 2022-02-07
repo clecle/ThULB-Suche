@@ -28,21 +28,27 @@ namespace ThULBTest\View\Helper;
 
 use Exception;
 use ThULB\RecordDriver\SolrVZGRecord;
-use VuFind\I18n\Translator\Loader\ExtendedIni;
-use VuFind\Service\Factory as ServiceFactory;
 use Laminas\Config\Config;
 use Laminas\Http\Client;
 use Laminas\I18n\Translator\Translator;
 use Laminas\Config\Reader\Ini as IniReader;
 use Laminas\Mvc\I18n\Translator as MvcTranslator;
+use ThULB\Search\Factory\SolrDefaultBackendFactory;
+use VuFind\Search\BackendManager;
+use VuFindSearch\Backend\BrowZine\Connector;
+use VuFindTheme\ThemeInfo;
 
 /**
  * General view helper test class that provides usually used operations.
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCase
+abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
 {
+    use \VuFindTest\Feature\ViewTrait;
+    use \VuFindTest\Feature\FixtureTrait;
+    use \VuFindTest\Feature\SearchServiceTrait;
+
 //    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
 //    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
     const FINDEX_REQUEST_PATH = '/31/GBV_ILN_31/select';
@@ -91,7 +97,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      */
     protected function getRecordFromFindex($ppn)
     {
-        $url = FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
+        $url = $this->getFindexUrl($ppn);
         $client = new Client($url, array(
             'maxredirects' => 3,
             'timeout' => 10
@@ -103,7 +109,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
         $jsonString = trim($response->getBody());
         $jsonObject = json_decode($jsonString, true);
         $marcObject = new SolrVZGRecord($this->getMainConfig());
-        $marcObject->attachSearchService($this->getServiceManager()->get('VuFindSearch\Service'));
+        $marcObject->attachSearchService($this->getSearchService($this->getBackendManager()));
 
         
         if ($jsonObject['response']['numFound'] < 1) {
@@ -116,6 +122,10 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
             return null;
         }
         return $marcObject;
+    }
+
+    protected function getFindexUrl($ppn) {
+        return FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
     }
 
     /**
@@ -133,7 +143,7 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
      *
      * @return array
      */
-    protected function getViewHelpers()
+    protected function getViewHelpers($container)
     {   
         $context = new \VuFind\View\Helper\Root\Context();
         
@@ -142,12 +152,13 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
             'context' => $context,
             'doi' => new \VuFind\View\Helper\Root\Doi($context),
+            'imageLink' => new \VuFindTheme\View\Helper\ImageLink((new ThemeInfo())),
             'openUrl' => new \VuFind\View\Helper\Root\OpenUrl($context, [], $this->getMockBuilder('VuFind\Resolver\Driver\PluginManager')->disableOriginalConstructor()->getMock()),
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
             'record' => new \VuFind\View\Helper\Root\Record(),
-            'recordLink' => new \ThULB\View\Helper\Root\RecordLink($this->getMockBuilder('VuFind\Record\Router')->disableOriginalConstructor()->getMock()),
+            'recordLinker' => new \ThULB\View\Helper\Root\RecordLinker(new \VuFind\Record\Router($this->getMainConfig())),
             'searchTabs' => $this->getMockBuilder('VuFind\View\Helper\Root\SearchTabs')->disableOriginalConstructor()->getMock(),
-            'searchOptions' => new \VuFind\View\Helper\Root\SearchOptions(new \VuFind\Search\Options\PluginManager($this->getServiceManager())),
+            'searchOptions' => new \VuFind\View\Helper\Root\SearchOptions(new \VuFind\Search\Options\PluginManager($container)),
             'transEsc' => new \VuFind\View\Helper\Root\TransEsc(),
             'translate' => new \VuFind\View\Helper\Root\Translate(),
 //            'usertags' => new \VuFind\View\Helper\Root\UserTags(),
@@ -201,5 +212,19 @@ abstract class AbstractViewHelperTest extends \VuFindTest\Unit\ViewHelperTestCas
         }
         
         return $this->config;
+    }
+
+    /**
+     * Given a connector, wrap it up in a backend and backend manager
+     *
+     * @return BackendManager
+     */
+    protected function getBackendManager(): BackendManager
+    {
+        $container = $this->getMockContainer();
+        $backendFactory = new SolrDefaultBackendFactory();
+        $backend = $backendFactory($container, 'Solr');
+        $container->set('Solr', $backend);
+        return new BackendManager($container);
     }
 }

@@ -34,9 +34,13 @@ namespace ThULB\RecordDriver;
 use Exception;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
+use ThULBSearch\Backend\Solr\Backend;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
 use Laminas\Config\Config;
+use VuFindSearch\Command\GetLuceneHelperCommand;
+use VuFindSearch\Command\RetrieveBatchCommand;
+use VuFindSearch\Service;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -57,6 +61,7 @@ class SolrVZGRecord extends SolrMarc
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
+    const LIBRARY_ILN = '31';
 
     const SEPARATOR = '|\/|';
 
@@ -138,9 +143,9 @@ class SolrVZGRecord extends SolrMarc
             }
         }
 
-        $leader = $this->getMarcRecord()->getLeader();
-        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31', 'e' => 'a']);
-        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => '31']);
+        $leader = $this->getMarcReader()->getLeader();
+        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN, 'e' => 'a']);
+        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN]);
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && count($allCopies) !== count($ordered));
@@ -274,8 +279,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getContainerLink()
     {
-        $containerField = $this->getMarcRecord()->getField('773');
-        return $this->getLinkFromField($containerField);
+        return $this->getLinkFromField($this->getMarcReader()->getField('773'));
     }
 
     /**
@@ -325,13 +329,10 @@ class SolrVZGRecord extends SolrMarc
         );
 
         $fields = array();
-        foreach($this->getFieldsConditional('936', false, $conditions) as $dataField) {
-            $descriptions = array();
-            foreach($dataField->getSubfields('j') as $subField) {
-                $descriptions[] = $subField->getData();
-            }
+        foreach($this->getFieldsConditional('936', $conditions) as $dataField) {
+            $descriptions = $this->getSubfields($dataField, 'j');
             $fields[] = array(
-                'bklnumber' => $dataField->getSubfield('a')->getData(),
+                'bklnumber' => $this->getSubfield($dataField, 'a'),
                 'bklname' => count($descriptions) ? $descriptions : null
             );
         }
@@ -348,7 +349,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getThuBiblioClassification()
     {
-        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => '31']);
+        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => self::LIBRARY_ILN]);
         $thuBib = array();
 
         foreach($classNumbers as $classNumber) {
@@ -454,7 +455,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getPhysicalDescriptions()
     {
-        $fields = $this->getMarcRecord()->getFields('300');
+        $fields = $this->getMarcReader()->getFields('300');
 
         $physicalDescriptions = [];
         foreach ($fields as $singleField) {
@@ -644,13 +645,11 @@ class SolrVZGRecord extends SolrMarc
     public function getSecondaryAuthorsRoles()
     {
         $roles = [];
-        $fields = $this->getMarcRecord()->getFields('700');
+        $fields = $this->getMarcReader()->getFields('700');
         foreach ($fields as $field) {
-            foreach ($field->getSubfields() as $subfield) {
-                if ($subfield->getCode() === '4') {
-                    $roles[] = $subfield->getData();
-                    continue 2;
-                }
+            if ($role = $this->getSubfield($field, '4')) {
+                $roles[] = $role;
+                continue;
             }
             $roles[] = '';
         }
@@ -708,13 +707,12 @@ class SolrVZGRecord extends SolrMarc
     {
         $roles = [];
 
-        $fields = $this->getMarcRecord()->getFields('110|710', true);
+        $fields = array_merge(
+            $this->getMarcReader()->getFields('110'),
+            $this->getMarcReader()->getFields('710')
+        );
         foreach ($fields as $field) {
-            if ($subfield = $field->getSubField('4')) {
-                $roles[] = $subfield->getData();
-            } else {
-                $roles[] = '';
-            }
+            $roles[] = $this->getSubfield($field, '4');
         }
 
         return $roles;
@@ -750,13 +748,12 @@ class SolrVZGRecord extends SolrMarc
         $retVal = [];
         foreach ($fieldsNames as $value) {
             $value = trim($value);
-            $fields = $this->getMarcRecord()->getFields($value);
+            $fields = $this->getMarcReader()->getFields($value);
             if (!empty($fields)) {
                 foreach ($fields as $field) {
                     // Check to see if we should display at all
                     if ($useVisibilityIndicator) {
-                        $visibilityIndicator = $field->getIndicator('1');
-                        if ($visibilityIndicator == '1') {
+                        if ($field['i1'] == '1') {
                             continue;
                         }
                     }
@@ -764,8 +761,8 @@ class SolrVZGRecord extends SolrMarc
                     // Get data for field
                     $tmp = $this->getFieldData($field);
                     if (is_array($tmp)) {
-                        if ($subfieldA = $field->getSubfield('a')) {
-                            $tmp['value'] .= ' ' . trim($subfieldA->getData());
+                        if ($subfieldA = $this->getSubfield($field, 'a')) {
+                            $tmp['value'] .= ' ' . trim($subfieldA);
                         }
                         $retVal[] = $tmp;
                     }
@@ -834,11 +831,14 @@ class SolrVZGRecord extends SolrMarc
         if(!is_array($ppnList) || empty($ppnList)) {
             return $ppnList;
         }
-        $result = $this->searchService->retrieveBatch('Solr', $ppnList);
+
+        $result = $this->searchService->invoke(
+            new RetrieveBatchCommand('Solr', $ppnList)
+        );
 
         $availablePPNs = array();
         /* @var $record SolrVZGRecord */
-        foreach($result->getRecords() as $record) {
+        foreach($result->getResult()->getRecords() as $record) {
             try {
                 $availablePPNs[] = $record->getUniqueID();
             }
@@ -887,16 +887,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getInvalidISBNs()
     {
-        $fields = $this->getMarcRecord()->getFields('020');
-
-        $invalidISBNs = array();
-        foreach($fields as $field) {
-            if($field->getSubfield('z')) {
-                $invalidISBNs[] = $field->getSubfield('z')->getData();
-            }
-        }
-
-        return $invalidISBNs;
+        return $this->getMarcReader()->getFieldsSubfields('020', ['z'], null);
     }
 
     /**
@@ -937,11 +928,11 @@ class SolrVZGRecord extends SolrMarc
     public function getPrintingPlaces()
     {
         $printingPlaces = [];
-        $fields = $this->getMarcRecord()->getFields('751');
+        $fields = $this->getMarcReader()->getFields('751');
         if (is_array($fields)) {
             foreach ($fields as $currentField) {
-                $ind1 = $currentField->getIndicator(1);
-                $ind2 = $currentField->getIndicator(2);
+                $ind1 = $currentField['i1'];
+                $ind2 = $currentField['i2'];
                 if (($ind1 && trim($ind1)) || ($ind2 && trim($ind2))) {
                     continue;
                 }
@@ -989,13 +980,15 @@ class SolrVZGRecord extends SolrMarc
     protected function conditionMet($field, $condition) {
 
         // Check if all conditions are met
-        $valueToMatch = null;
+        $valueToMatch = false;
         if(array_key_exists('subfield', $condition)) {
-            $conditionSubField = $field->getSubfield($condition['subfield']);
-            $valueToMatch = $conditionSubField ? $conditionSubField->getData() : false;
+            if($data = $this->getSubfield($field, $condition['subfield'])) {
+                $valueToMatch = $data;
+            }
         }
-        if(array_key_exists('indicator', $condition)) {
-            $valueToMatch = $field->getIndicator($condition['indicator']);
+        if(array_key_exists('indicator', $condition)
+            && trim($field['i' . $condition['indicator']]) !== '') {
+            $valueToMatch = $field['i' . $condition['indicator']];
         }
 
         switch ($condition['operator']) {
@@ -1049,7 +1042,7 @@ class SolrVZGRecord extends SolrMarc
     public function getFormattedData($relevantFields, $formattingRules, $conditions = []) {
         $returnData = array();
         foreach ($relevantFields as $fieldNumber => $subfields) {
-            $fields = $this->getMarcRecord()->getFields($fieldNumber);
+            $fields = $this->getMarcReader()->getFields($fieldNumber);
             foreach ($fields as $field) {
 
                 // Check if all conditions are met
@@ -1060,13 +1053,9 @@ class SolrVZGRecord extends SolrMarc
                 }
 
                 $fieldData = [];
-                foreach ($field->getSubfields() as $subfield) {
-                    if (in_array($subfield->getCode(), $subfields)) {
-                        $fieldData[$fieldNumber . $subfield->getCode()] =
-                            isset($fieldData[$fieldNumber . $subfield->getCode()]) ?
-                                $fieldData[$fieldNumber . $subfield->getCode()] . ', ' . $subfield->getData() :
-                                $subfield->getData();
-                    }
+                foreach($subfields as $subfield) {
+                    $fieldData[$fieldNumber . $subfield] =
+                        implode(', ', $this->getSubfields($field, $subfield)) ?: null;
                 }
 
                 if ($fieldData) {
@@ -1185,27 +1174,26 @@ class SolrVZGRecord extends SolrMarc
      */
     protected function getFieldData($field)
     {
-        $leader = $this->getMarcRecord()->getLeader();
+        $leader = $this->getMarcReader()->getLeader();
         // Make sure that there is a t field to be displayed:
-        if ($title = $field->getSubfield('t')) {
-            $title = $title->getData();
-        } else if (strtolower($leader[7]) === 'm'
-            && strtolower($leader[19]) === 'c'
-        ) {
-            $title = $this->getFirstFieldValue('245', ['a']);
-        } else {
-            $title = false;
+        if (!$title = $this->getSubfield($field, 't')) {
+            if (strtolower($leader[7]) === 'm'
+                && strtolower($leader[19]) === 'c'
+            ) {
+                $title = $this->getFirstFieldValue('245', ['a']);
+            } else {
+                $title = false;
+            }
         }
 
         $link = $this->getLinkFromField($field, $title);
 
-        $pages = $field->getSubfield('g');
         // Make sure we have something to display:
         return ($link === false) ? false : [
             'title' => $this->getRecordLinkNote($field),
             'value' => $title ? $title : 'Link',
             'link'  => $link,
-            'pages' => $pages ? $pages->getData() : ''
+            'pages' => $this->getMarcReader()->getSubfield($field, 'g')
         ];
     }
 
@@ -1224,7 +1212,7 @@ class SolrVZGRecord extends SolrMarc
             ? $this->mainConfig->Record->marc_links_link_types
             : 'id,isbn,issn,dnb,zdb,title';
         $linkTypes = explode(',', $linkTypeSetting);
-        $linkFields = $field->getSubfields('w');
+        $linkFields = $this->getSubfields($field, 'w');
 
         // Run through the link types specified in the config.
         // For each type, check field for reference
@@ -1241,17 +1229,17 @@ class SolrVZGRecord extends SolrMarc
                 }
                 break;
             case 'isbn':
-                if ($isbn = $field->getSubfield('z')) {
+                if ($isbn = $this->getSubfield($field, 'z')) {
                     $link = [
-                        'type' => 'isbn', 'value' => trim($isbn->getData()),
+                        'type' => 'isbn', 'value' => trim($isbn),
                         'exclude' => $this->getUniqueId()
                     ];
                 }
                 break;
             case 'issn':
-                if ($issn = $field->getSubfield('x')) {
+                if ($issn = $this->getSubfield($field, 'x')) {
                     $link = [
-                        'type' => 'issn', 'value' => trim($issn->getData()),
+                        'type' => 'issn', 'value' => trim($issn),
                         'exclude' => $this->getUniqueId()
                     ];
                 }
@@ -1284,7 +1272,7 @@ class SolrVZGRecord extends SolrMarc
             }
         }
 
-        return isset($link) ? $link : false;
+        return $link ?? false;
     }
 
     /**
@@ -1292,7 +1280,7 @@ class SolrVZGRecord extends SolrMarc
      * into the field number where relevant to generate a note to associate
      * with a record link.
      *
-     * @param File_MARC_Data_Field $field Field to examine
+     * @param array $field Field to examine
      *
      * @return string
      *
@@ -1301,24 +1289,24 @@ class SolrVZGRecord extends SolrMarc
     protected function getRecordLinkNote($field)
     {
         // If set, use relationship information from subfield i and n
-        if ($subfieldI = $field->getSubfield('i')) {
-            $data = trim($subfieldI->getData());
+        if ($subfieldI = $this->getSubfield($field, 'i')) {
+            $data = trim($subfieldI);
             if (!empty($data)) {
-                if ($subfieldN = $field->getSubfield('n')) {
-                    $data .= ' ' . trim($subfieldN->getData());
+                if ($subfieldN = $this->getSubfield($field, 'n')) {
+                    $data .= ' ' . trim($subfieldN);
                 }
                 return $data;
             }
         }
 
         // Normalize blank relationship indicator to 0:
-        $relationshipIndicator = $field->getIndicator('2');
+        $relationshipIndicator = $field['i2'];
         if ($relationshipIndicator == ' ') {
             $relationshipIndicator = '0';
         }
 
         // Assign notes based on the relationship type
-        $value = $field->getTag();
+        $value = $field['tag'];
         switch ($value) {
         case '780':
             if (in_array($relationshipIndicator, range('0', '7'))) {
@@ -1394,19 +1382,19 @@ class SolrVZGRecord extends SolrMarc
         $matches = [];
 
         // Did we find any matching fields?
-        $series = $this->getFieldsConditional('490', false, [$this->createFieldCondition('subfield', 'a', '!=', false)]);
+        $series = $this->getFieldsConditional('490', [$this->createFieldCondition('subfield', 'a', '!=', false)]);
         foreach ($series as $currentField) {
-            $currentArray = ['name' => $currentField->getSubfield('a')->getData()];
-            if ($number = $currentField->getSubfield('v')) {
-                $currentArray['number'] = $number->getData();
+            $currentArray = ['name' => $this->getSubfield($currentField, 'a')];
+            if ($number = $this->getSubfield($currentField, 'v')) {
+                $currentArray['number'] = $number;
 
                 // Do we have IDs to link the field to
-                $secondaryFields = $this->getFieldsConditional('800|810|830', true, [
-                    $this->createFieldCondition('subfield', 'v', '==', $number->getData()),
+                $secondaryFields = $this->getFieldsConditional(['800', '810', '830'], [
+                    $this->createFieldCondition('subfield', 'v', '==', $number),
                     $this->createFieldCondition('subfield', 'w', '!=', false)
                 ]);
                 if(count($secondaryFields) > 0) {
-                    $rawId = $secondaryFields[0]->getSubfield('w')->getData();
+                    $rawId = $this->getSubfield($secondaryFields[0], 'w');
                     if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                         $currentArray['id'] = substr($rawId, 8);
                     }
@@ -1418,22 +1406,19 @@ class SolrVZGRecord extends SolrMarc
         }
 
         // Did we find any matching fields?
-        $series = $this->getFieldsConditional('773', false, [$this->createFieldCondition('subfield', 'w', '!=', false)]);
-        /* @var $currentField File_MARC_Data_Field */
+        $series = $this->getFieldsConditional('773', [$this->createFieldCondition('subfield', 'w', '!=', false)]);
         foreach ($series as $currentField) {
-            if (($name = $currentField->getSubfield('t')) === false) {
-                $field = $this->getMarcRecord()->getField('245');
-                $name = $field ? $field->getSubfield('a') : '';
+            if (!($name = $this->getSubfield($currentField, 't'))) {
+                $name = $this->getMarcReader()->getFieldsSubfields('245', ['a'])[0] ?? false;
             }
-            $currentArray = ['name' => $name ? $name->getData() : $this->translate('Main entry')];
+            $currentArray = ['name' => $name ?: $this->translate('Main entry')];
 
-            if ($number = $currentField->getSubfield('g')) {
-                $currentArray['number'] = $number->getData();
+            if ($number = $this->getSubfield($currentField, 'g')) {
+                $currentArray['number'] = $number;
             }
 
             // Do we have IDs to link the field to
-            $subFieldW = $currentField->getSubfield('w');
-            $rawId = $subFieldW ? $subFieldW->getData() : '';
+            $rawId = $this->getSubfield($currentField, 'w');
             if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
                 $currentArray['id'] = substr($rawId, 8);
             }
@@ -1481,22 +1466,21 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 2),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover'])
+            $this->createFieldCondition('subfield', 3, 'nin', ['Volltext', 'Cover', 'Unbekannt'])
         );
 
-        $urls = $this->getFieldsConditional('856', false, $conditions);
+        $urls = $this->getFieldsConditional('856', $conditions);
         foreach ($urls as $url) {
-            if(!($description = $url->getSubfield('3'))) {
-                $description = $url->getSubfield('y');
+            if(!($description = $this->getSubfield($url, '3'))) {
+                $description = $this->getSubfield($url, 'y');
             }
 
             if ($description) {
-                $description = $description->getData();
                 $lowerDescription = strtolower($description);
 
                 if(!isset($retVal[$lowerDescription])) {
                     $retVal[$lowerDescription] = [
-                        'url' => $url->getSubfield('u')->getData(),
+                        'url' => $this->getSubfield($url, 'u'),
                         'desc' => $description
                     ];
                 }
@@ -1524,40 +1508,37 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getFullTextURL()
     {
-        if(!$this->isFormat('electronic Article')) {
+        if(!$this->isFormat('electronic Article|eBook|eJournal', true)) {
             return false;
         }
 
         $retVal = false;
-        $unknownLicence = null;
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 0),
             $this->createFieldCondition('subfield', 'u', '!=', false),
-            $this->createFieldCondition('subfield', 'z', '==', 'Kostenfrei')
         );
         $fulltextCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', 'Volltext')
+            $this->createFieldCondition('subfield', '3', '==', 'Volltext'),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
         $freeCondition = array(
-            $this->createFieldCondition('subfield', '3', '==', false)
+            $this->createFieldCondition('subfield', '3', '==', false),
+            $this->createFieldCondition('subfield', 'z', 'in', ['Kostenfrei', 'kostenfrei'])
         );
 
-        $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $fulltextCondition));
+        $urls = $this->getFieldsConditional('856', array_merge($basicConditions, $fulltextCondition));
+        if(!$urls) {
+            $urls = $this->getFieldsConditional('856', array_merge($basicConditions, $freeCondition));
+        }
+        if(!$urls && in_array('NL', $this->fields['collection'] ?? [])) {
+            $urls = $this->getFieldsConditional('856', $basicConditions);
+        }
         if(is_array($urls) && count($urls) >= 1) {
             $retVal = array(
-                'link' => $urls[0]->getSubfield('u')->getData(),
+                'link' => $this->getSubfield($urls[0], 'u'),
                 'desc' => $this->translate('Full text online')
             );
-        }
-        else {
-            $urls = $this->getFieldsConditional('856', false, array_merge($basicConditions, $freeCondition));
-            if(is_array($urls) && count($urls) >= 1) {
-                $retVal = array(
-                    'link' => $urls[0]->getSubfield('u')->getData(),
-                    'desc' => $this->translate('Full text online')
-                );
-            }
         }
 
         return $retVal;
@@ -1567,27 +1548,30 @@ class SolrVZGRecord extends SolrMarc
      * Get all fields that meet the specified conditions.
      * For conditions @see conditionMet
      *
-     * @param string $spec tag name
-     * @param bool   $prce if true, then match tag name as a regular expression
+     * @param array|string $spec tag name
      * @param array  $conditions
      *
      * @return array
      *
      * @throws File_MARC_Exception
      */
-    protected function getFieldsConditional($spec, $prce = false, $conditions = []) {
+    protected function getFieldsConditional($spec, $conditions = []) {
+        if(is_string($spec)) {
+            $spec = [$spec];
+        }
+
         $retFields = [];
-        $fields = $this->getMarcRecord()->getFields($spec, $prce);
-
-        foreach ($fields as $field) {
-            // Check if all conditions are met
-            foreach ($conditions as $condition) {
-                if (!$this->conditionMet($field, $condition)) {
-                    continue 2;
+        foreach($spec as $fieldName) {
+            foreach ($this->getMarcReader()->getFields($fieldName) as $field) {
+                // Check if all conditions are met
+                foreach ($conditions as $condition) {
+                    if (!$this->conditionMet($field, $condition)) {
+                        continue 2;
+                    }
                 }
-            }
 
-            $retFields[] = $field;
+                $retFields[] = $field;
+            }
         }
 
         return $retFields;
@@ -1646,7 +1630,7 @@ class SolrVZGRecord extends SolrMarc
 
         // Try to look up the specified field, return empty array if it doesn't
         // exist.
-        $fields = $this->getMarcRecord()->getFields($field);
+        $fields = $this->getMarcReader()->getFields($field);
         if (!is_array($fields)) {
             return $matches;
         }
@@ -1676,7 +1660,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function isNewsPaper()
     {
-        $leader = $this->getMarcRecord()->getLeader();
+        $leader = $this->getMarcReader()->getLeader();
         if ( strtoupper($leader[7] ) == "S" ) {
             return true;
         }
@@ -1713,7 +1697,8 @@ class SolrVZGRecord extends SolrMarc
      * @return bool
      */
     public function isInArchive() {
-        $archiveCodes = array_keys($this->departmentConfig->DepartmentEmails->toArray());
+        $depMails = $this->departmentConfig->DepartmentArchiveEmail;
+        $archiveCodes = array_keys($depMails ? $depMails->toArray() : []);
         $holdingsLocations = $this->getHoldingsLocations();
 
         foreach($holdingsLocations as $location) {
@@ -1774,7 +1759,8 @@ class SolrVZGRecord extends SolrMarc
       $retVal = [];
 
       /* extract all LINKS form MARC 981 */
-      $links = $this->getConditionalFieldArray('981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => '31']);
+      $links = $this->getConditionalFieldArray(
+          '981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => self::LIBRARY_ILN]);
 
       if ( !empty($links) ){
         /* what kind of LINKS do we have?
@@ -1783,9 +1769,9 @@ class SolrVZGRecord extends SolrMarc
         foreach ( $links as $link ) {
           $more = "";
           $linkElements = explode(self::SEPARATOR, $link);
-          $id = (isset($linkElements[0]) ? $linkElements[0] : '');
-          $txt = (isset($linkElements[1]) ? $linkElements[1] : '');
-          $url = (isset($linkElements[2]) ? $linkElements[2] : '');
+          $id = $linkElements[0] ?? '';
+          $txt = $linkElements[1] ?? '';
+          $url = $linkElements[2] ?? '';
 
           /* do we have a picture? f.e. ELS-gif */
           if ( substr($txt, -3) == "gif" ) {
@@ -1806,11 +1792,13 @@ class SolrVZGRecord extends SolrMarc
           /* Now, we are ready to extract extra-information
            * @details for each link is common catalogisation till RDA-introduction
            */
-          $details = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31', '1' => $id]);
+          $details = $this->getConditionalFieldArray(
+              '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
 
           if ( empty($details) ) {
             /* new catalogisation rules with RDA: One Link and single Details for each part */
-            $details = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31']);
+            $details = $this->getConditionalFieldArray(
+                '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN]);
           }
           if ( !empty($details) ) {
             foreach ($details as $detail) {
@@ -1820,7 +1808,8 @@ class SolrVZGRecord extends SolrMarc
             $more = "";
           }
 
-          $corporates = $this->getConditionalFieldArray('982', ['a'], false, '', ['2' => '31', '1' => $id]);
+          $corporates = $this->getConditionalFieldArray(
+              '982', ['a'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
           if ( !empty($corporates) ) {
             foreach ($corporates as $corporate) {
               $more .= $corporate."<br>";
@@ -1866,8 +1855,10 @@ class SolrVZGRecord extends SolrMarc
       $retVal = [];
       list($txt, $epn) = explode(":epn:", $epn_str);
       /* extract all Comments form MARC 980 */
-      $comments_g = $this->getConditionalFieldArray('980', ['g', 'k'], false, '', ['2' => '31', 'b' => $epn] );
-      $comments_k = $this->getConditionalFieldArray('980', ['k'], false, '', ['2' => '31', 'b' => $epn] );
+      $comments_g = $this->getConditionalFieldArray(
+          '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
+      $comments_k = $this->getConditionalFieldArray(
+          '980', ['k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
 
       $comments = array($comments_g[0], $comments_k[0]);
       return $comments;
@@ -1992,16 +1983,12 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getProduction() {
         $productions = array();
-        foreach($this->getMarcRecord()->getFields('264') as $currentField) {
-            if($currentField->getIndicator(2) == 0) {
-                $a = array();
-                $subfields = $currentField->getSubfields('a');
-                foreach($subfields as $currentSubfield) {
-                    $a[] = $currentSubfield->getData();
-                }
+        foreach($this->getMarcReader()->getFields('264') as $currentField) {
+            if($currentField['i2'] == 0) {
+                $a = $this->getSubfields($currentField, 'a');
 
-                $b = $currentField->getSubfield('b');
-                $b = $b ? ' : ' . $b->getData() : '';
+                $b = $this->getSubfield($currentField, 'b');
+                $b = $b ? ' : ' . $b : '';
 
                 $productions[] = implode('; ', $a) . $b;
             }
@@ -2052,7 +2039,7 @@ class SolrVZGRecord extends SolrMarc
      * @throws File_MARC_Exception
      */
     public function getOtherTitles() {
-        $fields = $this->getMarcRecord()->getFields('249');
+        $fields = $this->getMarcReader()->getFields('249');
 
         if(!is_array($fields) || count($fields) < 1) {
             return '';
@@ -2060,15 +2047,15 @@ class SolrVZGRecord extends SolrMarc
         $field = $fields[0];
 
         $data = '';
-        foreach ($field->getSubFields() as $subField) {
-            if($subField->getCode() === 'a') {
+        foreach ($field['subfields'] as $subField) {
+            if($subField['code'] === 'a') {
                 $separator = !empty($data) ? ' ; ' : '';
             }
             else {
-                $separator = $subField->getCode() === 'b' ? ' : ' : ' / ';
+                $separator = $subField['code'] === 'b' ? ' : ' : ' / ';
             }
 
-            $data .= $separator . $subField->getData();
+            $data .= $separator . $subField['data'];
         }
 
         return $data;
@@ -2109,21 +2096,21 @@ class SolrVZGRecord extends SolrMarc
      * @throws File_MARC_Exception
      */
     private function getSubjectsFromField650() {
-        $fields = $this->getMarcRecord()->getFields('650');
+        $fields = $this->getMarcReader()->getFields('650');
         if (!$fields) {
             return [];
         }
 
         $subjects = array();
         foreach ($fields as $field) {
-            if ($subfield = $field->getSubfield('8')) {
-                $level = preg_split('/\./', $subfield->getData());
-                if ($subfield = $field->getSubfield('a')) {
-                    $subjects[$level[0]][$level[1]] = $subfield->getData();
+            if ($subfield = $this->getSubfield($field, '8')) {
+                $level = preg_split('/\./', $subfield);
+                if ($subfield = $this->getSubfield($field, 'a')) {
+                    $subjects[$level[0]][$level[1]] = $subfield;
                 }
             } else {
-                if ($subfield = $field->getSubfield('a')) {
-                    $subjects[][0] = $subfield->getData();
+                if ($subfield = $this->getSubfield($field, 'a')) {
+                    $subjects[][0] = $subfield;
                 }
             }
         }
@@ -2148,11 +2135,17 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('indicator', '2', '!=', false),
             $this->createFieldCondition('subfield',  'a', '!=', false),
         );
-        $fields = $this->getFieldsConditional('689', false, $conditions);
+
+        $t  = false == null;
+        $t2 = false === null;
+        $t3 = false != null;
+        $t4 = false !== null;
+
+        $fields = $this->getFieldsConditional('689', $conditions);
 
         $subjects = array();
         foreach ($fields as $field) {
-            $subjects[$field->getIndicator(1)][$field->getIndicator(2)] = $field->getSubfield('a')->getData();
+            $subjects[$field['i1']][$field['i2']] = $this->getSubfield($field, 'a');
         }
 
         return $subjects;
@@ -2226,9 +2219,9 @@ class SolrVZGRecord extends SolrMarc
         );
 
         // Fix for cases where 024 $a is not set
-        $fields024 = $this->getFieldsConditional('024', false, $conditions);
+        $fields024 = $this->getFieldsConditional('024', $conditions);
 
-        return (count($fields024) > 0) ? $fields024[0]->getSubfield('a')->getData() : false;
+        return (count($fields024) > 0) ? $this->getSubfield($fields024[0], 'a') : false;
     }
 
     /**
@@ -2239,24 +2232,24 @@ class SolrVZGRecord extends SolrMarc
     public function getLegalInformation()
     {
         // Fix for cases where 024 $a is not set
-        $fields540 = $this->getMarcRecord()->getFields('540');
+        $fields540 = $this->getMarcReader()->getFields('540');
         $data = array();
         foreach ($fields540 as $field) {
             $description = $link = null;
-            if($subfield = $field->getSubfield('f')) {
-                $description = $subfield->getData();
+            if($subfield = $this->getSubfield($field,'f')) {
+                $description = $subfield;
             }
-            elseif($subfield = $field->getSubfield('a')) {
-                $description = $subfield->getData();
+            elseif($subfield = $this->getSubfield($field, 'a')) {
+                $description = $subfield;
             }
 
-            if($subfield = $field->getSubfield('u')) {
-                $link = $subfield->getData();
+            if($subfield = $this->getSubfield($field, 'u')) {
+                $link = $subfield;
             }
             if($description || $link) {
                 $data[] = array(
-                    'desc' => $description ?? $link,
-                    'link' => $link
+                    'desc' => $description ?: $link,
+                    'link' => $link ?: false
                 );
             }
         }
@@ -2271,12 +2264,11 @@ class SolrVZGRecord extends SolrMarc
     public function getAccessRestrictions()
     {
         $retValue = [];
-        $fields = $this->getFieldsConditional('506', false, [$this->createFieldCondition('subfield', 'a', '!=', false)]);
+        $fields = $this->getFieldsConditional('506', [$this->createFieldCondition('subfield', 'a', '!=', false)]);
         foreach ($fields as $field) {
-            $link = $field->getSubfield('u');
             $retValue[] = array(
-                'desc' => $field->getSubfield('a')->getData(),
-                'link' => $link ? $link->getData() : false
+                'desc' => $this->getSubfield($field, 'a'),
+                'link' => $this->getSubfield($field, 'u') ?: false
             );
         }
 
@@ -2296,9 +2288,9 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('subfield', '2', '==', 'urn')
         );
 
-        $fields = $this->getFieldsConditional('024', false, $conditions);
+        $fields = $this->getFieldsConditional('024', $conditions);
         foreach ($fields as $field) {
-            return $field->getSubfield('a')->getData();
+            return $this->getSubfield($field, 'a');
         }
 
         return false;
@@ -2308,6 +2300,8 @@ class SolrVZGRecord extends SolrMarc
      * Return the first valid DOI found in the record (false if none).
      *
      * @return string|false
+     *
+     * @throws File_MARC_Exception
      */
     public function getCleanDOI()
     {
@@ -2317,11 +2311,55 @@ class SolrVZGRecord extends SolrMarc
             $this->createFieldCondition('subfield', 'a', '!=', false),
         );
 
-        if($fields = $this->getFieldsConditional('024', false, $conditions)) {
-            return $fields[0]->getSubfield('a')->getData();
+        if($fields = $this->getFieldsConditional('024', $conditions)) {
+            return $this->getSubfield($fields[0], 'a');
         }
 
         return false;
+    }
+
+    /**
+     * Get the RVK notations of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getRvkNotation() {
+        $fields = $this->getFieldsConditional('936', [
+            $this->createFieldCondition('indicator', '1', '==', 'r'),
+            $this->createFieldCondition('indicator', '2', '==', 'v'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Get the local classification of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getLocalClassification() {
+        $fields = $this->getFieldsConditional('983', [
+            $this->createFieldCondition('subfield', '2', '==', '31'),
+            $this->createFieldCondition('subfield', '8', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
     }
 
 //    Commented out for possible future use.
@@ -2337,7 +2375,7 @@ class SolrVZGRecord extends SolrMarc
 //        $formats = parent::getFormats();
 //        foreach($formats as $index => $format) {
 //            if(strtolower($format) == 'unknown') {
-//                $format = substr($this->getMarcRecord()->getLeader(), 6, 1);
+//                $format = substr($this->getMarcReader()->getLeader(), 6, 1);
 //                if(isset($this->marcFormatConfig->Leader6_Format[$format])) {
 //                    $formats[$index] = $this->marcFormatConfig->Leader6_Format[$format];
 //                }

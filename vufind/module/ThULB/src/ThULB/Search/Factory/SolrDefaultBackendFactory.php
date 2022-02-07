@@ -2,10 +2,10 @@
 
 namespace ThULB\Search\Factory;
 
-use ThULB\Backend\Solr\Backend;
+use ThULBSearch\Backend\Solr\Backend;
+use ThULBSearch\Backend\Solr\QueryBuilder;
 use VuFind\Search\Factory\SolrDefaultBackendFactory as OriginalFactory;
 use VuFindSearch\Backend\Solr\LuceneSyntaxHelper;
-use ThULB\Backend\Solr\QueryBuilder;
 
 class SolrDefaultBackendFactory extends OriginalFactory
 {

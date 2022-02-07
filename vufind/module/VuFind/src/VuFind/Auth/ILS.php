@@ -68,9 +68,9 @@ class ILS extends AbstractBase
     /**
      * Constructor
      *
-     * @param \VuFind\ILS\Connection    $connection    ILS connection to set
-     * @param \VuFind\ILS\Authenticator $authenticator ILS authenticator
-     * @param EmailAuthenticator        $emailAuth     Email authenticator
+     * @param \VuFind\ILS\Connection        $connection    ILS connection to set
+     * @param \VuFind\Auth\ILSAuthenticator $authenticator ILS authenticator
+     * @param EmailAuthenticator            $emailAuth     Email authenticator
      */
     public function __construct(
         \VuFind\ILS\Connection $connection,
@@ -209,7 +209,8 @@ class ILS extends AbstractBase
     public function getILSLoginMethod($target = '')
     {
         $config = $this->getCatalog()->checkFunction(
-            'patronLogin', ['patron' => ['cat_username' => "$target.login"]]
+            'patronLogin',
+            ['patron' => ['cat_username' => "$target.login"]]
         );
         return $config['loginMethod'] ?? 'password';
     }

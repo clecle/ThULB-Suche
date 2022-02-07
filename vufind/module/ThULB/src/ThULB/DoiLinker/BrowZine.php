@@ -28,6 +28,7 @@
 namespace ThULB\DoiLinker;
 
 use VuFind\DoiLinker\BrowZine as OriginalBrowZine;
+use VuFindSearch\Backend\BrowZine\Command\LookupDoiCommand;
 
 /**
  * BrowZine DOI linker
@@ -55,7 +56,9 @@ class BrowZine extends OriginalBrowZine
         $baseIconUrl = 'https://assets.thirdiron.com/images/integrations/';
         $response = [];
         foreach ($doiArray as $doi) {
-            $data = $this->connector->lookupDoi($doi)['data'] ?? null;
+            $command = new LookupDoiCommand('BrowZine', $doi);
+            $result = $this->searchService->invoke($command)->getResult();
+            $data = $result['data'] ?? null;
             if ($this->arrayKeyAvailable('browzineWebLink', $data)) {
                 $response[$doi][] = [
                     'link' => $data['browzineWebLink'],

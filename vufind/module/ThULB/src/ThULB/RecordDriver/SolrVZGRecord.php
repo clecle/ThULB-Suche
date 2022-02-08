@@ -34,13 +34,10 @@ namespace ThULB\RecordDriver;
 use Exception;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
-use ThULBSearch\Backend\Solr\Backend;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
 use Laminas\Config\Config;
-use VuFindSearch\Command\GetLuceneHelperCommand;
 use VuFindSearch\Command\RetrieveBatchCommand;
-use VuFindSearch\Service;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -2083,9 +2080,26 @@ class SolrVZGRecord extends SolrMarc
      * @throws File_MARC_Exception
      */
     public function getAllSubjectHeadings($extended = false) {
-        return array_unique(
-            array_merge($this->getSubjectsFromField650(), $this->getSubjectsFromField689()),
-            SORT_REGULAR);
+        $subjects = array_unique(
+            array_merge(
+                $this->getSubjectsFromField650(),
+                $this->getSubjectsFromField689()
+            ), SORT_REGULAR
+        );
+
+        usort($subjects, function($o1, $o2) {
+            if(count($o1) < count($o2)) {
+                return 1;
+            }
+            elseif(count($o1) > count($o2)) {
+                return -1;
+            }
+            else {
+                return strcasecmp($o1[0], $o2[0]);
+            }
+        });
+
+        return $subjects;
     }
 
     /**

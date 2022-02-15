@@ -13,7 +13,7 @@
 <?php if ($doiActive && ($linkedDoi = $this->thulb_doiLinker($cleanDoi))): ?>
   <?php foreach($linkedDoi[$cleanDoi] as $linkedDoiData): ?>
     <a href="<?= $linkedDoiData['link'];?>" target="_blank" class="btn btn-primary <?= $linkedDoiData['source'] ?? ''; ?>">
-      <?php if($resolver == 'unpaywall'): ?>
+      <?php if($linkedDoiData['source'] == 'unpaywall'): ?>
         <div><i class="fa fa-unlock-alt"></i></div>
       <?php endif; ?>
       <?= $linkedDoiData['label'];?>

@@ -19,7 +19,11 @@ class DoiLinker extends AbstractHelper {
         foreach($this->resolver as $resolver) {
             if ($this->pluginManager->has($resolver)) {
                 $resolverResponse = $this->pluginManager->get($resolver)->getLinks([$doi]);
-                $response[$doi] = array_merge($response[$doi] ?? [], $resolverResponse[$doi]);
+
+                $doiData = array_merge($response[$doi] ?? [], $resolverResponse[$doi] ?? []);
+                if(!empty($doiData)) {
+                    $response[$doi] = $doiData;
+                }
             }
         }
 

@@ -626,7 +626,7 @@ class PAIA extends OriginalPAIA
         else if (false === $sepPos && isset($this->config['DepartmentTitles'][$callNumber])) {
             return '';
         }
-        else if ($sepPos !== false) {
+        else if ($sepPos !== false && isset($this->config['DepartmentRegex'])) {
             foreach($this->config['DepartmentRegex'] as $regex) {
                 if(preg_match($regex, $callNumber)) {
                     return substr($callNumber, $sepPos + 1);

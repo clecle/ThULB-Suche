@@ -1505,10 +1505,6 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getFullTextURL()
     {
-        if(!$this->isFormat('electronic Article|eBook|eJournal', true)) {
-            return false;
-        }
-
         $retVal = false;
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),

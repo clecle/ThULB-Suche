@@ -1507,10 +1507,6 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getFullTextURL()
     {
-        if(!$this->isFormat('electronic Article|eBook|eJournal', true)) {
-            return false;
-        }
-
         $retVal = false;
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
@@ -2082,9 +2078,26 @@ class SolrVZGRecord extends SolrMarc
      * @throws File_MARC_Exception
      */
     public function getAllSubjectHeadings($extended = false) {
-        return array_unique(
-            array_merge($this->getSubjectsFromField650(), $this->getSubjectsFromField689()),
-            SORT_REGULAR);
+        $subjects = array_unique(
+            array_merge(
+                $this->getSubjectsFromField650(),
+                $this->getSubjectsFromField689()
+            ), SORT_REGULAR
+        );
+
+        usort($subjects, function($o1, $o2) {
+            if(count($o1) < count($o2)) {
+                return 1;
+            }
+            elseif(count($o1) > count($o2)) {
+                return -1;
+            }
+            else {
+                return strcasecmp($o1[0], $o2[0]);
+            }
+        });
+
+        return $subjects;
     }
 
     /**

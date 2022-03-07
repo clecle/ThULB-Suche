@@ -1,7 +1,7 @@
 <?php 
 $count = 0;
+$total = count($data);
 foreach ($data as $field) {
-    echo ($count) ? "<br />\n" : '';
     echo '<span class="subject-line" property="keywords">';
         $subject = '';
         if(count($field) == 1) {
@@ -14,5 +14,6 @@ foreach ($data as $field) {
             echo '<a title="' . $this->escapeHtmlAttr($subject) . '" href="' . $this->record($this->driver)->getLink('subject', $subject) . '" rel="nofollow">' . trim($this->escapeHtml($subfield)) . '</a>';
         }
     echo '</span>';
-    $count++;
+
+    echo ++$count < $total ? (count($field) == 1 ? '; ' : "<br />\n") : '';
 }

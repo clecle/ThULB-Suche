@@ -21,6 +21,8 @@
 
   $fullTextLink = $this->driver->tryMethod('getFullTextURL');
 
+  $onlineContentLinks = $this->thulb_onlineContentLink($this->driver);
+
   $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>
 
@@ -59,8 +61,18 @@
 
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink): ?>
+<?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink || !empty($onlineContentLinks)): ?>
   <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
+    <?php foreach($onlineContentLinks as $linkData): ?>
+      <?php if(empty($linkData)) continue; ?>
+      <tr vocab="http://schema.org/" typeof="Offer">
+        <td>
+          <dl class="dl-horizontal">
+            <dt><?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $linkData]); ?></dt>
+          </dl>
+        </td>
+      </tr>
+    <?php endforeach; ?>
     <?php if(!empty($doiHtml)): ?>
       <tr vocab="http://schema.org/" typeof="Offer">
         <td>

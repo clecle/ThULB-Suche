@@ -34,13 +34,10 @@ namespace ThULB\RecordDriver;
 use Exception;
 use File_MARC_Data_Field;
 use File_MARC_Exception;
-use ThULBSearch\Backend\Solr\Backend;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
 use Laminas\Config\Config;
-use VuFindSearch\Command\GetLuceneHelperCommand;
 use VuFindSearch\Command\RetrieveBatchCommand;
-use VuFindSearch\Service;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -115,6 +112,8 @@ class SolrVZGRecord extends SolrMarc
      * @var Config
      */
     protected $departmentConfig;
+
+    protected $holdingData = null;
 
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
                                 $marcFormatConfig = null, $departmentConfig = null)
@@ -2203,7 +2202,10 @@ class SolrVZGRecord extends SolrMarc
 
     public function getHoldings()
     {
-        return parent::getRealTimeHoldings();
+        if(!$this->holdingData) {
+            $this->holdingData = $this->getRealTimeHoldings();
+        }
+        return $this->holdingData;
     }
 
     /**

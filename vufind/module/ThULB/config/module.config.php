@@ -61,6 +61,7 @@ $config = array(
             'ajaxhandler' => array(
                 'factories' => array(
                     \ThULB\AjaxHandler\FulltextLookup::class => \ThULB\AjaxHandler\FulltextLookupFactory::class,
+                    \ThULB\AjaxHandler\OnlineContentLookup::class => \ThULB\AjaxHandler\OnlineContentLookupFactory::class,
                     \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                     'ThULB\AjaxHandler\GetResultCount' => 'ThULB\AjaxHandler\GetResultCountFactory',
                     'ThULB\AjaxHandler\HideMessage' => 'ThULB\AjaxHandler\HideMessageFactory',
@@ -68,6 +69,7 @@ $config = array(
                 ),
                 'aliases' => array(
                     'fulltextLookup' => \ThULB\AjaxHandler\FulltextLookup::class,
+                    'onlineContentLookup' => \ThULB\AjaxHandler\OnlineContentLookup::class,
                     'getResultCount' => 'ThULB\AjaxHandler\GetResultCount',
                     'hideMessage' => 'ThULB\AjaxHandler\HideMessage',
                     'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
@@ -200,6 +202,7 @@ $config = array(
             'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
             'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
+            'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
         ),
     ),
 

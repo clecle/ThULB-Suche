@@ -57,6 +57,24 @@ class Summon extends OriginalSummon
     }
 
     /**
+     * Return an array of associative fulltext URL arrays with one or more of the
+     * following keys:
+     *
+     * <li>
+     *   <ul>desc: URL description text to display (optional)</ul>
+     *   <ul>url: fully-formed URL (required if 'route' is absent)</ul>
+     *   <ul>route: VuFind route to build URL with (required if 'url' is absent)</ul>
+     *   <ul>routeParams: Parameters for route (optional)</ul>
+     *   <ul>queryString: Query params to append after building route (optional)</ul>
+     * </li>
+     *
+     * @return array
+     */
+    public function getFullTextURL() {
+        return $this->hasFullText() ? parent::getURLs() : [];
+    }
+
+    /**
      * Get a full, free-form reference to the context of the item that contains this
      * record (i.e. volume, year, issue, pages).
      *

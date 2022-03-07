@@ -991,7 +991,7 @@ li[data-tab="details"] {
   }
 }
 
-.doiLinkLoading {
+.doiLinkLoading, .onlineContentLoading {
   height: 15px;
   padding-right: 5px;
 }
@@ -1328,5 +1328,34 @@ form#newpassword .form-group.flex-center {
   &:focus {
     background-color: $brand-primary;
     color: white;
+  }
+}
+
+.access-onlineContent-open {
+  background-color: #26C515;
+  border-color: #1e9f10;
+
+  &:hover, &:focus {
+    background-color: #1e9f10;
+  }
+}
+
+.access-onlineContent-restricted {
+  background-color: #d77504;
+  border-color: #ad5f04;
+
+  &:hover, &:focus {
+    background-color: #ad5f04;
+  }
+}
+
+.access-reference {}
+
+.access-browzine {
+  background-color: #e1637e;
+  border-color: #bd3855;
+
+  &:hover, &:focus {
+    background-color: #bd3855;
   }
 }

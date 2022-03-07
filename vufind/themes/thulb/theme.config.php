@@ -10,6 +10,7 @@ return array(
             'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
             \ThULB\View\Helper\Root\DoiLinker::class => 'ThULB\View\Helper\Root\Factory::getDoiLinker',
+            \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
         ],
         'aliases' => array (
             'flashmessages' => 'ThULB\View\Helper\Root\Flashmessages',
@@ -18,6 +19,7 @@ return array(
             'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
             'thulb_session' => 'ThULB\View\Helper\Root\Session',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
+            'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
         ),
     ],
     'favicon' => 'thulb_favicon.ico',

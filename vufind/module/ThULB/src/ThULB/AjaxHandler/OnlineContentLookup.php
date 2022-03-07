@@ -84,7 +84,7 @@ class OnlineContentLookup extends AbstractBase
                 $onlineContentLinks = $this->phpRenderer->thulb_onlineContent($result);
                 $html = array();
                 foreach ($onlineContentLinks as $linkData) {
-                    $html[] = trime(
+                    $html[] = trim(
                         $this->phpRenderer->record($result)
                             ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData])
                     );

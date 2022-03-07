@@ -89,11 +89,13 @@ class OnlineContent extends AbstractHelper
                 // stop after finding the full text link
                 break;
             }
-
         }
 
         // get fulltext url from the record data
         if(!$ftLink && ($data = $driver->tryMethod('getFullTextURL'))) {
+            if($driver->getSourceIdentifier() == 'Summon') {
+                $data = array_shift($data);
+            }
             $ftLink = array(
                 'label' => $this->view->transEsc('Full text / PDF'),
                 'link' => $data['url'] ?? $data['link'] ?? null,

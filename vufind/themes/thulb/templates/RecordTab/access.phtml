@@ -21,7 +21,7 @@
 
   $fullTextLink = $this->driver->tryMethod('getFullTextURL');
 
-  $onlineContentLinks = $this->thulb_onlineContentLink($this->driver);
+  $onlineContentLinks = $this->thulb_onlineContent($this->driver);
 
   $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>

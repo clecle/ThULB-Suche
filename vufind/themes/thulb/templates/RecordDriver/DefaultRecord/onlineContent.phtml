@@ -1,6 +1,6 @@
 <?php if(!empty($linkData)): ?>
-  <a class="btn btn-primary access-<?= $linkData['access']; ?> external-link" href="<?= $linkData['link']; ?>" target="_blank">
-    <?php if(isset($linkData['class'])): ?>
+  <a class="btn btn-primary access-<?= $linkData['access'] ?? ''; ?> external-link online-content" href="<?= $linkData['link']; ?>" target="_blank">
+    <?php if($linkData['class'] ?? false): ?>
       <i class="<?= $linkData['class'] ?>"></i>
     <?php endif; ?>
     <?= $linkData['label']; ?>

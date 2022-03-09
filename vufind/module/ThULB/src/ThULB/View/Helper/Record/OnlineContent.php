@@ -58,22 +58,6 @@ class OnlineContent extends AbstractHelper
     public function getFulltextLink($driver, $doiLinks = []) {
         $ftLink = array();
 
-        // try to get the fulltext link from libkey/browzine
-        foreach($doiLinks as $doiLink) {
-            if ($doiLink['data']['fullTextFile'] ?? false) {
-                $ftLink = array (
-                    'label' => $this->view->transEsc('Full text / PDF'),
-                    'link' => $doiLink['data']['fullTextFile'],
-                    'source' => $doiLink['source'],
-                    'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
-                    'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
-                );
-
-                // stop after finding the full text link
-                break;
-            }
-        }
-
         // try to get fulltext url from local ILS
         if(!$ftLink && $driver->getSourceIdentifier() == 'Solr') {
             $holdings = $driver->getHoldings();
@@ -82,12 +66,30 @@ class OnlineContent extends AbstractHelper
                     'label' => $this->view->transEsc('Full text / PDF'),
                     'link' => $onlineHolding['remotehref'] ?? null,
                     'source' => 'DAIA',
-                    'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-                    'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+//                    'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
+//                    'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
                 );
 
                 // stop after finding the full text link
                 break;
+            }
+        }
+
+        // try to get the fulltext link from libkey/browzine
+        if(!$ftLink) {
+            foreach ($doiLinks as $doiLink) {
+                if ($doiLink['data']['fullTextFile'] ?? false) {
+                    $ftLink = array(
+                        'label' => $this->view->transEsc('Full text / PDF'),
+                        'link' => $doiLink['data']['fullTextFile'],
+                        'source' => $doiLink['source'],
+//                        'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
+//                        'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                    );
+
+                    // stop after finding the full text link
+                    break;
+                }
             }
         }
 
@@ -100,8 +102,8 @@ class OnlineContent extends AbstractHelper
                 'label' => $this->view->transEsc('Full text / PDF'),
                 'link' => $data['url'] ?? $data['link'] ?? null,
                 'source' => $driver->getSourceIdentifier(),
-                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
+//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
             );
         }
 

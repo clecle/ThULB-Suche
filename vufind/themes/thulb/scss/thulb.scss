@@ -1352,10 +1352,14 @@ form#newpassword .form-group.flex-center {
 .access-reference {}
 
 .access-browzine {
-  background-color: #e1637e;
-  border-color: #bd3855;
+  background-color: $brand-secondary;
+  border-color: darken($brand-secondary, 10%);
 
   &:hover, &:focus {
-    background-color: #bd3855;
+    background-color: darken($brand-secondary, 10%);
   }
+}
+
+.online-content {
+  margin-right: 5px;
 }

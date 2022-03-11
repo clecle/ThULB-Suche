@@ -2377,6 +2377,21 @@ class SolrVZGRecord extends SolrMarc
         return $data;
     }
 
+    /**
+     * Return a source for the record.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        // display source only for selected records
+        if(in_array('GBV_ILN_2403', $this->fields['collection_details'])) {
+            return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+        }
+
+        return '';
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

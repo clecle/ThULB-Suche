@@ -1,6 +1,6 @@
 <?php
 /**
- * View helper for holdings
+ * View helper for online contents
  *
  * PHP version 5
  *
@@ -20,8 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category ThULB
- * @author   Clemes Kynast <clemens.kynast@thulb.uni-jena.de>
- * @author   Richard Großer <richard.grosser@thulb.uni-jena.de>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  *
  */
@@ -29,6 +27,7 @@
 namespace ThULB\View\Helper\Record;
 
 use Laminas\View\Helper\AbstractHelper;
+use VuFind\RecordDriver\DefaultRecord;
 
 class OnlineContent extends AbstractHelper
 {
@@ -51,14 +50,22 @@ class OnlineContent extends AbstractHelper
 
         $response = array();
         if($data = $this->getFulltextLink($driver, $doiData[$cleanDoi] ?? [])) {
-            $response[] = $data;
+            $response = array_merge($response, $data);
         }
         if($data = $this->getBrowseJournalLink($doiData[$cleanDoi] ?? [])) {
-            $response[] = $data;
+            $response = array_merge($response, $data);
         }
         return $response;
     }
 
+    /**
+     * Get the fulltext links for the given record and doi link data.
+     *
+     * @param DefaultRecord $driver
+     * @param array $doiLinks
+     *
+     * @return array
+     */
     public function getFulltextLink($driver, $doiLinks = []) {
         $priorities = array (
             'Solr' => array (
@@ -73,41 +80,59 @@ class OnlineContent extends AbstractHelper
             )
         );
 
-        $ftLink = array();
         foreach($priorities[$driver->getSourceIdentifier()] as $method => $variable) {
             $fullMethodName = sprintf('get%sFulltextLink', $method);
             if($ftLink = $this->$fullMethodName($$variable)) {
-                break;
+                return $ftLink;
             }
         }
 
-        return $ftLink;
+        return [];
     }
 
+    /**
+     * Get the fulltext link data from the given Solr record data.
+     *
+     * @param DefaultRecord $driver
+     *
+     * @return array
+     */
     protected function getSolrFulltextLink($driver) {
         $data = $driver->tryMethod('getFullTextURL');
 
         return !$data ? [] : array (
-            'type' => 'main',
-            'label' => 'Full text / PDF',
-            'link' => $data['url'] ?? $data['link'] ?? null,
-            'source' => $driver->getSourceIdentifier(),
-//            'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-//            'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+            array (
+                'type' => 'fulltext',
+                'label' => 'Full text / PDF',
+                'link' => $data['url'] ?? $data['link'] ?? null,
+                'source' => $driver->getSourceIdentifier(),
+//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
+//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+            )
         );
     }
 
+    /**
+     * Get the fulltext link data from the given doi link data.
+     *
+     * @param array $doiLinks
+     *
+     * @return array
+     */
     protected function getLibkeyFulltextLink($doiLinks = []) {
         // try to get the fulltext link from libkey/browzine
         foreach ($doiLinks as $doiLink) {
             if ($doiLink['data']['fullTextFile'] ?? false) {
-                return array(
-                    'type' => 'main',
-                    'label' => 'Full text / PDF',
-                    'link' => $doiLink['data']['fullTextFile'],
-                    'source' => $doiLink['source'],
-//                    'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
-//                    'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                return array (
+                    array(
+                        'type' => 'fulltext',
+                        'label' => 'Full text / PDF',
+                        'link' => $doiLink['data']['fullTextFile'],
+                        'source' => $doiLink['source'],
+//                        'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
+//                        'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                        'data' => $doiLink
+                    )
                 );
             }
         }
@@ -115,13 +140,22 @@ class OnlineContent extends AbstractHelper
         return [];
     }
 
+    /**
+     * Get the fulltext link data from the holdings of the record.
+     * Solr holdings are from the local DAIA and Summon holdings from record data.
+     *
+     * @param DefaultRecord $driver
+     *
+     * @return array
+     */
     protected function getHoldingFulltextLink($driver) {
         $holdings = $driver->getHoldings();
+        $holdingFt = array ();
         foreach($holdings['holdings']['Remote']['items'] ?? [] as $onlineHolding) {
-            return array(
-                'type' => 'main',
-                'label' => $driver->getSourceIdentifier() == 'Summon' && !$driver->hasFullText() ?
-                    'get_citation' : 'Full text / PDF',
+            $isReference = $driver->getSourceIdentifier() == 'Summon' && !$driver->hasFullText();
+            $holdingFt[] = array (
+                'type' => $isReference ? 'reference' : 'fulltext',
+                'label' => $isReference ? 'get_citation' : 'Full text / PDF',
                 'link' => $onlineHolding['remotehref'] ?? null,
                 'source' => $driver->getSourceIdentifier() == 'Solr' ?
                         'DAIA' : $driver->getSourceIdentifier(),
@@ -131,21 +165,29 @@ class OnlineContent extends AbstractHelper
             );
         }
 
-        return [];
+        return $holdingFt;
     }
 
+    /**
+     * Get the link to browse in the journal from doi link data.
+     *
+     * @param array $doiLinks
+     *
+     * @return array
+     */
     public function getBrowseJournalLink($doiLinks = []) {
-        $bjLink = array();
-
         foreach($doiLinks as $doiLink) {
             if ($doiLink['data']['browzineWebLink'] ?? false) {
-                $bjLink = array (
-                    'type' => 'browzine',
-                    'label' => 'Browse e-journal',
-                    'link' => $doiLink['data']['browzineWebLink'],
-                    'source' => $doiLink['source'],
-                    'access' => 'browzine',
-                    'icon' => $doiLink['icon']
+                return array (
+                    array (
+                        'type' => 'browzine',
+                        'label' => 'Browse e-journal',
+                        'link' => $doiLink['data']['browzineWebLink'],
+                        'source' => $doiLink['source'],
+                        'access' => 'browzine',
+                        'icon' => $doiLink['icon'],
+                        'data' => $doiLink
+                    )
                 );
 
                 // stop after finding the journal link
@@ -153,9 +195,16 @@ class OnlineContent extends AbstractHelper
             }
         }
 
-        return $bjLink;
+        return [];
     }
 
+    /**
+     * Look up a DOI in the configured DOI resolvers.
+     *
+     * @param string $doi
+     *
+     * @return array
+     */
     protected function doiLookup($doi) {
         $response = array();
         foreach ($this->resolvers as $resolver) {

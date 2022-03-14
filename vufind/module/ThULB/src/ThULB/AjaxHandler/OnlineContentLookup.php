@@ -70,9 +70,9 @@ class OnlineContentLookup extends AbstractBase
     public function handleRequest(Params $params)
     {
         $response = [];
-        $onlineContent = (array)$params->fromPost('onlineContent', []);
+        $onlineContent = (array) $params->fromPost('onlineContent', []);
 
-        $onlineContentIDs = array();
+        $onlineContentIDs = array ();
         foreach ($onlineContent as $lookUp) {
             list($source, $id) = preg_split('/:/', $lookUp);
             $onlineContentIDs[$source][] = $id;
@@ -82,14 +82,22 @@ class OnlineContentLookup extends AbstractBase
             $results = $this->backendManager->get($source)->retrieveBatch($ids);
             foreach ($results as $result) {
                 $onlineContentLinks = $this->phpRenderer->thulb_onlineContent($result);
-                $html = array();
+
+                $addedTypes = array ();
+                $html = array ();
                 foreach ($onlineContentLinks as $linkData) {
+                    // only show one link of each type in the result view
+                    if(in_array($linkData['type'], $addedTypes)) {
+                        continue;
+                    }
+                    $addedTypes[] = $linkData['type'];
+
                     $html[] = trim(
                         $this->phpRenderer->record($result)
                             ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData])
                     );
                 }
-                $response[] = array(
+                $response[] = array (
                     'id' => $source . ':' . $result->getUniqueID(),
                     'result' => $html
                 );

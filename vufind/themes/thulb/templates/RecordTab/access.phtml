@@ -85,7 +85,7 @@
                 </div>
               <?php endif; ?>
 
-              <?php if (($contentLink['type'] ?? '') == 'main') : ?>
+              <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
                 <?= $this->render('RecordTab/access/citations.phtml'); ?>
               <?php endif; ?>
             </dd>

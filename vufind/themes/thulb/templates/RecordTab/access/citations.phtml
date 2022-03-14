@@ -1,0 +1,13 @@
+<?php
+  $citesLink = $this->driver->tryMethod('getCitatedReferencesLink');
+  $citesCount = $this->driver->tryMethod('getCitatedReferencesCount');
+?>
+<?php if ($citesLink && $citesCount > 0) : ?>
+  <div class="citations">
+    <?= $citesCount?>
+    <a href="<?= $citesLink?>" target="_blank" class="external-link">
+      <?= $this->transEsc('Web of Science Scites Link')?>
+    </a>
+    <?= $this->translate('Web of Science Scites Ref')?>
+  </div>
+<?php endif; ?>

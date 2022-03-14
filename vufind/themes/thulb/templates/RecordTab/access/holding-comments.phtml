@@ -1,0 +1,12 @@
+<?php $comments = $this->thulb_holdingHelper()->getHoldingComments($holding); ?>
+<?php if (!empty($comments)) : ?>
+  <div class="item-notes">
+    <?php if (is_array($comments) && count($comments) > 0): ?>
+      <?php foreach ($comments as $comment): ?>
+        <?php if (!empty($comment)): ?>
+          <p><?= $comment ?></p>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>

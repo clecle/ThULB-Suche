@@ -8,8 +8,6 @@
   // Account for replace_other_urls setting
   $offlineMode = $this->ils()->getOfflineMode();
   $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
-  $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 
   try {
     $holdings = $this->driver->getHoldings();
@@ -115,32 +113,10 @@
                 <?php endif; ?>
 
                 <?php /* BESTANDSANGABEN */ ?>
-                <?php $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
-                <?php if (!empty($chron)) : ?>
-                  <div class="item-notes">
-                    <?php if (is_array($chron) && count($chron) > 0): ?>
-                      <?php foreach ($chron as $chron): ?>
-                        <?php if (!empty($chron)): ?>
-                          <p><?= $chron ?></p>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
+                <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
 
                 <?php /* ANMERKGUNGEN */ ?>
-                <?php $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-                <?php if (!empty($comments)) : ?>
-                  <div class="item-notes">
-                    <?php if (is_array($comments) && count($comments) > 0): ?>
-                      <?php foreach ($comments as $comment): ?>
-                        <?php if (!empty($comment)): ?>
-                          <p><?= $comment ?></p>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
+                <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]); ?>
 
                 <?php if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
                   <div class="item-notes">
@@ -148,15 +124,7 @@
                   </div>
                 <?php endif; ?>
 
-                <?php if ($citesLink && $citesCount > 0) : ?>
-                  <div class="citations">
-                    <?= $citesCount?>
-                    <a href="<?= $citesLink?>" target="_blank" class="external-link">
-                      <?= $this->transEsc('Web of Science Scites Link')?>
-                    </a>
-                    <?= $this->translate('Web of Science Scites Ref')?>
-                  </div>
-                <?php endif; ?>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
               </dd>
             </dl>
           </td>
@@ -217,14 +185,7 @@
                     </div>
                   <?php endif; ?>
                 </dd>
-                <?php if ($citesLink && $citesCount > 0) : ?>
-                  <dd>
-                    <div class="citations">
-                      <?= $citesCount?> <a href="<?= $citesLink?>" target="_blank"><?= $this->transEsc('Web of Science Scites Link')?></a>
-                      <?= $this->translate('Web of Science Scites Ref')?>
-                    </div>
-                  </dd>
-                <?php endif; ?>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
               <?php endif; ?>
 
               <!-- @TODO needed? -->
@@ -233,42 +194,9 @@
               <?php endif; ?>
 
               <?php /* ANMERKGUNGEN & BESTAND */ ?>
-              <?php $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-              <?php $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
+              <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
 
-              <?php if (!empty($chron)) : ?>
-                <dt><?= $this->transEsc("Item Chronology")?>:</dt>
-                <div class="item-notes">
-                  <dd>
-                    <?php if (is_array($chron) && count($chron) > 0): ?>
-                      <ul>
-                        <?php foreach ($chron as $chron): ?>
-                          <?php if (!empty($chron)): ?>
-                          <li><?= $chron ?></li>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                      </ul>
-                    <?php endif; ?>
-                  </dd>
-                </div>
-              <?php endif; ?>
-
-              <?php if (!empty($comments)) : ?>
-                <dt><?= $this->transEsc("Item Notes")?>:</dt>
-                <div class="item-notes">
-                  <dd>
-                    <?php if (is_array($comments) && count($comments) > 0): ?>
-                      <ul>
-                        <?php foreach ($comments as $comment): ?>
-                          <?php if (!empty($comment)): ?>
-                          <li><?= $comment ?></li>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                      </ul>
-                    <?php endif; ?>
-                  </dd>
-                </div>
-              <?php endif; ?>
+              <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]); ?>
 
               <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>
                 <dt><?= $this->transEsc('See also')?>:</dt>

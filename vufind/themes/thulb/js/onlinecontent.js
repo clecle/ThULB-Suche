@@ -2,7 +2,7 @@
 VuFind.register('onlineContent', function onlineContent() {
     function displayOnlineContent(result, el) {
 
-        var onlineContentEl = el.find('.onlineContent');
+        var onlineContentEl = el.find('.online-content');
         var currentOnlineContent = $(onlineContentEl).data('onlineContent');
         console.log(result);
 
@@ -102,7 +102,7 @@ VuFind.register('onlineContent', function onlineContent() {
     };
 
     function checkOnlineContent(el) {
-        var currentOnlineContent = $(el).find('.onlineContent').data('onlineContent');
+        var currentOnlineContent = $(el).find('.online-content').data('onlineContent');
         ItemStatusHandler.itemQueueAjax(currentOnlineContent, $(el));
     }
 

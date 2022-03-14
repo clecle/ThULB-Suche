@@ -43,7 +43,11 @@ class OnlineContent extends AbstractHelper
     public function __invoke($driver)
     {
         $cleanDoi = $driver->getCleanDOI();
-        $doiData = $this->doiLookup($cleanDoi);
+        $doiData = array();
+        if($driver->getSourceIdentifier() == 'Summon' ||
+            ($driver->getSourceIdentifier() == 'Solr' && $driver->isFormat('eArticle'))) {
+            $doiData = $this->doiLookup($cleanDoi);
+        }
 
         $response = array();
         if($data = $this->getFulltextLink($driver, $doiData[$cleanDoi] ?? [])) {
@@ -56,68 +60,78 @@ class OnlineContent extends AbstractHelper
     }
 
     public function getFulltextLink($driver, $doiLinks = []) {
+        $priorities = array (
+            'Solr' => array (
+                'Holding' => 'driver',
+                'Libkey' => 'doiLinks',
+                'Solr' => 'driver'
+            ),
+            'Summon' => array (
+                'Libkey' => 'doiLinks',
+                'Holding' => 'driver',
+                'Summon' => 'driver'
+            )
+        );
+
         $ftLink = array();
-
-        // try to get fulltext url from local ILS
-        if(!$ftLink && $driver->getSourceIdentifier() == 'Solr') {
-            $holdings = $driver->getHoldings();
-            foreach($holdings['holdings']['Remote']['items'] ?? [] as $onlineHolding) {
-                $ftLink = array(
-                    'label' => $this->view->transEsc('Full text / PDF'),
-                    'link' => $onlineHolding['remotehref'] ?? null,
-                    'source' => 'DAIA',
-//                    'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-//                    'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
-                );
-
-                // stop after finding the full text link
+        foreach($priorities[$driver->getSourceIdentifier()] as $method => $variable) {
+            $fullMethodName = sprintf('get%sFulltextLink', $method);
+            if($ftLink = $this->$fullMethodName($$variable)) {
                 break;
             }
         }
 
-        // try to get the fulltext link from libkey/browzine
-        if(!$ftLink) {
-            foreach ($doiLinks as $doiLink) {
-                if ($doiLink['data']['fullTextFile'] ?? false) {
-                    $ftLink = array(
-                        'label' => $this->view->transEsc('Full text / PDF'),
-                        'link' => $doiLink['data']['fullTextFile'],
-                        'source' => $doiLink['source'],
-//                        'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
-//                        'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
-                    );
-
-                    // stop after finding the full text link
-                    break;
-                }
-            }
-        }
-
-        // get fulltext url from the record data
-        if(!$ftLink && ($data = $driver->tryMethod('getFullTextURL'))) {
-            if($driver->getSourceIdentifier() == 'Summon') {
-                $data = array_shift($data);
-            }
-            $ftLink = array(
-                'label' => $this->view->transEsc('Full text / PDF'),
-                'link' => $data['url'] ?? $data['link'] ?? null,
-                'source' => $driver->getSourceIdentifier(),
-//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
-            );
-        }
-
-        // get summon reference link if there is no fulltext link
-        if(!$ftLink && $driver->getSourceIdentifier() == 'Summon' && ($urls = $driver->getURLs())) {
-            $ftLink = array(
-                'label' => $urls[0]['desc'],
-                'link' => $urls[0]['url'],
-                'source' => $driver->getSourceIdentifier(),
-                'access' => 'reference'
-            );
-        }
-
         return $ftLink;
+    }
+
+    protected function getSolrFulltextLink($driver) {
+        $data = $driver->tryMethod('getFullTextURL');
+
+        return !$data ? [] : array (
+            'type' => 'main',
+            'label' => 'Full text / PDF',
+            'link' => $data['url'] ?? $data['link'] ?? null,
+            'source' => $driver->getSourceIdentifier(),
+//            'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
+//            'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+        );
+    }
+
+    protected function getLibkeyFulltextLink($doiLinks = []) {
+        // try to get the fulltext link from libkey/browzine
+        foreach ($doiLinks as $doiLink) {
+            if ($doiLink['data']['fullTextFile'] ?? false) {
+                return array(
+                    'type' => 'main',
+                    'label' => 'Full text / PDF',
+                    'link' => $doiLink['data']['fullTextFile'],
+                    'source' => $doiLink['source'],
+//                    'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
+//                    'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                );
+            }
+        }
+
+        return [];
+    }
+
+    protected function getHoldingFulltextLink($driver) {
+        $holdings = $driver->getHoldings();
+        foreach($holdings['holdings']['Remote']['items'] ?? [] as $onlineHolding) {
+            return array(
+                'type' => 'main',
+                'label' => $driver->getSourceIdentifier() == 'Summon' && !$driver->hasFullText() ?
+                    'get_citation' : 'Full text / PDF',
+                'link' => $onlineHolding['remotehref'] ?? null,
+                'source' => $driver->getSourceIdentifier() == 'Solr' ?
+                        'DAIA' : $driver->getSourceIdentifier(),
+//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
+//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock',
+                'data' => $onlineHolding
+            );
+        }
+
+        return [];
     }
 
     public function getBrowseJournalLink($doiLinks = []) {
@@ -126,7 +140,8 @@ class OnlineContent extends AbstractHelper
         foreach($doiLinks as $doiLink) {
             if ($doiLink['data']['browzineWebLink'] ?? false) {
                 $bjLink = array (
-                    'label' => $this->view->transEsc('Browse e-journal'),
+                    'type' => 'browzine',
+                    'label' => 'Browse e-journal',
                     'link' => $doiLink['data']['browzineWebLink'],
                     'source' => $doiLink['source'],
                     'access' => 'browzine',

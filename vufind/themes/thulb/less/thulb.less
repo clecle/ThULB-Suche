@@ -969,7 +969,7 @@ li[data-tab="details"] {
   }
 }
 
-.doiLinkLoading, .onlineContentLoading {
+.doiLinkLoading, .online-content-loading {
   height: 15px;
   padding-right: 5px;
 }
@@ -1335,15 +1335,6 @@ form#newpassword .form-group.flex-center {
 .access-reference {}
 
 .access-browzine {
-  background-color: #e1637e;
-  border-color: #bd3855;
-
-  &:hover, &:focus {
-    background-color: #bd3855;
-  }
-}
-
-.access-browzine {
   background-color: @brand-secondary;
   border-color: darken(@brand-secondary, 10%);
 
@@ -1352,6 +1343,15 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.online-content {
-  margin-right: 5px;
+.online-content > * + * {
+  margin-left: 5px;
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    width: 180px;
+  }
+  .dl-horizontal dd {
+    margin-left: 200px;
+  }
 }

@@ -991,7 +991,7 @@ li[data-tab="details"] {
   }
 }
 
-.doiLinkLoading, .onlineContentLoading {
+.doiLinkLoading, .online-content-loading {
   height: 15px;
   padding-right: 5px;
 }
@@ -1360,6 +1360,15 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.online-content {
-  margin-right: 5px;
+.online-content > * + * {
+  margin-left: 5px;
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    width: 180px;
+  }
+  .dl-horizontal dd {
+    margin-left: 200px;
+  }
 }

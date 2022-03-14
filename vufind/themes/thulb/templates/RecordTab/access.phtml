@@ -61,12 +61,34 @@
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
 <?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink || !empty($onlineContentLinks)): ?>
   <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
-    <?php foreach($onlineContentLinks as $linkData): ?>
-      <?php if(empty($linkData)) continue; ?>
+    <?php foreach($onlineContentLinks as $contentLink): ?>
+      <?php if(empty($contentLink)) continue; ?>
+      <?php $linkData = $contentLink['data'] ?? []; ?>
       <tr vocab="http://schema.org/" typeof="Offer">
         <td>
           <dl class="dl-horizontal">
-            <dt><?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $linkData]); ?></dt>
+            <dt><?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?></dt>
+            <dd>
+              <?php if($linkData['remotetitle'] ?? false):?>
+                [<?php echo $linkData['remotetitle']; ?>]
+              <?php endif; ?>
+
+              <?php /* BESTANDSANGABEN */ ?>
+              <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
+
+              <?php /* ANMERKGUNGEN */ ?>
+              <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
+
+              <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+                <div class="item-notes">
+                  <?= $this->transEsc('explain_reference') ?>
+                </div>
+              <?php endif; ?>
+
+              <?php if (($contentLink['type'] ?? '') == 'main') : ?>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
+              <?php endif; ?>
+            </dd>
           </dl>
         </td>
       </tr>

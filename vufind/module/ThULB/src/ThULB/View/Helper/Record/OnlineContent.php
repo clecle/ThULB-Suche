@@ -45,7 +45,7 @@ class OnlineContent extends AbstractHelper
         $cleanDoi = $driver->getCleanDOI();
         $doiData = array();
         if($driver->getSourceIdentifier() == 'Summon' ||
-            ($driver->getSourceIdentifier() == 'Solr' && $driver->isFormat('eArticle'))) {
+            ($driver->getSourceIdentifier() == 'Solr' && $driver->isFormat('electronic Article'))) {
             $doiData = $this->doiLookup($cleanDoi);
         }
 

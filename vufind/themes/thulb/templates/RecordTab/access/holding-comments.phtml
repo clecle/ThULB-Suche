@@ -2,11 +2,13 @@
 <?php if (!empty($comments)) : ?>
   <div class="item-notes">
     <?php if (is_array($comments) && count($comments) > 0): ?>
-      <?php foreach ($comments as $comment): ?>
-        <?php if (!empty($comment)): ?>
-          <p><?= $comment ?></p>
-        <?php endif; ?>
-      <?php endforeach; ?>
+      <ul>
+        <?php foreach ($comments as $comment): ?>
+          <?php if (!empty($comment)): ?>
+            <li><?= $comment ?></li>
+          <?php endif; ?>
+        <?php endforeach; ?>
+      </ul>
     <?php endif; ?>
   </div>
 <?php endif; ?>

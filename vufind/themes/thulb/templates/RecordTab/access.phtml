@@ -216,9 +216,17 @@
               <?php endif; ?>
 
               <?php /* ANMERKGUNGEN & BESTAND */ ?>
-              <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
+              <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
+              <?php if(trim($chronologyHtml)): ?>
+                <dt><?= $this->transEsc("Item Chronology")?>:</dt>
+                <dd><?= $chronologyHtml; ?></dd>
+              <?php endif;?>
 
-              <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]); ?>
+              <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]);; ?>
+              <?php if(trim($commentsHtml)): ?>
+                <dt><?= $this->transEsc("Item Notes")?>:</dt>
+                <dd><?= $commentsHtml; ?></dd>
+              <?php endif; ?>
 
               <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>
                 <dt><?= $this->transEsc('See also')?>:</dt>

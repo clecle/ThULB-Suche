@@ -541,7 +541,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .openaccess {
   @extend .label;
   @extend .label-info;
-  background-color: #b2b2b2;
+  background-color: #5cb85c;
 }
 
 .result .format {

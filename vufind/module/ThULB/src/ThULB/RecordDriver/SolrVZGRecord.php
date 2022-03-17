@@ -2392,6 +2392,10 @@ class SolrVZGRecord extends SolrMarc
         return '';
     }
 
+    public function isOpenAccess() {
+        return (bool) $this->getFullTextURL();
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

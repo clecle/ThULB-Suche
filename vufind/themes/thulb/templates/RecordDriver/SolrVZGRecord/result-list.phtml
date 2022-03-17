@@ -72,8 +72,6 @@
           */
           $openUrl = $this->openUrl($this->driver, 'results');
           $openUrlActive = $openUrl->isActive();
-          $doi = $this->doi($this->driver, 'results');
-          $doiActive = $doi->isActive();
           // Account for replace_other_urls setting
           $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         ?>
@@ -93,14 +91,10 @@
 
         <div class="flex-center action-row">
           <?= $this->record($this->driver)->renderTemplate('onlineContent-lookup.phtml'); ?>
-          <?= $this->render('Helpers/fulltext.phtml'); ?>
-          <?php if ($openUrlActive || !empty($urls) || $doiActive): ?>
+          <?php if ($openUrlActive || !empty($urls)): ?>
             <?php if ($openUrlActive): ?>
               <br/>
               <?= $openUrl->renderTemplate()?>
-            <?php endif; ?>
-            <?php if ($doiActive): ?>
-              <?= $doi->renderTemplate()?>
             <?php endif; ?>
             <?php if (!is_array($urls)) $urls = array(); ?>
             <?php if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):

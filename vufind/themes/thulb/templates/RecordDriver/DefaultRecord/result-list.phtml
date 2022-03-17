@@ -72,10 +72,6 @@
           */
           $openUrl = $this->openUrl($this->driver, 'results');
           $openUrlActive = $openUrl->isActive();
-          $doi = $this->doi($this->driver, 'results');
-          $doiActive = $doi->isActive();
-          // Account for replace_other_urls setting
-          $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         ?>
 
         <div clasS="badges-row">
@@ -91,22 +87,9 @@
 
         <div class="flex-center action-row">
           <?= $this->record($this->driver)->renderTemplate('onlineContent-lookup.phtml'); ?>
-          <?php if ($openUrlActive || !empty($urls) || $doiActive): ?>
-            <?php if ($openUrlActive): ?>
-              <br/>
-              <?= $openUrl->renderTemplate()?>
-            <?php endif; ?>
-            <?php if ($doiActive): ?>
-              <?= $doi->renderTemplate()?>
-            <?php endif; ?>
-            <?php if (!is_array($urls)) $urls = array(); ?>
-            <?php if(!$this->driver->isCollection()):
-              foreach ($urls as $current): ?>
-                <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs external-link" target="new">
-                  <?= ($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->escapeHtml($current['desc'])?>
-                </a>
-              <?php endforeach; ?>
-            <?php endif; ?>
+          <?php if ($openUrlActive): ?>
+            <br/>
+            <?= $openUrl->renderTemplate()?>
           <?php endif; ?>
 
           <?= $this->record($this->driver)->getCitationReferences() ?>

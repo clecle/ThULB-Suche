@@ -7,7 +7,6 @@
 
   // Account for replace_other_urls setting
   $offlineMode = $this->ils()->getOfflineMode();
-  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
 
   try {
     $holdings = $this->driver->getHoldings();
@@ -17,11 +16,7 @@
     $offlineMode = 'ils-offline';
   }
 
-  $fullTextLink = $this->driver->tryMethod('getFullTextURL');
-
   $onlineContentLinks = $this->thulb_onlineContent($this->driver);
-
-  $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>
 
 <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
@@ -59,7 +54,7 @@
 
 <?php // online holdings ?>
 <?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink || !empty($onlineContentLinks)): ?>
+<?php if(!empty($onlineHolding) || !empty($onlineContentLinks)): ?>
   <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
     <?php foreach($onlineContentLinks as $contentLink): ?>
       <?php if(empty($contentLink)) continue; ?>
@@ -93,29 +88,6 @@
         </td>
       </tr>
     <?php endforeach; ?>
-    <?php if(!empty($doiHtml)): ?>
-      <tr vocab="http://schema.org/" typeof="Offer">
-        <td>
-          <dl class="dl-horizontal">
-            <dt><?= $doiHtml; ?></dt>
-            <dd><?= $this->translate('explain_unpaywall'); ?></dd>
-          </dl>
-        </td>
-      </tr>
-    <?php endif; ?>
-    <?php if(empty($onlineHolding) && $fullTextLink): ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <dt>
-                <a href="<?php echo $fullTextLink['link']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $this->transEsc($fullTextLink['desc'] ?? 'Full text online'); ?>
-                </a>
-              </dt>
-            </dl>
-          </td>
-        </tr>
-    <?php endif; ?>
     <?php if(!empty($onlineHolding)): ?>
       <?php $listedOnlineHoldingUrls = []; ?>
       <?php foreach ($onlineHolding['items'] as $row): ?>
@@ -208,11 +180,6 @@
                   <?php endif; ?>
                 </dd>
                 <?= $this->render('RecordTab/access/citations.phtml'); ?>
-              <?php endif; ?>
-
-              <!-- @TODO needed? -->
-              <?php if(!empty($doiHtml)): ?>
-                <dd><?= $doiHtml; ?></dd>
               <?php endif; ?>
 
               <?php /* ANMERKGUNGEN & BESTAND */ ?>

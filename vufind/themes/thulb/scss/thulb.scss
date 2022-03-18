@@ -1360,8 +1360,13 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.online-content > :not(script) + * {
-  margin-left: 5px;
+.online-content {
+  text-align: left;
+
+  & > * {
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
 }
 
 @media (min-width: 768px) {

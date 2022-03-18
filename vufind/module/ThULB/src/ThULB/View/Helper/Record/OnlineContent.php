@@ -106,8 +106,7 @@ class OnlineContent extends AbstractHelper
                 'label' => 'Full text / PDF',
                 'link' => $data['url'] ?? $data['link'] ?? null,
                 'source' => $driver->getSourceIdentifier(),
-//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
             )
         );
     }
@@ -129,8 +128,7 @@ class OnlineContent extends AbstractHelper
                         'label' => 'Full text / PDF',
                         'link' => $doiLink['data']['fullTextFile'],
                         'source' => $doiLink['source'],
-//                        'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
-//                        'class' => $doiLink['data']['openAccess'] ? 'fa fa-unlock-alt' : 'fa fa-lock'
+                        'access' => $doiLink['data']['openAccess'] ? 'onlineContent-open' : 'onlineContent-restricted',
                         'data' => $doiLink
                     )
                 );
@@ -159,8 +157,8 @@ class OnlineContent extends AbstractHelper
                 'link' => $onlineHolding['remotehref'] ?? null,
                 'source' => $driver->getSourceIdentifier() == 'Solr' ?
                         'DAIA' : $driver->getSourceIdentifier(),
-//                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-//                'class' => $driver->tryMethod('isOpenAccess') ? 'fa fa-unlock-alt' : 'fa fa-lock',
+                'access' => $isReference ? 'reference' : ($driver->tryMethod('isOpenAccess') ?
+                    'onlineContent-open' : 'onlineContent-restricted'),
                 'data' => $onlineHolding
             );
         }

@@ -53,8 +53,7 @@
 <?php endif; ?>
 
 <?php // online holdings ?>
-<?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding) || !empty($onlineContentLinks)): ?>
+<?php if(!empty($onlineContentLinks)): ?>
   <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
     <?php foreach($onlineContentLinks as $contentLink): ?>
       <?php if(empty($contentLink)) continue; ?>
@@ -88,43 +87,6 @@
         </td>
       </tr>
     <?php endforeach; ?>
-    <?php if(!empty($onlineHolding)): ?>
-      <?php $listedOnlineHoldingUrls = []; ?>
-      <?php foreach ($onlineHolding['items'] as $row): ?>
-        <?php if(in_array($row['remotehref'], $listedOnlineHoldingUrls)) continue; ?>
-        <?php $listedOnlineHoldingUrls[] = $row['remotehref']; ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <dt>
-                <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
-                </a>
-              </dt>
-              <dd>
-                <?php if(!empty($row['remotetitle'])):?>
-                  [<?php echo $row['remotetitle']; ?>]
-                <?php endif; ?>
-
-                <?php /* BESTANDSANGABEN */ ?>
-                <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
-
-                <?php /* ANMERKGUNGEN */ ?>
-                <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]); ?>
-
-                <?php if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
-                  <div class="item-notes">
-                    <?= $this->transEsc('explain_reference') ?>
-                  </div>
-                <?php endif; ?>
-
-                <?= $this->render('RecordTab/access/citations.phtml'); ?>
-              </dd>
-            </dl>
-          </td>
-        </tr>
-      <?php endforeach; ?>
-    <?php endif; ?>
   </table>
 <?php endif; ?>
 

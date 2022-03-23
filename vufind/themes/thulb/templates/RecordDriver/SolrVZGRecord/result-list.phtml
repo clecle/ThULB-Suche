@@ -76,7 +76,7 @@
           $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
         ?>
 
-        <div clasS="badges-row">
+        <div class="badges-row">
           <?= $this->record($this->driver)->getFormatList() ?>
           <?= $this->record($this->driver)->getOpenAccess() ?>
 
@@ -99,7 +99,7 @@
             <?php if (!is_array($urls)) $urls = array(); ?>
             <?php if(!$this->driver->isCollection() && isset($urls['inhaltsverzeichnis'])):
               $current = $urls['inhaltsverzeichnis']; ?>
-              <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary external-link" target="new">
+              <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs external-link" target="new">
                 <?= ($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->escapeHtml($current['desc'])?>
               </a>
             <?php endif; ?>

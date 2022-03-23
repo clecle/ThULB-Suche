@@ -1336,21 +1336,23 @@ form#newpassword .form-group.flex-center {
 }
 
 .access-reference {
-  background-color: lighten($brand-primary, 15%);
-  border-color: lighten($brand-primary, 10%);
+  background-color: $brand-primary;
+  border-color: $brand-primary;
 }
 
 .access-browzine {
-  background-color: lighten($brand-primary, 7.5%);
-  border-color: lighten($brand-primary, 2.5%);
+  /*background-color: $brand-primary;
+  border-color: $brand-primary;*/
 }
 
 .action-row .fulltext {
-  background-color: lighten($brand-primary, 15%);
-  border-color: lighten($brand-primary, 10%);
+  /*  background-color: lighten($brand-primary, 15%);
+    border-color: lighten($brand-primary, 10%);*/
   align-self: start;
 }
-
+.padb5 {
+  padding-bottom: 5px;
+}
 .online-content {
   text-align: left;
 

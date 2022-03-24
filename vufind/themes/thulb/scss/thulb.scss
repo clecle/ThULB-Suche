@@ -1282,6 +1282,9 @@ div.modal-body .facet-tree-container {
 .ml-2 {
   margin-left: 10px !important;
 }
+.pb-5 {
+  padding-bottom: 5px;
+}
 
 form#newpassword .form-group.flex-center {
   .control-label {
@@ -1350,9 +1353,7 @@ form#newpassword .form-group.flex-center {
     border-color: lighten($brand-primary, 10%);*/
   align-self: start;
 }
-.padb5 {
-  padding-bottom: 5px;
-}
+
 .online-content {
   text-align: left;
 

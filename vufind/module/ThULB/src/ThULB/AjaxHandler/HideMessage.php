@@ -30,7 +30,7 @@ class HideMessage extends AbstractBase
         if(isset($identifier) && !empty($identifier)) {
             $identifier = $identifier . '_expires';
             //$expires = time() + 7 * 24 * 60 * 60;       // hide message for 7 days
-            $expires = time() + 60 * 60;       // hide message for 7 days
+            $expires = time() + 24 * 60 * 60;       // hide message for 1 day
 
             $this->sessionManager->getStorage()->offsetSet($identifier, $expires);
         }

@@ -507,7 +507,7 @@ body.rtl {
   margin: 0 auto;
 }
 #moduletab li {
-  background-color: #8ab5d7;
+  background-color: lighten(@brand-primary, 20%);
   color: #fff;
   display: block;
   height: 66px;
@@ -521,10 +521,10 @@ body.rtl {
   text-decoration: none;
 }
 #moduletab li:hover {
-  background-color: #70bfff;
+  background-color: lighten(@brand-primary, 40%);
 }
 #moduletab .show {
-  background-color: #548ebe;
+  background-color: @brand-primary;
   box-shadow: none;
 }
 #moduletab .show a {
@@ -532,7 +532,7 @@ body.rtl {
 }
 
 #moduletab li.show::after {
-  border-color: transparent transparent transparent #548ebe;
+  border-color: transparent transparent transparent @brand-primary;
   border-style: solid;
   border-width: 33px;
   content: "";
@@ -552,7 +552,7 @@ body.rtl {
 }
 
 #moduletab li:hover::after {
-  border-color: transparent transparent transparent #70bfff;
+  border-color: transparent transparent transparent lighten(@brand-primary, 40%);
 }
 #moduletab_xs {
   margin: 0 auto;

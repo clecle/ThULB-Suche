@@ -20,7 +20,7 @@ return array(
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
         ),
     ],
-    'favicon' => 'thulb_favicon.ico',
+    'favicon' => 'thulb_favicon.png',
     'js' => array(
         'thulb.js',
         'jquery-ui.min.js',

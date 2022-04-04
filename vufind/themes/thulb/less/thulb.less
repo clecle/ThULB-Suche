@@ -1293,17 +1293,36 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.navbar .dropdown-menu li > a:hover {
-  background-color: @brand-primary;
-  color: white;
+.navbar {
+  border-radius: unset !important;
+  border: unset !important;
+
+  .dropdown-menu li > a:hover {
+    background-color: @brand-secondary;
+    color: white;
+  }
+
+  .dropdown.open .dropdown-toggle {
+    background-color: @brand-secondary;
+    color: white;
+
+    &:focus {
+      background-color: @brand-secondary;
+      color: white;
+    }
+  }
 }
 
-.navbar .dropdown.open .dropdown-toggle {
+.navbar-default {
   background-color: @brand-primary;
   color: white;
 
-  &:focus {
-    background-color: @brand-primary;
+  .navbar-nav > li > a {
     color: white;
+
+    &:hover, &:focus {
+      background-color: @brand-secondary;
+      color: white;
+    }
   }
 }

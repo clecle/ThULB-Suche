@@ -11,13 +11,20 @@ class DoiLinker extends AbstractHelper {
 
     public function __construct($pluginManager, $resolver) {
         $this->pluginManager = $pluginManager;
-        $this->resolver = $resolver;
+        $this->resolver = explode(',', $resolver);
     }
 
     public function __invoke($doi) {
         $response = [];
-        if ($this->pluginManager->has($this->resolver)) {
-            $response = $this->pluginManager->get($this->resolver)->getLinks([$doi]);
+        foreach($this->resolver as $resolver) {
+            if ($this->pluginManager->has($resolver)) {
+                $resolverResponse = $this->pluginManager->get($resolver)->getLinks([$doi]);
+
+                $doiData = array_merge($response[$doi] ?? [], $resolverResponse[$doi] ?? []);
+                if(!empty($doiData)) {
+                    $response[$doi] = $doiData;
+                }
+            }
         }
 
         return $response;

@@ -113,6 +113,8 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $departmentConfig;
 
+    protected $holdingData = null;
+
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
                                 $marcFormatConfig = null, $departmentConfig = null)
     {
@@ -2213,7 +2215,10 @@ class SolrVZGRecord extends SolrMarc
 
     public function getHoldings()
     {
-        return parent::getRealTimeHoldings();
+        if(!$this->holdingData) {
+            $this->holdingData = $this->getRealTimeHoldings();
+        }
+        return $this->holdingData;
     }
 
     /**
@@ -2370,6 +2375,25 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $data;
+    }
+
+    /**
+     * Return a source for the record.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        // display source only for selected records
+        if(in_array('GBV_ILN_2403', $this->fields['collection_details'])) {
+            return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+        }
+
+        return '';
+    }
+
+    public function isOpenAccess() {
+        return (bool) $this->getFullTextURL();
     }
 
 //    Commented out for possible future use.

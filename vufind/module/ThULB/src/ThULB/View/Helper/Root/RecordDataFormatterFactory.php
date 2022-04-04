@@ -186,11 +186,11 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
-        $spec->setTemplateLine('Source', 'getDatabaseXML', 'data-source.phtml',
+        $spec->setTemplateLine('Source', true, 'data-source.phtml',
             [
                 'useCache' => true,
                 'labelFunction' => function ($data) {
-                    return count($data) > 1 ? 'Sources' : 'Source';
+                    return is_array($data) && count($data) > 1 ? 'Sources' : 'Source';
                 }
             ]
         );

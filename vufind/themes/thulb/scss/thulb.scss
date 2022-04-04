@@ -541,7 +541,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .openaccess {
   @extend .label;
   @extend .label-info;
-  background-color: #b2b2b2;
+  background-color: #5cb85c;
 }
 
 .result .format {
@@ -581,6 +581,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .information {
   margin-top: 10px;
+  margin-left: 50px;
+  margin-right: 50px;
   background-color: $brand-secondary;
   padding: 15px;
   text-align: center;
@@ -598,6 +600,10 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .flex-center {
   display: flex;
   align-items: center;
+}
+
+.flex-wrap {
+  flex-wrap: wrap;
 }
 
 .center-text {
@@ -952,6 +958,11 @@ li[data-tab="details"] {
   }
 }
 
+.browzine {
+  background: #e18a20;
+  border: none;
+}
+
 .unpaywall {
   background: #20e168;
   border: none;
@@ -986,7 +997,7 @@ li[data-tab="details"] {
   }
 }
 
-.doiLinkLoading {
+.doiLinkLoading, .online-content-loading {
   height: 15px;
   padding-right: 5px;
 }
@@ -1028,7 +1039,7 @@ li[data-tab="details"] {
   font-weight: unset !important;
 }
 
-.action-row > * + * {
+.action-row > :not(script) + * {
   margin-right: 5px;
 }
 
@@ -1273,6 +1284,9 @@ div.modal-body .facet-tree-container {
 .ml-2 {
   margin-left: 10px !important;
 }
+.pb-5 {
+  padding-bottom: 5px;
+}
 
 form#newpassword .form-group.flex-center {
   .control-label {
@@ -1342,5 +1356,39 @@ form#newpassword .form-group.flex-center {
       background-color: $brand-secondary;
       color: white;
     }
+  }
+}
+
+.access-reference {
+  background-color: $brand-primary;
+  border-color: $brand-primary;
+}
+
+.access-browzine {
+  /*background-color: $brand-primary;
+  border-color: $brand-primary;*/
+}
+
+.action-row .fulltext {
+  /*  background-color: lighten($brand-primary, 15%);
+    border-color: lighten($brand-primary, 10%);*/
+  align-self: start;
+}
+
+.online-content {
+  text-align: left;
+
+  & > * {
+    margin-right: 5px;
+    margin-bottom: 5px;
+  }
+}
+
+@media (min-width: 768px) {
+  .dl-horizontal dt {
+    width: 180px;
+  }
+  .dl-horizontal dd {
+    margin-left: 200px;
   }
 }

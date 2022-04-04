@@ -27,10 +27,7 @@
  */
 namespace ThULB\DoiLinker;
 
-use VuFind\I18n\Translator\TranslatorAwareInterface;
-use VuFind\Log\Logger;
 use VuFind\Log\LoggerAwareTrait;
-use VuFindHttp\HttpServiceAwareInterface;
 use VuFind\DoiLinker\Unpaywall as OriginalUnpaywall;
 use Laminas\Log\LoggerAwareInterface;
 
@@ -66,6 +63,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
             foreach($response as $doi => $doiData) {
                 foreach($doiData as $index => $data) {
                     $response[$doi][$index]['label'] = 'PDF';
+                    $response[$doi][$index]['source'] = 'unpaywall';
                 }
             }
         }

@@ -7,9 +7,6 @@
 
   // Account for replace_other_urls setting
   $offlineMode = $this->ils()->getOfflineMode();
-  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $citesLink = is_callable([$this->driver, 'getCitatedReferencesLink']) ? $this->driver->getCitatedReferencesLink() : false;
-  $citesCount = is_callable([$this->driver, 'getCitatedReferencesCount']) ? $this->driver->getCitatedReferencesCount() : false;
 
   try {
     $holdings = $this->driver->getHoldings();
@@ -19,9 +16,7 @@
     $offlineMode = 'ils-offline';
   }
 
-  $fullTextLink = $this->driver->tryMethod('getFullTextURL');
-
-  $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
+  $onlineContentLinks = $this->thulb_onlineContent($this->driver);
 ?>
 
 <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
@@ -58,100 +53,47 @@
 <?php endif; ?>
 
 <?php // online holdings ?>
-<?php $onlineHolding = $holdings['holdings']['Remote'] ?? []; ?>
-<?php if(!empty($onlineHolding) || !empty($doiHtml) || $fullTextLink): ?>
-  <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
-    <?php if(!empty($doiHtml)): ?>
-      <tr vocab="http://schema.org/" typeof="Offer">
-        <td>
-          <dl class="dl-horizontal">
-            <dt><?= $doiHtml; ?></dt>
-            <dd><?= $this->translate('explain_unpaywall'); ?></dd>
-          </dl>
-        </td>
-      </tr>
-    <?php endif; ?>
-    <?php if(empty($onlineHolding) && $fullTextLink): ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <dt>
-                <a href="<?php echo $fullTextLink['link']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $this->transEsc($fullTextLink['desc'] ?? 'Full text online'); ?>
-                </a>
-              </dt>
-            </dl>
-          </td>
-        </tr>
-    <?php endif; ?>
-    <?php if(!empty($onlineHolding)): ?>
-      <?php $listedOnlineHoldingUrls = []; ?>
-      <?php foreach ($onlineHolding['items'] as $row): ?>
-        <?php if(in_array($row['remotehref'], $listedOnlineHoldingUrls)) continue; ?>
-        <?php $listedOnlineHoldingUrls[] = $row['remotehref']; ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <dt>
-                <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary external-link">
-                  <?= $desc = $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
-                </a>
-              </dt>
-              <dd>
-                <?php if(!empty($row['remotetitle'])):?>
-                  [<?php echo $row['remotetitle']; ?>]
-                <?php endif; ?>
+<?php if(!empty($onlineContentLinks)): ?>
+  <div summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
+    <?php foreach($onlineContentLinks as $contentLink): ?>
+    <div class="row">
+      <?php if(empty($contentLink)) continue; ?>
+      <?php $linkData = $contentLink['data'] ?? []; ?>
+          <div class="col-md-2 pb-5">
+              <?php // $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
+                <?php if(!empty($contentLink)): ?>
+                  <a class="btn btn-primary access-<?= $contentLink['access'] ?? ''; ?> external-link" href="<?= $contentLink['link']; ?>" target="_blank">
+                      <?php if($contentLink['class'] ?? false): ?>
+                          <i class="<?= $contentLink['class'] ?>"></i>
+                      <?php endif; ?>
+                      <?= $this->transEsc($contentLink['label']); ?>
+                  </a>
+              <?php endif; ?>
+            </div>
+            <div class="col-md-10 pb-5">
+              <?php if($linkData['remotetitle'] ?? false):?>
+                [<?php echo $linkData['remotetitle']; ?>]
+              <?php endif; ?>
 
-                <?php /* BESTANDSANGABEN */ ?>
-                <?php $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
-                <?php if (!empty($chron)) : ?>
-                  <div class="item-notes">
-                    <?php if (is_array($chron) && count($chron) > 0): ?>
-                      <?php foreach ($chron as $chron): ?>
-                        <?php if (!empty($chron)): ?>
-                          <p><?= $chron ?></p>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
+              <?php /* BESTANDSANGABEN */ ?>
+              <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
 
-                <?php /* ANMERKGUNGEN */ ?>
-                <?php $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-                <?php if (!empty($comments)) : ?>
-                  <div class="item-notes">
-                    <?php if (is_array($comments) && count($comments) > 0): ?>
-                      <?php foreach ($comments as $comment): ?>
-                        <?php if (!empty($comment)): ?>
-                          <p><?= $comment ?></p>
-                        <?php endif; ?>
-                      <?php endforeach; ?>
-                    <?php endif; ?>
-                  </div>
-                <?php endif; ?>
+              <?php /* ANMERKGUNGEN */ ?>
+              <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
 
-                <?php if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
-                  <div class="item-notes">
-                    <?= $this->transEsc('explain_reference') ?>
-                  </div>
-                <?php endif; ?>
+              <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+                <div class="item-notes">
+                  <?= $this->transEsc('explain_reference') ?>
+                </div>
+              <?php endif; ?>
 
-                <?php if ($citesLink && $citesCount > 0) : ?>
-                  <div class="citations">
-                    <?= $citesCount?>
-                    <a href="<?= $citesLink?>" target="_blank" class="external-link">
-                      <?= $this->transEsc('Web of Science Scites Link')?>
-                    </a>
-                    <?= $this->translate('Web of Science Scites Ref')?>
-                  </div>
-                <?php endif; ?>
-              </dd>
-            </dl>
-          </td>
-        </tr>
-      <?php endforeach; ?>
-    <?php endif; ?>
-  </table>
+              <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
+              <?php endif; ?>
+          </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
 <?php endif; ?>
 
 <?php // physical holdings ?>
@@ -205,57 +147,20 @@
                     </div>
                   <?php endif; ?>
                 </dd>
-                <?php if ($citesLink && $citesCount > 0) : ?>
-                  <dd>
-                    <div class="citations">
-                      <?= $citesCount?> <a href="<?= $citesLink?>" target="_blank"><?= $this->transEsc('Web of Science Scites Link')?></a>
-                      <?= $this->translate('Web of Science Scites Ref')?>
-                    </div>
-                  </dd>
-                <?php endif; ?>
-              <?php endif; ?>
-
-              <!-- @TODO needed? -->
-              <?php if(!empty($doiHtml)): ?>
-                <dd><?= $doiHtml; ?></dd>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
               <?php endif; ?>
 
               <?php /* ANMERKGUNGEN & BESTAND */ ?>
-              <?php $comments = $this->thulb_holdingHelper()->getHoldingComments($row); ?>
-              <?php $chron = $this->thulb_holdingHelper()->getHoldingChronology($row); ?>
-
-              <?php if (!empty($chron)) : ?>
+              <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
+              <?php if(trim($chronologyHtml)): ?>
                 <dt><?= $this->transEsc("Item Chronology")?>:</dt>
-                <div class="item-notes">
-                  <dd>
-                    <?php if (is_array($chron) && count($chron) > 0): ?>
-                      <ul>
-                        <?php foreach ($chron as $chron): ?>
-                          <?php if (!empty($chron)): ?>
-                          <li><?= $chron ?></li>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                      </ul>
-                    <?php endif; ?>
-                  </dd>
-                </div>
-              <?php endif; ?>
+                <dd><?= $chronologyHtml; ?></dd>
+              <?php endif;?>
 
-              <?php if (!empty($comments)) : ?>
+              <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]);; ?>
+              <?php if(trim($commentsHtml)): ?>
                 <dt><?= $this->transEsc("Item Notes")?>:</dt>
-                <div class="item-notes">
-                  <dd>
-                    <?php if (is_array($comments) && count($comments) > 0): ?>
-                      <ul>
-                        <?php foreach ($comments as $comment): ?>
-                          <?php if (!empty($comment)): ?>
-                          <li><?= $comment ?></li>
-                          <?php endif; ?>
-                        <?php endforeach; ?>
-                      </ul>
-                    <?php endif; ?>
-                  </dd>
-                </div>
+                <dd><?= $commentsHtml; ?></dd>
               <?php endif; ?>
 
               <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>

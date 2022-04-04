@@ -1,0 +1,7 @@
+<?= $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'onlinecontent.js', 'SET');?>
+
+<div class="flex-center center-text ajaxItem">
+  <img src="/themes/thulb/images/Ajax-loader.gif" class="online-content-loading">
+  <span class="online-content" data-online-content="<?= $this->escapeHtml($this->driver->getSourceIdentifier() . ':' . $this->driver->getUniqueID())?>">
+  </span>
+</div>

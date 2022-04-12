@@ -244,6 +244,10 @@ ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl, sortType
         window.location.hash = tabid;
       }
       fillEmptyHoldingsTab();
+
+      if(typeof VuFind.onlineContent == "object") {
+        VuFind.onlineContent.init();
+      }
     });
   return false;
 };

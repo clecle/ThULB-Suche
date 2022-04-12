@@ -3,8 +3,6 @@ VuFind.register('onlineContent', function onlineContent() {
     function displayOnlineContent(result, el) {
 
         var onlineContentEl = el.find('.online-content');
-        var currentOnlineContent = $(onlineContentEl).data('onlineContent');
-        console.log(result);
 
         var loadingImg = $(onlineContentEl).prev();
         if($(loadingImg).is('img')) {
@@ -102,8 +100,18 @@ VuFind.register('onlineContent', function onlineContent() {
     };
 
     function checkOnlineContent(el) {
-        var currentOnlineContent = $(el).find('.online-content').data('onlineContent');
-        ItemStatusHandler.itemQueueAjax(currentOnlineContent, $(el));
+        var onlineContentEl = $(el).find('.online-content');
+
+        $(onlineContentEl).each(function (index, element) {
+            var currentOnlineContent = $(element).data('onlineContent');
+
+            var loadingImg = $(onlineContentEl).prev();
+            if($(loadingImg).is('img')) {
+                $(loadingImg).show();
+            }
+
+            ItemStatusHandler.itemQueueAjax(currentOnlineContent, $(el));
+        });
     }
 
     // Assign actions to the OpenURL links. This can be called with a container e.g. when

@@ -82,6 +82,8 @@ h3 { font-size: 16px; }
 
 /* ------ Layout ------ */
 footer {
+  background-color: $brand-primary-darker;
+  color: #ffffff;
   margin-top: auto;
 
   ul {
@@ -359,7 +361,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 }
 
 .thulb-topline {
-  background-color: $brand-primary;
+  background-color: $brand-primary-darker;
   height: 5px;
   margin: 0;
   padding: 0;
@@ -684,21 +686,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 #dynmessage-preview-container {
   display: none;
-}
-
-#searchForm #searchForm_type {
-  border-bottom-right-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-  background-color: #eee;
-}
-
-#searchForm #searchForm_lookfor {
-  border-radius: 0 !important;
-}
-
-#searchForm button {
-  border-bottom-left-radius: 0 !important;
-  border-top-left-radius: 0 !important;
 }
 
 .callnumberTitle {
@@ -1194,12 +1181,33 @@ a.external-link:after,
   }
 }
 
-#searchForm > div {
-  display: flex;
-  flex-wrap: nowrap;
 
-  div.delete-icon {
-    flex-grow: 1;
+#searchForm {
+  margin-bottom: 20px;
+
+  & > div {
+    display: flex;
+    flex-wrap: nowrap;
+
+    div.delete-icon {
+      flex-grow: 1;
+    }
+  }
+
+  #searchForm_type {
+    border-bottom-right-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    background-color: $brand-primary;
+    color: #ffffff;
+  }
+
+  #searchForm_lookfor {
+    border-radius: 0 !important;
+  }
+
+  button {
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
   }
 }
 
@@ -1330,33 +1338,37 @@ form#newpassword .form-group.flex-center {
   border: unset !important;
 
   .dropdown-menu li > a:hover {
-    background-color: $brand-secondary;
+    background-color: $brand-primary;
     color: white;
   }
 
   .dropdown.open .dropdown-toggle {
-    background-color: $brand-secondary;
+    background-color: $brand-primary;
     color: white;
 
     &:focus {
-      background-color: $brand-secondary;
+      background-color: $brand-primary;
       color: white;
     }
   }
 }
 
 .navbar-default {
-  background-color: $brand-primary;
+  background-color: $brand-primary-darker;
   color: white;
 
   .navbar-nav > li > a {
     color: white;
 
     &:hover, &:focus {
-      background-color: $brand-secondary;
+      background-color: $brand-primary;
       color: white;
     }
   }
+}
+
+.navbar > .container .navbar-brand {
+  margin-left: 0;
 }
 
 .access-reference {
@@ -1391,4 +1403,8 @@ form#newpassword .form-group.flex-center {
   .dl-horizontal dd {
     margin-left: 200px;
   }
+}
+
+body > header {
+  background-color: #dbdbdb;
 }

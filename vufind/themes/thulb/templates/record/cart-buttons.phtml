@@ -3,10 +3,10 @@
   <?php $cartId = $this->source . '|' . $this->id; ?>
   <span class="btn-bookbag-toggle" data-cart-id="<?= $this->escapeHtmlAttr($this->id)?>" data-cart-source="<?= $this->escapeHtmlAttr($this->source)?>">
     <a class="cart-add hidden<?php if(!$cart->contains($cartId)): ?> correct<?php endif ?>">
-      <i class="cart-link-icon fa fa-plus-square" title="<?= $this->transEscAttr('Add to Book Bag') ?>"></i>
+      <i class="cart-link-icon fa fa-star-o" title="<?= $this->transEscAttr('Add to Book Bag') ?>"></i>
     </a>
     <a class="cart-remove hidden<?php if($cart->contains($cartId)): ?> correct<?php endif ?>">
-      <i class="cart-link-icon fa fa-minus-square" title="<?= $this->transEscAttr('Remove from Book Bag') ?>"></i>
+      <i class="cart-link-icon fa fa-star" title="<?= $this->transEscAttr('Remove from Book Bag') ?>"></i>
     </a>
     <noscript>
       <form method="post" name="addForm" action="<?= $this->url('cart-processor')?>">

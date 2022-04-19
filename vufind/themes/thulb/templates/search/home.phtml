@@ -2,9 +2,6 @@
   // Set page title.
   $this->headTitle($this->translate('Search Home'));
 
-  // Disable top search box -- this page has a special layout.
-  $this->layout()->searchbox = false;
-
   // Set default value if necessary:
   if (!isset($this->searchClassId)) {
     $this->searchClassId = 'Solr';
@@ -36,15 +33,6 @@
 JS;
   ?>
   <?= $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
-
-  <div class="row startpage_logo">
-    <div class="col-sm-6 col-sm-offset-3">
-      <img alt="welcome thulbsuche" src="<?= $this->imageLink('thulblogo_text_'. $this->layout()->userLang . '.png')?>">
-    </div>
-  </div>
-  <div class="startpage_searchbox">
-    <?= $this->context($this)->renderInContext("search/searchbox.phtml", ['ignoreHiddenFilterMemory' => true])?>
-  </div>
 
   <div class="tutorial">
     <div class="col-sm-4 col-xs-12 tutorial_sub">

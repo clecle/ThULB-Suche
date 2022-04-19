@@ -464,10 +464,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 }
 .tutorial_sub > h1 {
   font-weight: bold;
-  color: $brand-secondary;
 }
 .tutorial_sub > h5 {
-  color: $brand-secondary;
   text-transform: uppercase;
 }
 .tutorial_sub > img {

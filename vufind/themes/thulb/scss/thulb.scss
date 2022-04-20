@@ -1353,12 +1353,37 @@ form#newpassword .form-group.flex-center {
   background-color: $brand-primary-darker;
   color: white;
 
-  .navbar-nav > li > a {
-    color: white;
+  .navbar-header {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
 
-    &:hover, &:focus {
-      background-color: $brand-primary;
+    .navbar-brand {
+      margin-right: auto;
+    }
+
+    .navbar-nav {
+      display: flex;
+    }
+  }
+
+  .navbar-toggle .icon-bar {
+    background-color: #fff;
+  }
+
+  .navbar-nav {
+    margin: 0;
+
+    & > li > a {
       color: white;
+
+      &:hover, &:focus {
+        background-color: $brand-primary;
+        color: white;
+      }
     }
   }
 

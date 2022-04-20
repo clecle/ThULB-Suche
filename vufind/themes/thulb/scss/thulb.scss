@@ -9,6 +9,22 @@
  * = Breakpoint of <=530px also used to target phones specifically
  */
 
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('../fonts/Roboto-Regular.ttf');
+  src: url('../fonts/Roboto-Regular.ttf') format('ttf'),
+}
+@font-face {
+  font-family: 'Roboto-Italic';
+  src: url('../fonts/Roboto-Italic.ttf');
+  src: url('../fonts/Roboto-Italic.ttf') format('ttf'),
+}
+@font-face {
+  font-family: 'Roboto-Bold';
+  src: url('../fonts/Roboto-Bold.ttf');
+  src: url('../fonts/Roboto-Bold.ttf') format('ttf'),
+}
+
 html {
   font-size: 14px; // Root font size from Bootstrap, allows consistent use of rem units
   height: 100%;
@@ -17,6 +33,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a,

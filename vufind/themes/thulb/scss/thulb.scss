@@ -1450,3 +1450,42 @@ form#newpassword .form-group.flex-center {
 body > header {
   background-color: #dbdbdb;
 }
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav li.dropdown.open {
+    background-color: $brand-primary;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 0 5px 5px 5px;
+
+    .dropdown-toggle {
+      padding: 5px;
+      outline: none;
+    }
+
+    .dropdown-menu {
+      padding: 0;
+
+      & :first-child > a {
+        border-radius: 5px 5px 0 0;
+      }
+      & :last-child > a {
+        border-radius: 0 0 5px 5px;
+      }
+
+      & > li {
+        & > a {
+          background-color: #e5e5e5;
+          color: #555;
+        }
+
+        &.active {
+          & > a {
+            background-color: $brand-primary-darker;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}

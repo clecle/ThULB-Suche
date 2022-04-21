@@ -1405,7 +1405,7 @@ form#newpassword .form-group.flex-center {
   }
 
   .navbar-right i {
-    font-size: 20px;
+    font-size: 25px;
   }
 }
 
@@ -1487,5 +1487,14 @@ body > header {
         }
       }
     }
+  }
+}
+
+#cartSummary #cartItems {
+  display: flex;
+  align-items: center;
+
+  & > * + * {
+    margin-left: 5px;
   }
 }

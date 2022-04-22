@@ -148,6 +148,14 @@ $config = array(
                     'ThULB\RecordDriver\SolrVZGRecord' => ['VuFind\RecordDriver\IlsAwareDelegatorFactory'],
                 )
             ),
+            'record_fallbackloader' => array (
+                'factories' => array (
+                    \VuFind\Record\FallbackLoader\Summon::class => \VuFind\Record\FallbackLoader\SummonFactory::class,
+                ),
+                'aliases' => array (
+                    'summon' => null
+                )
+            ),
             'recordtab' => array(
                 'factories' => array(
                     'ThULB\RecordTab\ArticleCollectionList' => 'ThULB\RecordTab\Factory::getArticleCollectionList',

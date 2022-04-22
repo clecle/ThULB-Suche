@@ -1490,6 +1490,12 @@ body > header {
   }
 }
 
+@media (min-width: 768px) {
+  .navbar-header .navbar-nav > li {
+    margin: auto;
+  }
+}
+
 #cartSummary #cartItems {
   display: flex;
   align-items: center;

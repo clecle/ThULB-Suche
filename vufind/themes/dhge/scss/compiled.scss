@@ -4,7 +4,7 @@
 
 @import "../../bootstrap3/scss/vendor/bootstrap";
 $fa-font-path: "../../bootstrap3/css/fonts";
-@import "../../bootstrap3/scss/vendor/font-awesome/font-awesome";
+@import "../../thulb/scss/vendor/font-awesome/font-awesome";
 @import "../../bootstrap3/scss/vendor/bootstrap-accessibility/bootstrap-accessibility";
 @import "../../bootstrap3/scss/vendor/a11y";
 
@@ -21,7 +21,5 @@ $fa-font-path: "../../bootstrap3/css/fonts";
 @import "components/sidebar";
 @import "../../bootstrap3/scss/components/similar-carousel";
 @import "../../bootstrap3/scss/components/sliders";
-
-@import "../../thulb/scss/thulb";
 
 @import "dhge";

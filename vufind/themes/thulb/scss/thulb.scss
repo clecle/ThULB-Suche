@@ -9,6 +9,22 @@
  * = Breakpoint of <=530px also used to target phones specifically
  */
 
+@font-face {
+  font-family: 'Roboto-Regular';
+  src: url('../fonts/Roboto-Regular.ttf');
+  src: url('../fonts/Roboto-Regular.ttf') format('ttf'),
+}
+@font-face {
+  font-family: 'Roboto-Italic';
+  src: url('../fonts/Roboto-Italic.ttf');
+  src: url('../fonts/Roboto-Italic.ttf') format('ttf'),
+}
+@font-face {
+  font-family: 'Roboto-Bold';
+  src: url('../fonts/Roboto-Bold.ttf');
+  src: url('../fonts/Roboto-Bold.ttf') format('ttf'),
+}
+
 html {
   font-size: 14px; // Root font size from Bootstrap, allows consistent use of rem units
   height: 100%;
@@ -17,6 +33,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 100%;
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 a,
@@ -359,7 +376,7 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 }
 
 .thulb-topline {
-  background-color: $brand-primary;
+  background-color: $brand-primary-darker;
   height: 5px;
   margin: 0;
   padding: 0;
@@ -462,10 +479,8 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 }
 .tutorial_sub > h1 {
   font-weight: bold;
-  color: $brand-secondary;
 }
 .tutorial_sub > h5 {
-  color: $brand-secondary;
   text-transform: uppercase;
 }
 .tutorial_sub > img {
@@ -686,21 +701,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   display: none;
 }
 
-#searchForm #searchForm_type {
-  border-bottom-right-radius: 0 !important;
-  border-top-right-radius: 0 !important;
-  background-color: #eee;
-}
-
-#searchForm #searchForm_lookfor {
-  border-radius: 0 !important;
-}
-
-#searchForm button {
-  border-bottom-left-radius: 0 !important;
-  border-top-left-radius: 0 !important;
-}
-
 .callnumberTitle {
   font-weight: bold;
 }
@@ -831,7 +831,6 @@ span.th-bibliography {
   height: 16px;
   border-radius: 3px;
   border: solid 1px #ccc;
-
 }
 
 span.service_loan,
@@ -1194,12 +1193,33 @@ a.external-link:after,
   }
 }
 
-#searchForm > div {
-  display: flex;
-  flex-wrap: nowrap;
 
-  div.delete-icon {
-    flex-grow: 1;
+#searchForm {
+  margin-bottom: 20px;
+
+  & > div {
+    display: flex;
+    flex-wrap: nowrap;
+
+    div.delete-icon {
+      flex-grow: 1;
+    }
+  }
+
+  #searchForm_type {
+    border-bottom-right-radius: 0 !important;
+    border-top-right-radius: 0 !important;
+    background-color: $brand-primary-darker;
+    color: #ffffff;
+  }
+
+  #searchForm_lookfor {
+    border-radius: 0 !important;
+  }
+
+  button {
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
   }
 }
 
@@ -1325,19 +1345,71 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.navbar .dropdown-menu li > a:hover {
-  background-color: $brand-primary;
-  color: white;
-}
+.navbar {
+  border-radius: unset !important;
+  border: unset !important;
 
-.navbar .dropdown.open .dropdown-toggle {
-  background-color: $brand-primary;
-  color: white;
-
-  &:focus {
+  .dropdown-menu li > a:hover {
     background-color: $brand-primary;
     color: white;
   }
+
+  .dropdown.open .dropdown-toggle {
+    background-color: $brand-primary;
+    color: white;
+
+    &:focus {
+      background-color: $brand-primary;
+      color: white;
+    }
+  }
+}
+
+.navbar-default {
+  background-color: $brand-primary-darker;
+  color: white;
+
+  .navbar-header {
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+    width: 100%;
+
+    .navbar-brand {
+      margin-right: auto;
+    }
+
+    .navbar-nav {
+      display: flex;
+    }
+  }
+
+  .navbar-toggle .icon-bar {
+    background-color: #fff;
+  }
+
+  .navbar-nav {
+    margin: 0;
+
+    & > li > a {
+      color: white;
+
+      &:hover, &:focus {
+        background-color: $brand-primary;
+        color: white;
+      }
+    }
+  }
+
+  .navbar-right i {
+    font-size: 25px;
+  }
+}
+
+.navbar > .container .navbar-brand {
+  margin-left: 0;
 }
 
 .access-reference {
@@ -1372,4 +1444,66 @@ form#newpassword .form-group.flex-center {
   .dl-horizontal dd {
     margin-left: 200px;
   }
+}
+
+body > header {
+  background-color: #dbdbdb;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-nav li.dropdown.open {
+    background-color: $brand-primary;
+    border-radius: 5px;
+    margin: 5px;
+    padding: 0 5px 5px 5px;
+
+    .dropdown-toggle {
+      padding: 5px;
+      outline: none;
+    }
+
+    .dropdown-menu {
+      padding: 0;
+
+      & :first-child > a {
+        border-radius: 5px 5px 0 0;
+      }
+      & :last-child > a {
+        border-radius: 0 0 5px 5px;
+      }
+
+      & > li {
+        & > a {
+          background-color: #e5e5e5;
+          color: #555;
+        }
+
+        &.active {
+          & > a {
+            background-color: $brand-primary-darker;
+            color: #fff;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-header .navbar-nav > li {
+    margin: auto;
+  }
+}
+
+#cartSummary #cartItems {
+  display: flex;
+  align-items: center;
+
+  & > * + * {
+    margin-left: 5px;
+  }
+}
+
+.user-icon {
+  height: 25px;
 }

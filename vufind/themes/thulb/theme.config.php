@@ -22,7 +22,7 @@ return array(
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
         ),
     ],
-    'favicon' => 'thulb_favicon.ico',
+    'favicon' => 'thulb_favicon.png',
     'js' => array(
         'thulb.js',
         'jquery-ui.min.js',

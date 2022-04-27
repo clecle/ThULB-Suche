@@ -3,38 +3,39 @@
 
 <nav class="navbar navbar-default">
   <div class="container">
-    <div class="row">
-      <div class="navbar-header">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#tsnavbar" aria-expanded="false">
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
         <?= $this->render('navbar/navbar-logo.phtml'); ?>
+      </div>
+      <div class="collapse navbar-collapse" id="tsnavbar">
+        <?= $this->render('navbar/navbar-left.phtml'); ?>
         <ul class="nav navbar-nav navbar-right">
         <?php if (!isset($this->layout()->renderingError)): ?>
           <?php $cart = $this->cart(); if ($cart->isActive()): ?>
             <li id="cartSummary">
               <a id="cartItems" data-lightbox title="<?= $this->transEscAttr('View Book Bag')?>" href="<?= $this->url('cart-home')?>">
+                <?= $this->transEsc('Book Bag')?>
                 <i class="fa fa-star-o" aria-hidden="true"></i> <strong><?= count($cart->getItems())?></strong>
+                <span class="full<?= !$cart->isFull() ? ' hidden' : '' ?>">(<?= $this->transEsc('bookbag_full') ?>)</span>
               </a>
             </li>
           <?php endif; ?>
           <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
             <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
-              <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>">
-                <img class="user-icon" src="<?= $this->imageLink('user_account_white.svg'); ?>" alt="<?= $this->transEsc('Your Account'); ?>"/>
-              </a>
+              <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>"><?= $this->transEsc("Useraccount")?> <i class="fa fa-user" aria-hidden="true"></i></a>
             </li>
             <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
-              <a title="<?= $this->transEscAttr("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout">
-                <i class="fa fa-sign-out" aria-hidden="true"></i>
-              </a>
+              <a title="<?= $this->transEscAttr("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout"><?= $this->transEsc("Log Out")?> <i class="fa fa-sign-out" aria-hidden="true"></i></a>
             </li>
             <li id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
               <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
-                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>">
-                  <img class="user-icon" src="<?= $this->imageLink('user_account_white.svg'); ?>" alt="<?= $this->transEsc('Institutional Login'); ?>"/>
-                </a>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
               <?php else: ?>
-                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>">
-                  <img class="user-icon" src="<?= $this->imageLink('user_account_white.svg'); ?>" alt="<?= $this->transEsc('Userlogin'); ?>"/>
-                </a>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>"><?= $this->transEsc('Useraccount')?> <i class="fa fa-user" aria-hidden="true"></i></a>
               <?php endif; ?>
             </li>
           <?php endif; ?>
@@ -54,13 +55,11 @@
           <?php endif; ?>
 
           <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
-            <li class="language dropdown hidden-xs">
+            <li class="language dropdown">
               <form method="post" name="langForm" id="langForm">
                 <input type="hidden" name="mylang"/>
               </form>
-              <a href="#_" class="dropdown-toggle" data-toggle="dropdown">
-                <?= strtoupper($this->layout()->userLang); ?> <b class="caret"></b>
-              </a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Language")?> <b class="caret"></b></a>
               <ul class="dropdown-menu">
                 <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
                   <li  class="langOption<?= $this->layout()->userLang == $langCode ? ' active' : ''?>"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
@@ -70,16 +69,7 @@
           <?php endif; ?>
         <?php endif; ?>
         </ul>
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#tsnavbar" aria-expanded="false">
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-    </div>
-    <div class="row">
-      <?= $this->render('navbar/navbar-left.phtml'); ?>
-    </div>
+      </div><!-- /.navbar-collapse -->
   </div>
 </nav>
 

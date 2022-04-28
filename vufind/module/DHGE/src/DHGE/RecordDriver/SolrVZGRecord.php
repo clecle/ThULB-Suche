@@ -53,38 +53,51 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
-    const LIBRARY_ILN = '250|281';
+    const LIBRARY_ILN = ['250', '281'];
 
     const SEPARATOR = '|\/|';
 
     /**
-     * Returns true if the record supports real-time AJAX status lookups.
+     * Get the local classification of the record.
      *
-     * @return bool
+     * @return array
      *
      * @throws File_MARC_Exception
      */
-    public function supportsAjaxStatus() {
-        $noStatus = true;
-        $noStatusMedia = ['Article', 'eBook', 'eJournal', 'electronic Article', 'electronic Resource'];
-        
-        foreach ($this->getFormats() as $format) {
-            if (!in_array($format, $noStatusMedia)) {
-                $noStatus = false;
-                break;
+    public function getLocalClassification() {
+        $fields = $this->getFieldsConditional('983', [
+            $this->createFieldCondition('subfield', '2', 'in', self::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '8', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
+    /**
+     * Return a source for the record.
+     *
+     * @return string
+     */
+    public function getSource()
+    {
+        foreach(self::LIBRARY_ILN as $iln) {
+            if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
+                return '';
             }
         }
-        $ordered = 0;
-        $allCopies = 0;
-        foreach (explode('|', self::LIBRARY_ILN) as $iln) {
-            $ordered += count($this->getConditionalFieldArray('980', ['e'], true, '', ['2' => $iln, 'e' => 'a']));
-            $allCopies += count($this->getConditionalFieldArray('980', ['e'], true, '', ['2' => $iln]));
+
+        // display source only for selected records
+        if(in_array('GBV_ILN_2403', $this->fields['collection_details'])) {
+            return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
         }
 
-        $leader = $this->getMarcReader()->getLeader();
-
-        return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
-            && !$noStatus && $allCopies !== $ordered);
+        return '';
     }
 
     /**

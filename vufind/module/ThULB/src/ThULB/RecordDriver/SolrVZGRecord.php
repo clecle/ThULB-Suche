@@ -148,7 +148,6 @@ class SolrVZGRecord extends SolrMarc
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && count($allCopies) !== count($ordered));
-        
     }
 
     /**
@@ -1604,7 +1603,8 @@ class SolrVZGRecord extends SolrMarc
      * @param bool   $concat     Should we concatenate subfields?
      * @param string $separator  Separator string (used only when $concat === true)
      * @param array  $conditions contains key value pairs with a subfield as key
-     *                           and the expected subfield content as value
+     *                           and the expected subfield content as value, if the value
+     *                           is an array it is considered as an 'OR' operation
      *
      * @return array
      *
@@ -1633,13 +1633,18 @@ class SolrVZGRecord extends SolrMarc
         // Extract all the requested subfields, if applicable.
         foreach ($fields as $currentField) {
             foreach ($conditions as $conditionSubfield => $conditionValue) {
+                if(!is_array($conditionValue)) {
+                    $conditionValue = [$conditionValue];
+                }
+
                 $check = $this->getSubfieldArray($currentField, [$conditionSubfield]);
-                if (!in_array($conditionValue, $check)) {
-                    continue 2;
+                foreach($conditionValue as $condValue) {
+                    if (!in_array($condValue, $check)) {
+                        continue 3;
+                    }
                 }
             }
-            $next = $this
-                ->getSubfieldArray($currentField, $subfields, $concat, $separator);
+            $next = $this->getSubfieldArray($currentField, $subfields, $concat, $separator);
             $matches = array_merge($matches, $next);
         }
 
@@ -2364,7 +2369,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getLocalClassification() {
         $fields = $this->getFieldsConditional('983', [
-            $this->createFieldCondition('subfield', '2', '==', '31'),
+            $this->createFieldCondition('subfield', '2', '==', self::LIBRARY_ILN),
             $this->createFieldCondition('subfield', '8', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);
@@ -2384,12 +2389,8 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getSource()
     {
-        $ilns = preg_split('/\|/', self::LIBRARY_ILN);
-
-        foreach($ilns as $iln) {
-            if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
-                return '';
-            }
+        if(in_array('GBV_ILN_' . self::LIBRARY_ILN, $this->fields['collection_details'])) {
+            return '';
         }
 
         // display source only for selected records

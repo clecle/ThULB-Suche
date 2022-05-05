@@ -55,6 +55,8 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
     const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_KXP"&q=id:';
 
     protected $translationLocale = 'de';
+
+    protected $theme = 'thulb';
     
     protected $config;
     
@@ -66,8 +68,12 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      *
      * @return \Laminas\View\Renderer\PhpRenderer
      */
-    protected function getPhpRenderer($plugins = [], $theme = 'thulb')
+    protected function getPhpRenderer($plugins = [], $theme = null)
     {
+        if(!$theme) {
+            $theme = $this->theme;
+        }
+
         $resolver = new \Laminas\View\Resolver\TemplatePathStack();
 
         $resolver->setPaths(
@@ -152,7 +158,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
             'context' => $context,
             'doi' => new \VuFind\View\Helper\Root\Doi($context),
-            'imageLink' => new \VuFindTheme\View\Helper\ImageLink((new ThemeInfo())),
+            'imageLink' => new \VuFindTheme\View\Helper\ImageLink((new ThemeInfo(APPLICATION_PATH . '/themes/', $this->theme))),
             'openUrl' => new \VuFind\View\Helper\Root\OpenUrl($context, [], $this->getMockBuilder('VuFind\Resolver\Driver\PluginManager')->disableOriginalConstructor()->getMock()),
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
             'record' => new \VuFind\View\Helper\Root\Record(),

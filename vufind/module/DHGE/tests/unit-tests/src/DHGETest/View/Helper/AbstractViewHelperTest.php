@@ -38,6 +38,7 @@ abstract class AbstractViewHelperTest extends \ThULBTest\View\Helper\AbstractVie
 {
     const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:(((GBV_ILN_250%20OR%20GBV_ILN_281)%20AND%20GBV_KXP)%20OR%20ZDB-1-BEP%20OR%20ZDB-1-RWF%20OR%20ZDB-1-EFD)&q=id:';
 
+    protected $theme = 'dhge';
     /**
      * Get a working renderer.
      *
@@ -46,8 +47,12 @@ abstract class AbstractViewHelperTest extends \ThULBTest\View\Helper\AbstractVie
      *
      * @return \Laminas\View\Renderer\PhpRenderer
      */
-    protected function getPhpRenderer($plugins = [], $theme = 'dhge')
+    protected function getPhpRenderer($plugins = [], $theme = null)
     {
+        if(!$theme) {
+            $theme = $this->theme;
+        }
+
         $resolver = new \Laminas\View\Resolver\TemplatePathStack();
 
         $resolver->setPaths(

@@ -23,18 +23,16 @@
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  */
 
-namespace ThULBTest\View\Helper\Root;
+namespace DHGETest\View\Helper\Root;
 
 /**
- * Test class for the record data formatters basic classification view helper
- * functionality.
+ * Description
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class localClassificationMetadataTest extends AbstractRecordDataFormatterTest
+class EditionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Lokale Klassifikation';
-    protected $metadataKey = 'Local classification';
-    protected $recordDriverFunction = 'getLocalClassification';
-    protected $template = 'data-localClassification.phtml';
+    protected $sheetName = 'Ausgabe';
+    protected $metadataKey = 'Edition';
+    protected $recordDriverFunction = 'getEdition';
 }

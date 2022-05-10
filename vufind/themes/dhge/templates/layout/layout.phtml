@@ -198,7 +198,9 @@ JS;
       </div>
     </div>
 
-    <div class="vpn-warning-wrapper container" style="display: none;"></div>
+    <div class="vpn-warning-wrapper container">
+        <?= $this->render('Helpers/vpn-hint.phtml'); ?>
+    </div>
 
     <footer class="hidden-print">
       <?= $this->render('footer.phtml')?>

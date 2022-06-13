@@ -1637,10 +1637,8 @@ class SolrVZGRecord extends SolrMarc
                 }
 
                 $check = $this->getSubfieldArray($currentField, [$conditionSubfield]);
-                foreach($conditionValue as $condValue) {
-                    if (!in_array($condValue, $check)) {
-                        continue 3;
-                    }
+                if(!array_intersect($conditionValue, $check)) {
+                    continue 2;
                 }
             }
             $next = $this->getSubfieldArray($currentField, $subfields, $concat, $separator);

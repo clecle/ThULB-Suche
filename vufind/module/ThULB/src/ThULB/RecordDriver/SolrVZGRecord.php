@@ -143,8 +143,8 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $leader = $this->getMarcReader()->getLeader();
-        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN, 'e' => 'a']);
-        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => self::LIBRARY_ILN]);
+        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => static::LIBRARY_ILN, 'e' => 'a']);
+        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => static::LIBRARY_ILN]);
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && count($allCopies) !== count($ordered));
@@ -161,8 +161,7 @@ class SolrVZGRecord extends SolrMarc
             $shortTitle = $this->getFormattedMarcData('245a : 245b ( / 245c)') ?:
                               $this->getFormattedMarcData('490v: 490a');
 
-            if ($shortTitle === '')
-            {
+            if ($shortTitle === '') {
                 $shortTitle = isset($this->fields['title_short']) ?
                     is_array($this->fields['title_short']) ?
                     $this->fields['title_short'][0] : $this->fields['title_short'] : '';
@@ -347,7 +346,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getThuBiblioClassification()
     {
-        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => self::LIBRARY_ILN]);
+        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => static::LIBRARY_ILN]);
         $thuBib = array();
 
         foreach($classNumbers as $classNumber) {
@@ -555,8 +554,8 @@ class SolrVZGRecord extends SolrMarc
 
         $partInfo = '';
         for ($i = 0; $i < $numOfEntries; $i++) {
-            $n = (isset($nSubfields[$i]) && !in_array($nSubfields[$i], self::$defaultPlaceholders)) ? $nSubfields[$i] : '';
-            $p = (isset($pSubfields[$i]) && !in_array($pSubfields[$i], self::$defaultPlaceholders)) ? $pSubfields[$i] : '';
+            $n = (isset($nSubfields[$i]) && !in_array($nSubfields[$i], static::$defaultPlaceholders)) ? $nSubfields[$i] : '';
+            $p = (isset($pSubfields[$i]) && !in_array($pSubfields[$i], static::$defaultPlaceholders)) ? $pSubfields[$i] : '';
             $separator = ($n && $p) ? ': ' : '';
             $partInfo .= (($i > 0 && ($n || $p)) ? ' ; ' : '') .
                              $n . $separator . $p;
@@ -1116,14 +1115,14 @@ class SolrVZGRecord extends SolrMarc
             } else {
                 $value = empty ($data) ? $this->getFirstFieldValue($fieldNumber, [$subfieldChar]) : null;
             }
-            $value = ($ignorePlaceholders && !is_null($value) && in_array($value, self::$defaultPlaceholders)) ? null : $value;
+            $value = ($ignorePlaceholders && !is_null($value) && in_array($value, static::$defaultPlaceholders)) ? null : $value;
             if (!is_null($value)) {
                 $marcData[$fieldNumber . $subfieldChar] = $value;
                 $replacement = 'T';
                 // check for separators in the marc field and marc the separator
                 // in the format string as removable
                 if ($removeSeparators) {
-                    foreach (self::$defaultSeparators as $separator) {
+                    foreach (static::$defaultSeparators as $separator) {
                         if (substr($value, 0, strlen($separator)) === $separator) {
                             $replacement = 'ST';
                         } else if ((substr($value, -strlen($separator)) === $separator)) {
@@ -1220,7 +1219,7 @@ class SolrVZGRecord extends SolrMarc
             switch (trim($linkType)){
             case 'id':
                 foreach ($linkFields as $current) {
-                    $bibLink = trim($this->getIdFromLinkingField($current, self::PPN_LINK_ID_PREFIX), '*');
+                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX), '*');
                     if ($bibLink) {
                         $link = ['type' => 'bib', 'value' => $bibLink];
                     }
@@ -1244,7 +1243,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'dnb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, self::DNB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX);
                     if ($bibLink) {
                         $link = ['type' => 'dnb', 'value' => $bibLink];
                     }
@@ -1252,7 +1251,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'zdb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, self::ZDB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX);
                     if ($bibLink) {
                         $link = ['type' => 'zdb', 'value' => $bibLink];
                     }
@@ -1393,7 +1392,7 @@ class SolrVZGRecord extends SolrMarc
                 ]);
                 if(count($secondaryFields) > 0) {
                     $rawId = $this->getSubfield($secondaryFields[0], 'w');
-                    if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+                    if (strpos($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')') === 0) {
                         $currentArray['id'] = substr($rawId, 8);
                     }
                 }
@@ -1417,7 +1416,7 @@ class SolrVZGRecord extends SolrMarc
 
             // Do we have IDs to link the field to
             $rawId = $this->getSubfield($currentField, 'w');
-            if (strpos($rawId, '(' . self::PPN_LINK_ID_PREFIX . ')') === 0) {
+            if (strpos($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')') === 0) {
                 $currentArray['id'] = substr($rawId, 8);
             }
 
@@ -1760,7 +1759,7 @@ class SolrVZGRecord extends SolrMarc
 
       /* extract all LINKS form MARC 981 */
       $links = $this->getConditionalFieldArray(
-          '981', ['1', 'y', 'r', 'w'], true, self::SEPARATOR, ['2' => self::LIBRARY_ILN]);
+          '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]);
 
       if ( !empty($links) ){
         /* what kind of LINKS do we have?
@@ -1768,7 +1767,7 @@ class SolrVZGRecord extends SolrMarc
          */
         foreach ( $links as $link ) {
           $more = "";
-          $linkElements = explode(self::SEPARATOR, $link);
+          $linkElements = explode(static::SEPARATOR, $link);
           $id = $linkElements[0] ?? '';
           $txt = $linkElements[1] ?? '';
           $url = $linkElements[2] ?? '';
@@ -1793,12 +1792,12 @@ class SolrVZGRecord extends SolrMarc
            * @details for each link is common catalogisation till RDA-introduction
            */
           $details = $this->getConditionalFieldArray(
-              '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
+              '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]);
 
           if ( empty($details) ) {
             /* new catalogisation rules with RDA: One Link and single Details for each part */
             $details = $this->getConditionalFieldArray(
-                '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN]);
+                '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
           }
           if ( !empty($details) ) {
             foreach ($details as $detail) {
@@ -1809,7 +1808,7 @@ class SolrVZGRecord extends SolrMarc
           }
 
           $corporates = $this->getConditionalFieldArray(
-              '982', ['a'], false, '', ['2' => self::LIBRARY_ILN, '1' => $id]);
+              '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]);
           if ( !empty($corporates) ) {
             foreach ($corporates as $corporate) {
               $more .= $corporate."<br>";
@@ -1829,10 +1828,10 @@ class SolrVZGRecord extends SolrMarc
           $txt_sanitized = $url_data['host'];
 
           $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
-          $retVal[$id] = $txt_sanitized . self::SEPARATOR .
-              $txt . self::SEPARATOR .
-              $url . self::SEPARATOR .
-              $more . self::SEPARATOR .
+          $retVal[$id] = $txt_sanitized . static::SEPARATOR .
+              $txt . static::SEPARATOR .
+              $url . static::SEPARATOR .
+              $more . static::SEPARATOR .
               $tmp;
         }
       } else {
@@ -1856,9 +1855,9 @@ class SolrVZGRecord extends SolrMarc
       list($txt, $epn) = explode(":epn:", $epn_str);
       /* extract all Comments form MARC 980 */
       $comments_g = $this->getConditionalFieldArray(
-          '980', ['g', 'k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
+          '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn] );
       $comments_k = $this->getConditionalFieldArray(
-          '980', ['k'], false, '', ['2' => self::LIBRARY_ILN, 'b' => $epn] );
+          '980', ['k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn] );
 
       $comments = array($comments_g[0], $comments_k[0]);
       return $comments;
@@ -2369,7 +2368,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getLocalClassification() {
         $fields = $this->getFieldsConditional('983', [
-            $this->createFieldCondition('subfield', '2', '==', self::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '2', '==', static::LIBRARY_ILN),
             $this->createFieldCondition('subfield', '8', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);
@@ -2389,7 +2388,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getSource()
     {
-        if(in_array('GBV_ILN_' . self::LIBRARY_ILN, $this->fields['collection_details'])) {
+        if(in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
             return '';
         }
 

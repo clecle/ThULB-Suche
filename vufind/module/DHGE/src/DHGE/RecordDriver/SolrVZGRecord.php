@@ -66,7 +66,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      */
     public function getLocalClassification() {
         $fields = $this->getFieldsConditional('983', [
-            $this->createFieldCondition('subfield', '2', 'in', self::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '2', 'in', static::LIBRARY_ILN),
             $this->createFieldCondition('subfield', '8', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);
@@ -86,7 +86,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      */
     public function getSource()
     {
-        foreach(self::LIBRARY_ILN as $iln) {
+        foreach(static::LIBRARY_ILN as $iln) {
             if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
                 return '';
             }

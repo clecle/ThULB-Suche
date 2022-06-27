@@ -201,8 +201,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $pdf->Output('F', $savePath . $fileName);
         }
         catch (ErrorException $e) {
-            $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
-
             if($this->logger != null && is_callable($this->logger, 'logException')) {
                 $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
             }

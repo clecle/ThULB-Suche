@@ -343,14 +343,13 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
                 $errors[] = 'grantUntil';
             }
 
-            $user = $this->getUser();
             $fileName = sprintf('%s_%s.pdf', $user['username'], time());
-            if(!$errors && $this->createLetterOfAuthorisationPDF($request, $fileName) &&
+            if(!$errors && $this->createLetterOfAuthorisationPDF($request, $fileName, $ilsUser) &&
                     $this->sendLetterOfAuthorisationEmail($user['firstname'] . ' ' . $user['lastname'], $user['email'], $fileName)) {
-                $this->flashMessenger(true, 'Letter of Authorisation was sent to your email address');
+                $this->flashMessenger()->addSuccessMessage('Letter of Authorisation was sent to your email address');
             }
             else {
-                $this->addFlashMessage(false, 'Letter of Authorisation could not be sent to your email address');
+                $this->flashMessenger()->addErrorMessage('Letter of Authorisation could not be sent to your email address');
             }
         }
 
@@ -360,12 +359,13 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     /**
      * Create the pdf of a letter of authorisation.
      *
-     * @param Request $request Request with the form data
-     * @param string $fileName Name to save the pdf with.
+     * @param Request $request  Request with the form data
+     * @param string $fileName  Name to save the pdf with.
+     * @param string[] $ilsUser Userdata from ILS
      *
      * @return bool
      */
-    protected function createLetterOfAuthorisationPDF(Request $request, string $fileName) : bool {
+    protected function createLetterOfAuthorisationPDF(Request $request, string $fileName, array $ilsUser) : bool {
         try {
             $user = $this->getUser();
 
@@ -388,7 +388,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             $pdf->setIssuerEMail($user['email']);
             $pdf->setIssuerName($user['firstname'] . ' ' . $user['lastname']);
             $pdf->setIssuerUserNumber($user['username']);
-            $pdf->setIssuerAddress(explode(',', $this->getILS()->getMyProfile($this->catalogLogin())['address1'] ?? ''));
+            $pdf->setIssuerAddress(explode(',', $ilsUser['address1'] ?? ''));
 
             $pdf->create();
             $pdf->Output('F', $savePath . $fileName);

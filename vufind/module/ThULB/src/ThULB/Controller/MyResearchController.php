@@ -327,11 +327,16 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
 
         $errors = [];
         $request = $this->getRequest();
-        if($request->isPost() && !$request->getPost('mylang')) {
+        $user = $this->getUser();
+        $ilsUser = $this->getILS()->getMyProfile($this->catalogLogin());
+        if ($ilsUser['statuscode'] == 6) {
+            $this->flashMessenger()->addErrorMessage('you are not allowed to issue a letter of authorisation');
+        }
+        elseif ($request->isPost() && !$request->getPost('mylang')) {
             // validate form
             $requiredFields = ['firstname', 'lastname', 'grantUntil', 'check1', 'check2'];
-            foreach($requiredFields as $field) {
-                if(!$request->getPost($field)) {
+            foreach ($requiredFields as $field) {
+                if (!$request->getPost($field)) {
                     $errors[] = $field;
                 }
             }

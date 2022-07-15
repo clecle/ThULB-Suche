@@ -119,4 +119,28 @@ class Results extends OriginalResults
         // Send back data:
         return $ret;
     }
+
+    /**
+     * Process spelling suggestions from the results object
+     *
+     * @param array $spelling Suggestions from Summon
+     *
+     * @return void
+     */
+    protected function processSpelling($spelling) : void
+    {
+        $this->suggestions = [];
+        foreach ($spelling as $current) {
+            if(!isset($current['originalQuery']) && isset($current['suggestion'])) {
+                $current = $current['suggestion'];
+            }
+            if (!isset($this->suggestions[$current['originalQuery']])) {
+                $this->suggestions[$current['originalQuery']] = [
+                    'suggestions' => []
+                ];
+            }
+            $this->suggestions[$current['originalQuery']]['suggestions'][]
+                = $current['suggestedQuery'];
+        }
+    }
 }

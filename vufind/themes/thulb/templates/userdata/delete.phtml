@@ -1,0 +1,45 @@
+<?php $this->layout()->searchbox = false; ?>
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <?php echo $this->flashmessages(); ?>
+
+  <form action="/Userdata/delete" method="post">
+    <table>
+      <tr>
+        <td class="tag-col pt-2">Nutzernummer</td>
+        <td class="text-col pt-2">
+          <input type="text" name="userNumber" value="<?= $userNumber; ?>" />
+        </td>
+      </tr>
+      <tr>
+        <td class="tag-col pt-2">&nbsp;</td>
+        <td class="text-col pt-2">
+          <input type="submit" value="Prüfen" class="btn btn-primary"/>
+        </td>
+      </tr>
+    </table>
+  </form>
+
+  <?php if(!empty($checkData)): ?>
+    <div class="dataCheck">
+      <?php $userDataToDisplay = ['username' => 'Nutzernummer', 'firstname' => 'Vorname', 'lastname' => 'Nachname', 'email' => 'E-Mail']; ?>
+      <h2>zu löschender Nutzer:</h2>
+      <table>
+        <?php foreach($userDataToDisplay as $field => $desc): ?>
+          <tr>
+            <td class="bold"><?= $desc; ?>:</td>
+            <td><?= $checkData[$field] ?? ''; ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    </div>
+
+    <form action="/Userdata/confirmDelete" method="post" class="pt-2">
+      <input type="hidden" name="userNumber" value="<?= $userNumber; ?>">
+      <input type="submit" value="<?= $this->transEsc('Delete'); ?>" class="btn btn-primary" />
+    </form>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>">
+  <?=$this->render("admin/menu.phtml")?>
+</div>

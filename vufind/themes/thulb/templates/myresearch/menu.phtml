@@ -47,7 +47,7 @@
     </a>
   <?php endif; ?>
   <a href="<?= $this->url('myresearch-letterofauthorisation') ?>" class="<?= $this->active == 'letterofauthorisation' ? ' active' : ''?>">
-    <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Vollmacht') ?>
+    <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Create Letter of Authorisation') ?>
   </a>
 </div>
 <?php if ($this->userlist()->getMode() !== 'disabled' && $user = $this->auth()->isLoggedIn()): ?>

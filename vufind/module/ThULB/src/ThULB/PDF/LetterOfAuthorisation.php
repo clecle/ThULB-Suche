@@ -107,11 +107,12 @@ class LetterOfAuthorisation extends tFPDF
         $this->addSpace(10);
         $this->addText('Registered_user_and_issuer', $this->widthContentSection);
         $this->addSpace();
+        $this->addText($this->issuerName, $this->widthContentSection);
         for($i = 0; $i < 3; $i++) {
             $this->addText($this->issuerAddress[$i] ?? '', $this->widthContentSection);
         }
         $this->addSpace();
-        $this->addText($this->issuerName, $this->widthContentSection);
+        $this->addText($this->issuerEMail, $this->widthContentSection);
         $this->addSpace();
         $this->addText('username', $this->widthContentSection, ['%%username%%' => $this->issuerUserNumber]);
         $this->addSpace();
@@ -133,7 +134,7 @@ class LetterOfAuthorisation extends tFPDF
         $this->addText('Date', $this->widthContentSection);
         $this->Line($this->printBorderLeft + 15, $this->GetY(), $contentSectionMid - 10, $this->GetY());
         $this->SetXY($contentSectionMid - 5, $y);
-        $this->addText('Signature', $this->widthContentSection);
+        $this->addText('Your Signature', $this->widthContentSection);
         $this->Line($contentSectionMid + 20, $this->GetY(),$this->printBorderLeft + $this->widthContentSection, $this->GetY());
     }
 

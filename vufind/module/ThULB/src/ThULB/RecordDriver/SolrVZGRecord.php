@@ -2386,13 +2386,15 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getSource()
     {
-        if(in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-            return '';
+        if (in_array('KXP', $this->fields['collection'])) {
+            if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
+                return 'K10plus-Verbundkatalog';
+            } elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
+                return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+            }
         }
-
-        // display source only for selected records
-        if(in_array('GBV_ILN_2403', $this->fields['collection_details'])) {
-            return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+        elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
+            return 'Digitale Bibliothek Thüringen (DBT)';
         }
 
         return '';

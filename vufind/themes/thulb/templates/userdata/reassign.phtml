@@ -1,0 +1,179 @@
+<?php $this->layout()->searchbox = false; ?>
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <?php echo $this->flashmessages(); ?>
+
+  <form action="/Userdata/reassign" method="post">
+    <table>
+      <tbody>
+        <tr>
+          <td class="tag-col pt-2">Alte Nutzernummer</td>
+          <td class="text-col pt-2">
+            <input type="text" name="oldUserNumber" value="<?= $oldUserNumber; ?>" />
+          </td>
+        </tr>
+        <tr>
+          <td class="tag-co pt-2l">Neue Nutzernummer</td>
+          <td class="text-col pt-2">
+            <input type="text" name="newUserNumber" value="<?= $newUserNumber; ?>" />
+          </td>
+        </tr>
+        <tr>
+          <td class="tag-col pt-2">&nbsp;</td>
+          <td class="text-col pt-2">
+            <input type="submit" value="Prüfen" class="btn btn-primary"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+  <?php if(!empty($checkData)): ?>
+  <div class="dataCheck">
+    <?php $userDataToDisplay = ['username' => 'Nutzernummer', 'firstname' => 'Vorname', 'lastname' => 'Nachname', 'email' => 'E-Mail']; ?>
+    <h2>zu ändernde Daten:</h2>
+
+    <h4>Nutzerdaten</h4>
+    <table>
+      <thead>
+        <tr class="bold">
+          <td>&nbsp;</td>
+          <td>Alter Nutzer</td>
+          <td>Neuer Nutzer</td>
+        </tr>
+      </thead>
+      <tbody>
+      <?php foreach($userDataToDisplay as $field => $desc): ?>
+        <tr>
+          <td class="bold"><?= $desc; ?>:</td>
+          <td><?= $checkData['oldUser'][$field]; ?></td>
+          <?php if($checkData['newUser']['id'] ?? false): ?>
+            <td><?= $checkData['newUser'][$field]; ?></td>
+          <?php elseif($field == 'username'): ?>
+            <td><span class="alert">Nutzer nicht in der Datenbank vorhanden.</span></td>
+          <?php else: ?>
+            <td>&nbsp;</td>
+          <?php endif;; ?>
+        </tr>
+      <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <?php if(!empty($comments = $checkData['comments'])): ?>
+      <h4>Kommentare (<?= count($comments); ?>):</h4>
+      <table>
+        <thead>
+          <tr>
+            <td>Titel</td>
+            <td>Kommentar</td>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($comments as $comment): ?>
+            <tr>
+              <td><?= $comment['record_id']; ?></td>
+              <td><?= $comment['comment']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <!-- Unvollständig -->
+    <?php if(!empty($resourceTags = $checkData['resourcetags'])): ?>
+      <h4>Stichwörter (<?= count($resourceTags); ?>):</h4>
+    <?php endif; ?>
+
+    <?php if(!empty($searches = $checkData['search'])): ?>
+      <h4>Gespeicherte Suchanfragen (<?= count($searches); ?>):</h4>
+      <table>
+        <thead>
+          <tr>
+            <td>Index</td>
+            <td>Suchstring</td>
+          </tr>
+        </thead>
+        <?php foreach($searches as $search): ?>
+          <tr>
+            <td><?= $search['searchClass']; ?></td>
+            <td><?= $search['queryString']; ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userCards = $checkData['usercard'])): ?>
+      <h4>Nutzerkarten (<?= count($userCards); ?>):</h4>
+      <table>
+        <thead>
+          <tr>
+            <td>Kartenname</td>
+            <td>Bibliothek</td>
+            <td>Nutzername</td>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($userCards as $userCard): ?>
+            <tr>
+              <td><?= $userCard['card_name']; ?></td>
+              <td><?= $userCard['home_library']; ?></td>
+              <td><?= $userCard['cat_username']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userLists = $checkData['userlist'])): ?>
+      <h4>Favoritenlisten (<?= count($userLists); ?>):</h4>
+      <table>
+        <thead>
+          <tr>
+            <td>Name</td>
+            <td>Beschreibung</td>
+            <td>Einträge</td>
+            <td>Öffentlich</td>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($userLists as $list): ?>
+            <tr>
+              <td><?= $list['title']; ?></td>
+              <td><?= $list['description'] ?? ''; ?></td>
+              <td><?= $list['entries'] ?? 0; ?></td>
+              <td><?= $list['public'] ? 'Ja' : 'Nein'; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userResources = $checkData['userresource'])): ?>
+      <h4>Favoriten (<?= count($userResources); ?>):</h4>
+      <table>
+        <thead>
+          <tr>
+            <td>Liste</td>
+            <td>Resource</td>
+          </tr>
+        </thead>
+        <?php foreach($userResources as $resource): ?>
+          <tr>
+            <td><?= $resource['list_title']; ?></td>
+            <td><?= $resource['record_id']; ?></td>
+          </tr>
+        <?php endforeach; ?>
+      </table>
+    <?php endif; ?>
+
+    <form action="/Userdata/save" method="post" class="pt-2">
+      <input type="hidden" name="oldUserNumber" value="<?= $oldUserNumber; ?>">
+      <input type="hidden" name="newUserNumber" value="<?= $newUserNumber; ?>">
+      <input type="submit" value="<?= $this->transEsc('Save'); ?>" class="btn btn-primary" />
+    </form>
+  </div>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>">
+  <?=$this->render("admin/menu.phtml")?>
+</div>

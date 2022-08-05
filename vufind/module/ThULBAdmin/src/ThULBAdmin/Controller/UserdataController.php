@@ -1,6 +1,6 @@
 <?php
 
-namespace ThULB\Controller;
+namespace ThULBAdmin\Controller;
 
 use Laminas\Db\Sql\Select;
 use VuFind\Controller\AbstractBase;
@@ -9,7 +9,7 @@ use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 
-class ReassignUserdataController extends AbstractBase {
+class UserdataController extends AbstractBase {
     use LoggerAwareTrait;
 
     /* @var \VuFind\Db\Table\PluginManager */
@@ -24,7 +24,7 @@ class ReassignUserdataController extends AbstractBase {
      *
      * @param ServiceLocatorInterface $sm Service manager
      */
-    public function __construct(ServiceLocatorInterface $sm) {
+    public function __construct (ServiceLocatorInterface $sm) {
         parent::__construct($sm);
 
         $this->accessPermission = 'access.AdminModule';
@@ -58,7 +58,7 @@ class ReassignUserdataController extends AbstractBase {
         );
     }
 
-    public function homeAction() {
+    public function reassignAction () {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -74,7 +74,7 @@ class ReassignUserdataController extends AbstractBase {
                 $userTable = $this->dbTables->get('User');
 
                 $checkData['oldUser'] = $oldUser = $userTable->getByUsername($oldUserNumber)->toArray();
-                $checkData['newUser'] = $newUser = $userTable->getByUsername($newUserNumber)->toArray();
+                $checkData['newUser'] = $userTable->getByUsername($newUserNumber)->toArray();
 
                 foreach($this->dataTables as $table) {
                     $name = $table['name'];
@@ -134,8 +134,8 @@ class ReassignUserdataController extends AbstractBase {
                     /* @var $userTable \VuFind\Db\Table\User */
                     $userTable = $this->dbTables->get('User');
 
-                    $oldUser = $userTable->getByUsername($oldUserNumber);
-                    $newUser = $userTable->getByUsername($newUserNumber);
+                    $oldUser = $userTable->getByUsername($oldUserNumber, false);
+                    $newUser = $userTable->getByUsername($newUserNumber, false);
 
                     if (!$newUser->offsetExists('id')) {
                         $newUser = $userTable->createRowForUsername($newUserNumber);
@@ -158,5 +158,46 @@ class ReassignUserdataController extends AbstractBase {
         }
 
         return $this->redirect()->toUrl('/ReassignUserdata');
+    }
+
+    public function deleteAction () {
+        if(!$this->getAuthManager()->isLoggedIn()) {
+            return $this->forceLogin();
+        }
+
+        $checkData = [];
+
+        if($this->getRequest()->isPost()) {
+            $userNumber = $this->getRequest()->getPost('userNumber');
+            $checkData = $this->dbTables
+                ->get('User')
+                ->getByUsername($userNumber, false);
+
+            if(!$checkData) {
+                $this->flashMessenger()->addmessage('User not found', 'error');
+            }
+        }
+
+        return new ViewModel([
+            'userNumber' => $userNumber ?? '',
+            'checkData' => $checkData ? $checkData->toArray() : null
+        ]);
+    }
+
+    public function confirmDeleteAction () {
+
+        if($this->getRequest()->isPost()) {
+            $userNumber = $this->getRequest()->getPost('userNumber');
+
+            if($this->dbTables->get('User')->getByUsername($userNumber)->delete()) {
+                $this->flashMessenger()->addmessage('User deleted', 'success');
+            }
+            else {
+                $this->flashMessenger()->addmessage('Could not delete user', 'error');
+            }
+
+        }
+
+        return $this->redirect()->toUrl('/Userdata/delete');
     }
 }

@@ -1,13 +1,12 @@
 <?php
 
-namespace ThULB\Controller;
+namespace ThULBAdmin\Controller;
 
 use Exception;
 use VuFind\Controller\AbstractBase;
 use VuFind\Log\LoggerAwareTrait;
 use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 
 class DynMessagesController extends AbstractBase
@@ -46,7 +45,7 @@ class DynMessagesController extends AbstractBase
         );
     }
 
-    public function homeAction() {
+    public function editAction() {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -85,7 +84,7 @@ class DynMessagesController extends AbstractBase
             }
         }
 
-        return $this->redirect()->toUrl('/dynMessages');
+        return $this->redirect()->toUrl('/DynMessages/edit');
     }
 
     /**

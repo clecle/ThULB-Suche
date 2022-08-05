@@ -76,7 +76,6 @@ class OnlineContent extends AbstractHelper
             'Summon' => array (
                 'Libkey' => 'doiLinks',
                 'Holding' => 'driver',
-                'Summon' => 'driver'
             )
         );
 

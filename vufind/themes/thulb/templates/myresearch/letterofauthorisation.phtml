@@ -31,7 +31,7 @@
         <input id="lastname" type="text" name="lastname" class="form-control" required placeholder="<?= $this->transEsc('Last Name'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('lastname'))?>" />
       </div>
       <div class="col-lg-4<?= in_array('grantUntil', $errors) ? ' has-error' : ''; ?>">
-        <label for="grantUntil" class="font-weight-bold"><?= $this->transEsc('Granted Until'); ?></label>
+        <label for="grantUntil" class="font-weight-bold"><?= $this->transEsc('Valid Until'); ?></label>
         <input id="grantUntil" type="date" name="grantUntil" class="form-control" required placeholder="<?= $this->transEsc('Granted Until'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
       </div>
     </div>

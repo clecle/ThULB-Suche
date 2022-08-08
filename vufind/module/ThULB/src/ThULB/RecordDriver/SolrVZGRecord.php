@@ -2382,22 +2382,26 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Return a source for the record.
      *
-     * @return string
+     * @return array
      */
     public function getSource()
     {
+        $source = [];
         if (in_array('KXP', $this->fields['collection'])) {
             if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-                return 'K10plus-Verbundkatalog';
-            } elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+                $source['name'] = 'K10plus-Verbundkatalog';
+                $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+            }
+            elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
+                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
             }
         }
         elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
-            return 'Digitale Bibliothek Thüringen (DBT)';
+            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
+            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
         }
 
-        return '';
+        return $source;
     }
 
     public function isOpenAccess() {

@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class GeneralNotesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Anmerkungen';
+    protected $sheetName = 'Anmerkungen zur Veröffentlich';
     protected $metadataKey = 'Item Description';
     protected $recordDriverFunction = 'getGeneralNotes';
 }

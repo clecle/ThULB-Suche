@@ -49,10 +49,8 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
     use \VuFindTest\Feature\SearchServiceTrait;
 
-//    const FINDEX_REQUEST_PATH = '/index/31/GBV_ILN_31/select';
-//    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_GVK"&q=id:';
-    const FINDEX_REQUEST_PATH = '/31/GBV_ILN_31/select';
-    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:"GBV_ILN_31"+AND+collection_details:"GBV_KXP"&q=id:';
+    const FINDEX_REQUEST_PATH = '/31/URMEL/select';
+    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:((GBV_ILN_31+AND+GBV_KXP)+OR+GBV_ILN_2403+OR+UrMEL)&q=id:';
 
     protected $translationLocale = 'de';
 

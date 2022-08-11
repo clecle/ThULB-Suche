@@ -162,9 +162,7 @@ class Summon extends OriginalSummon
      */
     public function isOpenAccess()
     {
-        return (array_key_exists('IsOpenAccess', $this->fields) && $this->fields['IsOpenAccess'])
-                ? $this->fields['IsOpenAccess'][0]
-                : false;
+        return $this->fields['IsOpenAccess'][0] ?? false;
     }
 
     /**

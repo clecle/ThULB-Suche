@@ -2405,7 +2405,7 @@ class SolrVZGRecord extends SolrMarc
     }
 
     public function isOpenAccess() {
-        return (bool) $this->getFullTextURL();
+        return ($this->fields['isOA_bool'] ?? 'false') == 'true';
     }
 
 //    Commented out for possible future use.

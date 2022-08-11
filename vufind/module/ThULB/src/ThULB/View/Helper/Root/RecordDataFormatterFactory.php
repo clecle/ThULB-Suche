@@ -178,11 +178,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Finding Aid', 'getFindingAids');
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
-        $spec->setTemplateLine('RVK notation', 'getRvkNotation', 'data-rvkNotation.phtml', [
-            'labelFunction' => function ($data) {
-                return count($data) > 1 ? 'RVK notations' : 'RVK notation';
-            }
-        ]);
+        $spec->setTemplateLine('RVK notation', 'getRvkNotation', 'data-rvkNotation.phtml');
         $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');

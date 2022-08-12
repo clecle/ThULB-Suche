@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class PublicationDetailsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Publikationsangaben';
+    protected $sheetName = 'Publikation';
     protected $metadataKey = 'Publication Metadata';
     protected $recordDriverFunction = 'getPublicationDetails';
     protected $template = 'data-publicationDetails.phtml';

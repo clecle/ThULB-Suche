@@ -2289,6 +2289,13 @@ class SolrVZGRecord extends SolrMarc
             );
         }
 
+        if(empty($retValue) && $this->isOpenAccess()) {
+            $retValue[] = array(
+                'desc' => 'Open Access',
+                'link' => false
+            );
+        }
+
         return $retValue;
     }
 
@@ -2380,28 +2387,58 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get the local subject terms of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getLocalSubjects() : array {
+        $fields = $this->getFieldsConditional('982', [
+            $this->createFieldCondition('subfield', '2', '==', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '1', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
+    /**
      * Return a source for the record.
      *
-     * @return string
+     * @return array
      */
     public function getSource()
     {
+        $source = [];
         if (in_array('KXP', $this->fields['collection'])) {
             if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-                return 'K10plus-Verbundkatalog';
-            } elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+                $source['name'] = 'K10plus-Verbundkatalog';
+                $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+            }
+            elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
+                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
             }
         }
         elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
-            return 'Digitale Bibliothek Thüringen (DBT)';
+            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
+            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
+        }
+        elseif (in_array('NL', $this->fields['collection'])) {
+            $source['name'] = 'Nationallizenz';
+            $source['url'] = 'https://www.nationallizenzen.de/';
         }
 
-        return '';
+        return $source;
     }
 
     public function isOpenAccess() {
-        return (bool) $this->getFullTextURL();
+        return ($this->fields['isOA_bool'] ?? 'false') == 'true';
     }
 
 //    Commented out for possible future use.

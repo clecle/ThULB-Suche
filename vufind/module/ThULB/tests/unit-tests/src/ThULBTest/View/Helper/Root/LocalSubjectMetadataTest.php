@@ -25,15 +25,10 @@
 
 namespace ThULBTest\View\Helper\Root;
 
-/**
- * Test class for the record data formatters general notes view helper
- * functionality.
- *
- * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
- */
-class GeneralNotesMetadataTest extends AbstractRecordDataFormatterTest
+class LocalSubjectMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Anmerkungen zur Veröffentlich';
-    protected $metadataKey = 'Item Description';
-    protected $recordDriverFunction = 'getGeneralNotes';
+    protected $sheetName = 'Lokale Schlagwörter';
+    protected $metadataKey = 'Local subject terms';
+    protected $recordDriverFunction = 'getLocalSubjects';
+    protected $template = 'data-localSubjects.phtml';
 }

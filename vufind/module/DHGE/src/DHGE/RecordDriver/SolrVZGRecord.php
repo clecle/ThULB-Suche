@@ -86,18 +86,28 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      */
     public function getSource()
     {
-        foreach(static::LIBRARY_ILN as $iln) {
-            if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
-                return '';
+        $source = [];
+        if (in_array('KXP', $this->fields['collection'])) {
+            foreach(static::LIBRARY_ILN as $iln) {
+                if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
+                    $source['name'] = 'K10plus-Verbundkatalog';
+                    $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+                }
+            }
+            if (!$source && in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
+                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
             }
         }
-
-        // display source only for selected records
-        if(in_array('GBV_ILN_2403', $this->fields['collection_details'])) {
-            return 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+        elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
+            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
+            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
+        }
+        elseif (in_array('NL', $this->fields['collection'])) {
+            $source['name'] = 'Nationallizenz';
+            $source['url'] = 'https://www.nationallizenzen.de/';
         }
 
-        return '';
+        return $source;
     }
 
     /**

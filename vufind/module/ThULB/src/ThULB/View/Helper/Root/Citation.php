@@ -18,7 +18,7 @@ class Citation extends OriginalCitation
         $authorRoles = array_merge($authorRoles, (array) $driver->tryMethod('getSecondaryAuthorsRoles'));
 
         for($i = count($authorRoles) - 1; $i >= 0; $i--) {
-            if(in_array($authorRoles[$i], ['dgs', 'dgg'])) {
+            if(in_array($authorRoles[$i], ['dgs', 'dgg', 'rev'])) {
                 unset($this->details['authors'][$i]);
             }
         }

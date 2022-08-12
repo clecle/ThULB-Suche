@@ -2400,6 +2400,10 @@ class SolrVZGRecord extends SolrMarc
             $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
             $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
         }
+        elseif (in_array('NL', $this->fields['collection'])) {
+            $source['name'] = 'Nationallizenz';
+            $source['url'] = 'https://www.nationallizenzen.de/';
+        }
 
         return $source;
     }

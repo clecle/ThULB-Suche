@@ -2387,6 +2387,28 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get the local subject terms of the record.
+     *
+     * @return array
+     *
+     * @throws File_MARC_Exception
+     */
+    public function getLocalSubjects() : array {
+        $fields = $this->getFieldsConditional('982', [
+            $this->createFieldCondition('subfield', '2', '==', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '1', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
+    /**
      * Return a source for the record.
      *
      * @return array

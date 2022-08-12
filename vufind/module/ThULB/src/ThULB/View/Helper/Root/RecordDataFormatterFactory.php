@@ -180,6 +180,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         $spec->setTemplateLine('RVK notation', 'getRvkNotation', 'data-rvkNotation.phtml');
         $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
+        $spec->setTemplateLine('Local subject terms', 'getLocalSubjects', 'data-localSubjects.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
         $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
         $spec->setTemplateLine('Source', true, 'data-source.phtml',

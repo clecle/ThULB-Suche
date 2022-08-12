@@ -2289,6 +2289,13 @@ class SolrVZGRecord extends SolrMarc
             );
         }
 
+        if(empty($retValue) && $this->isOpenAccess()) {
+            $retValue[] = array(
+                'desc' => 'Open Access',
+                'link' => false
+            );
+        }
+
         return $retValue;
     }
 

@@ -1532,7 +1532,8 @@ class SolrVZGRecord extends SolrMarc
             $retVal[] = array(
                 'link' => $link = $this->getSubfield($url, 'u'),
                 'desc' => $this->translate('Full text online'),
-                'remotetitle' => parse_url($link)['host'] ?? $link
+                'remotetitle' => parse_url($link)['host'] ?? $link,
+                'about' => $this->getSubfield($url, 'x') . ', ' . $this->getSubfield($url, 'z')
             );
         }
 

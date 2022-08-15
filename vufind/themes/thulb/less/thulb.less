@@ -1510,3 +1510,18 @@ body > header {
 .user-icon {
   height: 25px;
 }
+
+div.online-access {
+  margin: 10px 15px;
+}
+
+div.striped {
+  & > div.row {
+    border-top: 1px solid #ddd;
+    padding: 8px 8px 28px;
+
+    &:nth-of-type(odd) {
+      background-color: @table-bg-accent;
+    }
+  }
+}

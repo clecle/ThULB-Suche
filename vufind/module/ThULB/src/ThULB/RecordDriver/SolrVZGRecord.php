@@ -1505,7 +1505,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getFullTextURL()
     {
-        $retVal = false;
+        $retVal = [];
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 0),
@@ -1527,10 +1527,12 @@ class SolrVZGRecord extends SolrMarc
         if(!$urls && in_array('NL', $this->fields['collection'] ?? [])) {
             $urls = $this->getFieldsConditional('856', $basicConditions);
         }
-        if(is_array($urls) && count($urls) >= 1) {
-            $retVal = array(
-                'link' => $this->getSubfield($urls[0], 'u'),
-                'desc' => $this->translate('Full text online')
+
+        foreach($urls ?? [] as $url) {
+            $retVal[] = array(
+                'link' => $link = $this->getSubfield($url, 'u'),
+                'desc' => $this->translate('Full text online'),
+                'remotetitle' => parse_url($link)['host'] ?? $link
             );
         }
 

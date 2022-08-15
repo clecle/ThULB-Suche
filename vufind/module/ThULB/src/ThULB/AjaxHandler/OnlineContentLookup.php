@@ -94,7 +94,7 @@ class OnlineContentLookup extends AbstractBase
 
                     $html[] = trim(
                         $this->phpRenderer->record($result)
-                            ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData])
+                            ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData, 'additionalBtnClass' => 'btn-xs'])
                     );
                 }
                 $response[] = array (

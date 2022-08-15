@@ -54,43 +54,35 @@
 
 <?php // online holdings ?>
 <?php if(!empty($onlineContentLinks)): ?>
-  <div summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
+  <div class="online-access striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
     <?php foreach($onlineContentLinks as $contentLink): ?>
     <div class="row">
       <?php if(empty($contentLink)) continue; ?>
       <?php $linkData = $contentLink['data'] ?? []; ?>
-          <div class="col-md-2 pb-1">
-              <?php // $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
-                <?php if(!empty($contentLink)): ?>
-                  <a class="btn btn-primary access-<?= $contentLink['access'] ?? ''; ?> external-link" href="<?= $contentLink['link']; ?>" target="_blank">
-                      <?php if($contentLink['class'] ?? false): ?>
-                          <i class="<?= $contentLink['class'] ?>"></i>
-                      <?php endif; ?>
-                      <?= $this->transEsc($contentLink['label']); ?>
-                  </a>
-              <?php endif; ?>
-            </div>
-            <div class="col-md-10 pb-1">
-              <?php if($linkData['remotetitle'] ?? false):?>
-                [<?php echo $linkData['remotetitle']; ?>]
-              <?php endif; ?>
+      <div class="col-md-2 pb-1">
+        <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
+      </div>
+      <div class="col-md-10 pb-1">
+        <?php if($linkData['remotetitle'] ?? false):?>
+          [<?php echo $linkData['remotetitle']; ?>]
+        <?php endif; ?>
 
-              <?php /* BESTANDSANGABEN */ ?>
-              <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
+        <?php /* BESTANDSANGABEN */ ?>
+        <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
 
-              <?php /* ANMERKGUNGEN */ ?>
-              <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
+        <?php /* ANMERKGUNGEN */ ?>
+        <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
 
-              <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
-                <div class="item-notes">
-                  <?= $this->transEsc('explain_reference') ?>
-                </div>
-              <?php endif; ?>
-
-              <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
-                <?= $this->render('RecordTab/access/citations.phtml'); ?>
-              <?php endif; ?>
+        <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+          <div class="item-notes">
+            <?= $this->transEsc('explain_reference') ?>
           </div>
+        <?php endif; ?>
+
+        <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
+          <?= $this->render('RecordTab/access/citations.phtml'); ?>
+        <?php endif; ?>
+      </div>
     </div>
     <?php endforeach; ?>
   </div>

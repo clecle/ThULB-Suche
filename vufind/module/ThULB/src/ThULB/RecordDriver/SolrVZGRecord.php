@@ -2425,7 +2425,7 @@ class SolrVZGRecord extends SolrMarc
                 $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
             }
             elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+                $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
             }
         }
         elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {

@@ -290,4 +290,22 @@ class Summon extends OriginalSummon
 
         return $retVal;
     }
+
+    /**
+     * Get access restriction notes for the record.
+     *
+     * @return array
+     */
+    public function getAccessRestrictions() : array
+    {
+        $retValue = [];
+        if($this->isOpenAccess()) {
+            $retValue[] = array(
+                'desc' => 'Open Access',
+                'link' => false
+            );
+        }
+
+        return $retValue;
+    }
 }

@@ -1307,6 +1307,9 @@ div.modal-body .facet-tree-container {
 .pb-1 {
   padding-bottom: 5px;
 }
+.pl-6 {
+  padding-left: 30px !important;
+}
 .pt-2 {
   padding-top: 10px;
 }
@@ -1403,6 +1406,17 @@ form#newpassword .form-group.flex-center {
         background-color: $brand-primary;
         color: white;
       }
+    }
+
+    li > span.menu-group {
+      display: block;
+      color: black;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.428571429;
+      white-space: nowrap;
+      text-decoration: underline;
     }
   }
 

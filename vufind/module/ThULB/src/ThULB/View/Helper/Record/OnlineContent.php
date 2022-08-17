@@ -39,8 +39,7 @@ class OnlineContent extends AbstractHelper
         $this->resolvers = explode(',', $resolver);
     }
 
-    public function __invoke($driver)
-    {
+    public function __invoke(DefaultRecord $driver) : array {
         $cleanDoi = $driver->getCleanDOI();
         $doiData = array();
         if($driver->getSourceIdentifier() == 'Summon' ||
@@ -66,7 +65,7 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    public function getFulltextLink($driver, $doiLinks = []) {
+    public function getFulltextLink(DefaultRecord $driver, array $doiLinks = []) : array {
         $priorities = array (
             'Solr' => array (
                 'Holding' => 'driver',
@@ -96,18 +95,21 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    protected function getSolrFulltextLink($driver) {
-        $data = $driver->tryMethod('getFullTextURL');
+    protected function getSolrFulltextLink(DefaultRecord $driver) : array {
+        $solrFt = [];
 
-        return !$data ? [] : array (
-            array (
+        foreach($driver->tryMethod('getFullTextURL') ?? [] as $fulltextURL) {
+            $solrFt[] = array(
                 'type' => 'fulltext',
                 'label' => 'Full text / PDF',
-                'link' => $data['url'] ?? $data['link'] ?? null,
+                'link' => $fulltextURL['url'] ?? $fulltextURL['link'] ?? null,
                 'source' => $driver->getSourceIdentifier(),
                 'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted',
-            )
-        );
+                'data' => $fulltextURL
+            );
+        }
+
+        return $solrFt;
     }
 
     /**
@@ -117,7 +119,7 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    protected function getLibkeyFulltextLink($doiLinks = []) {
+    protected function getLibkeyFulltextLink(array $doiLinks = []) : array {
         // try to get the fulltext link from libkey/browzine
         foreach ($doiLinks as $doiLink) {
             if ($doiLink['data']['fullTextFile'] ?? false) {
@@ -145,7 +147,7 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    protected function getHoldingFulltextLink($driver) {
+    protected function getHoldingFulltextLink(DefaultRecord $driver) : array {
         $holdings = $driver->getHoldings();
         $holdingFt = array ();
         foreach($holdings['holdings']['Remote']['items'] ?? [] as $onlineHolding) {
@@ -172,7 +174,7 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    public function getBrowseJournalLink($doiLinks = []) {
+    public function getBrowseJournalLink(array $doiLinks = []) : array {
         foreach($doiLinks as $doiLink) {
             if ($doiLink['data']['browzineWebLink'] ?? false) {
                 return array (
@@ -186,9 +188,6 @@ class OnlineContent extends AbstractHelper
                         'data' => $doiLink
                     )
                 );
-
-                // stop after finding the journal link
-                break;
             }
         }
 
@@ -202,7 +201,7 @@ class OnlineContent extends AbstractHelper
      *
      * @return array
      */
-    protected function doiLookup($doi) {
+    protected function doiLookup(string $doi) : array {
         $response = array();
         foreach ($this->resolvers as $resolver) {
             if ($this->pluginManager->has($resolver)) {

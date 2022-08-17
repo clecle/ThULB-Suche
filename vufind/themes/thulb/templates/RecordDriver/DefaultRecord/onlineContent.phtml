@@ -1,5 +1,5 @@
 <?php if(!empty($linkData)): ?>
-  <a class="btn btn-xs btn-primary access-<?= $linkData['access'] ?? ''; ?> external-link" href="<?= $linkData['link']; ?>" target="_blank">
+  <a class="btn <?= $additionalBtnClass ?? ''; ?> btn-primary access-<?= $linkData['access'] ?? ''; ?> external-link" href="<?= $linkData['link']; ?>" target="_blank">
     <?php if($linkData['class'] ?? false): ?>
       <i class="<?= $linkData['class'] ?>"></i>
     <?php endif; ?>

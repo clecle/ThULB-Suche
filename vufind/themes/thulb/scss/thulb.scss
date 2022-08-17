@@ -1301,17 +1301,20 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.mb-2 {
+  margin-bottom: 10px !important;
+}
 .ml-2 {
   margin-left: 10px !important;
 }
 .mr-2 {
   margin-right: 10px !important;
 }
-.mb-2 {
-  margin-bottom: 10px !important;
-}
 .pb-1 {
   padding-bottom: 5px;
+}
+.pl-6 {
+  padding-left: 30px !important;
 }
 .pt-2 {
   padding-top: 10px;
@@ -1409,6 +1412,17 @@ form#newpassword .form-group.flex-center {
         background-color: $brand-primary;
         color: white;
       }
+    }
+
+    li > span.menu-group {
+      display: block;
+      color: black;
+      padding: 3px 20px;
+      clear: both;
+      font-weight: 400;
+      line-height: 1.428571429;
+      white-space: nowrap;
+      text-decoration: underline;
     }
   }
 
@@ -1515,6 +1529,21 @@ body > header {
 
 .user-icon {
   height: 25px;
+}
+
+div.online-access {
+  margin: 10px 15px;
+}
+
+div.striped {
+  & > div.row {
+    border-top: 1px solid #ddd;
+    padding: 8px 8px 28px;
+
+    &:nth-of-type(odd) {
+      background-color: $table-bg-accent;
+    }
+  }
 }
 
 .font-weight-default {

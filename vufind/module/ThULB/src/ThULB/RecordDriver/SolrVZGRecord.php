@@ -1505,7 +1505,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getFullTextURL()
     {
-        $retVal = false;
+        $retVal = [];
         $basicConditions = array(
             $this->createFieldCondition('indicator', 1, '==', 4),
             $this->createFieldCondition('indicator', 2, '==', 0),
@@ -1527,10 +1527,13 @@ class SolrVZGRecord extends SolrMarc
         if(!$urls && in_array('NL', $this->fields['collection'] ?? [])) {
             $urls = $this->getFieldsConditional('856', $basicConditions);
         }
-        if(is_array($urls) && count($urls) >= 1) {
-            $retVal = array(
-                'link' => $this->getSubfield($urls[0], 'u'),
-                'desc' => $this->translate('Full text online')
+
+        foreach($urls ?? [] as $url) {
+            $retVal[] = array(
+                'link' => $link = $this->getSubfield($url, 'u'),
+                'desc' => $this->translate('Full text online'),
+                'remotetitle' => parse_url($link)['host'] ?? $link,
+                'about' => 'externer Link, ' . $this->getSubfield($url, 'z')
             );
         }
 
@@ -2422,7 +2425,7 @@ class SolrVZGRecord extends SolrMarc
                 $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
             }
             elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
+                $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
             }
         }
         elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {

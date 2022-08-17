@@ -1,8 +1,8 @@
 <?php $i = 1; ?>
 <?php foreach ($data as $subject): ?>
   <span class="subject-line" property="keywords">
-    <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($subject)?>%22&amp;type=TopicBrowse">
-        <?= $subject; ?>
+    <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($subject)?>%22&amp;type=Subject">
+      <?= $subject; ?>
     </a>
   </span>
   <?= ($i++ < count($data)) ? '; ' : '' ?>

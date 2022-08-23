@@ -2467,3 +2467,4 @@ class SolrVZGRecord extends SolrMarc
 //        return $formats;
 //    }
 }
+        

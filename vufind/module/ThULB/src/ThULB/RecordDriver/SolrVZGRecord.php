@@ -2428,7 +2428,7 @@ class SolrVZGRecord extends SolrMarc
                 $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
             }
         }
-        elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
+        elseif (in_array('DBT@UrMEL', $this->fields['collection_details'])) {
             $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
             $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
         }
@@ -2467,4 +2467,3 @@ class SolrVZGRecord extends SolrMarc
 //        return $formats;
 //    }
 }
-        

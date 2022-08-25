@@ -61,7 +61,7 @@ class OnlineContent extends AbstractHelper
      * Get the fulltext links for the given record and doi link data.
      *
      * @param DefaultRecord $driver
-     * @param array $doiLinks
+     * @param array         $doiLinks
      *
      * @return array
      */

@@ -115,7 +115,7 @@ class QueriedCookie implements PermissionProviderInterface,
      *
      * @return array
      */
-    public function getPermissions($options)
+    public function getPermissions($options) : array
     {
         // user only gets the permission if all options match (AND)
         foreach ((array)$options as $option) {
@@ -134,9 +134,9 @@ class QueriedCookie implements PermissionProviderInterface,
      *
      * @param string $option Option
      *
-     * @return bool true if a get param matches, false if not
+     * @return bool          true if a get param matches, false if not
      */
-    protected function checkGetParam($option)
+    protected function checkGetParam(string $option) : bool
     {
         // split option on spaces unless escaped with backslash
         $optionParts = $this->splitString($option, ' ', '\\');
@@ -203,9 +203,9 @@ class QueriedCookie implements PermissionProviderInterface,
      * @param string $delimiter Delimiter character
      * @param string $escape    Escape character
      *
-     * @return array split string parts
+     * @return array            split string parts
      */
-    protected function splitString($string, $delimiter, $escape)
+    protected function splitString(string $string, string $delimiter, string $escape) : array
     {
         if ($delimiter === '') {
             return [$string];

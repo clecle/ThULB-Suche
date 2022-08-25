@@ -50,6 +50,7 @@ class ILS extends OriginalILS
      * @param string $password Password to verify
      *
      * @return void
+     *
      * @throws AuthException
      */
     public function validatePasswordAgainstPolicy($password) {

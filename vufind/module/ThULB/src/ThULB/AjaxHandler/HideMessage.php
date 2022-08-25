@@ -23,8 +23,10 @@ class HideMessage extends AbstractBase
      * Writes a timestamp to the session, when the message should be shown again
      *
      * @param Params $params
+     *
+     * @return array
      */
-    public function handleRequest(Params $params) {
+    public function handleRequest(Params $params) : array {
         $identifier = $params->fromPost('message', $params->fromQuery('message'));
 
         if(isset($identifier) && !empty($identifier)) {

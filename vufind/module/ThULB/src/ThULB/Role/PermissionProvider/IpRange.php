@@ -13,7 +13,7 @@ class IpRange extends OriginalIpRange
      *
      * @return array
      */
-    public function getPermissions($options)
+    public function getPermissions($options) : array
     {
         $server = $this->request->getServer();
         $ip = $server->get('HTTP_X_FORWARDED_FOR') ?: $server->get('REMOTE_ADDR');

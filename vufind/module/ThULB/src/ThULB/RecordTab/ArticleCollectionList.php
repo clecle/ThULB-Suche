@@ -51,7 +51,7 @@ class ArticleCollectionList extends CollectionList
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription() : string
     {
         return 'related_articles';
     }
@@ -60,9 +60,10 @@ class ArticleCollectionList extends CollectionList
      * Get the processed search results.
      *
      * @return Results
+     *
      * @throws Exception
      */
-    public function getResults()
+    public function getResults() : Results
     {
         if (null === $this->results) {
             $driver = $this->getRecordDriver();

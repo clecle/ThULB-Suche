@@ -44,7 +44,7 @@ class Factory {
      *
      * @return SummonResults
      */
-    public static function getSummon(ServiceManager $sm)
+    public static function getSummon(ServiceManager $sm) : SummonResults
     {
         $options = $sm->get('VuFind\SearchParamsPluginManager')->get('Summon');
         $searchService = $sm->get('VuFind\Search');
@@ -65,7 +65,7 @@ class Factory {
      *
      * @return SolrResults
      */
-    public static function getSolr(ServiceManager $sm)
+    public static function getSolr(ServiceManager $sm) : SolrResults
     {
         $params = $sm->get('VuFind\SearchParamsPluginManager')->get('Solr');
         $searchService = $sm->get('VuFind\Search');
@@ -75,7 +75,7 @@ class Factory {
         $solr = new SolrResults($params, $searchService, $recordLoader, $facetManager);
         
         $config = $sm->get('VuFind\Config')->get('config');
-        $spellConfig = isset($config->Spelling) ? $config->Spelling : null;
+        $spellConfig = $config->Spelling ?? null;
         $solr->setSpellingProcessor(
             new SpellingProcessor($spellConfig)
         );

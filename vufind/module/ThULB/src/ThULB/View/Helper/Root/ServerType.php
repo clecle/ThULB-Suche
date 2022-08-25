@@ -39,7 +39,7 @@ class ServerType extends AbstractHelper
      *
      * @return String
      */
-    public function __invoke()
+    public function __invoke() : string
     {
         return $_SERVER['VUFIND_ENV'];
     }

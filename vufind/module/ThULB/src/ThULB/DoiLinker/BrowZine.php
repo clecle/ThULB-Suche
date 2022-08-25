@@ -51,7 +51,7 @@ class BrowZine extends OriginalBrowZine
      *
      * @return array
      */
-    public function getLinks(array $doiArray)
+    public function getLinks(array $doiArray) : array
     {
         $baseIconUrl = 'https://assets.thirdiron.com/images/integrations/';
         $response = [];

@@ -67,7 +67,7 @@ class OnlineContentLookup extends AbstractBase
      *
      * @return array [response data, HTTP status code]
      */
-    public function handleRequest(Params $params)
+    public function handleRequest(Params $params) : array
     {
         $response = [];
         $onlineContent = (array) $params->fromPost('onlineContent', []);

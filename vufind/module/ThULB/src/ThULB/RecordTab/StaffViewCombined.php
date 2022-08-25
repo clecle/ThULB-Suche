@@ -39,7 +39,7 @@ use VuFind\RecordTab\AbstractBase;
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 class StaffViewCombined extends AbstractBase {
-    public function getDescription()
+    public function getDescription() : string
     {
         return '.';
     }

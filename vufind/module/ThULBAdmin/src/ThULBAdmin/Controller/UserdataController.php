@@ -58,7 +58,7 @@ class UserdataController extends AbstractBase {
         );
     }
 
-    public function reassignAction () {
+    public function reassignAction() : ViewModel{
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -120,7 +120,7 @@ class UserdataController extends AbstractBase {
      *
      * @return Response
      */
-    public function saveAction() {
+    public function saveAction() : Response {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -160,7 +160,7 @@ class UserdataController extends AbstractBase {
         return $this->redirect()->toUrl('/ReassignUserdata');
     }
 
-    public function deleteAction () {
+    public function deleteAction () : ViewModel {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -184,7 +184,7 @@ class UserdataController extends AbstractBase {
         ]);
     }
 
-    public function confirmDeleteAction () {
+    public function confirmDeleteAction () : Response {
 
         if($this->getRequest()->isPost()) {
             $userNumber = $this->getRequest()->getPost('userNumber');

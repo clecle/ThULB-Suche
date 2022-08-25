@@ -56,7 +56,7 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
      *
      * @return array
      */
-    public function getLinks(array $doiArray)
+    public function getLinks(array $doiArray) : array
     {
         $response = parent::getLinks($doiArray);
         if(!empty($response)) {
@@ -75,9 +75,9 @@ class Unpaywall extends OriginalUnpaywall implements LoggerAwareInterface
      *
      * @param string $doi DOI
      *
-     * @return null|string
+     * @return string|null
      */
-    protected function callApi($doi) {
+    protected function callApi($doi) : ?string{
         try {
             $url = $this->apiUrl . "/" . urlencode($doi) . "?"
                 . http_build_query(['email' => $this->email]);

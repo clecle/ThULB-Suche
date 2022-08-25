@@ -51,7 +51,7 @@ class Factory
      *
      * @return CollectionList
      */
-    public static function getArticleCollectionList(ServiceManager $sm)
+    public static function getArticleCollectionList(ServiceManager $sm) : CollectionList
     {
         return new ArticleCollectionList(
             $sm->get('VuFind\SearchRunner'),
@@ -66,24 +66,9 @@ class Factory
      *
      * @return CollectionList
      */
-    public static function getNonArticleCollectionList(ServiceManager $sm)
+    public static function getNonArticleCollectionList(ServiceManager $sm) : CollectionList
     {
         return new NonArticleCollectionList(
-            $sm->get('VuFind\SearchRunner'),
-            $sm->get('VuFind\RecommendPluginManager')
-        );
-    }
-
-    /**
-     * Factory for CollectionList tab plugin.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return CollectionList
-     */
-    public static function getRecordLinkCollectionList(ServiceManager $sm)
-    {
-        return new RecordLinkCollectionList(
             $sm->get('VuFind\SearchRunner'),
             $sm->get('VuFind\RecommendPluginManager')
         );

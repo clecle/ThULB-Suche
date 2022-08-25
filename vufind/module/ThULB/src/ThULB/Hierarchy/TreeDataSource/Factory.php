@@ -53,7 +53,7 @@ class Factory
      *
      * @return Solr
      */
-    public static function getSolr(ServiceManager $sm)
+    public static function getSolr(ServiceManager $sm) : Solr
     {
         $cacheDir = $sm->get('VuFind\CacheManager')->getCacheDir(false);
         $hierarchyFilters = $sm->get('VuFind\Config')->get('HierarchyDefault');

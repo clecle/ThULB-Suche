@@ -48,11 +48,11 @@ class Json extends OriginalJson
      *
      * @param object $record   Solr record to format
      * @param string $parentID The starting point for the current recursion
-     * (equivalent to Solr field hierarchy_parent_id)
+     *                         (equivalent to Solr field hierarchy_parent_id)
      *
-     * @return string
+     * @return object
      */
-    protected function formatNode($record, $parentID = null)
+    protected function formatNode($record, $parentID = null) : object
     {
         $raw = [
             'id' => $record->id,
@@ -78,11 +78,11 @@ class Json extends OriginalJson
      * Get Solr Children for JSON
      *
      * @param string $parentID The starting point for the current recursion
-     * (equivalent to Solr field hierarchy_parent_id)
+     *                         (equivalent to Solr field hierarchy_parent_id)
      *
      * @return array
      */
-    protected function mapChildren($parentID)
+    protected function mapChildren($parentID) : array
     {
         $json = [];
         foreach ($this->childMap[$parentID] as $current) {
@@ -99,7 +99,7 @@ class Json extends OriginalJson
             // otherwise, we can just collect flat values.
             if ($this->sort) {
                 $positions = $this->getHierarchyPositionsInParents($current);
-                $sequence = isset($positions[$parentID]) ? $positions[$parentID] : 0;
+                $sequence = $positions[$parentID] ?? 0;
                 $json[] = [$sequence, $childNode];
             } else {
                 $json[] = $childNode;

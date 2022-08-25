@@ -46,7 +46,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting)
+    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array
     {
         $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
 

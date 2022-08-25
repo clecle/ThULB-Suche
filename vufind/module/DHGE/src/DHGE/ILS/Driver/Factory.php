@@ -25,13 +25,13 @@
  */
 
 namespace DHGE\ILS\Driver;
-use Zend\ServiceManager\ServiceManager;
+use Laminas\ServiceManager\ServiceManager;
 
 /**
  * A class to provide factory methods for custom ils drivers.
  */
 class Factory {
-    public static function getPAIA(ServiceManager $sm) {
+    public static function getPAIA(ServiceManager $sm) : PAIA {
         return new PAIA(
             $sm->get('VuFind\DateConverter'),
             $sm->get('VuFind\SessionManager')

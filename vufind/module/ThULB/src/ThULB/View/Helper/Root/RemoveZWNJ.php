@@ -13,7 +13,7 @@ class RemoveZWNJ extends AbstractHelper
      *
      * @return String
      */
-    public function __invoke($string)
+    public function __invoke(string $string) : string
     {
         return str_replace("\xE2\x80\x8C", "", $string);
     }

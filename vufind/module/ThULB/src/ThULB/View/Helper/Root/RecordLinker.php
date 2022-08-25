@@ -41,14 +41,15 @@ class RecordLinker extends OriginalRecordLinker
      * Given an array representing a related record (which may be a bib ID or OCLC
      * number), this helper renders a URL linking to that record.
      *
-     * @param array $link Link information from record model
-     * @param bool $escape Should we escape the rendered URL?
+     * @param array  $link   Link information from record model
      * @param string $source Source ID for backend being used to retrieve records
+     * @param bool   $escape Should we escape the rendered URL?
      *
-     * @return string       URL derived from link information
+     * @return string|null   URL derived from link information
+     *
      * @throws Exception
      */
-    public function related($link, $escape = true, $source = DEFAULT_SEARCH_BACKEND)
+    public function related($link, $source = DEFAULT_SEARCH_BACKEND, bool $escape = true) : ?string
     {
         $urlHelper = $this->getView()->plugin('url');
         $baseUrl = $urlHelper($this->getSearchActionForSource($source));

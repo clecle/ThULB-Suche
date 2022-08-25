@@ -61,7 +61,7 @@ class SummonController extends OriginalSummonController
      *
      * @return ViewModel
      */
-    public function facetListAction() {
+    public function facetListAction() : ViewModel {
         $view = parent::facetListAction();
 
         // only sort by display text if the list is sorted by index(alphabetically)

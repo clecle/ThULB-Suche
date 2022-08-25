@@ -66,11 +66,12 @@ class Results extends OriginalResults
      * Returns the stored list of facets for the last search
      *
      * @param array $filter Array of field => on-screen description listing
-     * all of the desired facet fields; set to null to get all configured values.
+     *                      all the desired facet fields; set to null to
+     *                      get all configured values.
      *
      * @return array        Facets data arrays
      */
-    public function getFacetList($filter = null)
+    public function getFacetList($filter = null) : array
     {
         // Make sure we have processed the search before proceeding:
         if (null === $this->responseFacets) {

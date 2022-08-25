@@ -45,7 +45,7 @@ class Flashmessages extends OriginalFlashmessages
      *
      * @return string $html
      */
-    public function __invoke()
+    public function __invoke() : string
     {
         // Add namespace warning to the original function
         $html = '';

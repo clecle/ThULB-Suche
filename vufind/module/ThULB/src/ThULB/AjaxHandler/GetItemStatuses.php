@@ -46,7 +46,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting)
+    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array
     {
         $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
 
@@ -72,7 +72,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
         return $statusGroup;
     }
 
-    protected function sortLocationList($location1, $location2) {
+    protected function sortLocationList($location1, $location2) : int {
         return strcasecmp($location1['location'], $location2['location']);
     }
 }

@@ -3,6 +3,7 @@
 namespace ThULB\Controller\Plugin;
 
 use VuFind\Controller\Plugin\IlsRecords as OriginalIlsRecords;
+use VuFind\RecordDriver\AbstractBase;
 
 class IlsRecords extends OriginalIlsRecords
 {
@@ -14,7 +15,7 @@ class IlsRecords extends OriginalIlsRecords
      *
      * @param array $records Record information
      *
-     * @return \VuFind\RecordDriver\AbstractBase[]
+     * @return AbstractBase[]
      */
     public function getDrivers(array $records): array
     {

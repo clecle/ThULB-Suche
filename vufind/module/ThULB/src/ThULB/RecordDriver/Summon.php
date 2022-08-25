@@ -41,7 +41,7 @@ use VuFind\RecordDriver\Summon as OriginalSummon;
  */
 class Summon extends OriginalSummon
 {
-    public function getURLs()
+    public function getURLs() : array
     {
         $hasNoFulltext = !isset($this->fields['hasFullText']) || !$this->fields['hasFullText'];
         if (isset($this->fields['link']) && $hasNoFulltext) {
@@ -70,7 +70,7 @@ class Summon extends OriginalSummon
      *
      * @return array
      */
-    public function getFullTextURL() {
+    public function getFullTextURL() : array {
         return $this->hasFullText() ? parent::getURLs() : [];
     }
 
@@ -80,7 +80,7 @@ class Summon extends OriginalSummon
      *
      * @return string
      */
-    public function getContainerReference()
+    public function getContainerReference() : string
     {
         $str = '';
         $vol = $this->getContainerVolume();
@@ -118,7 +118,7 @@ class Summon extends OriginalSummon
      *
      * @return array
      */
-    public function getCorporateAuthors()
+    public function getCorporateAuthors() : array
     {
         $authors = [];
         if (isset($this->fields['CorporateAuthor_xml'])) {
@@ -160,7 +160,7 @@ class Summon extends OriginalSummon
      * 
      * @return bool
      */
-    public function isOpenAccess()
+    public function isOpenAccess() : bool
     {
         return $this->fields['IsOpenAccess'][0] ?? false;
     }
@@ -191,7 +191,7 @@ class Summon extends OriginalSummon
      * if no thumbnail can be generated.
      *
      * @param string $size Size of thumbnail (small, medium or large -- small is
-     * default).
+     *                     default).
      *
      * @return string|array|bool
      */
@@ -231,7 +231,7 @@ class Summon extends OriginalSummon
      *
      * @return array
      */
-    public function getAllSubjectHeadings($extended = false)
+    public function getAllSubjectHeadings($extended = false) : array
     {
         $subjects = [];
         $lowerSubjects = [];
@@ -271,7 +271,7 @@ class Summon extends OriginalSummon
         return $retVal;
     }
 
-    public function getHoldings() {
+    public function getHoldings() : array {
 
         $retVal = [];
 

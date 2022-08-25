@@ -25,6 +25,7 @@
 namespace ThULB\Controller;
 
 use Laminas\Mvc\MvcEvent;
+use VuFind\Exception\PasswordSecurity;
 
 /**
  * A trait to add the function to force users to change the password
@@ -35,8 +36,11 @@ trait ChangePasswordTrait
      * Execute the request.
      * Force logged in users to change their passwords.
      *
-     * @param  MvcEvent $event
+     * @param MvcEvent $event
+     *
      * @return mixed
+     *
+     * @throws PasswordSecurity
      */
     public function onDispatch(MvcEvent $event)
     {
@@ -64,9 +68,9 @@ trait ChangePasswordTrait
      *
      * @return bool
      *
-     * @throws \VuFind\Exception\PasswordSecurity
+     * @throws PasswordSecurity
      */
-    protected function isPasswordChangeNeeded() {
+    protected function isPasswordChangeNeeded() : bool {
         if(!($this->getConfig()->Authentication->enforce_valid_password ?? false)) {
             return false;
         }
@@ -86,15 +90,10 @@ trait ChangePasswordTrait
      *
      * @return mixed
      */
-    public function forceNewPassword($extras = [], $forward = true)
+    public function forceNewPassword(array $extras = [], bool $forward = true)
     {
         // We don't want to return to the lightbox
         $serverUrl = $this->getServerUrl();
-//        $serverUrl = str_replace(
-//            ['?layout=lightbox', '&layout=lightbox'],
-//            ['?', '&'],
-//            $serverUrl
-//        );
 
         // Store the current URL as a login followup action
         $this->followup()->store($extras, $serverUrl);

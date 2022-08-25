@@ -44,7 +44,7 @@ class CollectionList extends OriginalCollectionList
      *
      * @return bool
      */
-    public function supportsAjax()
+    public function supportsAjax() : bool
     {
         return true;
     }
@@ -54,7 +54,7 @@ class CollectionList extends OriginalCollectionList
      *
      * @return bool
      */
-    public function isVisible()
+    public function isVisible() : bool
     {
         $uriParts = explode('/', strstr($this->request->getRequestUri(), '?', true));
         $classParts = explode('\\', get_class($this));

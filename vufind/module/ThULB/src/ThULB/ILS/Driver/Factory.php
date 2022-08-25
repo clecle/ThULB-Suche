@@ -33,7 +33,7 @@ use Laminas\ServiceManager\ServiceManager;
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 class Factory {
-    public static function getPAIA(ServiceManager $sm)
+    public static function getPAIA(ServiceManager $sm) : PAIA
     {
         return new PAIA(
             $sm->get('VuFind\DateConverter'),

@@ -44,7 +44,7 @@ class Factory
      *
      * @return QueriedCookie
      */
-    public static function getQueriedCookie(ServiceManager $sm)
+    public static function getQueriedCookie(ServiceManager $sm) : QueriedCookie
     {
         return new QueriedCookie($sm->get('Request'), $sm->get('VuFind\CookieManager'));
     }

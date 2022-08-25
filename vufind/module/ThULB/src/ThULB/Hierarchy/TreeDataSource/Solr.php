@@ -70,7 +70,7 @@ class Solr extends OriginalSolr
      *
      * @return array
      */
-    protected function searchSolr($q, $rows = null)
+    protected function searchSolr($q, $rows = null) : array
     {
         if (is_null($rows)) {
             $rows = $this->maxRows;

@@ -24,16 +24,17 @@ class Loader extends OriginalLoader
     /**
      * Given an ID and record source, load the requested record object.
      *
-     * @param string   $id              Record ID
-     * @param string   $source          Record source
-     * @param bool     $tolerateMissing Should we load a "Missing" placeholder
-     * instead of throwing an exception if the record cannot be found?
-     * @param ParamBag $params          Search backend parameters
+     * @param string        $id              Record ID
+     * @param string        $source          Record source
+     * @param bool          $tolerateMissing Should we load a "Missing" placeholder instead of
+     *                                       throwing an exception if the record cannot be found?
+     * @param ParamBag|null $params          Search backend parameters
+     *
+     * @return AbstractBase
      *
      * @throws Exception
-     * @return AbstractBase
      */
-    public function load($id, $source = DEFAULT_SEARCH_BACKEND, $tolerateMissing = true, ParamBag $params = null) {
+    public function load($id, $source = DEFAULT_SEARCH_BACKEND, $tolerateMissing = true, ParamBag $params = null) : AbstractBase {
         $key = $source . ':' . $id;
         if (!isset($this->tryCounter[$key])) {
             $this->tryCounter[$key] = 0;

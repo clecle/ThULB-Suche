@@ -30,7 +30,7 @@ class GetResultCount extends AbstractBase
      *
      * @return array [response data, HTTP status code]
      */
-    public function handleRequest(Params $params)
+    public function handleRequest(Params $params) : array
     {
         $index = $params->fromPost('index', $params->fromQuery('index'));
         $lookFor = $params->fromPost('lookfor', $params->fromQuery('lookfor'));

@@ -19,7 +19,7 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
      *
      * @return array Facet item
      */
-    protected function createFacetItem($facet, $item, $urlHelper, $escape = true, $results = null)
+    protected function createFacetItem($facet, $item, $urlHelper, $escape = true, Results $results = null) : array
     {
         $href = '';
         $exclude = '';
@@ -68,7 +68,7 @@ class HierarchicalFacetHelper extends OriginalFacetHelper
      *
      * @return array
      */
-    public function getFilterStringParts($filter)
+    public function getFilterStringParts($filter) : array
     {
         $parts = explode('/', $filter);
         if (count($parts) <= 1 || !is_numeric($parts[0])) {

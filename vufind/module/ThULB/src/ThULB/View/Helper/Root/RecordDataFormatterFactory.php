@@ -30,6 +30,8 @@
 namespace ThULB\View\Helper\Root;
 
 use Interop\Container\ContainerInterface;
+use Interop\Container\Exception\ContainerException;
+use Throwable;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use VuFind\View\Helper\Root\RecordDataFormatterFactory as OriginalFactory;
@@ -46,14 +48,17 @@ class RecordDataFormatterFactory extends OriginalFactory
      * Create the helper.
      *
      * @param ContainerInterface $container
-     * @param string             $requestedName
-     * @param array|null         $options
+     * @param string $requestedName
+     * @param array|null $options
      *
      * @return RecordDataFormatter
+     *
+     * @throws ContainerException
+     * @throws Throwable
      */
     public function __invoke(ContainerInterface $container, $requestedName,
                              array $options = null
-    ) {
+    ) : RecordDataFormatter {
         $helper = parent::__invoke($container, $requestedName, $options);
         $helper->setDefaults('full', $this->getDefaultFullSpecs());
         
@@ -65,7 +70,7 @@ class RecordDataFormatterFactory extends OriginalFactory
      *
      * @return array
      */
-    public function getDefaultFullSpecs()
+    public function getDefaultFullSpecs() : array
     {
         $spec = new SpecBuilder();
         $spec->setLine('Other Titles', 'getOtherTitles');
@@ -195,7 +200,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         return $spec->getArray();
     }
 
-    public function getDefaultDescriptionSpecs()
+    public function getDefaultDescriptionSpecs() : array
     {
         $specs = parent::getDefaultDescriptionSpecs();
 

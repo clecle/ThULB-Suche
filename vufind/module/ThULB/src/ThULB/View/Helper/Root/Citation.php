@@ -6,7 +6,7 @@ use VuFind\View\Helper\Root\Citation as OriginalCitation;
 
 class Citation extends OriginalCitation
 {
-    public function __invoke($driver)
+    public function __invoke($driver) : Citation
     {
         parent::__invoke($driver);
 

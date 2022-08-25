@@ -26,8 +26,8 @@
 
 namespace DHGE\View\Helper\Root;
 
-use DHGE\View\Helper\Root\Session;
 use Laminas\ServiceManager\ServiceManager;
+use Laminas\View\Helper\AbstractHelper;
 use ThULB\View\Helper\Root\Factory as OriginalViewHelperFactory;
 
 /**
@@ -37,7 +37,7 @@ use ThULB\View\Helper\Root\Factory as OriginalViewHelperFactory;
  */
 class Factory extends OriginalViewHelperFactory
 {
-    public static function getSession(ServiceManager $sm) {
+    public static function getSession(ServiceManager $sm) : AbstractHelper {
         return new Session($sm->get('VuFind\SessionManager'));
     }
 }

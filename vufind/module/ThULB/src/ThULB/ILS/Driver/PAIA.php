@@ -64,7 +64,9 @@ class PAIA extends OriginalPAIA
      * @param array $holdDetails An array of item and patron data
      *
      * @return mixed An array of data on the request including
-     * whether or not it was successful and a system message (if available)
+     *               whether it was successful and a system message (if available)
+     *
+     * @throws ForbiddenException
      */
     public function placeHold($holdDetails)
     {
@@ -76,7 +78,7 @@ class PAIA extends OriginalPAIA
         
         return $details;
     }
-    
+
     /**
      * Get Patron Holds
      *
@@ -84,9 +86,11 @@ class PAIA extends OriginalPAIA
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @return mixed Array of the patron's holds on success.
+     * @return array Array of the patron's holds on success.
+     *
+     * @throws ForbiddenException
      */
-    public function getMyHoldsAndSRR($patron)
+    public function getMyHoldsAndSRR(array $patron) : array
     {
         // filters for getMyHolds are:
         // status = 1 - reserved (the document is not accessible for the patron yet,
@@ -99,7 +103,7 @@ class PAIA extends OriginalPAIA
 
         return $this->mapPaiaItems($items, 'myHoldsMapping');
     }
-    
+
     /**
      * Get Patron Loans
      *
@@ -109,9 +113,11 @@ class PAIA extends OriginalPAIA
      *
      * @param array $patron The patron array from patronLogin
      *
-     * @return array Array of the patron's transactions on success,
+     * @return array        Array of the patron's transactions on success
+     *
+     * @throws ForbiddenException
      */
-    public function getMyProvidedItems($patron)
+    public function getMyProvidedItems(array $patron) : array
     {
         /* 
          * filters for getMyTransactions are:
@@ -133,7 +139,7 @@ class PAIA extends OriginalPAIA
      *
      * @return array Array of the patron's profile data on success,
      */
-    public function getMyProfile($patron)
+    public function getMyProfile($patron) : array
     {
         $profile = parent::getMyProfile($patron);
         
@@ -170,7 +176,7 @@ class PAIA extends OriginalPAIA
         return $profile;
     }
     
-    protected function myTransactionsMapping($items)
+    protected function myTransactionsMapping($items) : array
     {
         $result = parent::myTransactionsMapping($items);
         
@@ -208,7 +214,7 @@ class PAIA extends OriginalPAIA
         return $result;
     }
     
-    protected function myProvidedItemsMapping($items)
+    protected function myProvidedItemsMapping($items) : array
     {
         $results = [];
 
@@ -324,9 +330,9 @@ class PAIA extends OriginalPAIA
      *
      * @param array $doc Array of PAIA item.
      *
-     * @return String
+     * @return String|null
      */
-    protected function getCallNumber($doc)
+    protected function getCallNumber($doc) : ?string
     {
         return isset($doc['label']) ? $this->removeDepIdFromCallNumber($doc['label']) : null;
     }
@@ -339,7 +345,7 @@ class PAIA extends OriginalPAIA
      *
      * @return string $id
      */
-    protected function getAlternativeItemId($id)
+    protected function getAlternativeItemId($id) : string
     {
         return str_replace(self::DAIA_DOCUMENT_ID_PREFIX, '', $id);
     }
@@ -351,7 +357,7 @@ class PAIA extends OriginalPAIA
      *
      * @return array
      */
-    protected function getItemStatus($item)
+    protected function getItemStatus($item) : array
     {
         $status = parent::getItemStatus($item);
 
@@ -389,7 +395,7 @@ class PAIA extends OriginalPAIA
         return $status;
     }
     
-    protected function getStatusString($item)
+    protected function getStatusString($item) : string
     {
         $status = 'unknown';
         if (isset($item['available']) && $item['available']) {
@@ -408,7 +414,7 @@ class PAIA extends OriginalPAIA
      *
      * @return string
      */
-    protected function getItemCallnumber($item)
+    protected function getItemCallnumber($item) : string
     {
         $callnumber = isset($item['label']) && !empty($item['label']) ? $item['label'] : '';
         
@@ -423,7 +429,7 @@ class PAIA extends OriginalPAIA
      *
      * @return array            Array with VuFind compatible status information.
      */
-    protected function parseDaiaArray($id, $daiaArray)
+    protected function parseDaiaArray($id, $daiaArray) : array
     {
         $result = [];
         
@@ -513,14 +519,13 @@ class PAIA extends OriginalPAIA
      * @param string $username The patron's username
      * @param string $password The patron's login password
      *
-     * @return mixed          Associative array of patron info on successful login,
-     * null on unsuccessful login.
+     * @return array|null      Associative array of patron info on successful login,
+     *                         null on unsuccessful login.
      *
      * @throws ILSException
-     *
      * @throws AuthException
      */
-    public function patronLogin($username, $password)
+    public function patronLogin($username, $password) : ?array
     {
         if ($username == '' || $password == '') {
             throw new ILSException('Invalid Login, Please try again.');
@@ -556,9 +561,11 @@ class PAIA extends OriginalPAIA
             
             throw new ILSException($e->getMessage());
         }
+
+        return null;
     }
     
-    public function getOfflineMode()
+    public function getOfflineMode() : bool
     {
         return false;
     }
@@ -572,7 +579,7 @@ class PAIA extends OriginalPAIA
      *
      * @return string
      */
-    protected function getItemDepartment($item)
+    protected function getItemDepartment($item) : string
     {
         return isset($item['storage']) && isset($item['storage']['content'])
         && !empty($item['storage']['content'])
@@ -588,7 +595,7 @@ class PAIA extends OriginalPAIA
      *
      * @return string
      */
-    protected function getItemDepartmentId($item)
+    protected function getItemDepartmentId($item) : string
     {
         return isset($item['storage']) && isset($item['storage']['id'])
             ? $item['storage']['id'] : parent::getItemDepartmentId($item);
@@ -603,10 +610,9 @@ class PAIA extends OriginalPAIA
      *
      * @return string
      */
-    protected function getItemDepartmentLink($item)
+    protected function getItemDepartmentLink($item) : string
     {
-        return isset($item['storage']['href'])
-            ? $item['storage']['href'] : parent::getItemDepartmentLink($item);
+        return $item['storage']['href'] ?? parent::getItemDepartmentLink($item);
     }
     
     /**
@@ -616,7 +622,7 @@ class PAIA extends OriginalPAIA
      *                           begins with a storage id, separated by a colon
      * @return string
      */
-    protected function removeDepIdFromCallNumber($callNumber)
+    protected function removeDepIdFromCallNumber(string $callNumber) : string
     {
         $sepPos = strpos($callNumber, ':');
         
@@ -646,7 +652,7 @@ class PAIA extends OriginalPAIA
      *
      * @return string|null
      */
-    protected function getDepIdFromItem($document, $shortenedCallnumber) {
+    protected function getDepIdFromItem(array $document, string $shortenedCallnumber) : ?string{
         $callnumber = $document['label'] ?? null;
         if(!empty($callnumber) && !empty($shortenedCallnumber)) {
             return str_replace(':' . $shortenedCallnumber, '', $callnumber);
@@ -664,10 +670,11 @@ class PAIA extends OriginalPAIA
      *
      * @param string $file JSON data
      *
-     * @return mixed
+     * @return array
+     *
      * @throws ILSException
      */
-    protected function paiaParseJsonAsArray($file)
+    protected function paiaParseJsonAsArray($file) : array
     {
         $responseArray = json_decode($file, true);
 
@@ -695,7 +702,7 @@ class PAIA extends OriginalPAIA
      *
      * @param string $id     The Bib ID
      * @param array  $data   An Array of item data
-     * @param array $patron An array of patron data
+     * @param array  $patron An array of patron data
      *
      * @return array|bool True if request is valid, false if not, array if patron is blocked
      *
@@ -723,19 +730,18 @@ class PAIA extends OriginalPAIA
      * @param string $username Username
      * @param string $password Password
      *
-     * @return mixed Associative array of patron info on successful login,
-     * null on unsuccessful login, PEAR_Error on error.
+     * @return bool
+     *
      * @throws ILSException
      */
-    protected function paiaLogin($username, $password)
+    protected function paiaLogin($username, $password) : bool
     {
         // perform full PAIA auth and get patron info
         $post_data = [
             "username"   => $username,
             "password"   => $password,
             "grant_type" => "password",
-            "scope"      => "read_patron read_fees read_items write_items " .
-                "change_password"
+            "scope"      => "read_patron read_fees read_items write_items change_password"
         ];
         $responseJson = $this->paiaLoginRequest('auth/login', $post_data);
 
@@ -783,14 +789,15 @@ class PAIA extends OriginalPAIA
     /**
      * Post something to a foreign host
      *
-     * @param string $file         POST target URL
-     * @param array  $data_to_send POST data
-     * @param string $access_token PAIA access token for current session
+     * @param string      $file         POST target URL
+     * @param array       $data_to_send POST data
+     * @param string|null $access_token PAIA access token for current session
      *
-     * @return string POST response
+     * @return string                   POST response
+     *
      * @throws ILSException
      */
-    protected function paiaLoginRequest($file, $data_to_send, $access_token = null)
+    protected function paiaLoginRequest(string $file, array $data_to_send, string $access_token = null) : string
     {
         $postData = http_build_query($data_to_send);
 
@@ -819,17 +826,19 @@ class PAIA extends OriginalPAIA
         }
         return ($result->getBody());
     }
-        /**
+
+    /**
      * Post something to a foreign host
      *
      * @param string $file         POST target URL
      * @param array  $data_to_send POST data
      * @param string $access_token PAIA access token for current session
      *
-     * @return string POST response
+     * @return string              POST response
+     *
      * @throws ILSException
      */
-    protected function paiaPostRequest($file, $data_to_send, $access_token = null)
+    protected function paiaPostRequest($file, $data_to_send, $access_token = null) : string
     {
         // json-encoding
         $postData = json_encode($data_to_send);
@@ -868,10 +877,11 @@ class PAIA extends OriginalPAIA
      * @param string $file POST target URL
      * @param array  $data POST data
      *
-     * @return array|mixed
+     * @return array
+     *
      * @throws ILSException
      */
-    protected function paiaPostAsArray($file, $data)
+    protected function paiaPostAsArray($file, $data) : array
     {
         $responseJson = $this->paiaPostRequest(
             $file,
@@ -898,8 +908,10 @@ class PAIA extends OriginalPAIA
      *                       oldPassword.
      *
      * @return array An array with patron information.
+     *
+     * @throws ForbiddenException
      */
-    public function changePassword($details) {
+    public function changePassword($details) : array {
         $details = parent::changePassword($details);
         $details['status'] = $this->translate($details['status']);
 

@@ -14,7 +14,7 @@ class QueryBuilder extends OriginalQueryBuilder
      *
      * @return string
      */
-    protected function getNormalizedQueryString($query)
+    protected function getNormalizedQueryString($query) : string
     {
         // Allowed operators: && || ^ " ~ * ?
         $operatorsToIgnore = array('+', '-', '!', '(', ')', '{', '}', '[', ']', ':', '/');
@@ -35,10 +35,8 @@ class QueryBuilder extends OriginalQueryBuilder
      *
      * @return string
      */
-    protected function ignoreOperators($queryString, $operatorsToIgnore) {
+    protected function ignoreOperators(string $queryString, array $operatorsToIgnore) : string{
         $pattern = '/([' . preg_quote(implode('', $operatorsToIgnore), '/') . '])/';
-        $queryString = preg_replace($pattern, "\\\\$1", $queryString);
-
-        return $queryString;
+        return preg_replace($pattern, "\\\\$1", $queryString);
     }
 }

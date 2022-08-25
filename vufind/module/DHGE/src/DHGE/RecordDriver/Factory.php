@@ -38,7 +38,7 @@ class Factory
      *
      * @return SolrMarc
      */
-    public static function getSolrMarc(ServiceManager $sm)
+    public static function getSolrMarc(ServiceManager $sm) : SolrMarc
     {
         $driver = new SolrVZGRecord(
             $sm->get('VuFind\Config')->get('config'),

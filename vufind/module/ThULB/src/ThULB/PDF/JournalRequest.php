@@ -48,12 +48,12 @@ class JournalRequest extends tFPDF
     /**
      * Constructor.
      *
-     * @param Translate $translator Translator to use.
-     * @param string $orientation Page orientation.
-     * @param string $unit Unit to measure pages.
-     * @param string $size Size of the pages.
+     * @param Translate $translator  Translator to use.
+     * @param string    $orientation Page orientation.
+     * @param string    $unit        Unit to measure pages.
+     * @param string    $size        Size of the pages.
      */
-    public function __construct(Translate $translator, $orientation = 'P', $unit = 'mm', $size = 'A4') {
+    public function __construct(Translate $translator, $orientation = 'P', $unit = 'mm', string $size = 'A4') {
         parent::__construct($orientation, $unit, $size);
 
         $this->translator = $translator;
@@ -124,7 +124,7 @@ class JournalRequest extends tFPDF
      * @param int $y2     Y coordinate of the end point.
      * @param int $dashes Amount of dashes in this line, affects width of dashes
      */
-    protected function stripedLine($x1, $y1, $x2, $y2, $dashes = 10) {
+    protected function stripedLine(int $x1, int $y1, int $x2, int $y2, int $dashes = 10) {
         $segmentWidth = ($x2 - $x1) / ($dashes * 2 - 1);
         for($segment = 0; $segment < ($dashes * 2 - 1); $segment++) {
             if($segment % 2) {
@@ -143,13 +143,13 @@ class JournalRequest extends tFPDF
      * Add a text formatted as headline.
      * Sets XY coordinates for the next lines to be added.
      *
-     * @param string $headline Headline text
-     * @param int $x X coordinate of the headline.
-     * @param int $y Y coordinate of the headline.
-     * @param int $width Width of the headline.
-     * @param int $spaceAtBottom Space between headline and the next text.
+     * @param string $headline      Headline text
+     * @param int    $x             X coordinate of the headline.
+     * @param int    $y             Y coordinate of the headline.
+     * @param int    $width         Width of the headline.
+     * @param int    $spaceAtBottom Space between headline and the next text.
      */
-    protected function addHeadLine($headline, $x, $y, $width, $spaceAtBottom = 0) {
+    protected function addHeadLine(string $headline, int $x, int $y, int $width, int $spaceAtBottom = 0) {
         $this->SetXY($x, $y);
         $this->SetFont($this->FontFamily, 'UB', $this->FontSizePt + 3);
         $this->MultiCell($width, $this->FontSize, $headline);
@@ -242,15 +242,16 @@ class JournalRequest extends tFPDF
     /**
      * Adds a text to the pdf. X, Y coordinates have to be set beforehand.
      *
-     * @param string $description Translation key of the description.
-     * @param string $text Text to be added.
-     * @param int $cellWidth Width of the text cell.
-     * @param bool $asTable Format text as a table? If true, there will be a column
-     *                            for descriptions and a column for the text.
+     * @param string $description   Translation key of the description.
+     * @param string $text          Text to be added.
+     * @param int    $cellWidth     Width of the text cell.
+     * @param bool   $asTable       Format text as a table? If true, there will be a column
+     *                              for descriptions and a column for the text.
      * @param string $textFontStyle
-     * @param int $textFontSize
+     * @param int    $textFontSize
      */
-    protected function addText($description, $text, $cellWidth, $asTable = false, $textFontStyle = '', $textFontSize = self::DEFAULT_FONT_SIZE) {
+    protected function addText(string $description, string $text, int $cellWidth, bool $asTable = false,
+                               string $textFontStyle = '', int $textFontSize = self::DEFAULT_FONT_SIZE) {
         $description = $this->translator->translate($description);
         $description = $description ? $description . ':' : '';
         $spaceBetweenLines = 1;
@@ -284,7 +285,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $title
      */
-    public function setWorkTitle ($title) {
+    public function setWorkTitle (string $title) {
         $this->title = $title;
     }
 
@@ -297,7 +298,7 @@ class JournalRequest extends tFPDF
      *
      * @return string
      */
-    protected function shortenTextForWidth($string, $widthInMM, $wantedLines = 1) {
+    protected function shortenTextForWidth(string $string, int $widthInMM, int $wantedLines = 1) : string {
         // Base functionality taken from fpdf::MultiCell
         $widthMax = ($widthInMM - 2 * $this->cMargin);
         $charWidth = &$this->CurrentFont['cw'];
@@ -370,7 +371,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $issue
      */
-    public function setIssue($issue) {
+    public function setIssue(string $issue) {
         $this->issue = $issue;
     }
 
@@ -379,7 +380,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $pages
      */
-    public function setPages($pages) {
+    public function setPages(string $pages) {
         $this->requestPages = $pages;
     }
 
@@ -388,7 +389,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $firstname
      */
-    public function setFirstName($firstname) {
+    public function setFirstName(string $firstname) {
         $this->firstname = $firstname;
     }
 
@@ -397,7 +398,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $lastname
      */
-    public function setLastName($lastname) {
+    public function setLastName(string $lastname) {
         $this->lastname = $lastname;
     }
 
@@ -406,7 +407,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $userId
      */
-    public function setUserName($userId) {
+    public function setUserName(string $userId) {
         $this->username = $userId;
     }
 
@@ -415,7 +416,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $callNumber
      */
-    public function setCallNumber($callNumber) {
+    public function setCallNumber(string $callNumber) {
         $this->callNumber = $callNumber;
     }
 
@@ -424,7 +425,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $year
      */
-    public function setYear($year) {
+    public function setYear(string $year) {
         $this->year = $year;
     }
 
@@ -433,7 +434,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $volume
      */
-    public function setVolume($volume) {
+    public function setVolume(string $volume) {
         $this->volume = $volume;
     }
 
@@ -442,7 +443,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $comment
      */
-    public function setComment($comment) {
+    public function setComment(string $comment) {
         $this->comment = $comment;
     }
 }

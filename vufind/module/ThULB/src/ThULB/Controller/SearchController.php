@@ -53,7 +53,7 @@ class SearchController extends OriginalController
      *
      * @return ViewModel
      */
-    public function facetListAction() {
+    public function facetListAction() : ViewModel {
         $view = parent::facetListAction();
 
         $list = $view->getVariable('data');

@@ -26,6 +26,7 @@
 
 namespace ThULB\View\Helper\Root;
 use Laminas\ServiceManager\ServiceManager;
+use Laminas\View\Helper\AbstractHelper;
 
 /**
  * Description of Factory
@@ -41,7 +42,7 @@ class Factory
      *
      * @return Record
      */
-    public static function getRecord(ServiceManager $sm)
+    public static function getRecord(ServiceManager $sm) : Record
     {
         $helper = new Record(
             $sm->get('VuFind\Config')->get('config'),
@@ -60,7 +61,7 @@ class Factory
      *
      * @return RecordLinker
      */
-    public static function getRecordLinker(ServiceManager $sm)
+    public static function getRecordLinker(ServiceManager $sm) : RecordLinker
     {
         return new RecordLinker($sm->get('VuFind\RecordRouter'));
     }
@@ -70,9 +71,9 @@ class Factory
      *
      * @param ServiceManager $sm Service manager.
      *
-     * @return Session
+     * @return AbstractHelper
      */
-    public static function getSession(ServiceManager $sm)
+    public static function getSession(ServiceManager $sm) : AbstractHelper
     {
         return new Session($sm->get('VuFind\SessionManager'));
     }
@@ -84,7 +85,7 @@ class Factory
      *
      * @return DoiLinker
      */
-    public static function getDoiLinker(ServiceManager $sm)
+    public static function getDoiLinker(ServiceManager $sm) : DoiLinker
     {
         $config = $sm->get(\VuFind\Config\PluginManager::class)
             ->get('config');

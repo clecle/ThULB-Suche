@@ -42,7 +42,7 @@ class Factory
      *
      * @return SummonCombined
      */
-    public static function getSummonCombined(ServiceManager $sm)
+    public static function getSummonCombined(ServiceManager $sm) : SummonCombined
     {
         return new SummonCombined(
             $sm->get('VuFind\SearchResultsPluginManager')
@@ -56,7 +56,7 @@ class Factory
      *
      * @return SideFacets
      */
-    public static function getSideFacets(ServiceManager $sm)
+    public static function getSideFacets(ServiceManager $sm) : SideFacets
     {
         return new SideFacets(
             $sm->get('VuFind\Config\PluginManager'),

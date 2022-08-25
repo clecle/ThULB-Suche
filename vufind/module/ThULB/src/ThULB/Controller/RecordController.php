@@ -4,6 +4,7 @@ namespace ThULB\Controller;
 
 use Laminas\Mvc\MvcEvent;
 use \VuFind\Controller\RecordController as OriginalRecordController;
+use VuFind\Exception\PasswordSecurity;
 
 class RecordController extends OriginalRecordController
 {
@@ -19,6 +20,8 @@ class RecordController extends OriginalRecordController
      * Action for dealing with storage retrieval requests.
      *
      * @return mixed
+     *
+     * @throws PasswordSecurity
      */
     public function storageRetrievalRequestAction() {
         if($this->isPasswordChangeNeeded()) {
@@ -32,6 +35,8 @@ class RecordController extends OriginalRecordController
      * Action for dealing with holds.
      *
      * @return mixed
+     *
+     * @throws PasswordSecurity
      */
     public function holdAction() {
         if($this->isPasswordChangeNeeded()) {

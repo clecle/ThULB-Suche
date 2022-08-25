@@ -61,10 +61,8 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      * Get the local classification of the record.
      *
      * @return array
-     *
-     * @throws File_MARC_Exception
      */
-    public function getLocalClassification() {
+    public function getLocalClassification() : array {
         $fields = $this->getFieldsConditional('983', [
             $this->createFieldCondition('subfield', '2', 'in', static::LIBRARY_ILN),
             $this->createFieldCondition('subfield', '8', '==', '00'),
@@ -82,9 +80,9 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
     /**
      * Return a source for the record.
      *
-     * @return string
+     * @return array
      */
-    public function getSource()
+    public function getSource() : array
     {
         $source = [];
         if (in_array('KXP', $this->fields['collection'])) {
@@ -114,10 +112,8 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      * Get classification numbers of the record in the "Thüringen-Bibliographie".
      *
      * @return array
-     *
-     * @throws File_MARC_Exception
      */
-    public function getThuBiblioClassification() {
+    public function getThuBiblioClassification() : array {
         // Thuringian bibliography not available for DHGE
         return [];
     }
@@ -127,7 +123,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      *
      * @return bool
      */
-    public function isThuBibliography() {
+    public function isThuBibliography() : bool {
         // Thuringian bibliography not available for DHGE
         return false;
     }

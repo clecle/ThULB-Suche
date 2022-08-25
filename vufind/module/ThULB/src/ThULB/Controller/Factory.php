@@ -42,7 +42,7 @@ class Factory
      *
      * @return CartController
      */
-    public static function getCartController(ServiceManager $sm)
+    public static function getCartController(ServiceManager $sm) : CartController
     {
         return new CartController(
             $sm,

@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 
 use Laminas\View\Model\ViewModel;
+use Laminas\View\View;
 use VuFind\Controller\MyResearchController as OriginalController;
 use VuFind\RecordDriver\AbstractBase;
 use Laminas\Mvc\MvcEvent;
@@ -65,9 +66,9 @@ class MyResearchController extends OriginalController
     /**
      * Send list of checked out books to view
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function checkedoutAction()
+    public function checkedoutAction() : ViewModel
     {
         $viewModel = parent::checkedoutAction();
         $viewModel->setVariable('renewForm', true);
@@ -89,9 +90,9 @@ class MyResearchController extends OriginalController
     /**
      * Send list of books that are provided for the user to view
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function providedAction()
+    public function providedAction() : ViewModel
     {
         // Stop now if the user does not have valid catalog credentials available:
         if (!is_array($patron = $this->catalogLogin())) {
@@ -163,9 +164,9 @@ class MyResearchController extends OriginalController
     /**
      * Provide a link to the password change site of the ILS.
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function changePasswordLinkAction()
+    public function changePasswordLinkAction() : ViewModel
     {
         // Stop now if the user does not have valid catalog credentials available:
         if (!is_array($patron = $this->catalogLogin())) {
@@ -197,6 +198,7 @@ class MyResearchController extends OriginalController
      * Logout logged in users if the ILS Driver switched to an offline mode and redirect to login screen.
      *
      * @param  MvcEvent $event
+     *
      * @return mixed
      */
     public function onDispatch(MvcEvent $event)
@@ -240,7 +242,7 @@ class MyResearchController extends OriginalController
      *
      * @return ViewModel
      */
-    public function changePasswordAction() {
+    public function changePasswordAction() : ViewModel {
         /* @var $view ViewModel */
         $view =  parent::changePasswordAction();
 
@@ -261,9 +263,9 @@ class MyResearchController extends OriginalController
     /**
      * Handling submission of a new password for a user.
      *
-     * @return view
+     * @return ViewModel
      */
-    public function newPasswordAction()
+    public function newPasswordAction() : ViewModel
     {
         $view = parent::newPasswordAction();
 

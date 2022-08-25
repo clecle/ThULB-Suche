@@ -32,7 +32,7 @@ use Laminas\View\Helper\AbstractHelper;
 
 class HoldingHelper extends AbstractHelper
 {  
-  public function getAvailability(&$itemRow)
+  public function getAvailability(&$itemRow) : string
   {
     // AJAX Check record?
     $check = isset($itemRow['check']) && $itemRow['check'];
@@ -116,7 +116,7 @@ class HoldingHelper extends AbstractHelper
      *
      * @return string
      */
-  protected function getRecallLinkString(array $itemRow) {
+  protected function getRecallLinkString(array $itemRow) : string {
       $check = isset($itemRow['check']) && $itemRow['check'];
 
       return ' <a class="' . ($check ? 'checkRequest' : '') . 'placehold btn btn-primary btn-xs" data-lightbox href="' . $this->view->recordLinker()->getRequestUrl($itemRow['link']) . '">' .
@@ -124,7 +124,7 @@ class HoldingHelper extends AbstractHelper
           '</a>';
   }
 
-  public function getLocation(&$holding, $includeHTML = true)
+  public function getLocation(&$holding, $includeHTML = true) : string
   {
     $locationText = $this->view->transEscWithPrefix('location_', $holding['location']);
 
@@ -135,12 +135,12 @@ class HoldingHelper extends AbstractHelper
     return $locationText;
   }
 
-  public function getCallNumber(&$item)
+  public function getCallNumber(&$item) : string
   { 
     return $item['callnumber'] ?: '';
   }
 
-  public function getCallNumbers($holding)
+  public function getCallNumbers($holding) : string
   {
     $callnumberString = '';
 
@@ -161,16 +161,16 @@ class HoldingHelper extends AbstractHelper
     return $callnumberString;
   }
 
-  public function getHoldingComments(&$itemRow)
+  public function getHoldingComments($itemRow) : array
   {
-    $holding_comments = "";
+    $holding_comments = array();
     if (!empty($itemRow['about'])) {
       $holding_comments = explode("\n", $itemRow['about']);
     }
     return $holding_comments;
   }
    
-  public function getHoldingChronology(&$itemRow) {
+  public function getHoldingChronology($itemRow) : array {
     $holding_chron = array();
     if (!empty($itemRow['chronology_about'])) {
       $holding_chron[] = $itemRow['chronology_about'];

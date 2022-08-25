@@ -17,7 +17,7 @@ class Session extends OriginalSessionHelper
      *
      * @return string|null
      */
-    public function getLibrary() {
+    public function getLibrary() : ?string {
         return $this->getAccountSession()->library ?? null;
     }
 
@@ -26,7 +26,7 @@ class Session extends OriginalSessionHelper
      *
      * @return Container
      */
-    protected function getAccountSession() {
+    protected function getAccountSession() : Container {
         if(!$this->accountSession) {
             $this->accountSession = new Container('Account', $this->sessionManager);
         }

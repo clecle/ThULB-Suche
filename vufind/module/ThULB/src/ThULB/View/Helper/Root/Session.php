@@ -20,8 +20,7 @@ class Session extends AbstractHelper
      *
      * @return bool
      */
-    public function isMessageDisplayed($identifier) {
-
+    public function isMessageDisplayed($identifier) : bool {
         $value = 0;
         $identifier = $identifier . '_expires';
 

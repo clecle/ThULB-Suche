@@ -13,10 +13,10 @@ class Params extends OriginalParams
     /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Options $options Options to use
+     * @param \VuFind\Search\Base\Options  $options Options to use
      * @param \VuFind\Config\PluginManager $configLoader Config loader
-     * @param HierarchicalFacetHelper $facetHelper Hierarchical facet helper
-     * @param PluginManager|null $facetManager
+     * @param HierarchicalFacetHelper|null $facetHelper Hierarchical facet helper
+     * @param PluginManager|null           $facetManager
      */
     public function __construct($options, \VuFind\Config\PluginManager $configLoader,
                                 HierarchicalFacetHelper $facetHelper = null, PluginManager $facetManager = null
@@ -30,7 +30,7 @@ class Params extends OriginalParams
      *
      * @return array $filterQuery
      */
-    public function getFilterSettings()
+    public function getFilterSettings() : array
     {
         // Define Filter Query
         $filterQuery = [];
@@ -78,7 +78,7 @@ class Params extends OriginalParams
      *
      * @return array $facetSet
      */
-    public function getFacetSettings()
+    public function getFacetSettings() : array
     {
         $facetSet = parent::getFacetSettings();
 

@@ -123,7 +123,10 @@
                 <dt><?= $this->transEsc("Call Number")?>:</dt>
                 <dd><strong><?= $callno ?></strong></dd>
               <?php endif; ?>
-
+              <?php if($callno == 'bestellt'): ?>
+                <dt><?= $this->transEsc("Status")?>:</dt>
+                <dd><strong><?= $this->thulb_sera($row['epn'])['order_status'] ?? ''; ?></strong></dd>
+              <?php endif; ?>
               <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
                 <dt><?= $this->transEsc('Link')?>:</dt>
                 <dd>

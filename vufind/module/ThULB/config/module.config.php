@@ -117,6 +117,10 @@ $config = array(
             'ils_driver' => array(
                 'factories' => array(
                     'VuFind\ILS\Driver\PAIA' => 'ThULB\ILS\Driver\Factory::getPAIA',
+                    \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
+                ),
+                'aliases' => array(
+                    'sera' => \ThULB\ILS\Driver\Sera::class,
                 )
             ),
             'recommend' => array(
@@ -207,6 +211,7 @@ $config = array(
             'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class
         ),
     ),
 

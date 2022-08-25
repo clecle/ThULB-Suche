@@ -12,6 +12,7 @@ return array(
             'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
             \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
+            \ThULB\View\Helper\Record\SeraHelper::class => \ThULB\View\Helper\Record\SeraHelperFactory::class,
         ],
         'aliases' => array (
             'citation' => \ThULB\View\Helper\Root\Citation::class,
@@ -22,6 +23,7 @@ return array(
             'thulb_session' => 'ThULB\View\Helper\Root\Session',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class
         ),
     ],
     'favicon' => 'thulb_favicon.png',

@@ -151,7 +151,6 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
     {   
         $context = new \VuFind\View\Helper\Root\Context();
         
-        
         $helpers =  [
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
             'context' => $context,

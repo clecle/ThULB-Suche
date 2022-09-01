@@ -89,6 +89,7 @@ class Results extends OriginalResults
         // Loop through every field returned by the result set
         $fieldFacets = $this->responseFacets->getFieldFacets();
         $translatedFacets = $this->getOptions()->getTranslatedFacets();
+        $hierarchicalFacets = $this->getOptions()->getHierarchicalFacets();
         foreach (array_keys($filter) as $field) {
             $data = $fieldFacets[$field] ?? [];
             // Skip empty arrays:
@@ -102,13 +103,8 @@ class Results extends OriginalResults
             // Build our array of values for this field
             $list[$field]['list']  = [];
             // Should we translate values for the current facet?
-            if ($translate = in_array($field, $translatedFacets)) {
-                $translateTextDomain = $this->getOptions()
-                    ->getTextDomainForTranslatedFacet($field);
-            }
-            else {
-                $translateTextDomain = '';
-            }
+            $translate = in_array($field, $translatedFacets);
+            $hierarchical = in_array($field, $hierarchicalFacets);
 
             // Use custom facet class if available
             if($this->facetManager->has($field)) {
@@ -122,16 +118,25 @@ class Results extends OriginalResults
             // Loop through values:
             foreach ($data as $value => $count) {
                 // Initialize the array of data about the current facet:
-                $currentSettings = [];
-                $currentSettings['value'] = $value;
+                $currentSettings = compact('value', 'count');
 
                 $displayText = $this->getParams()
-                    ->checkForDelimitedFacetDisplayText($field, $value);
+                    ->getFacetValueRawDisplayText($field, $value);
+
+                if ($hierarchical) {
+                    if (!$this->hierarchicalFacetHelper) {
+                        throw new \Exception(
+                            get_class($this)
+                            . ': hierarchical facet helper unavailable'
+                        );
+                    }
+                    $displayText = $this->hierarchicalFacetHelper
+                        ->formatDisplayText($displayText);
+                }
 
                 $currentSettings['displayText'] = $translate
-                    ? $this->translate("$translateTextDomain::$displayText")
+                    ? $this->getParams()->translateFacetValue($field, $displayText)
                     : $displayText;
-                $currentSettings['count'] = $count;
                 $currentSettings['operator']
                     = $this->getParams()->getFacetOperator($field);
                 $currentSettings['isApplied']

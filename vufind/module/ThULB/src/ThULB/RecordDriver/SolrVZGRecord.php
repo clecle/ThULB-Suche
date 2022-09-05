@@ -262,12 +262,12 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the container link of the item from 773.
      *
-     * @return array
+     * @return array|bool
      *
      * @throws File_MARC_Exception
      * @throws Exception
      */
-    public function getContainerLink() : array
+    public function getContainerLink()
     {
         return $this->getLinkFromField($this->getMarcReader()->getField('773'));
     }
@@ -1853,13 +1853,13 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the group highlighting of the item.
      *
-     * @param string $highlightString
+     * @param array $highlightStrings
      *
      * @return array
      */
-    protected function groupHighlighting(string $highlightString) : array
+    protected function groupHighlighting(array $highlightStrings) : array
     {
-        return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightString);
+        return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightStrings);
     }
 
     /**

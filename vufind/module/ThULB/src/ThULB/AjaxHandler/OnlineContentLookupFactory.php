@@ -27,8 +27,8 @@
  */
 namespace ThULB\AjaxHandler;
 
+use Exception;
 use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
@@ -40,24 +40,24 @@ class OnlineContentLookupFactory implements \Laminas\ServiceManager\Factory\Fact
     /**
      * Create an object
      *
-     * @param ContainerInterface $container     Service manager
-     * @param string             $requestedName Service being created
-     * @param null|array         $options       Extra options (optional)
+     * @param ContainerInterface $container Service manager
+     * @param string $requestedName Service being created
+     * @param null|array $options Extra options (optional)
      *
      * @return object
      *
-     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotFoundException   if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
-     * creating a service.
-     * @throws ContainerException if any other error occurs
+     *                                    creating a service.
+     * @throws Exception
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $options = null
-    ) {
+    ) : object {
         if (!empty($options)) {
-            throw new \Exception('Unexpected options passed to factory.');
+            throw new Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
             $container->get(\VuFind\Search\BackendManager::class),

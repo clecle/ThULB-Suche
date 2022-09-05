@@ -24,9 +24,9 @@ class VpnWarning extends AbstractBase
     /**
      * Constructor
      *
-     * @param PermissionManager       $pm   Permission Manager
-     * @param PermissionDeniedManager $pdm  Permission Denied Manager
-     * @param Manager                 $auth Auth manager
+     * @param PermissionManager       $pm       Permission Manager
+     * @param PermissionDeniedManager $pdm      Permission Denied Manager
+     * @param Manager                 $auth     Auth manager
      * @param RendererInterface       $renderer View renderer
      */
     public function __construct(PermissionManager $pm, PermissionDeniedManager $pdm,
@@ -45,7 +45,7 @@ class VpnWarning extends AbstractBase
      *
      * @return array
      */
-    public function handleRequest(Params $params) {
+    public function handleRequest(Params $params) : array {
         $hide = $this->permissionManager->isAuthorized('hide.VpnWarning');
 
         $html = '';

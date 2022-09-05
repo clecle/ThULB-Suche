@@ -21,7 +21,7 @@ class PluginFactory extends AbstractPluginFactory
      *
      * @param ContainerInterface $container     Service container
      * @param string             $requestedName Name of service
-     * @param array              $extras        Extra options
+     * @param array|null         $extras        Extra options
      *
      * @return object
      *
@@ -29,7 +29,7 @@ class PluginFactory extends AbstractPluginFactory
      */
     public function __invoke(ContainerInterface $container, $requestedName,
         array $extras = null
-    ) {
+    ) : object {
         $class = $this->getClassName($requestedName);
         // Clone the options instance in case caller modifies it:
         return new $class();

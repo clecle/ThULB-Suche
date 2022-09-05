@@ -48,11 +48,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     /**
      * Action for placing a journal request.
      *
-     * @return ViewModel
+     * @return ViewModel|null
      *
      * @throws IOException
      */
-    public function journalAction () {
+    public function journalAction() : ?ViewModel {
 
         // Force login if necessary:
         if (!$this->getUser()) {
@@ -69,7 +69,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
                     ? $validRequest['status']
                     : 'storage_retrieval_request_error_blocked'
             );
-            return;
+            return null;
         }
 
         $savePath = $this->mainConfig->JournalRequest->request_save_path;
@@ -110,7 +110,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return array
      */
-    protected function getFormData() {
+    protected function getFormData() : array {
         $params = $this->params();
         $user = $this->getUser();
         $inventory = $this->getInventoryForRequest();
@@ -147,7 +147,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return array Array of available items.
      */
-    protected function getInventoryForRequest() {
+    protected function getInventoryForRequest() : array {
         if(!$this->inventory) {
             $archiveIds = array_keys($this->departmentsConfig->DepartmentArchiveEmail->toArray());
             $holdings = $this->loadRecord()->getRealTimeHoldings();
@@ -180,7 +180,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return bool Success of the pdf creation.
      */
-    protected function createPDF($formData, $fileName) {
+    protected function createPDF(array $formData, string $fileName) : bool {
         try {
             $savePath = $this->mainConfig->JournalRequest->request_save_path;
 
@@ -219,7 +219,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return bool Success of sending the email.
      */
-    protected function sendRequestEmail($fileName, $recipient) {
+    protected function sendRequestEmail(string $fileName, string $recipient) : bool{
         try {
             $savePath = $this->mainConfig->JournalRequest->request_save_path;
 
@@ -266,7 +266,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return bool
      */
-    protected function sendConfirmationEmail($formData, $recipient) {
+    protected function sendConfirmationEmail(array $formData, string $recipient) : bool {
         try {
             $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
 
@@ -317,7 +317,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         return true;
     }
 
-    protected function getDepartmentIdForCallnumber ($callnumber) {
+    protected function getDepartmentIdForCallnumber ($callnumber) : ?string {
         foreach($this->getInventoryForRequest() as $archive) {
             if ($archive['callnumber'] == $callnumber) {
                 return $archive['departmentId'];
@@ -334,7 +334,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return string|null
      */
-    protected function getArchiveEmailForCallnumber($callnumber) {
+    protected function getArchiveEmailForCallnumber(string $callnumber) : ?string {
         if(APPLICATION_ENV == 'development' || APPLICATION_ENV == 'testing') {
             return $this->departmentsConfig->JournalRequestTest->email;
         }
@@ -354,7 +354,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return string|null
      */
-    protected function getInformationEmailForCallnumber($callnumber) {
+    protected function getInformationEmailForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
         if (isset($this->departmentsConfig->DepartmentInformationEmail[$departmentId])) {
             return $this->departmentsConfig->DepartmentInformationEmail[$departmentId];
@@ -370,7 +370,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return string|null
      */
-    protected function getBorrowCounterForCallnumber($callnumber) {
+    protected function getBorrowCounterForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
         if (isset($this->departmentsConfig->DepartmentBorrowCounter[$departmentId])) {
             return $this->departmentsConfig->DepartmentBorrowCounter[$departmentId];
@@ -386,7 +386,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      *
      * @return string|null
      */
-    protected function getLocationUrlForCallnumber($callnumber) {
+    protected function getLocationUrlForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
         if (isset($this->departmentsConfig->DepartmentLocationUrl[$departmentId])) {
             return $this->departmentsConfig->DepartmentLocationUrl[$departmentId];
@@ -398,11 +398,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     /**
      * Validate form data.
      *
-     * @param $formData
+     * @param array $formData
      *
      * @return bool
      */
-    protected function validateFormData($formData) {
+    protected function validateFormData(array $formData) : bool {
         $error = false;
         if(!array_key_exists($formData['item'] ?? null, $this->getInventoryForRequest())) {
             $this->addFlashMessage(
@@ -424,11 +424,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     /**
      * Adds a flash message.
      *
-     * @param bool $success Type of flash message. TRUE for success message, FALSE for error message.
-     * @param string $messageKey Key of the message to translate.
-     * @param array $messageFields Additional fields to translate and insert into the message.
+     * @param bool   $success       Type of flash message. TRUE for success message, FALSE for error message.
+     * @param string $messageKey    Key of the message to translate.
+     * @param array  $messageFields Additional fields to translate and insert into the message.
      */
-    private function addFlashMessage($success, $messageKey, $messageFields = []) {
+    private function addFlashMessage(bool $success, string $messageKey, array $messageFields = []) {
         foreach ($messageFields as $field => $message) {
             $messageFields[$field] = $this->translate($message);
         }

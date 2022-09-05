@@ -30,10 +30,13 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use Exception;
+use Laminas\Config\Config;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\ResolverInterface;
 use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
+use VuFind\RecordTab\TabInterface;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
 use Laminas\View\Exception\RuntimeException;
 
@@ -50,10 +53,10 @@ class Record extends OriginalRecord
     /**
      * Constructor
      *
-     * @param null $config VuFind configuration
-     * @param NonArticleCollectionList $nonArticleCollection
+     * @param Config|null                   $config VuFind configuration
+     * @param NonArticleCollectionList|null $nonArticleCollection
      */
-    public function __construct($config = null, $nonArticleCollection = null)
+    public function __construct($config = null, NonArticleCollectionList $nonArticleCollection = null)
     {
         parent::__construct($config);
         $this->nonArticleCollection = $nonArticleCollection;
@@ -67,7 +70,7 @@ class Record extends OriginalRecord
      *
      * @return string
      */
-    public function getTitleHtml($maxLength = 180)
+    public function getTitleHtml($maxLength = 180) : string
     {
         $highlightedTitle = $this->driver->tryMethod('getHighlightedTitle');
         $title = trim($this->driver->tryMethod('getTitle'));
@@ -92,7 +95,7 @@ class Record extends OriginalRecord
      *
      * @return string
      */
-    public function getCitationReferences()
+    public function getCitationReferences() : string
     {
         return $this->renderTemplate('citation-references.phtml');
     }
@@ -102,7 +105,7 @@ class Record extends OriginalRecord
      *
      * @return string
      */
-    public function getOpenAccess()
+    public function getOpenAccess() : string
     {
         return $this->renderTemplate('isopenaccess.phtml');
     }
@@ -112,7 +115,7 @@ class Record extends OriginalRecord
      *
      * @return string
      */
-    public function getThuringiaBibliography()
+    public function getThuringiaBibliography() : string
     {
         return $this->renderTemplate('isThuBibliography.phtml');
     }
@@ -122,18 +125,18 @@ class Record extends OriginalRecord
      * name (or one of its parent classes); throw an exception if no match is
      * found.
      *
-     * @param string $template     Template path (with %s as class name placeholder)
-     * @param string $className    Name of class to apply to template.
+     * @param string            $template     Template path (with %s as class name placeholder)
+     * @param string            $className    Name of class to apply to template.
      * @param ResolverInterface $resolver     Resolver to use
-     * @param string $topClassName Top-level parent class of $className (or null
-     * if $className is already the top level; used for recursion only).
+     * @param string            $topClassName Top-level parent class of $className (or null if
+     *                                        $className is already the top level; used for recursion only).
      *
      * @return string
      * @throws RuntimeException
      */
     protected function resolveClassTemplate($template, $className, ResolverInterface $resolver,
                                             $topClassName = null
-    ) {
+    ) : string {
         // If the template resolves, return it:
         $templateWithClass = $this->getTemplateWithClass($template, $className);
         if ($resolver->resolve($templateWithClass)) {
@@ -171,7 +174,7 @@ class Record extends OriginalRecord
      *
      * @return string
      */
-    public function getAuthorDetails($author) {
+    public function getAuthorDetails(string $author) : string {
         foreach ($this->driver->getDeduplicatedAuthors() as $type):
             if(isset($type[$author])):
                 return isset($type[$author]['detail']) ? $type[$author]['detail'][0] : '';
@@ -184,11 +187,11 @@ class Record extends OriginalRecord
     /**
      * Render the contents of the specified record tab.
      *
-     * @param \VuFind\RecordTab\TabInterface $tab Tab to display
+     * @param TabInterface $tab Tab to display
      *
      * @return string
      */
-    public function getTab(\VuFind\RecordTab\TabInterface $tab)
+    public function getTab(TabInterface $tab) : string
     {
         $context = ['driver' => $this->driver, 'tab' => $tab];
         $classParts = explode('\\', get_class($tab));
@@ -203,11 +206,12 @@ class Record extends OriginalRecord
      * Checks if the record has related non-articles and the respective tab will be shown.
      *
      * @param PhpRenderer $renderer
+     *
      * @return bool
      *
-     * @throws \Exception
+     * @throws Exception
      */
-    public function hasNonArticleTab(PhpRenderer $renderer) {
+    public function hasNonArticleTab(PhpRenderer $renderer) : bool {
         // journal request feature activated and order link shown?
         if($renderer->permission()->allowDisplay('access.JournalRequest') &&
                 $this->driver->isFormat('Journal') && $this->driver->isInArchive()) {

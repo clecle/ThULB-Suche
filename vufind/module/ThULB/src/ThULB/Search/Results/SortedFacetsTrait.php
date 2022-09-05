@@ -26,6 +26,8 @@
 
 namespace ThULB\Search\Results;
 
+use Exception;
+
 /**
  * A trait to override the function to get a facet list with a version that
  * additionally sorts the facets
@@ -37,11 +39,14 @@ trait SortedFacetsTrait
      * facet fields first.
      *
      * @param array $filter Array of field => on-screen description listing
-     * all of the desired facet fields; set to null to get all configured values.
+     *                      all the desired facet fields; set to null to
+     *                      get all configured values.
      *
      * @return array        Facets data arrays
+     *
+     * @throws Exception
      */
-    public function getFacetList($filter = null)
+    public function getFacetList($filter = null) : array
     {
         $facetList = parent::getFacetList($filter);
         return $this->sortFacets($facetList);
@@ -55,7 +60,7 @@ trait SortedFacetsTrait
      *
      * @return array Facets data arrays
      */
-    public function sortFacets($facetList) {
+    public function sortFacets(array $facetList) : array {
         foreach ($facetList as $facetLabel => $facetData) {
             $this->sortFacetList($facetData['list']);
             $facetData['counts'] = array_values($facetData['list']);
@@ -74,7 +79,7 @@ trait SortedFacetsTrait
      *
      * @return boolean true
      */
-    protected function sortFacetList(&$facetFields)
+    protected function sortFacetList(array &$facetFields) : bool
     {
         $facetFields = array_values($facetFields);
         // find all applied facet fields

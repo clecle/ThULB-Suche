@@ -22,7 +22,7 @@ class SideFacets extends OriginalSideFacets
      *
      * @throws Exception
      */
-    public function getFacetSet()
+    public function getFacetSet() : array
     {
         $facetSet = $this->results->getFacetList($this->mainFacets);
 

@@ -39,16 +39,16 @@ class HoldingHelper extends OriginalHoldingHelper
      *
      * @return string
      */
-    protected function getRecallLinkString(array $itemRow) {
+    protected function getRecallLinkString(array $itemRow) : string {
         return $this->recallAvailable($itemRow) ? parent::getRecallLinkString($itemRow) : '';
     }
 
-    protected function recallAvailable(array $itemRow) {
+    protected function recallAvailable(array $itemRow): bool {
         return !$this->view->auth()->isLoggedIn() ||
             $itemRow['library'] == $this->view->dhge_session()->getLibrary();
     }
 
-    public function getAvailability(&$itemRow) {
+    public function getAvailability(&$itemRow) : string {
         $str = parent::getAvailability($itemRow);
 
         if($itemRow['status'] != 'available' && !$this->recallAvailable($itemRow)) {

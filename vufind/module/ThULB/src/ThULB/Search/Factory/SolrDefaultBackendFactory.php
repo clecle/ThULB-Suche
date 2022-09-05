@@ -21,7 +21,7 @@ class SolrDefaultBackendFactory extends OriginalFactory
      *
      * @return QueryBuilder
      */
-    protected function createQueryBuilder()
+    protected function createQueryBuilder() : QueryBuilder
     {
         $specs = $this->loadSpecs();
         $config = $this->config->get($this->mainConfig);

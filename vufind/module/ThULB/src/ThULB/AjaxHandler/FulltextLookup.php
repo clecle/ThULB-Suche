@@ -27,7 +27,9 @@
  */
 namespace ThULB\AjaxHandler;
 
+use Exception;
 use Laminas\Mvc\Controller\Plugin\Params;
+use ThULB\RecordDriver\SolrVZGRecord;
 use VuFind\AjaxHandler\AbstractBase;
 use VuFindSearch\Backend\Solr\Backend;
 
@@ -58,14 +60,16 @@ class FulltextLookup extends AbstractBase
      * @param Params $params Parameter helper from controller
      *
      * @return array [response data, HTTP status code]
+     *
+     * @throws Exception
      */
-    public function handleRequest(Params $params)
+    public function handleRequest(Params $params) : array
     {
         $response = [];
         $fulltextPPNs = (array)$params->fromQuery('fulltext', []);
 
         $results = $this->solrBackend->retrieveBatch($fulltextPPNs);
-        /* @var $result \ThULB\RecordDriver\SolrVZGRecord */
+        /* @var $result SolrVZGRecord */
         foreach ($results as $result) {
             if($result->isFormat('eBook|eJournal', true)) {
                 $holdings = $result->getHoldings();

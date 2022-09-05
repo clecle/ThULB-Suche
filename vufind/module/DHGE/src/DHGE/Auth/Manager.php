@@ -16,14 +16,15 @@ class Manager extends OriginalManager
      * on success, throws exception on failure.
      *
      * @param Request $request Request object containing
-     * account credentials.
+     *                         account credentials.
+     *
+     * @return UserRow         Object representing logged-in user.
      *
      * @throws AuthException
      * @throws PasswordSecurity
      * @throws AuthInProgress
-     * @return UserRow Object representing logged-in user.
      */
-    public function login($request) {
+    public function login($request) : UserRow {
         $library = $request->getPost()->get('library');
         $config = $this->getAuth()->getCatalog()->getConfig('LibraryURLs') ?? [];
 

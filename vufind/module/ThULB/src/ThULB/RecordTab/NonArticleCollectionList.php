@@ -50,9 +50,10 @@ class NonArticleCollectionList extends CollectionList
      * Get the processed search results.
      *
      * @return Results
+     *
      * @throws Exception
      */
-    public function getResults()
+    public function getResults() : Results
     {
         if (null === $this->results) {
             $driver = $this->getRecordDriver();

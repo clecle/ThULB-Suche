@@ -42,7 +42,7 @@ class SummonCombined extends AbstractSummonRecommend
      *
      * @return array
      */
-    public function getResults()
+    public function getResults() : array
     {
         return [
                    'best_bets' => $this->results->getBestBets(),

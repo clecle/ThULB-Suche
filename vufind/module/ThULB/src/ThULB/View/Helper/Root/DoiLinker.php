@@ -14,7 +14,7 @@ class DoiLinker extends AbstractHelper {
         $this->resolver = explode(',', $resolver);
     }
 
-    public function __invoke($doi) {
+    public function __invoke($doi) : array {
         $response = [];
         foreach($this->resolver as $resolver) {
             if ($this->pluginManager->has($resolver)) {

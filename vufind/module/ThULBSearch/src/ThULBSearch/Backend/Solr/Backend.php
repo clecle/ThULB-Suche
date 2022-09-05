@@ -45,12 +45,12 @@ class Backend extends OriginalBackend
     /**
      * Retrieve a batch of documents.
      *
-     * @param array    $ids    Array of document identifiers
-     * @param ParamBag $params Search backend parameters
+     * @param array         $ids    Array of document identifiers
+     * @param ParamBag|null $params Search backend parameters
      *
      * @return RecordCollectionInterface
      */
-    public function retrieveBatch($ids, ParamBag $params = null)
+    public function retrieveBatch($ids, ParamBag $params = null) : RecordCollectionInterface
     {
         $params = $params ?: new ParamBag();
 

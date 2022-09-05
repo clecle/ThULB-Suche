@@ -45,10 +45,11 @@ class Results extends OriginalResults
      *
      * @param array  $facetFields  name of the Solr fields to return facets for
      * @param bool   $removeFilter Clear existing filters from selected fields (true)
-     * or retain them (false)?
-     * @param int    $limit        A limit for the number of facets returned, this
-     * may be useful for very large amounts of facets that can break the JSON parse
-     * method because of PHP out of memory exceptions (default = -1, no limit).
+     *                             or retain them (false)?
+     * @param int    $limit        A limit for the number of facets returned, this may be
+     *                             useful for very large amounts of facets that can break
+     *                             the JSON parse method because of PHP out of memory
+     *                             exceptions (default = -1, no limit).
      * @param string $facetSort    A facet sort value to use (null to retain current)
      * @param int    $page         1 based. Offsets results by limit.
      * @param bool   $isOrFacet
@@ -58,8 +59,8 @@ class Results extends OriginalResults
      * @throws Exception
      */
     public function getPartialFieldFacets($facetFields, $removeFilter = true,
-                                          $limit = -1, $facetSort = null, $page = null, $isOrFacet = false
-    ) {
+                                          $limit = -1, $facetSort = null, $page = null, bool $isOrFacet = false
+    ) : array {
         /* @var $params Params */
         $params = $this->getParams();
         $query  = $params->getQuery();

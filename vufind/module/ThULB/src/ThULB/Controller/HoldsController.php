@@ -3,7 +3,9 @@
 namespace ThULB\Controller;
 
 use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Model\ViewModel;
 use VuFind\Controller\HoldsController as OriginalHoldsController;
 use VuFind\RecordDriver\AbstractBase;
 use VuFind\Validator\Csrf;
@@ -14,9 +16,9 @@ class HoldsController extends OriginalHoldsController
      * We don't use this action anymore; it is replaced by the loans action, that
      * combines all items held by the patron and all provided items
      *
-     * @return mixed
+     * @return Response
      */
-    public function listAction()
+    public function listAction() : Response
     {
         return $this->redirect()->toRoute('default', ['controller' => 'holds', 'action' => 'holdsAndSRR']);
     }
@@ -29,9 +31,9 @@ class HoldsController extends OriginalHoldsController
     /**
      * Send list of holds to view
      *
-     * @return mixed
+     * @return ViewModel
      */
-    public function holdsAndSRRAction()
+    public function holdsAndSRRAction() : ViewModel
     {
         // Stop now if the user does not have valid catalog credentials available:
         if (!is_array($patron = $this->catalogLogin())) {
@@ -71,7 +73,8 @@ class HoldsController extends OriginalHoldsController
         // Get List of PickUp Libraries based on patron's home library
         try {
             $view->pickup = $catalog->getPickUpLocations($patron);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             // Do nothing; if we're unable to load information about pickup
             // locations, they are not supported and we should ignore them.
         }

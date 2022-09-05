@@ -13,7 +13,7 @@ class Access extends AbstractTab
      *
      * @return string
      */
-    public function getDescription() {
+    public function getDescription() : string {
         return 'Access';
     }
 
@@ -21,9 +21,10 @@ class Access extends AbstractTab
      * Get the record driver
      *
      * @return AbstractBase
+     *
      * @throws Exception
      */
-    public function getRecordDriver() {
+    public function getRecordDriver() : AbstractBase {
         // make function public
         return parent::getRecordDriver();
     }

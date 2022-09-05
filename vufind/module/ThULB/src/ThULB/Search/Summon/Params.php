@@ -14,7 +14,7 @@ class Params extends OriginalParams
      *
      * @return void
      */
-    public function createBackendFilterParameters(ParamBag $params) {
+    public function createBackendFilterParameters(ParamBag $params) : void {
         parent::createBackendFilterParameters($params);
 
         $array = $params->getArrayCopy();

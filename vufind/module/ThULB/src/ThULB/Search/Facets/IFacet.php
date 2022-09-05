@@ -16,7 +16,7 @@ interface IFacet
      *
      * @return array
      */
-    public function getFacetList($field, $data, $params);
+    public function getFacetList(string $field, NamedList $data, Params $params) : array;
 
     /**
      * Return the filter value associated with the given value.
@@ -25,5 +25,5 @@ interface IFacet
      *
      * @return string
      */
-    public function getFilterValue($value);
+    public function getFilterValue(string $value) : string;
 }

@@ -38,7 +38,7 @@ class Factory
      *
      * @return SolrMarc
      */
-    public static function getSolrMarc(ServiceManager $sm)
+    public static function getSolrMarc(ServiceManager $sm) : SolrMarc
     {
         $driver = new SolrVZGRecord(
             $sm->get('VuFind\Config')->get('config'),
@@ -63,7 +63,7 @@ class Factory
      *
      * @return Summon
      */
-    public static function getSummon(ServiceManager $sm)
+    public static function getSummon(ServiceManager $sm) : Summon
     {
         $summon = $sm->get('VuFind\Config')->get('Summon');
         $driver = new Summon(

@@ -43,7 +43,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @param \VuFind\Config\PluginManager $configLoader
      */
-    public function __construct($configLoader) {
+    public function __construct(\VuFind\Config\PluginManager $configLoader) {
         $this->configLoader = $configLoader;
         $this->tbClassification = $this->configLoader->get('TBClassification');
 
@@ -67,7 +67,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return array
      */
-    public function getFacetList($field, $data, $params) {
+    public function getFacetList(string $field, NamedList $data, Params $params) : array {
         if($this->facetList != null && !empty($this->facetList)) {
             return $this->facetList;
         }
@@ -140,7 +140,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return string
      */
-    public function getFilterValue($value) {
+    public function getFilterValue(string $value) : string {
         $returnValue = $value;
         if (isset($this->filterValueList[$value]) && $this->tbClassification) {
             $returnValue = $this->filterValueList[$value];
@@ -159,7 +159,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return string
      */
-    private function getChildInternalValue($child) {
+    private function getChildInternalValue(string $child) : string {
         return "31:$child <Thüringen>";
     }
 
@@ -170,7 +170,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return string
      */
-    private function getGroupInternalValue($group) {
+    private function getGroupInternalValue(string $group) : string {
         if ($this->tbClassification->Group_Values->$group ?? false) {
             return $this->tbClassification->Group_Values->$group;
         }
@@ -193,7 +193,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return array
      */
-    private function getDataAsArray($data) {
+    private function getDataAsArray(NamedList $data) : array {
         $dataArray = array();
         foreach($data as $value => $count) {
             $dataArray[$value] = $count;
@@ -210,7 +210,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      *
      * @return int
      */
-    public static function compareTBChildFacets($facet1, $facet2)
+    public static function compareTBChildFacets(array $facet1, array $facet2) : int
     {
         if($facet1['count'] == $facet2['count']) {
             return strcmp($facet1['displayText'], $facet2['displayText']);

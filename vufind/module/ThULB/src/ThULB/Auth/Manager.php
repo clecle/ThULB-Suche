@@ -14,7 +14,7 @@ class Manager extends OriginalManager
      *
      * @return bool False if password does not match the policies or auth driver does not support validation.
      */
-    public function validatePasswordAgainstPolicy($password) {
+    public function validatePasswordAgainstPolicy(string $password) : bool {
         try {
             $this->tryOnAuth('validatePasswordAgainstPolicy', $password);
         }
@@ -29,11 +29,11 @@ class Manager extends OriginalManager
      * Try a method on the auth driver.
      *
      * @param string $method    Method to try
-     * @param mixed $arg        An optional argument passed to the method.
+     * @param mixed  $arg       An optional argument passed to the method.
      *
      * @return mixed|false      Returns false if the method can't be called.
      */
-    protected function tryOnAuth($method, $arg = null) {
+    protected function tryOnAuth(string $method, $arg = null) {
         return is_callable([$this->getAuth(), $method]) ? $this->getAuth()->$method($arg) : false;
     }
 }

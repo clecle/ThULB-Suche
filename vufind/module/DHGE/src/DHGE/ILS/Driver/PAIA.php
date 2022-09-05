@@ -15,7 +15,7 @@ class PAIA extends OriginalPAIA {
      * @param string $id The record id to retrieve the holdings for
      *
      * @return mixed     On success, an associative array with the following keys:
-     * id, availability (boolean), status, location, reserve, callnumber.
+     *                   id, availability (boolean), status, location, reserve, callnumber.
      */
     public function getStatus($id) {
         $docs = array();
@@ -65,9 +65,9 @@ class PAIA extends OriginalPAIA {
      *
      * @param array $ids The array of record ids to retrieve the status for
      *
-     * @return array    An array of status information values on success.
+     * @return array     An array of status information values on success.
      */
-    public function getStatuses($ids)
+    public function getStatuses($ids) : array
     {
         $status = [];
 
@@ -105,6 +105,7 @@ class PAIA extends OriginalPAIA {
      * make the driver active.
      *
      * @throws ILSException
+     *
      * @return void
      */
     public function init() {

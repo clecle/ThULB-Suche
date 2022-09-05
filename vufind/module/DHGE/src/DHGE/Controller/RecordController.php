@@ -4,6 +4,7 @@ namespace DHGE\Controller;
 
 use Laminas\View\Model\ViewModel;
 use ThULB\Controller\RecordController as OriginalRecordController;
+use VuFind\Exception\PasswordSecurity;
 
 class RecordController extends OriginalRecordController
 {
@@ -11,6 +12,8 @@ class RecordController extends OriginalRecordController
      * Action for dealing with holds.
      *
      * @return mixed
+     *
+     * @throws PasswordSecurity
      */
     public function holdAction() {
         // Check if the requested item is available in the current library

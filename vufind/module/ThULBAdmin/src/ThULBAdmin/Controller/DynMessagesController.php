@@ -45,7 +45,7 @@ class DynMessagesController extends AbstractBase
         );
     }
 
-    public function editAction() {
+    public function editAction() : ViewModel {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -65,7 +65,7 @@ class DynMessagesController extends AbstractBase
      *
      * @return Response
      */
-    public function saveAction() {
+    public function saveAction() : Response {
         if(!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
@@ -95,7 +95,7 @@ class DynMessagesController extends AbstractBase
      *
      * @return array
      */
-    function readLanguageFile($fileName) {
+    function readLanguageFile(string $fileName) : array {
 
         $values = array();
 
@@ -139,7 +139,7 @@ class DynMessagesController extends AbstractBase
      *
      * @return boolean  Returns TRUE if files could be written, FALSE otherwise.
      */
-    function writeLanguageFile($fileName, $values) {
+    function writeLanguageFile(string $fileName, array $values) : bool {
 
         $success = true;
         if(is_file($fileName) && is_writable($fileName)) {
@@ -180,7 +180,7 @@ class DynMessagesController extends AbstractBase
      *
      * @return bool Returns TRUE if the directory does not exist OR if the directory was successfully deleted.
      */
-    function delTree($dir) {
+    function delTree(string $dir) : bool {
         if(!file_exists($dir)) {
             return true;
         }

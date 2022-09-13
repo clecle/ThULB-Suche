@@ -87,8 +87,12 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $locationUrl = $this->getLocationUrlForCallnumber($callNumber);
 
             if ($this->createPDF($formData, $fileName) &&
-                    $this->sendRequestEmail($fileName, $archiveEmail) &&
-                    $this->sendConfirmationEmail($formData, $this->getUser()['email'])) {
+                    $this->sendRequestEmail($fileName, $archiveEmail)) {
+
+                if($this->getUser()['email'] ?? false) {
+                    $this->sendConfirmationEmail($formData, $this->getUser()['email']);
+                }
+
                 $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
                     ['%%location%%' => $borrowCounter, '%%url%%' => $locationUrl]);
             }

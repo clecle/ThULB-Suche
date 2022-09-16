@@ -119,7 +119,7 @@ class LetterOfAuthorisation extends tFPDF
         $widthHalfContentSection = $this->widthContentSection / 2;
 
         $this->SetY(40, true);
-        $this->SetTextColor(30, 96, 190);
+        $this->SetTextColor(33, 84, 163);
         $this->addText('Letter of Authorisation', 'de', $this->widthContentSection, [], 15, 'B');
         $this->SetTextColor(0, 0, 0);
         $this->addSpace(10);
@@ -163,10 +163,10 @@ class LetterOfAuthorisation extends tFPDF
         $this->addSpace(10);
 
         $y = $this->GetY();
-        $this->addText('Granted until', 'de', $this->widthContentSection);
+        $this->addText('Granted until', 'de', $this->widthContentSection, [], 0, 'B');
         $this->addText('Granted until', 'en', $this->widthContentSection, [], 0, 'I');
         $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
-        $this->addText($this->grantedUntil, 'de', $widthHalfContentSection);
+        $this->addText($this->grantedUntil, 'de', $widthHalfContentSection, [], 0, 'B');
         $this->SetX($this->printBorderLeft);
         $this->addSpace(20);
 

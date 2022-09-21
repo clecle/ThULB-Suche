@@ -250,7 +250,7 @@ class JournalRequest extends tFPDF
      * @param string $textFontStyle
      * @param int    $textFontSize
      */
-    protected function addText(string $description, string $text, int $cellWidth, bool $asTable = false,
+    protected function addText(string $description, ?string $text, int $cellWidth, bool $asTable = false,
                                string $textFontStyle = '', int $textFontSize = self::DEFAULT_FONT_SIZE) {
         $description = $this->translator->translate($description);
         $description = $description ? $description . ':' : '';

@@ -46,8 +46,8 @@
       <i class="fa fa-fw fa-lock" aria-hidden="true"></i> <?= $this->transEsc('Change Password') ?>
     </a>
   <?php endif; ?>
-  <a href="<?= $this->url('myresearch-letterofauthorisation') ?>" class="<?= $this->active == 'letterofauthorisation' ? ' active' : ''?>">
-    <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Create Letter of Authorisation') ?>
+  <a href="<?= $this->url('myresearch-letterofauthorization') ?>" class="<?= $this->active == 'letterofauthorization' ? ' active' : ''?>">
+    <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Create Letter of Authorization') ?>
   </a>
 </div>
 <?php if ($this->userlist()->getMode() !== 'disabled' && $user = $this->auth()->isLoggedIn()): ?>

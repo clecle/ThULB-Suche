@@ -1,7 +1,7 @@
 <?php
   $errors = $this->errors ?? [];
   // Set up page title:
-  $pageTitle = "Letter of Authorisation";
+  $pageTitle = "Letter of Authorization";
   $this->headTitle($this->translate($pageTitle));
 
   // Set up breadcrumbs:
@@ -14,13 +14,13 @@
   <h2><?= $this->transEsc($pageTitle); ?></h2>
 
   <div class="alert alert-info">
-      <?= $this->transEsc('information_authorisation'); ?>
+      <?= $this->transEsc('information_authorization'); ?>
   </div>
 
   <?= $this->flashmessages() ?>
 
   <form class="form-horizontal authority-form" method="post" name="authority">
-    <p><?= $this->transEsc('authorisation_issued_for');?>:</p>
+    <p><?= $this->transEsc('authorization_issued_for');?>:</p>
     <div class="row mb-2">
       <div class="col-lg-4<?= in_array('firstname', $errors) ? ' has-error' : ''; ?>">
         <label for="firstname" class="font-weight-bold"><?= $this->transEsc('First Name'); ?></label>
@@ -38,21 +38,21 @@
     <div class="flex mb-2">
       <input id="check1" type="checkbox" name="check1" class="mr-2" required />
       <label for="check1" class="font-weight-default">
-        <?= $this->transEsc('I_grant_authorisation_to'); ?>
+        <?= $this->transEsc('I_grant_authorization_to'); ?>
       </label>
     </div>
     <div class="flex mb-2">
       <input id="check2" type="checkbox" name="check2" class="mr-2" required />
       <label for="check2" class="font-weight-default">
-        <?= $this->transEsc('as_authorisation_issuer'); ?>
+        <?= $this->transEsc('as_authorization_issuer'); ?>
       </label>
     </div>
     <div class="center-text mb-2">
-      <button class="btn btn-primary"><?= $this->transEsc('Create Letter of Authorisation'); ?></button>
+      <button class="btn btn-primary"><?= $this->transEsc('Create Letter of Authorization'); ?></button>
     </div>
   </form>
 </div>
 
 <div class="<?= $this->layoutClass('sidebar')?>">
-    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'letterofauthorisation'])?>
+    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'letterofauthorization'])?>
 </div>

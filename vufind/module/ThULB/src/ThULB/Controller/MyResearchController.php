@@ -35,7 +35,7 @@ use Laminas\Mime\Part;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 use Picqer\Barcode\BarcodeGeneratorPNG;
-use ThULB\PDF\LetterOfAuthorisation;
+use ThULB\PDF\LetterOfAuthorization;
 use VuFind\Controller\MyResearchController as OriginalController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Paginator\Adapter\ArrayAdapter;
@@ -316,12 +316,12 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      *
      * @throws IOException
      */
-    public function letterOfAuthorisationAction() : ViewModel {
+    public function letterOfAuthorizationAction() : ViewModel {
         if (!$this->getAuthManager()->isLoggedIn()) {
             return $this->forceLogin();
         }
 
-        $savePath = $this->mainConfig->LetterOfAuthorisation->pdf_save_path;
+        $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
         if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
             throw new IOException('File not writable: "' . $savePath . '"');
         }
@@ -331,7 +331,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         $user = $this->getUser();
         $ilsUser = $this->getILS()->getMyProfile($this->catalogLogin());
         if ($ilsUser['statuscode'] == 6) {
-            $this->flashMessenger()->addErrorMessage('you are not allowed to issue a letter of authorisation');
+            $this->flashMessenger()->addErrorMessage('you are not allowed to issue a letter of authorization');
         }
         elseif ($request->isPost() && !$request->getPost('mylang')) {
             // validate form
@@ -350,12 +350,12 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             }
 
             $fileName = sprintf('%s_%s.pdf', $user['username'], time());
-            if(!$errors && $this->createLetterOfAuthorisationPDF($request, $fileName, $ilsUser) &&
-                    $this->sendLetterOfAuthorisationEmail($user['firstname'] . ' ' . $user['lastname'], $user['email'], $fileName)) {
-                $this->flashMessenger()->addSuccessMessage('Letter of Authorisation was sent to your email address');
+            if(!$errors && $this->createLetterOfAuthorizationPDF($request, $fileName, $ilsUser) &&
+                    $this->sendLetterOfAuthorizationEmail($user['firstname'] . ' ' . $user['lastname'], $user['email'], $fileName)) {
+                $this->flashMessenger()->addSuccessMessage('Letter of Authorization was sent to your email address');
             }
             else {
-                $this->flashMessenger()->addErrorMessage('Letter of Authorisation could not be sent to your email address');
+                $this->flashMessenger()->addErrorMessage('Letter of Authorization could not be sent to your email address');
             }
         }
 
@@ -363,7 +363,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     }
 
     /**
-     * Create the pdf of a letter of authorisation.
+     * Create the pdf of a letter of authorization.
      *
      * @param Request $request  Request with the form data
      * @param string $fileName  Name to save the pdf with.
@@ -371,7 +371,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      *
      * @return bool
      */
-    protected function createLetterOfAuthorisationPDF(Request $request, string $fileName, array $ilsUser) : bool {
+    protected function createLetterOfAuthorizationPDF(Request $request, string $fileName, array $ilsUser) : bool {
         try {
             $user = $this->getUser();
 
@@ -385,9 +385,9 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
                 file_put_contents($barcodeFile, $generator->getBarcode($user['username'], $generator::TYPE_CODE_39, 1));
             }
 
-            $savePath = $this->mainConfig->LetterOfAuthorisation->pdf_save_path;
+            $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
 
-            $pdf = new LetterOfAuthorisation($this->getViewRenderer()->plugin('translate'));
+            $pdf = new LetterOfAuthorization($this->getViewRenderer()->plugin('translate'));
             $pdf->setBarcode($barcodeFile);
             $pdf->setAuthorizedName($request->getPost('firstname') . ' ' . $request->getPost('lastname'));
             $pdf->setGrantedUntil(date('d.m.Y', strtotime($request->getPost('grantUntil'))));
@@ -411,7 +411,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     }
 
     /**
-     * Send an email with the attached letter of authorisation pdf to the user.
+     * Send an email with the attached letter of authorization pdf to the user.
      *
      * @param string $name        Name of the user, shown in email
      * @param string $email       Email address of the user
@@ -419,19 +419,19 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      *
      * @return bool
      */
-    protected function sendLetterOfAuthorisationEmail(string $name, string $email, string $pdfFilename) : bool {
+    protected function sendLetterOfAuthorizationEmail(string $name, string $email, string $pdfFilename) : bool {
         try {
             // @todo translate email
             $text = new Part();
             $text->type = Mime::TYPE_TEXT;
             $text->charset = 'utf-8';
             $text->setContent(htmlspecialchars_decode(
-                $this->getViewRenderer()->render('Email/letter-of-authorisation', [
+                $this->getViewRenderer()->render('Email/letter-of-authorization', [
                     'name' => $name,
                 ])
             ));
 
-            $savePath = $this->mainConfig->LetterOfAuthorisation->pdf_save_path;
+            $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
 
             $fileContent = file_get_contents($savePath . $pdfFilename, 'r');
             $attachment = new Part($fileContent);
@@ -448,7 +448,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             $mailer->send(
                 $email,
                 $this->mainConfig->Mail->default_from,
-                $this->translate('Email::letter_of_authorisation_email_subject'),
+                $this->translate('Email::letter_of_authorization_email_subject'),
                 $mimeMessage
             );
         }

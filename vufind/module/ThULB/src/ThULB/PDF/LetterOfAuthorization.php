@@ -128,7 +128,7 @@ class LetterOfAuthorization extends tFPDF
         $y = $this->GetY();
         $this->addText('Registered_user_and_issuer', 'de', $widthHalfContentSection - 5);
         $this->addText('Registered_user_and_issuer', 'en', $widthHalfContentSection - 5, [], 0, 'I');
-        $this->SetXY($this->printBorderLeft + $widthHalfContentSection + 5, $y);
+        $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
         $this->addText($this->issuerName ?? '', 'de', $widthHalfContentSection - 5);
         for($i = 0; $i < 3; $i++) {
             $this->addText($this->issuerAddress[$i] ?? '', 'de', $widthHalfContentSection - 5);
@@ -139,7 +139,7 @@ class LetterOfAuthorization extends tFPDF
         $y = $this->GetY();
         $this->addText('username', 'de', $widthHalfContentSection - 5);
         $this->addText('username', 'en', $widthHalfContentSection - 5, [], 0, 'I');
-        $this->SetXY($this->printBorderLeft + $widthHalfContentSection + 5, $y);
+        $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
         $this->addText($this->issuerUserNumber, 'de', $widthHalfContentSection - 5);
         $this->SetXY($this->printBorderLeft + $this->widthContentSection - $barcodeWidthMm, $this->GetY() + 3);
         $this->Image($this->barcode);

@@ -1,0 +1,58 @@
+<?php
+  $errors = $this->errors ?? [];
+  // Set up page title:
+  $pageTitle = "Letter of Authorization";
+  $this->headTitle($this->translate($pageTitle));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
+      . '<li>' . $this->transEsc($pageTitle) . '</li>';
+?>
+
+<div class="<?= $this->layoutClass('mainbody')?>">
+
+  <h2><?= $this->transEsc($pageTitle); ?></h2>
+
+  <div class="alert alert-info">
+      <?= $this->transEsc('information_authorization'); ?>
+  </div>
+
+  <?= $this->flashmessages() ?>
+
+  <form class="form-horizontal authority-form" method="post" name="authority">
+    <p><?= $this->transEsc('authorization_issued_for');?>:</p>
+    <div class="row mb-2">
+      <div class="col-lg-4<?= in_array('firstname', $errors) ? ' has-error' : ''; ?>">
+        <label for="firstname" class="font-weight-bold"><?= $this->transEsc('First Name'); ?></label>
+        <input id="firstname" type="text" name="firstname" class="form-control" required placeholder="<?= $this->transEsc('First Name'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('firstname'))?>" />
+      </div>
+      <div class="col-lg-4<?= in_array('lastname', $errors) ? ' has-error' : ''; ?>">
+        <label for="lastname" class="font-weight-bold"><?= $this->transEsc('Last Name'); ?></label>
+        <input id="lastname" type="text" name="lastname" class="form-control" required placeholder="<?= $this->transEsc('Last Name'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('lastname'))?>" />
+      </div>
+      <div class="col-lg-4<?= in_array('grantUntil', $errors) ? ' has-error' : ''; ?>">
+        <label for="grantUntil" class="font-weight-bold"><?= $this->transEsc('Valid Until'); ?></label>
+        <input id="grantUntil" type="date" name="grantUntil" class="form-control" required placeholder="<?= $this->transEsc('Granted Until'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
+      </div>
+    </div>
+    <div class="flex mb-2">
+      <input id="check1" type="checkbox" name="check1" class="mr-2" required />
+      <label for="check1" class="font-weight-default">
+        <?= $this->transEsc('I_grant_authorization_to'); ?>
+      </label>
+    </div>
+    <div class="flex mb-2">
+      <input id="check2" type="checkbox" name="check2" class="mr-2" required />
+      <label for="check2" class="font-weight-default">
+        <?= $this->transEsc('as_authorization_issuer'); ?>
+      </label>
+    </div>
+    <div class="center-text mb-2">
+      <button class="btn btn-primary"><?= $this->transEsc('Create Letter of Authorization'); ?></button>
+    </div>
+  </form>
+</div>
+
+<div class="<?= $this->layoutClass('sidebar')?>">
+    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'letterofauthorization'])?>
+</div>

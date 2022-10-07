@@ -262,12 +262,12 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the container link of the item from 773.
      *
-     * @return array
+     * @return array|bool
      *
      * @throws File_MARC_Exception
      * @throws Exception
      */
-    public function getContainerLink() : array
+    public function getContainerLink()
     {
         return $this->getLinkFromField($this->getMarcReader()->getField('773'));
     }
@@ -374,9 +374,9 @@ class SolrVZGRecord extends SolrMarc
      *
      * @TODO repeatable?
      *
-     * @return string
+     * @return string|null
      */
-    public function getNumbering() : string {
+    public function getNumbering() : ?string {
         return $this->getFirstFieldValue('362', ['a']);
     }
 
@@ -385,9 +385,9 @@ class SolrVZGRecord extends SolrMarc
      *
      * not repeatable
      *
-     * @return string
+     * @return string|null
      */
-    public function getNumberingPeculiarities() : string {
+    public function getNumberingPeculiarities() : ?string {
         return $this->getFirstFieldValue('515', ['a']);
     }
 
@@ -396,9 +396,9 @@ class SolrVZGRecord extends SolrMarc
      *
      * not repeatable
      *
-     * @return string
+     * @return string|null
      */
-    public function getLanguageNotes() : string {
+    public function getLanguageNotes() : ?string {
         return $this->getFirstFieldValue('546', ['a']);
     }
 
@@ -463,9 +463,9 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the projection of a map.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCartographicProjection() : string
+    public function getCartographicProjection() : ?string
     {
         return $this->getFirstFieldValue('255', ['b']);
     }
@@ -473,9 +473,9 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the coordinates of a map.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCartographicCoordinates() : string
+    public function getCartographicCoordinates() : ?string
     {
         return $this->getFirstFieldValue('255', ['c']);
     }
@@ -483,9 +483,9 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the equinox of a map.
      *
-     * @return string
+     * @return string|null
      */
-    public function getCartographicEquinox() : string
+    public function getCartographicEquinox() : ?string
     {
         return $this->getFirstFieldValue('255', ['e']);
     }
@@ -495,9 +495,9 @@ class SolrVZGRecord extends SolrMarc
      * first location of the publication, the publisher, the year and the
      * edition.
      *
-     * @return String
+     * @return String|null
      */
-    public function getReducedPublicationInfo() : string
+    public function getReducedPublicationInfo() : ?string
     {
         return $this->getFormattedMarcData('250a - (((264a : 264b), 264c)');
     }
@@ -505,9 +505,9 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the dissertation notes of the item from 502.
      *
-     * @return string
+     * @return string|null
      */
-    public function getDissertationNote() : string
+    public function getDissertationNote() : ?string
     {
         $dissNote = $this->getFieldArray('502', ['a', 'b', 'c', 'd', 'g', 'o'], true, ', ');
         return ($dissNote) ? ltrim($dissNote[0], '@') : '';
@@ -1853,13 +1853,13 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Get the group highlighting of the item.
      *
-     * @param string $highlightString
+     * @param array $highlightStrings
      *
      * @return array
      */
-    protected function groupHighlighting(string $highlightString) : array
+    protected function groupHighlighting(array $highlightStrings) : array
     {
-        return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightString);
+        return preg_replace('/\{\{\{\{END_HILITE\}\}\}\}\s?\{\{\{\{START_HILITE\}\}\}\}/', ' ', $highlightStrings);
     }
 
     /**

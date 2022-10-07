@@ -11,18 +11,18 @@
 
 @font-face {
   font-family: 'Roboto-Regular';
-  src: url('../fonts/Roboto-Regular.ttf');
-  src: url('../fonts/Roboto-Regular.ttf') format('ttf'),
+  src: url('../fonts/unifont/Roboto-Regular.ttf');
+  src: url('../fonts/unifont/Roboto-Regular.ttf') format('ttf'),
 }
 @font-face {
   font-family: 'Roboto-Italic';
-  src: url('../fonts/Roboto-Italic.ttf');
-  src: url('../fonts/Roboto-Italic.ttf') format('ttf'),
+  src: url('../fonts/unifont/Roboto-Italic.ttf');
+  src: url('../fonts/unifont/Roboto-Italic.ttf') format('ttf'),
 }
 @font-face {
   font-family: 'Roboto-Bold';
-  src: url('../fonts/Roboto-Bold.ttf');
-  src: url('../fonts/Roboto-Bold.ttf') format('ttf'),
+  src: url('../fonts/unifont/Roboto-Bold.ttf');
+  src: url('../fonts/unifont/Roboto-Bold.ttf') format('ttf'),
 }
 
 html {
@@ -1301,8 +1301,14 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.mb-2 {
+  margin-bottom: 10px !important;
+}
 .ml-2 {
   margin-left: 10px !important;
+}
+.mr-2 {
+  margin-right: 10px !important;
 }
 .pb-1 {
   padding-bottom: 5px;
@@ -1537,4 +1543,12 @@ div.striped {
       background-color: @table-bg-accent;
     }
   }
+}
+
+.font-weight-default {
+  font-weight: unset;
+}
+
+.authority-form input[type="checkbox"] {
+  align-self: start;
 }

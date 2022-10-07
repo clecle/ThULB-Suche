@@ -87,8 +87,12 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $locationUrl = $this->getLocationUrlForCallnumber($callNumber);
 
             if ($this->createPDF($formData, $fileName) &&
-                    $this->sendRequestEmail($fileName, $archiveEmail) &&
-                    $this->sendConfirmationEmail($formData, $this->getUser()['email'])) {
+                    $this->sendRequestEmail($fileName, $archiveEmail)) {
+
+                if($this->getUser()['email'] ?? false) {
+                    $this->sendConfirmationEmail($formData, $this->getUser()['email']);
+                }
+
                 $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
                     ['%%location%%' => $borrowCounter, '%%url%%' => $locationUrl]);
             }
@@ -201,8 +205,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $pdf->Output('F', $savePath . $fileName);
         }
         catch (ErrorException $e) {
-            $this->addFlashMessage(false, 'storage_retrieval_request_journal_failed');
-
             if($this->logger != null && is_callable($this->logger, 'logException')) {
                 $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
             }

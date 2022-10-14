@@ -100,7 +100,7 @@
             <?php endif; ?>
 
             <div class="hidden-print">
-              <?php if (count($this->lists) > 0): ?>
+              <?php if ($this->lists && count($this->lists) > 0): ?>
                 <strong><?= $this->transEsc('Saved in')?>:</strong>
                 <?php $i=0;foreach($this->lists as $current): ?>
                     <a href="<?= $this->url('userList', array('id' => $current->id))?>"><?= $this->escapeHtml($current->title)?></a><?php if($i++ < count($this->lists)-1): ?>,<?php endif; ?>

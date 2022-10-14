@@ -33,9 +33,9 @@ class Sera extends AbstractBase implements
      * @return array
      */
     public function getStatus($id) : array {
-        $postData = "sql=SELECT convert(char(10),d.expected_date,104) AS expected_date, (SELECT description FROM orderstatus WHERE iln=31 AND orderstatus_code = o.orderstatus_code) AS order_status" .
-                     " FROM orders o, delivery d WHERE o.iln = 31 AND d.iln=31 AND o.order_id_nr = d.order_id_nr AND o.orderstatus_code not in ('u', 'v', 'w')" .
-                     " AND o.epn = " . $id;
+        $postData = "sql=SELECT orderstatus_code FROM orders o" .
+                        " WHERE o.iln = 31 AND o.orderstatus_code IN ('t', 'b')" .
+                        " AND o.epn = " . $id;
 
         $headers = [
             'Accept' => 'application/json',

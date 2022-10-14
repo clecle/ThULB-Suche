@@ -123,9 +123,14 @@
                 <dt><?= $this->transEsc("Call Number")?>:</dt>
                 <dd><strong><?= $callno ?></strong></dd>
               <?php endif; ?>
-              <?php if($callno == 'bestellt' && ($orderStatus = $this->thulb_sera($row['epn'])['order_status'] ?? '')): ?>
+              <?php if($callno == 'bestellt' && ($orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? '')): ?>
                 <dt><?= $this->transEsc("Status")?>:</dt>
-                <dd><strong><?= $orderStatus; ?></strong></dd>
+                <dd>
+                  <strong><?= $this->transEsc('Sera::' . $orderStatusCode); ?></strong>
+                  <?php if($orderStatusCode == 'b'): ?>
+                    <a href="#"><?= $this->transEsc('Reserve medium'); ?></a>
+                  <?php endif; ?>
+                </dd>
               <?php endif; ?>
               <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
                 <dt><?= $this->transEsc('Link')?>:</dt>

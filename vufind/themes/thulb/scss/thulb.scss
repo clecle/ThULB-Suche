@@ -919,10 +919,6 @@ div.groupLocation {
   }
 }
 
-.favourite-list {
-  font-size: 13px;
-}
-
 .striped {
   .cart-controls {
     padding: 0 8px;
@@ -1551,4 +1547,11 @@ div.striped {
 
 .authority-form input[type="checkbox"] {
   align-self: start;
+}
+
+#side-panel-standort_iln_str_mv i.fa-info-circle {
+  font-size: 18px;
+  vertical-align: middle;
+  color: $brand-primary;
+  margin-left: 5px;
 }

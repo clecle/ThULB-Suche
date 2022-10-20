@@ -170,9 +170,11 @@ $config = array(
             'search_facets' => array(
                 'factories' => array(
                     \ThULB\Search\Facets\ThBIBFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+                    \ThULB\Search\Facets\LocationFacet::class => \ThULB\Search\Facets\FacetFactory::class,
                 ),
                 'aliases' => array(
-                    'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class
+                    'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class,
+                    'standort_iln_str_mv' => \ThULB\Search\Facets\LocationFacet::class
                 )
             ),
             'search_params' => array(

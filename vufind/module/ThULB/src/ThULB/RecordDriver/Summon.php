@@ -162,7 +162,7 @@ class Summon extends OriginalSummon
      */
     public function isOpenAccess() : bool
     {
-        return $this->fields['IsOpenAccess'][0] ?? false;
+        return ($this->fields['IsOpenAccess'][0] ?? false) && $this->fields['hasFullText'];
     }
 
     /**

@@ -27,6 +27,15 @@ class Params extends OriginalParams
         else {
             $array['filters'][] = "ContentType,Newspaper Article,true";
         }
+        $filterIndex = isset($array['filters']) ?
+            array_search('includeReferences,true', $array['filters']) :
+            false;
+        if($filterIndex !== false) {
+            unset($array['filters'][$filterIndex]);
+        }
+        else {
+            $array['filters'][] = "IsFullText,true";
+        }
         $params->exchangeArray($array);
     }
 }

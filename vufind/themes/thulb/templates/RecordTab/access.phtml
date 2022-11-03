@@ -119,14 +119,14 @@
           <td>
             <dl class="dl-horizontal">
               <?php $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
-              <?php if ($callno): ?>
+              <?php if ($callno && $callno != 'bestellt'): ?>
                 <dt><?= $this->transEsc("Call Number")?>:</dt>
                 <dd><strong><?= $callno ?></strong></dd>
-              <?php endif; ?>
-              <?php if($callno == 'bestellt' && ($orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? '')): ?>
+              <?php elseif($callno == 'bestellt'): ?>
+                <?php $orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? ''; ?>
                 <dt><?= $this->transEsc("Status")?>:</dt>
                 <dd>
-                  <strong><?= $this->transEsc('Sera::' . $orderStatusCode); ?></strong>
+                  <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
                   <?php if($orderStatusCode == 'b'): ?>
                     <a href="#"><?= $this->transEsc('Reserve medium'); ?></a>
                   <?php endif; ?>

@@ -542,10 +542,20 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getPrimaryAuthors() : array
+    public function getPrimaryAuthors($excludeRoles = []) : array
     {
-        $author = $this->getFormattedMarcData('100a (100b)(, 100c)');
-        return $author ? [$author] : [];
+        $relevantFields = [
+            '100' => ['a', 'b', 'c']
+        ];
+        $formattingRules = [
+            '100' => '100a (100b)(, 100c)'
+        ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -575,7 +585,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSecondaryAuthors() : array
+    public function getSecondaryAuthors($excludeRoles = []) : array
     {
         $relevantFields = [
             '700' => ['a', 'b', 'c']
@@ -583,8 +593,12 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = [
             '700' => '700a (700b)(, 700c)'
         ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
 
-        return $this->getFormattedData($relevantFields, $formattingRules);
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -645,7 +659,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getCorporateAuthors() : array
+    public function getCorporateAuthors($excludeRoles = []) : array
     {
         $relevantFields = array(
             '110' => ['a', 'b', 'c', 'd', 'g'],
@@ -655,7 +669,12 @@ class SolrVZGRecord extends SolrMarc
             '110' => '110a (/ 110b, (\((110c, 110d)\)))( 110g)',
             '710' => '710a (/ 710b, (\((710c, 710d)\)))( 710g)'
         );
-        return $authors = $this->getFormattedData($relevantFields, $formattingRules);
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**

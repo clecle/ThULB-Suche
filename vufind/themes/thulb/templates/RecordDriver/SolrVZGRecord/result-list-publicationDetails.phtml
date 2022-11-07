@@ -1,8 +1,8 @@
 <?php
     $summAuthors = array_slice(array_merge(
         array_slice($this->driver->getPrimaryAuthorsWithHighlighting(), 0, 1),
-        array_slice($this->driver->getSecondaryAuthors(), 0, 1),
-        array_slice($this->driver->getCorporateAuthors(), 0, 1)
+        array_slice($this->driver->getSecondaryAuthors(['dgs', 'dgg', 'rev']), 0, 1),
+        array_slice($this->driver->getCorporateAuthors(['dgs', 'dgg', 'rev']), 0, 1)
     ), 0, 2);
 
     $isArticle = $this->driver->isFormat('(electronic )?Article', true);

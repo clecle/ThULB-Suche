@@ -835,6 +835,16 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get an array of all ISSNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISSNs()
+    {
+        return $this->getMarcReader()->getFieldsSubfields('022', ['a'], null);
+    }
+
+    /**
      * Get an array of all invalid ISBNs associated with the record (may be empty).
      *
      * @return array

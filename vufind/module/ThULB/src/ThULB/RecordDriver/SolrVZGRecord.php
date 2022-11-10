@@ -2284,6 +2284,26 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get the DDC notations of the record.
+     *
+     * @return array
+     */
+    public function getDdcNotationDNB() : array {
+        $fields = $this->getFieldsConditional('082', [
+            $this->createFieldCondition('indicator', '1', '==', '0'),
+            $this->createFieldCondition('indicator', '2', '==', '4'),
+            $this->createFieldCondition('subfield', '2', 'in', ['ddc', false])
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        return $data;
+    }
+
+    /**
      * Get the local classification of the record.
      *
      * @return array

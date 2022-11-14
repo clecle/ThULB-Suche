@@ -542,10 +542,20 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getPrimaryAuthors() : array
+    public function getPrimaryAuthors($excludeRoles = []) : array
     {
-        $author = $this->getFormattedMarcData('100a (100b)(, 100c)');
-        return $author ? [$author] : [];
+        $relevantFields = [
+            '100' => ['a', 'b', 'c']
+        ];
+        $formattingRules = [
+            '100' => '100a (100b)(, 100c)'
+        ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -575,7 +585,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSecondaryAuthors() : array
+    public function getSecondaryAuthors($excludeRoles = []) : array
     {
         $relevantFields = [
             '700' => ['a', 'b', 'c']
@@ -583,8 +593,12 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = [
             '700' => '700a (700b)(, 700c)'
         ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
 
-        return $this->getFormattedData($relevantFields, $formattingRules);
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -645,7 +659,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getCorporateAuthors() : array
+    public function getCorporateAuthors($excludeRoles = []) : array
     {
         $relevantFields = array(
             '110' => ['a', 'b', 'c', 'd', 'g'],
@@ -655,7 +669,12 @@ class SolrVZGRecord extends SolrMarc
             '110' => '110a (/ 110b, (\((110c, 110d)\)))( 110g)',
             '710' => '710a (/ 710b, (\((710c, 710d)\)))( 710g)'
         );
-        return $authors = $this->getFormattedData($relevantFields, $formattingRules);
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -832,6 +851,16 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = array('024' => '0249 024c');
         $conditions = array ($this->createFieldCondition('indicator', 1, '==', '2'));
         return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+    }
+
+    /**
+     * Get an array of all ISSNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISSNs()
+    {
+        return $this->getMarcReader()->getFieldsSubfields('022', ['a'], null);
     }
 
     /**
@@ -2250,6 +2279,73 @@ class SolrVZGRecord extends SolrMarc
         foreach($fields as $field) {
             $data[] = $this->getMarcReader()->getSubfield($field, 'a');
         }
+
+        return $data;
+    }
+
+    /**
+     * Get the DDC notations of the record.
+     *
+     * @return array
+     */
+    public function getDdcNotation() : array {
+        $fields = $this->getFieldsConditional('082', [
+            $this->createFieldCondition('indicator', '1', '==', '0'),
+            $this->createFieldCondition('indicator', '2', '==', false),
+            $this->createFieldCondition('subfield', '2', 'in', ['ddc', false])
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        $data = array_unique($data);
+        sort($data);
+
+        return $data;
+    }
+
+    /**
+     * Get the DDC notations of the record.
+     *
+     * @return array
+     */
+    public function getDdcNotationDNB() : array {
+        $fields = $this->getFieldsConditional('082', [
+            $this->createFieldCondition('indicator', '1', '==', '0'),
+            $this->createFieldCondition('indicator', '2', '==', '4'),
+            $this->createFieldCondition('subfield', '2', 'in', ['ddc', false])
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+        }
+
+        $data = array_unique($data);
+        sort($data);
+
+        return $data;
+    }
+
+    /**
+     * Get the DDC notations of the record.
+     *
+     * @return array
+     */
+    public function getDnbNotation() : array {
+        $fields = $this->getFieldsConditional('084', [
+            $this->createFieldCondition('subfield', '2', '==', 'sdnb')
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data = array_merge($data, $this->getMarcReader()->getSubfields($field, 'a'));
+        }
+
+        $data = array_unique($data);
+        sort($data);
 
         return $data;
     }

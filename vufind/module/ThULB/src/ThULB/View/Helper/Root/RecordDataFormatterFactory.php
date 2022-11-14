@@ -184,6 +184,9 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('Publication_Place', 'getHierarchicalPlaceNames');
         $spec->setTemplateLine('Author Notes', true, 'data-authorNotes.phtml');
         $spec->setTemplateLine('RVK notation', 'getRvkNotation', 'data-rvkNotation.phtml');
+        $spec->setTemplateLine('Notation DNB', 'getDnbNotation', 'data-dnbNotation.phtml');
+        $spec->setTemplateLine('DDC Notation DNB', 'getDdcNotationDNB', 'data-ddcNotation.phtml');
+        $spec->setTemplateLine('DDC Notation', 'getDdcNotation', 'data-ddcNotation.phtml');
         $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Local subject terms', 'getLocalSubjects', 'data-localSubjects.phtml');
         $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');

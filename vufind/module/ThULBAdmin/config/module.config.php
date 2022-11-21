@@ -19,7 +19,8 @@ $config = array(
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addDynamicRoute($config, 'DynMessages', 'DynMessages', 'edit');
 $routeGenerator->addDynamicRoute($config, 'DynMessages-save', 'DynMessages', 'save');
-$routeGenerator->addDynamicRoute($config, 'ReassignUserdata', 'Userdata', 'reassign');
+$routeGenerator->addDynamicRoute($config, 'Userdata-reassign', 'Userdata', 'reassign');
+$routeGenerator->addDynamicRoute($config, 'Userdata-save', 'Userdata', 'save');
 $routeGenerator->addDynamicRoute($config, 'DeleteUserdata', 'Userdata', 'delete');
 
 return $config;

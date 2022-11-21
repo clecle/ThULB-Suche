@@ -2,17 +2,17 @@
 <div class="<?=$this->layoutClass('mainbody')?>">
   <?php echo $this->flashmessages(); ?>
 
-  <form action="/Userdata/reassign" method="post">
+  <form action="<?= $this->url('Userdata-reassign'); ?>" method="post">
     <table>
       <tbody>
         <tr>
-          <td class="tag-col pt-2">Alte Nutzernummer</td>
+          <td class="tag-col pt-2"><?= $this->transEsc('Old Username'); ?></td>
           <td class="text-col pt-2">
             <input type="text" name="oldUserNumber" value="<?= $oldUserNumber; ?>" />
           </td>
         </tr>
         <tr>
-          <td class="tag-co pt-2l">Neue Nutzernummer</td>
+          <td class="tag-co pt-2l"><?= $this->transEsc('New Username'); ?></td>
           <td class="text-col pt-2">
             <input type="text" name="newUserNumber" value="<?= $newUserNumber; ?>" />
           </td>
@@ -29,27 +29,27 @@
 
   <?php if(!empty($checkData)): ?>
   <div class="dataCheck">
-    <?php $userDataToDisplay = ['username' => 'Nutzernummer', 'firstname' => 'Vorname', 'lastname' => 'Nachname', 'email' => 'E-Mail']; ?>
-    <h2>zu ändernde Daten:</h2>
+      <?php $userDataToDisplay = ['username' => 'Username', 'firstname' => 'First Name', 'lastname' => 'Last Name', 'email' => 'Email']; ?>
+    <h2><?= $this->transEsc('Data to change'); ?>:</h2>
 
-    <h4>Nutzerdaten</h4>
+    <h4><?= $this->transEsc('User data'); ?></h4>
     <table>
       <thead>
         <tr class="bold">
           <td>&nbsp;</td>
-          <td>Alter Nutzer</td>
-          <td>Neuer Nutzer</td>
+          <td><?= $this->transEsc('Old User'); ?></td>
+          <td><?= $this->transEsc('New User'); ?></td>
         </tr>
       </thead>
       <tbody>
       <?php foreach($userDataToDisplay as $field => $desc): ?>
         <tr>
-          <td class="bold"><?= $desc; ?>:</td>
+          <td class="bold"><?= $this->transEsc($desc);?>:</td>
           <td><?= $checkData['oldUser'][$field]; ?></td>
           <?php if($checkData['newUser']['id'] ?? false): ?>
             <td><?= $checkData['newUser'][$field]; ?></td>
           <?php elseif($field == 'username'): ?>
-            <td><span class="alert">Nutzer nicht in der Datenbank vorhanden.</span></td>
+            <td><span class="alert"><?= $this->transEsc('User not in database'); ?></span></td>
           <?php else: ?>
             <td>&nbsp;</td>
           <?php endif;; ?>
@@ -59,12 +59,12 @@
     </table>
 
     <?php if(!empty($comments = $checkData['comments'])): ?>
-      <h4>Kommentare (<?= count($comments); ?>):</h4>
+      <h4><?= $this->transEsc('Comments');?> (<?= count($comments); ?>):</h4>
       <table>
         <thead>
           <tr>
-            <td>Titel</td>
-            <td>Kommentar</td>
+            <td><?= $this->transEsc('title');?></td>
+            <td><?= $this->transEsc('comment');?></td>
           </tr>
         </thead>
         <tbody>
@@ -80,16 +80,16 @@
 
     <!-- Unvollständig -->
     <?php if(!empty($resourceTags = $checkData['resourcetags'])): ?>
-      <h4>Stichwörter (<?= count($resourceTags); ?>):</h4>
+      <h4><?= $this->transEsc('Tags');?> (<?= count($resourceTags); ?>):</h4>
     <?php endif; ?>
 
     <?php if(!empty($searches = $checkData['search'])): ?>
-      <h4>Gespeicherte Suchanfragen (<?= count($searches); ?>):</h4>
+      <h4><?= $this->transEsc('history_saved_searches');?> (<?= count($searches); ?>):</h4>
       <table>
         <thead>
           <tr>
-            <td>Index</td>
-            <td>Suchstring</td>
+            <td><?= $this->transEsc('Index');?></td>
+            <td><?= $this->transEsc('Search string');?></td>
           </tr>
         </thead>
         <?php foreach($searches as $search): ?>
@@ -102,13 +102,13 @@
     <?php endif; ?>
 
     <?php if(!empty($userCards = $checkData['usercard'])): ?>
-      <h4>Nutzerkarten (<?= count($userCards); ?>):</h4>
+      <h4><?= $this->transEsc('User cards');?> (<?= count($userCards); ?>):</h4>
       <table>
         <thead>
           <tr>
-            <td>Kartenname</td>
-            <td>Bibliothek</td>
-            <td>Nutzername</td>
+            <td><?= $this->transEsc('Card name');?></td>
+            <td><?= $this->transEsc('library');?></td>
+            <td><?= $this->transEsc('Username');?></td>
           </tr>
         </thead>
         <tbody>
@@ -124,14 +124,14 @@
     <?php endif; ?>
 
     <?php if(!empty($userLists = $checkData['userlist'])): ?>
-      <h4>Favoritenlisten (<?= count($userLists); ?>):</h4>
+      <h4><?= $this->transEsc('Favorite lists');?> (<?= count($userLists); ?>):</h4>
       <table>
         <thead>
           <tr>
-            <td>Name</td>
-            <td>Beschreibung</td>
-            <td>Einträge</td>
-            <td>Öffentlich</td>
+            <td><?= $this->transEsc('Name');?></td>
+            <td><?= $this->transEsc('Description');?></td>
+            <td><?= $this->transEsc('Entries');?></td>
+            <td><?= $this->transEsc('Public');?></td>
           </tr>
         </thead>
         <tbody>
@@ -148,12 +148,12 @@
     <?php endif; ?>
 
     <?php if(!empty($userResources = $checkData['userresource'])): ?>
-      <h4>Favoriten (<?= count($userResources); ?>):</h4>
+      <h4><?= $this->transEsc('Favorites');?> (<?= count($userResources); ?>):</h4>
       <table>
         <thead>
           <tr>
-            <td>Liste</td>
-            <td>Resource</td>
+            <td><?= $this->transEsc('List');?></td>
+            <td><?= $this->transEsc('Resource');?></td>
           </tr>
         </thead>
         <?php foreach($userResources as $resource): ?>
@@ -165,7 +165,7 @@
       </table>
     <?php endif; ?>
 
-    <form action="/Userdata/save" method="post" class="pt-2">
+    <form action="<?= $this->url('Userdata-save'); ?>" method="post" class="pt-2">
       <input type="hidden" name="oldUserNumber" value="<?= $oldUserNumber; ?>">
       <input type="hidden" name="newUserNumber" value="<?= $newUserNumber; ?>">
       <input type="submit" value="<?= $this->transEsc('Save'); ?>" class="btn btn-primary" />

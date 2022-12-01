@@ -2,8 +2,8 @@
 
 namespace ThULB\Mailer;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
+use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Throwable;
 use VuFind\Mailer\Factory as OriginalFactory;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

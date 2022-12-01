@@ -53,7 +53,7 @@ class ILS extends OriginalILS
      *
      * @throws AuthException
      */
-    public function validatePasswordAgainstPolicy($password) {
+    public function validatePasswordAgainstPolicy(string $password) : void {
         // Make function public
         parent::validatePasswordAgainstPolicy($password);
     }

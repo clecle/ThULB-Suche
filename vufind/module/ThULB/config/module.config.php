@@ -179,23 +179,28 @@ $config = array(
             ),
             'search_params' => array(
                 'factories' => array(
+                    'ThULB\Search\Blender\Params' => \ThULB\Search\Blender\ParamsFactory::class,
                     'ThULB\Search\Solr\Params' => \ThULB\Search\Solr\ParamsFactory::class,
-                    'ThULB\Search\Summon\Params' => 'VuFind\Search\Params\ParamsFactory'
+                    'ThULB\Search\Summon\Params' => \VuFind\Search\Params\ParamsFactory::class
                 ),
                 'aliases' => array(
-                    'solr' => 'ThULB\Search\Solr\Params',
-                    'summon' => 'ThULB\Search\Summon\Params'
+                    'blender' => \ThULB\Search\Blender\Params::class,
+                    'solr' => \ThULB\Search\Solr\Params::class,
+                    'summon' => \ThULB\Search\Summon\Params::class
                 )
             ),
             'search_results' => array(
                 'factories' => array(
+                    'VuFind\Search\Blender\Results' => 'ThULB\Search\Results\Factory::getBlender',
+                    'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr',
                     'VuFind\Search\Summon\Results' => 'ThULB\Search\Results\Factory::getSummon',
-                    'VuFind\Search\Solr\Results' => 'ThULB\Search\Results\Factory::getSolr'
                 )
             ),
             'search_backend' => array(
                 'factories' => array(
-                    'Solr' => \ThULB\Search\Factory\SolrDefaultBackendFactory::class
+                    'Blender' => \ThULB\Search\Factory\BlenderBackendFactory::class,
+                    'Solr' => \ThULB\Search\Factory\SolrDefaultBackendFactory::class,
+                    'Summon' => \ThULB\Search\Factory\SummonBackendFactory::class
                 )
             )
         ),

@@ -30,6 +30,7 @@ use VuFind\Search\Solr\SpellingProcessor;
 use Laminas\ServiceManager\ServiceManager;
 use ThULB\Search\Summon\Results as SummonResults;
 use ThULB\Search\Solr\Results as SolrResults;
+use ThULB\Search\Blender\Results as BlenderResults;
 
 /**
  * Factory
@@ -73,13 +74,38 @@ class Factory {
         $facetManager = $sm->get(\ThULB\Search\Facets\PluginManager::class);
 
         $solr = new SolrResults($params, $searchService, $recordLoader, $facetManager);
-        
+
         $config = $sm->get('VuFind\Config')->get('config');
         $spellConfig = $config->Spelling ?? null;
         $solr->setSpellingProcessor(
             new SpellingProcessor($spellConfig)
         );
-        
+
         return $solr;
+    }
+
+    /**
+     * Factory for Solr results object.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return SolrResults
+     */
+    public static function getBlender(ServiceManager $sm) : BlenderResults
+    {
+        $params = $sm->get('VuFind\SearchParamsPluginManager')->get('Blender');
+        $searchService = $sm->get('VuFind\Search');
+        $recordLoader = $sm->get('VuFind\RecordLoader');
+        $facetManager = $sm->get(\ThULB\Search\Facets\PluginManager::class);
+
+        $blender = new BlenderResults($params, $searchService, $recordLoader, $facetManager);
+
+        $config = $sm->get('VuFind\Config')->get('config');
+        $spellConfig = $config->Spelling ?? null;
+        $blender->setSpellingProcessor(
+            new SpellingProcessor($spellConfig)
+        );
+
+        return $blender;
     }
 }

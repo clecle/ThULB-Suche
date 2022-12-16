@@ -1085,25 +1085,25 @@ class SolrVZGRecord extends SolrMarc
         $marcData = [];
         $marcFieldStrings = [];
         preg_match_all('/[\d]{3}[\da-z]/', $format, $marcFieldStrings, PREG_OFFSET_CAPTURE);
-        foreach ($marcFieldStrings[0] as $i => $marcFieldInfo) {
+        foreach ($marcFieldStrings[0] as $marcFieldInfo) {
             $fieldNumber = substr($marcFieldInfo[0], 0, 3);
             $subfieldChar = substr($marcFieldInfo[0], 3);
-            if ($data && isset($data[$fieldNumber . $subfieldChar])) {
-                $value = $data[$fieldNumber . $subfieldChar];
+            if ($data) {
+                $value = $data[$fieldNumber . $subfieldChar] ?? null;
             } else {
-                $value = empty ($data) ? $this->getFirstFieldValue($fieldNumber, [$subfieldChar]) : null;
+                $value = $this->getFirstFieldValue($fieldNumber, [$subfieldChar]);
             }
-            $value = ($ignorePlaceholders && !is_null($value) && in_array($value, static::$defaultPlaceholders)) ? null : $value;
-            if (!is_null($value)) {
+            $value = ($ignorePlaceholders && in_array($value, static::$defaultPlaceholders)) ? null : $value;
+            if (!is_null($value) && $value != '') {
                 $marcData[$fieldNumber . $subfieldChar] = $value;
                 $replacement = 'T';
                 // check for separators in the marc field and marc the separator
                 // in the format string as removable
                 if ($removeSeparators) {
                     foreach (static::$defaultSeparators as $separator) {
-                        if (substr($value, 0, strlen($separator)) === $separator) {
+                        if (str_starts_with($value, $separator)) {
                             $replacement = 'ST';
-                        } else if ((substr($value, -strlen($separator)) === $separator)) {
+                        } else if ((str_ends_with($value, $separator))) {
                             $replacement = 'TS';
                         }
                     }

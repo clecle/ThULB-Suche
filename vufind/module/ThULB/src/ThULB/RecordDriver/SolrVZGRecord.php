@@ -288,7 +288,19 @@ class SolrVZGRecord extends SolrMarc
         $params = parent::getThumbnail($size);
         
         $params['contenttype'] = $this->fields['format'] ? $this->fields['format'][0] : '';
-        
+
+        $collection_details = $this->fields['collection_details'];
+
+        // is Main-Config Content > IIIF set?
+        if ($this->mainConfig->Content->IIIF ?? false) {
+            // get IIIF array: "collection-Name" = "IIIF-API-url"
+            $collections = $this->mainConfig->Content->IIIF->toArray();
+            $IIIF_collections = array_keys($collections);
+            // add only, if SOLR-Field "collection_details" contains the same Value as given in Main-Config - should be one, usually!
+            $params['collection_details'] = implode(',', array_intersect($collection_details, $IIIF_collections));
+        } else {
+            $params['collection_details'] = "";
+        }
         return $params;
     }
 

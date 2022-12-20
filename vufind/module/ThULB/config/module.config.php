@@ -12,6 +12,7 @@ $config = array(
             \ThULB\Controller\SearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\SummonController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\SummonrecordController::class => \VuFind\Controller\AbstractBaseFactory::class,
+            \ThULB\Controller\CoverController::class => \VuFind\Controller\CoverControllerFactory::class,
         ),
         'aliases' => array(
             'Holds' => \ThULB\Controller\HoldsController::class,
@@ -24,6 +25,7 @@ $config = array(
             \VuFind\Controller\MyResearchController::class => \ThULB\Controller\MyResearchController::class,
             \VuFind\Controller\SummonController::class => \ThULB\Controller\SummonController::class,
             \VuFind\Controller\SummonrecordController::class => \ThULB\Controller\SummonrecordController::class,
+            \VuFind\Controller\CoverController::class => \ThULB\Controller\CoverController::class,
         )
     ),
     'controller_plugins' => array (
@@ -42,6 +44,7 @@ $config = array(
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
+            'ThULB\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
         ],
         'aliases' => array(
             \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
@@ -50,6 +53,7 @@ $config = array(
             'VuFind\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Mailer\Mailer' => 'ThULB\Mailer\Mailer',
             'VuFind\Record\Loader' => 'ThULB\Record\Loader',
+            'VuFind\Cover\Loader' => 'ThULB\Cover\Loader',
         )
     ],
     'vufind' => array(
@@ -84,9 +88,11 @@ $config = array(
             'content_covers' => array(
                 'factories' => array(
                     \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \ThULB\Content\Covers\IIIF::class => \VuFind\Service\ServiceWithConfigIniFactory::class,
                 ),
                 'aliases' => array(
-                    'google' => \ThULB\Content\Covers\Google::class
+                    'google' => \ThULB\Content\Covers\Google::class,
+                    'iiif' => \ThULB\Content\Covers\IIIF::class
                 )
             ),
             'db_row' => array(

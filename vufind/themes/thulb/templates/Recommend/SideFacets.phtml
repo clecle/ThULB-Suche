@@ -71,4 +71,11 @@
   <?php endforeach; ?>
 <?php endif; ?>
 
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, "registerSideFacetTruncation();", 'SET');?>
+<?=
+  $this->inlineScript(
+    \Laminas\View\Helper\HeadScript::SCRIPT,
+    "VuFind.truncate.initTruncate('.truncate-facets', '.facet');" .
+    "VuFind.truncate.initTruncate('.truncate-hierarchical-facets', '.facet-tree-parent-container');",
+    'SET'
+  );
+?>

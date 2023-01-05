@@ -261,6 +261,25 @@ footer {
   .author-list { flex: 0 1 100%; }
 }
 
+.facet-group .facet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  background-color: unset;
+
+  & > .text {
+    display: flex;
+    flex-grow: 1;
+    text-indent: unset;
+    padding: 0;
+  }
+}
+
+.more-less-btn-wrapper > .btn {
+  width: 100%;
+  justify-content: center !important;
+}
+
 /* ------ MyResearch ------ */
 .form-login .btn-link ~ .btn-link { padding-left: 0; } // Login link spacing
 .myresearch-menu a {
@@ -776,7 +795,7 @@ div.facet-tree-parent > i {
   flex-shrink: 0;
   margin-left: 3px; }
 
-.facet-tree-container ul:last-child,
+.facet-tree-container:last-child,
 .facet-tree-parent {
   border-bottom: 1px solid #ddd;
 }

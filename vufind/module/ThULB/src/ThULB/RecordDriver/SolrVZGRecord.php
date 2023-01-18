@@ -296,10 +296,9 @@ class SolrVZGRecord extends SolrMarc
             // get IIIF array: "collection-Name" = "IIIF-API-url"
             $collections = $this->mainConfig->Content->IIIF->toArray();
             $IIIF_collections = array_keys($collections);
-            // add only, if SOLR-Field "collection_details" contains the same Value as given in Main-Config - should be one, usually!
-            $params['collection_details'] = implode(',', array_intersect($collection_details, $IIIF_collections));
-        } else {
-            $params['collection_details'] = "";
+            // add only, if SOLR-Field "collection_details" contains the same Value as given in
+            // Main-Config - should be one, usually!
+            $params['collection_details'] = array_intersect($collection_details, $IIIF_collections);
         }
         return $params;
     }

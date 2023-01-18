@@ -59,16 +59,39 @@ class Loader extends \VuFind\Cover\Loader
      * @param array $ids IDs returned by getIdentifiers() method
      *
      * @return string
+     *
+     * @throws \Exception
      */
     protected function determineLocalFile($ids)
     {
-        if (isset($ids['recordid']) && isset($ids['source'])) {
+        // We should check whether we have cached images for the 13- or 10-digit
+        // ISBNs. If no file exists, we'll favor the 10-digit number if
+        // available for the sake of brevity.
+        if (isset($ids['isbn'])) {
+            $file = $this->getCachePath($this->size, $ids['isbn']->get13());
+            if (!is_readable($file) && $ids['isbn']->get10()) {
+                return $this->getCachePath($this->size, $ids['isbn']->get10());
+            }
+            return $file;
+        } elseif (isset($ids['issn'])) {
+            return $this->getCachePath($this->size, $ids['issn']);
+        } elseif (isset($ids['oclc'])) {
+            return $this->getCachePath($this->size, 'OCLC' . $ids['oclc']);
+        } elseif (isset($ids['upc'])) {
+            return $this->getCachePath($this->size, 'UPC' . $ids['upc']);
+        } elseif (isset($ids['nbn'])) {
+            return $this->getCachePath($this->size, 'NBN' . $ids['nbn']);
+        } elseif (isset($ids['ismn'])) {
+            return $this->getCachePath($this->size, 'ISMN' . $ids['ismn']->get13());
+        } elseif (isset($ids['uuid'])) {
+            return $this->getCachePath($this->size, 'UUID' . $ids['uuid']);
+        } elseif (isset($ids['recordid']) && isset($ids['source'])) {
             return $this->getCachePath(
                 $this->size,
                 'ID' . md5($ids['source'] . '|' . $ids['recordid'])
             );
-        } elseif (isset($ids['collection_details'])) {
-            return $this->getCachePath($this->size, 'IIIF' . $ids['collection_details']);
+        } elseif (isset($ids['collection_details']) && isset($ids['recordid'])) {
+            return $this->getCachePath($this->size, 'IIIF_' . $ids['collection_details'] . '_' . $ids['recordid']);
         }
         throw new \Exception('Cannot determine local file path.');
     }

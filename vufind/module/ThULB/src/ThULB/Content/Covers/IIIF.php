@@ -56,17 +56,20 @@ class IIIF extends \VuFind\Content\AbstractCover
      */
     public function getUrl($key, $size, $ids)
     {
-        $px = 600;
-        // @TODO size control via Config
-        switch ($size) {
-            case "small": $px = 200;
-            case "medium": $px = 600;
-            case "large": $px = 1200;
+        if(!$ids['collection_details']) {
+            return false;
         }
+
+        $px = match ($size) {
+            "small" => $this->config->Content->IIIF_small ?? 200,
+            "medium" => $this->config->Content->IIIF_medium ?? 600,
+            "large" => $this->config->Content->IIIF_large ?? 1200,
+            default => 600,
+        };
+
         // Construct the request URL:
-        // we imploded in "SolrVZGRecord > getThumbnail", so lets explode again (usually not necessary)
-        $collection = explode(',', $ids['collection_details']);
-        $collectionVal = $collection[0];
+        $collection = $ids['collection_details'];
+        $collectionVal = array_shift($collection);
         $url = $this->config->Content->IIIF->$collectionVal;
         $url .= $ids['recordid'] . '/full/!'.$px.','.$px.'/0/default.jpg';
         return $url;

@@ -46,20 +46,18 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array
-    {
+    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array {
         $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
 
         // Use message for status 'unknown' only if there are no other items without status 'unknown'
         $available = null;
         $hasUnknown = false;
-        foreach ($statusGroup['locationList'] as $key => $location) {
-            if(isset($location['status_unknown']) && $location['status_unknown']) {
+        foreach ($statusGroup['locationList'] as $location) {
+            if($location['status_unknown'] ?? false) {
                 $hasUnknown = true;
             }
-            else {
-                $available = $available || $location['availability'];
-            }
+
+            $available = $available || $location['availability'];
         }
         if($hasUnknown && $available !== null) {
             $msg = $available ? 'available' : 'unavailable';

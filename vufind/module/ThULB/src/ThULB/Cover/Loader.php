@@ -50,7 +50,7 @@ class Loader extends \VuFind\Cover\Loader
     protected function storeSanitizedSettings($settings)
     {
         parent::storeSanitizedSettings($settings);
-        $this->collection_details = $settings['collection_details'];
+        $this->collection_details = $settings['collection_details'] ?? null;
     }
 
     /**

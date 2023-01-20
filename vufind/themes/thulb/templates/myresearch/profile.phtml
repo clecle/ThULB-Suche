@@ -34,28 +34,30 @@
         );
 
         $accountinfo = [
-            'group'  => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
-            'status' => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
-            'note'   => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
+            'group'    => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
+            'status'   => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
+            'totalDue' => $this->safeMoneyFormat($this->totalDue / 100),
+            'note'     => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
           ];
         echo $this->renderArray(
           $arrTemplate, $accountinfo,
-          [
-            $this->transEsc('User Group') => 'group',
-          ]
+          [$this->transEsc('User Group') => 'group']
         );
         echo $this->renderArray(
+          $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
+          $accountinfo,
+          [$this->transEsc('User Status') => 'status']
+        );
+        if($this->totalDue) {
+          echo $this->renderArray(
             $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
             $accountinfo,
-            [
-                $this->transEsc('User Status') => 'status'
-            ]
-        );
+            [$this->transEsc('Your Fines') => 'totalDue']
+          );
+        }
         echo $this->renderArray(
           $arrImportantTemplate, $accountinfo,
-          [
-            $this->transEsc('User Note') => 'note',
-          ]
+          [$this->transEsc('User Note') => 'note']
         );
         ?>
       <?php if ($showHomeLibForm): ?>

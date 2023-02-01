@@ -1,6 +1,12 @@
 <?php if($this->thulb_session()->isMessageDisplayed('vpnhint') && !$this->permission()->allowDisplay('hide.VpnWarning')): ?>
-  <div id="vpnhint" class="information flex-center">
-    <div><?= $this->translate('VPN_hint')?></div>
-    <button onclick="hideMessage('vpnhint');" class="btn btn-primary"><?= $this->translate('test_ok')?></button>
+  <div id="vpnhint" class="information flex-center" onclick="$('#vpn-hint-long').css('display', 'flex'); $('#vpn-hint-short').hide()">
+    <div id="vpn-hint-long" class="flex-hidden-xs flex-center">
+      <div><?= $this->translate('VPN_hint')?></div>
+      <button onclick="hideMessage('vpnhint');" class="btn btn-primary"><?= $this->translate('OK')?></button>
+    </div>
+    <div id="vpn-hint-short" class="flex-center center-text flex-visible-xs">
+      <span><?= $this->transEsc('VPN active?'); ?></span>
+      <i class="fa fa-info"></i>
+    </div>
   </div>
 <?php endif; ?>

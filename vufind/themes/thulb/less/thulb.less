@@ -595,13 +595,15 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 }
 
 .information {
-  margin-top: 10px;
-  margin-left: 50px;
-  margin-right: 50px;
+  margin: 10px 50px;
   background-color: #f9b200;
   padding: 15px;
   text-align: center;
   border-radius: 4px;
+
+  button {
+    margin-left: 10px;
+  }
 }
 
 .information button {
@@ -1041,6 +1043,11 @@ li[data-tab="details"] {
 .summonbox {
   &:extend(.alert);
   &:extend(.alert-info);
+
+  i {
+    font-size: 20px;
+    font-weight: bold;
+  }
 }
 
 a.external-link:after,
@@ -1555,4 +1562,22 @@ a.checkbox-filter > span > i.fa-info-circle,
   vertical-align: middle;
   color: @brand-primary;
   margin-left: 5px;
+}
+
+@media (max-width: 767px) {
+  .flex-visible-xs {
+    display: flex;
+  }
+  .flex-hidden-xs {
+    display: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .flex-visible-xs {
+    display: none;
+  }
+  .flex-hidden-xs {
+    display: flex;
+  }
 }

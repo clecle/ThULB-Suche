@@ -93,6 +93,9 @@
   <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
     <?php if($holdingKey == 'Remote') continue; ?>
     <h3>
+      <?php if(!preg_match('/Handapparat|Remote/', $holding['location'])): ?>
+        <?= $this->transEsc('Location') ?>:
+      <?php endif; ?>
       <?= $this->thulb_holdingHelper()->getLocation($holding, true);?>
     </h3>
     <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">

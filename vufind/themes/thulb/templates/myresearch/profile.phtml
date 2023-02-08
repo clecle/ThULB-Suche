@@ -50,7 +50,7 @@
         );
         if($this->totalDue) {
           echo $this->renderArray(
-            ($this->profile['statuscode'] == 3 || $this->profile['statuscode'] == 4)
+            ($this->profile['statuscode'] != 3 && $this->profile['statuscode'] != 4)
               ? $arrTemplate : $arrImportantTemplate,
             $accountinfo,
             [$this->transEsc('Your Fines') => 'totalDue']

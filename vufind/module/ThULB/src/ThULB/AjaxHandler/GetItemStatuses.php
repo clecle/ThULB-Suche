@@ -47,25 +47,81 @@ class GetItemStatuses extends OriginalGetItemStatuses
      * @return array                    Summarized availability information
      */
     protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array {
-        $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
-
-        // Use message for status 'unknown' only if there are no other items without status 'unknown'
-        $available = null;
-        $hasUnknown = false;
-        foreach ($statusGroup['locationList'] as $location) {
-            if($location['status_unknown'] ?? false) {
-                $hasUnknown = true;
+        // Summarize call number, location and availability info across all items:
+        $locations = [];
+        $use_unknown_status = $available = null;
+        foreach ($record as $info) {
+            // Check for a use_unknown_message flag
+            if ($available === null && ($info['use_unknown_message'] ?? false)) {
+                $use_unknown_status = true;
+                $locations[$info['location']]['status_unknown'] = true;
+            }
+            else {
+                $use_unknown_status = false;
             }
 
-            $available = $available || $location['availability'];
+            // Find an available copy
+            if ($info['availability']) {
+                $available = $locations[$info['location']]['available'] = true;
+            }
+
+            // Store call number/location info:
+            $locations[$info['location']]['callnumbers'][] = $this->formatCallNo(
+                $info['callnumber_prefix'],
+                $info['callnumber']
+            );
         }
-        if($hasUnknown && $available !== null) {
-            $msg = $available ? 'available' : 'unavailable';
-            $statusGroup['availability_message'] = $messages[$msg];
+
+        // Build list split out by location:
+        $locationList = [];
+        foreach ($locations as $location => $details) {
+            $locationCallnumbers = array_unique($details['callnumbers']);
+            // Determine call number string based on findings:
+            $callnumberHandler = $this->getCallnumberHandler(
+                $locationCallnumbers,
+                $callnumberSetting
+            );
+            $locationCallnumbers = $this->pickValue(
+                $locationCallnumbers,
+                $callnumberSetting,
+                'Multiple Call Numbers'
+            );
+            $locationInfo = [
+                'availability' =>
+                    $details['available'] ?? false,
+                'location' => htmlentities(
+                    $this->translateWithPrefix('location_', $location),
+                    ENT_COMPAT,
+                    'UTF-8'
+                ),
+                'callnumbers' =>
+                    htmlentities($locationCallnumbers, ENT_COMPAT, 'UTF-8'),
+                'status_unknown' => $details['status_unknown'] ?? false,
+                'callnumber_handler' => $callnumberHandler
+            ];
+            $locationList[] = $locationInfo;
         }
 
         // Sort locations by displayed name
-        usort($statusGroup['locationList'], [$this, 'sortLocationList']);
+        usort($locationList, [$this, 'sortLocationList']);
+
+        $availability_message = $use_unknown_status
+            ? $messages['unknown']
+            : $messages[$available ? 'available' : 'unavailable'];
+
+        $statusGroup = [
+            'id' => $record[0]['id'],
+            'availability' => ($available ? 'true' : 'false'),
+            'availability_message' => $availability_message,
+            'location' => false,
+            'locationList' => $locationList,
+            'reserve' =>
+                ($record[0]['reserve'] == 'Y' ? 'true' : 'false'),
+            'reserve_message' => $record[0]['reserve'] == 'Y'
+                ? $this->translate('on_reserve')
+                : $this->translate('Not On Reserve'),
+            'callnumber' => false
+        ];
 
         return $statusGroup;
     }

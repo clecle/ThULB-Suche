@@ -1389,12 +1389,21 @@ form#newpassword .form-group.flex-center {
   border-radius: unset !important;
   border: unset !important;
 
-  .dropdown-menu li > a {
-    padding: 5px 15px;
-
-    &:hover {
+  .dropdown-menu {
+    & > .active > span {
+      display: block;
+      padding: 5px 15px;
       background-color: @brand-primary;
       color: white;
+    }
+
+    li > a {
+      padding: 5px 15px;
+
+      &:hover {
+        background-color: @brand-primary;
+        color: white;
+      }
     }
   }
 

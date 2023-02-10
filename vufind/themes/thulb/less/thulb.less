@@ -1389,18 +1389,29 @@ form#newpassword .form-group.flex-center {
   border-radius: unset !important;
   border: unset !important;
 
-  .dropdown-menu li > a:hover {
-    background-color: @brand-primary;
-    color: white;
-  }
+  .dropdown-menu li > a {
+    padding: 5px 15px;
 
-  .dropdown.open .dropdown-toggle {
-    background-color: @brand-primary;
-    color: white;
-
-    &:focus {
+    &:hover {
       background-color: @brand-primary;
       color: white;
+    }
+  }
+
+  .dropdown.open {
+    .dropdown-menu > li + li {
+      border-top: 1px solid #d5d5d5;
+    }
+
+    .dropdown-toggle {
+      background-color: @brand-primary;
+      color: white;
+
+      &:focus,
+      &:hover {
+        background-color: @brand-primary;
+        color: white;
+      }
     }
   }
 }
@@ -1436,20 +1447,15 @@ form#newpassword .form-group.flex-center {
     & > li > a {
       color: white;
 
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         background-color: @brand-primary;
         color: white;
       }
     }
 
-    li > span.menu-group {
-      display: block;
-      color: black;
-      padding: 3px 20px;
-      clear: both;
-      font-weight: 400;
-      line-height: 1.428571429;
-      white-space: nowrap;
+    ul.dropdown-menu {
+      box-shadow: 5px 5px 10px -5px #555;
     }
   }
 
@@ -1501,31 +1507,49 @@ body > header {
 }
 
 @media (max-width: 767px) {
+  #tsnavbar > ul > li:not(.open) > a {
+    padding-left: 20px;
+  }
+
   .navbar-default .navbar-nav li.dropdown.open {
-    background-color: @brand-primary;
+    background-color: @brand-primary-darker-10;
     border-radius: 5px;
     margin: 5px;
-    padding: 0 5px 5px 5px;
+    padding: 5px;
+    box-shadow: 0 0 10px 0 darken(@brand-primary, 30%);
+    isolation: isolate;
 
     .dropdown-toggle {
-      padding: 5px;
+      padding: 5px 10px;
       outline: none;
+      background-color: @brand-primary-darker-10;
     }
 
     .dropdown-menu {
       padding: 0;
+      box-shadow: 0 0 10px 0 @brand-primary-darker;
+      isolation: isolate;
+      margin: 0 10px 10px;
+      background-color: @brand-primary;
 
-      & :first-child > a {
-        border-radius: 5px 5px 0 0;
-      }
-      & :last-child > a {
-        border-radius: 0 0 5px 5px;
+      & > li + li {
+        border-top: 1px solid @brand-primary-darker;
       }
 
       & > li {
+        background-color: @brand-primary;
+
+        &:first-child {
+          border-radius: 5px 5px 0 0;
+        }
+
+        &:last-child {
+          border-radius: 0 0 5px 5px;
+        }
+
         & > a {
-          background-color: #e5e5e5;
-          color: #555;
+          padding: 5px 15px;
+          color: #fff;
         }
 
         &.active {

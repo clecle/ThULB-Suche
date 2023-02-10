@@ -29,7 +29,8 @@ $border-radius-small:       3px !important;
 // $gray-lighter: lighten($gray-base, 93.5%) !default; // #eee
 //
 $brand-primary:             #1E60BE;
-$brand-primary-darker:      #002F5D;
+$brand-primary-darker:      darken($brand-primary, 20%);
+$brand-primary-darker-10:   darken($brand-primary, 10%);
 $brand-primary-lighter:     lighten($brand-primary, 20%);
 $brand-secondary:           #AE9A63;
 $brand-inverted:            #ffcc00;

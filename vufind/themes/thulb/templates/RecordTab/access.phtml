@@ -98,38 +98,42 @@
       <?php endif; ?>
       <?= $this->thulb_holdingHelper()->getLocation($holding, true);?>
     </h3>
-    <table class="table table-striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
+    <div class="striped" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
       <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
-        <tr>
+        <div class="row">
+          <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
             <?php // Translation for summary is a special case for backwards-compatibility ?>
-          <th><?= $textFieldName == 'summary' ? $this->transEsc("Volume Holdings") : $this->transEsc(ucfirst($textFieldName))?>:</th>
-          <td>
-            <?php foreach ($textFields as $current): ?>
-              <?= $this->escapeHtml($current)?><br/>
-            <?php endforeach; ?>
-          </td>
-        </tr>
+            <div class="description"><?= $textFieldName == 'summary' ? $this->transEsc("Volume Holdings") : $this->transEsc(ucfirst($textFieldName))?>:</div>
+            <div class="text">
+              <?php foreach ($textFields as $current): ?>
+                <?= $this->escapeHtml($current)?><br/>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
       <?php endforeach; endif; ?>
+
       <?php foreach ($holding['items'] as $row): ?>
         <?php
-        // AJAX Check record?
-        $check = isset($row['check']) && $row['check'];
-        $checkStorageRetrievalRequest = isset($row['checkStorageRetrievalRequest']) && $row['checkStorageRetrievalRequest'];
-        $checkILLRequest = isset($row['checkILLRequest']) && $row['checkILLRequest'];
+          // AJAX Check record?
+          $check = isset($row['check']) && $row['check'];
+          $checkStorageRetrievalRequest = isset($row['checkStorageRetrievalRequest']) && $row['checkStorageRetrievalRequest'];
+          $checkILLRequest = isset($row['checkILLRequest']) && $row['checkILLRequest'];
         ?>
         <?php if (isset($row['barcode']) && $row['barcode'] != ""): ?>
-        <tr vocab="http://schema.org/" typeof="Offer">
-          <td>
-            <dl class="dl-horizontal">
-              <?php $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
-              <?php if ($callno): ?>
-                <dt><?= $this->transEsc("Call Number")?>:</dt>
-                <dd><strong><?= $callno ?></strong></dd>
-              <?php endif; ?>
+          <div class="row" vocab="http://schema.org/" typeof="Offer">
+            <?php $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
+            <?php if ($callno): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc("Call Number")?>:</div>
+                <div class="text"><strong><?= $callno ?></strong></div>
+              </div>
+            <?php endif; ?>
 
-              <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
-                <dt><?= $this->transEsc('Link')?>:</dt>
-                <dd>
+            <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc('Link')?>:</div>
+                <div class="text">
                   <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary">
                     <?= $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
                   </a>
@@ -141,58 +145,64 @@
                       <?= $this->transEsc('explain_reference') ?>
                     </div>
                   <?php endif; ?>
-                </dd>
+                </div>
                 <?= $this->render('RecordTab/access/citations.phtml'); ?>
-              <?php endif; ?>
+              </div>
+            <?php endif; ?>
 
-              <?php /* ANMERKGUNGEN & BESTAND */ ?>
-              <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
-              <?php if(trim($chronologyHtml)): ?>
-                <dt><?= $this->transEsc("Item Chronology")?>:</dt>
-                <dd><?= $chronologyHtml; ?></dd>
-              <?php endif;?>
+            <?php /* ANMERKGUNGEN & BESTAND */ ?>
+            <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
+            <?php if(trim($chronologyHtml)): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc("Item Chronology")?>:</div>
+                <div class="text"><?= $chronologyHtml; ?></div>
+              </div>
+            <?php endif;?>
 
-              <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]);; ?>
-              <?php if(trim($commentsHtml)): ?>
-                <dt><?= $this->transEsc("Item Notes")?>:</dt>
-                <dd><?= $commentsHtml; ?></dd>
-              <?php endif; ?>
+            <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]);; ?>
+            <?php if(trim($commentsHtml)): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc("Item Notes")?>:</div>
+                <div class="text"><?= $commentsHtml; ?></div>
+              </div>
+            <?php endif; ?>
 
-              <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>
-                <dt><?= $this->transEsc('See also')?>:</dt>
-                <dd>
+            <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc('See also')?>:</div>
+                <div class="text">
                   <a href="<?php echo $row['remotehref']; ?>"><?php echo $row['remotedomain']; ?></a>
                     <?php if(!empty($row['remotetitle'])):?>
                       [<?php echo $row['remotetitle']; ?>]
                     <?php endif; ?>
-                </dd>
-              <?php endif; ?>
-
-              <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
-                      && ($row['departmentId'] ?? '') != 'DMag'
-                      && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
-                <div class="availability-status flex-center">
-                  <dt><?= $this->transEsc("Availability Status")?>:</dt>
-                  <dd><?= $this->thulb_holdingHelper()->getAvailability($row);?></dd>
                 </div>
-              <?php endif; ?>
-            </dl>
-          </td>
-        </tr>
+              </div>
+            <?php endif; ?>
+
+            <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                    && ($row['departmentId'] ?? '') != 'DMag'
+                    && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
+<!--              <div class="row availability-status flex-center">-->
+              <div class="flex flex-wrap-xs pb-1 pl-2 pr-2">
+                <div class="description"><?= $this->transEsc("Availability Status")?>:</div>
+                <div class="text"><?= $this->thulb_holdingHelper()->getAvailability($row);?></div>
+              </div>
+            <?php endif; ?>
+          </div>
         <?php endif; ?>
       <?php endforeach; ?>
 
       <?php if (!empty($holding['purchase_history'])): ?>
-        <tr>
-          <th><?= $this->transEsc("Most Recent Received Issues")?>:</th>
-          <td>
+        <div class="">
+          <div class="description col-xs-2"><?= $this->transEsc("Most Recent Received Issues")?>:</div>
+          <div class="pb-1 col-xs-9">
             <?php foreach ($holding['purchase_history'] as $current): ?>
               <?= $this->escapeHtml($current['issue'])?><br/>
             <?php endforeach; ?>
-          </td>
-        </tr>
+          </div>
+        </div>
       <?php endif; ?>
-    </table>
+    </div>
   <?php endforeach; ?>
 <?php endif; ?>
 

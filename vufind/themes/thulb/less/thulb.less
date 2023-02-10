@@ -606,8 +606,16 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   }
 }
 
-.information button {
-  margin-left: 10px;
+@media (max-width: 767px) {
+  .information {
+    border-radius: 20px;
+    margin: 10px 25px;
+
+    i {
+      margin-left: 10px;
+      font-size: 16px;
+    }
+  }
 }
 
 .flex {
@@ -621,6 +629,16 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .flex-wrap {
   flex-wrap: wrap;
+}
+
+.flex-wrap-xs {
+  flex-wrap: nowrap;
+}
+
+@media (max-width: 575px) {
+  .flex-wrap-xs {
+    flex-wrap: wrap;
+  }
 }
 
 .center-text {
@@ -1316,8 +1334,14 @@ div.modal-body .facet-tree-container {
 .pb-1 {
   padding-bottom: 5px;
 }
+.pl-2 {
+  padding-left: 10px;
+}
 .pl-6 {
-  padding-left: 30px;
+  padding-left: 30px !important;
+}
+.pr-2 {
+  padding-right: 10px;
 }
 .pt-2 {
   padding-top: 10px;
@@ -1335,28 +1359,29 @@ form#newpassword .form-group.flex-center {
   }
 }
 
-.access-tab .availability-status {
-  dd {
-    margin-left: 0;
+.access-tab {
+  .description {
+    font-weight: bold;
+    text-align: right;
+    width: 120px;
+    margin-right: 10px;
+    flex-shrink: 0;
   }
 
-  dt {
-    margin-right: 20px;
-  }
-
-  dt > *,
-  dd > * {
-    vertical-align: middle;
-  }
-
-  .btn.btn-xs {
-    font-size: 14px;
+  .text {
+    flex-grow: 1;
   }
 }
 
-@media (max-width: 767px) {
-  .access-tab .availability-status.flex-center {
-    display: block;
+@media (max-width: 575px) {
+  .access-tab {
+    .description {
+      text-align: left;
+    }
+
+    .text {
+      width: 100%;
+    }
   }
 }
 

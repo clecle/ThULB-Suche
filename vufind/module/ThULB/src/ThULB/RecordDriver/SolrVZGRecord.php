@@ -148,6 +148,26 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Retrieve raw data from object (primarily for use in staff view and
+     * autocomplete; avoid using whenever possible).
+     *
+     * @return mixed
+     */
+    public function getRawData()
+    {
+        ksort($this->fields, SORT_NATURAL | SORT_FLAG_CASE);
+        foreach ($this->fields as $key => $field) {
+            if(is_array($field)) {
+                sort($field, SORT_NATURAL | SORT_FLAG_CASE);
+
+                $this->fields[$key] = $field;
+            }
+        }
+
+        return $this->fields;
+    }
+
+    /**
      * Get the short (pre-subtitle) title of the record.
      *
      * @return string

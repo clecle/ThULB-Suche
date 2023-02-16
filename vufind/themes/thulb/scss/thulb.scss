@@ -1362,26 +1362,25 @@ form#newpassword .form-group.flex-center {
   }
 }
 
+.bold {
+  font-weight: bold;
+}
+
 .access-tab {
-  .description {
-    font-weight: bold;
+  .col-description {
     width: 85px;
     margin-right: 10px;
     flex-shrink: 0;
   }
 
-  .text {
+  .col-text {
     flex-grow: 1;
   }
 }
 
 @media (max-width: 575px) {
   .access-tab {
-    .description {
-      text-align: left;
-    }
-
-    .text {
+    .col-text {
       width: 100%;
     }
   }
@@ -1568,6 +1567,7 @@ body > header {
             background-color: $brand-primary-darker;
             color: #fff;
           }
+
           & > span {
             background-color: $brand-primary-darker;
             color: #fff;
@@ -1605,7 +1605,7 @@ div.online-access {
 div.striped {
   & > div.row {
     border-top: 1px solid #ddd;
-    padding: 8px 8px 28px;
+    padding: 10px 10px 25px;
 
     &:nth-of-type(odd) {
       background-color: $table-bg-accent;

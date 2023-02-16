@@ -1334,6 +1334,9 @@ div.modal-body .facet-tree-container {
 .pb-1 {
   padding-bottom: 5px;
 }
+.pl-1 {
+  padding-left: 5px;
+}
 .pl-2 {
   padding-left: 10px;
 }
@@ -1362,8 +1365,7 @@ form#newpassword .form-group.flex-center {
 .access-tab {
   .description {
     font-weight: bold;
-    text-align: right;
-    width: 120px;
+    width: 85px;
     margin-right: 10px;
     flex-shrink: 0;
   }

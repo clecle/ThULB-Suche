@@ -56,7 +56,7 @@ class IIIF extends \VuFind\Content\AbstractCover
      */
     public function getUrl($key, $size, $ids)
     {
-        if(!$ids['collection_details']) {
+        if(!($ids['collection_details'] ?? false)) {
             return false;
         }
 

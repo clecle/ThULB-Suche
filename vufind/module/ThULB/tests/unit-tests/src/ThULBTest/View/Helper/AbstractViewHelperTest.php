@@ -27,15 +27,21 @@
 namespace ThULBTest\View\Helper;
 
 use Exception;
-use ThULB\RecordDriver\SolrVZGRecord;
 use Laminas\Config\Config;
+use Laminas\Config\Reader\Ini as IniReader;
 use Laminas\Http\Client;
 use Laminas\I18n\Translator\Translator;
-use Laminas\Config\Reader\Ini as IniReader;
 use Laminas\Mvc\I18n\Translator as MvcTranslator;
+use Laminas\View\Renderer\PhpRenderer;
+use Laminas\View\Resolver\TemplatePathStack;
+use PHPUnit\Framework\TestCase;
+use ThULB\RecordDriver\SolrVZGRecord;
 use ThULB\Search\Factory\SolrDefaultBackendFactory;
 use VuFind\Search\BackendManager;
-use VuFindSearch\Backend\BrowZine\Connector;
+use VuFind\View\Helper\Root\Context;
+use VuFindTest\Feature\FixtureTrait;
+use VuFindTest\Feature\SearchServiceTrait;
+use VuFindTest\Feature\ViewTrait;
 use VuFindTheme\ThemeInfo;
 
 /**
@@ -43,20 +49,22 @@ use VuFindTheme\ThemeInfo;
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
+abstract class AbstractViewHelperTest extends TestCase
 {
-    use \VuFindTest\Feature\ViewTrait;
-    use \VuFindTest\Feature\FixtureTrait;
-    use \VuFindTest\Feature\SearchServiceTrait;
+    use ViewTrait;
+    use FixtureTrait;
+    use SearchServiceTrait;
 
     const FINDEX_REQUEST_PATH = '/31/URMEL/select';
-    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:((GBV_ILN_31+AND+GBV_KXP)+OR+GBV_ILN_2403+OR+UrMEL)&q=id:';
+    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:((GBV_ILN_31+AND+GBV_KXP)+OR+DBT@UrMEL)+OR+(collection_details:GBV_ILN_2403+AND+isOA_bool:true)&q=id:';
 
-    protected $translationLocale = 'de';
+    protected string $translationLocale = 'de';
 
-    protected $theme = 'thulb';
-    
-    protected $config;
+    protected array $parentThemes = ['root', 'bootstrap'];
+
+    protected string $theme = 'thulb';
+
+    protected ?Config $config = null;
     
     /**
      * Get a working renderer.
@@ -64,24 +72,21 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      * @param array  $plugins Custom VuFind plug-ins to register
      * @param string $theme   Theme directory to load from
      *
-     * @return \Laminas\View\Renderer\PhpRenderer
+     * @return PhpRenderer
      */
-    protected function getPhpRenderer($plugins = [], $theme = null)
-    {
+    protected function getPhpRenderer($plugins = [], $theme = null) : PhpRenderer {
         if(!$theme) {
             $theme = $this->theme;
         }
 
-        $resolver = new \Laminas\View\Resolver\TemplatePathStack();
+        $resolver = new TemplatePathStack();
 
-        $resolver->setPaths(
-            [
-                $this->getPathForTheme('root'),
-                $this->getPathForTheme('bootstrap3'),
-                $this->getPathForTheme($theme)
-            ]
-        );
-        $renderer = new \Laminas\View\Renderer\PhpRenderer();
+        foreach ($this->parentThemes as $parentTheme) {
+            $resolver->addPath($this->getPathForTheme($parentTheme));
+        }
+        $resolver->addPath($this->getPathForTheme($theme));
+
+        $renderer = new PhpRenderer();
         $renderer->setResolver($resolver);
         if (!empty($plugins)) {
             $pluginManager = $renderer->getHelperPluginManager();
@@ -99,8 +104,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      * @return SolrVZGRecord|null
      * @throws Exception
      */
-    protected function getRecordFromFindex($ppn)
-    {
+    protected function getRecordFromFindex(string $ppn) : ?SolrVZGRecord {
         $url = $this->getFindexUrl($ppn);
         $client = new Client($url, array(
             'maxredirects' => 3,
@@ -128,8 +132,8 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
         return $marcObject;
     }
 
-    protected function getFindexUrl($ppn) {
-        return FINDEX_TEST_HOST . self::FINDEX_REQUEST_PATH . self::FINDEX_QUERY_STRING . trim($ppn);
+    protected function getFindexUrl($ppn) : string {
+        return FINDEX_TEST_HOST . static::FINDEX_REQUEST_PATH . static::FINDEX_QUERY_STRING . trim($ppn);
     }
 
     /**
@@ -137,19 +141,19 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    protected function getFirstLastConfig()
-    {
+    protected function getFirstLastConfig() : array {
         return ['Record' => ['first_last_navigation' => true]];
     }
 
     /**
      * Get view helpers needed by test.
      *
+     * @param $container
+     *
      * @return array
      */
-    protected function getViewHelpers($container)
-    {   
-        $context = new \VuFind\View\Helper\Root\Context();
+    protected function getViewHelpers($container) : array {
+        $context = new Context();
         
         $helpers =  [
 //            'auth' => new \VuFind\View\Helper\Root\Auth($this->getMockBuilder('VuFind\Auth\Manager')->disableOriginalConstructor()->getMock()),
@@ -175,7 +179,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
     /**
      * Factory for a valid Translator
      */
-    protected function getTranslator() {
+    protected function getTranslator() : MvcTranslator {
         $translator = new MvcTranslator(new Translator());
         
         $pathStack = [
@@ -203,17 +207,16 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      * 
      * @param string $locale
      */
-    protected function setTranslationLocale($locale) {
+    protected function setTranslationLocale(string $locale) {
         $this->translationLocale = $locale;
     }
     
-    protected function getMainConfig()
-    {
+    protected function getMainConfig() : Config {
         if (is_null($this->config)) {
             $iniReader = new IniReader();
             $this->config = new Config($iniReader->fromFile(THULB_CONFIG_FILE), true);
         }
-        
+
         return $this->config;
     }
 
@@ -222,8 +225,7 @@ abstract class AbstractViewHelperTest extends \PHPUnit\Framework\TestCase
      *
      * @return BackendManager
      */
-    protected function getBackendManager(): BackendManager
-    {
+    protected function getBackendManager(): BackendManager {
         $container = $this->getMockContainer();
         $backendFactory = new SolrDefaultBackendFactory();
         $backend = $backendFactory($container, 'Solr');

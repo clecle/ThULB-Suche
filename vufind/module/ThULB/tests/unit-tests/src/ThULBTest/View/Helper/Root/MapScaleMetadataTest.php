@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class MapScaleMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Maßstab bei Karten';
-    protected $metadataKey = 'Map Scale';
-    protected $recordDriverFunction = 'getCartographicScale';
+    protected ?string $sheetName = 'Maßstab bei Karten';
+    protected ?string $metadataKey = 'Map Scale';
+    protected ?string $recordDriverFunction = 'getCartographicScale';
 }

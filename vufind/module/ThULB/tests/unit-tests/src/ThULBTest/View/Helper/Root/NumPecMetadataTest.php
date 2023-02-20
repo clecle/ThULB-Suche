@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class NumPecMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Anmerkungen zum Erscheinungsver';
-    protected $metadataKey = 'NumPecs';
-    protected $template = 'data-numbering_peculiarities.phtml';
+    protected ?string $sheetName = 'Anmerkungen zum Erscheinungsver';
+    protected ?string $metadataKey = 'NumPecs';
+    protected ?string $template = 'data-numbering_peculiarities.phtml';
 }

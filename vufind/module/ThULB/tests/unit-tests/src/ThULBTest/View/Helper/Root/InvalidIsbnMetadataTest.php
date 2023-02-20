@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class InvalidIsbnMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Falsche ISBN';
-    protected $metadataKey = 'Invalid ISBN';
-    protected $recordDriverFunction = 'getInvalidISBNs';
+    protected ?string $sheetName = 'Falsche ISBN';
+    protected ?string $metadataKey = 'Invalid ISBN';
+    protected ?string $recordDriverFunction = 'getInvalidISBNs';
 }

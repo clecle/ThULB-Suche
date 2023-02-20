@@ -34,7 +34,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class ConferenceMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Konferenz';
-    protected $metadataKey = 'Conference';
-    protected $recordDriverFunction = 'getMeetingNames';
+    protected ?string $sheetName = 'Konferenz';
+    protected ?string $metadataKey = 'Conference';
+    protected ?string $recordDriverFunction = 'getMeetingNames';
 }

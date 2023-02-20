@@ -32,7 +32,7 @@ namespace DHGETest\View\Helper\Root;
 
 class DoiMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'DOI';
-    protected $metadataKey = 'DOI';
-    protected $recordDriverFunction = 'getCleanDOI';
+    protected ?string $sheetName = 'DOI';
+    protected ?string $metadataKey = 'DOI';
+    protected ?string $recordDriverFunction = 'getCleanDOI';
 }

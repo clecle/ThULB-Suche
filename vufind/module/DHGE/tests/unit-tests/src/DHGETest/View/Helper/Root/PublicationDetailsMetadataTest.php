@@ -33,8 +33,8 @@ namespace DHGETest\View\Helper\Root;
  */
 class PublicationDetailsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Publikation';
-    protected $metadataKey = 'Publication Metadata';
-    protected $recordDriverFunction = 'getPublicationDetails';
-    protected $template = 'data-publicationDetails.phtml';
+    protected ?string $sheetName = 'Publikation';
+    protected ?string $metadataKey = 'Publication Metadata';
+    protected ?string $recordDriverFunction = 'getPublicationDetails';
+    protected ?string $template = 'data-publicationDetails.phtml';
 }

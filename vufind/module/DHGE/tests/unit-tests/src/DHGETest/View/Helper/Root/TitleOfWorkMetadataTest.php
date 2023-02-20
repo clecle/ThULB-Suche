@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class TitleOfWorkMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Werktitel';
-    protected $metadataKey = 'Title of work';
-    protected $recordDriverFunction = 'getTitleOfWork';
+    protected ?string $sheetName = 'Werktitel';
+    protected ?string $metadataKey = 'Title of work';
+    protected ?string $recordDriverFunction = 'getTitleOfWork';
 }

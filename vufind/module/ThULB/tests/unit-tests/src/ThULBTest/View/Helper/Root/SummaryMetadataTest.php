@@ -8,6 +8,6 @@ namespace ThULBTest\View\Helper\Root;
  */
 class SummaryMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Zusammenfassung';
-    protected $recordDriverFunction = 'getSummary';
+    protected ?string $sheetName = 'Zusammenfassung';
+    protected ?string $recordDriverFunction = 'getSummary';
 }

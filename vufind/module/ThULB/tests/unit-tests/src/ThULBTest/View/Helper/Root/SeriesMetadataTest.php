@@ -33,8 +33,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class SeriesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Teil von';
-    protected $metadataKey = 'Series';
-    protected $recordDriverFunction = 'getSeries';
-    protected $template = 'data-series.phtml';
+    protected ?string $sheetName = 'Teil von';
+    protected ?string $metadataKey = 'Series';
+    protected ?string $recordDriverFunction = 'getSeries';
+    protected ?string $template = 'data-series.phtml';
 }

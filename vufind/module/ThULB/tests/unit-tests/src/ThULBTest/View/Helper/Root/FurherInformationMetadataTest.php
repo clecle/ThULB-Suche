@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class FurherInformationMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Mehr zum Titel';
-    protected $metadataKey = 'Online Access';
-    protected $template = 'data-onlineAccess.phtml';           
+    protected ?string $sheetName = 'Mehr zum Titel';
+    protected ?string $metadataKey = 'Online Access';
+    protected ?string $template = 'data-onlineAccess.phtml';
 }

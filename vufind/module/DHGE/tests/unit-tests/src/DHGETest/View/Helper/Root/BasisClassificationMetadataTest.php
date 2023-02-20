@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class BasisClassificationMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Basisklassifikation';
-    protected $metadataKey = 'Basic Classification';
-    protected $template = 'data-basicClassification.phtml';           
+    protected ?string $sheetName = 'Basisklassifikation';
+    protected ?string $metadataKey = 'Basic Classification';
+    protected ?string $template = 'data-basicClassification.phtml';
 }

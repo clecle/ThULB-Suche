@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 
 use IOException;
+use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mime\Message;
 use Laminas\Mime\Mime;
@@ -287,7 +288,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      *
      * @return ViewModel
      */
-    public function newPasswordAction() : ViewModel
+    public function newPasswordAction() : ViewModel | Response
     {
         $view = parent::newPasswordAction();
 

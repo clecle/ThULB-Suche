@@ -865,10 +865,19 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getISBNs() : array
     {
-        $relevantFields = array('020' => ['9', 'c']);
-        $formattingRules = array('020' => '0209 : 020c');
-        $conditions = array ($this->createFieldCondition('subfield', 'z', '==', false));
-        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+        $conditions = array($this->createFieldCondition('subfield', 'z', '==', false));
+
+        $data = [];
+        foreach($this->getFieldsConditional('020', $conditions) as $field) {
+            $fieldData = array(
+                '0209' => $this->getSubfield($field, '9') ?: $this->getSubfield($field, 'a'),
+                '020c' => $this->getSubfield($field, 'c') ?: null
+            );
+
+            $data[] = $this->getFormattedMarcData('0209 : 020c', true, true, $fieldData);
+        }
+
+        return $data;
     }
 
     /**

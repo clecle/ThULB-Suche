@@ -2328,7 +2328,9 @@ class SolrVZGRecord extends SolrMarc
 
         $data = [];
         foreach($fields as $field) {
-            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+            $data = array_merge(
+                $data, $this->getMarcReader()->getSubfields($field, 'a')
+            );
         }
 
         $data = array_unique($data);

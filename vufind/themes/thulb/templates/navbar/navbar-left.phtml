@@ -17,13 +17,19 @@
       </li>
     <?php endif; ?>
     <li><a href="https://www.thulb.uni-jena.de/recherchieren/-bestellen/thulb-suche-suchtipps" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
-    <li><a href="https://mailform.thulb.uni-jena.de/?mail=ZGlzY292ZXJ5X3RodWxiQHVuaS1qZW5hLmRl" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+    <li class="dropdown">
+      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('ThULB-Suche Support'); ?></a></li>
+        <li><a href="https://mailform.thulb.uni-jena.de/?mail=ZGlzY292ZXJ5X3RodWxiQHVuaS1qZW5hLmRl" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+      </ul>
+    </li>
     <li class="visible-xs"><a href="https://www.thulb.uni-jena.de/impressum.html" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
     <li><a href="https://kataloge.thulb.uni-jena.de/DB=1/LNG=DU/" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="https://mailform.thulb.uni-jena.de/?mail=YW5zY2hhZmZ1bmdzdm9yc2NobGFnX3RodWxiQHVuaS1qZW5hLmRl" target="_blank"><?= $this->transEsc('Acquisition suggestion')?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('acquisition-suggestion'); ?>" target="_blank"><?= $this->transEsc('Acquisition suggestion')?></a></li>
         <li><a href="https://kxp.k10plus.de/DB=2.1/DB=2.1/LNG=DU/" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
         <li><a href="https://fernleihe.thulb.uni-jena.de/login" target="_blank"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
         <li><a href="https://kxp.k10plus.de/login/LNG=DU/LOGIN/REQUEST?DB=2.1" target="_blank"><?= $this->transEsc('Login GVK')?></a></li>

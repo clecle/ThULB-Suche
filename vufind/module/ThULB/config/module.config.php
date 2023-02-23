@@ -215,6 +215,7 @@ $config = array(
             'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
         ),
     ),
 

@@ -2408,6 +2408,10 @@ class SolrVZGRecord extends SolrMarc
         return $source;
     }
 
+    public function getSummary() : array {
+        return [$this->getFirstFieldValue('520')];
+    }
+
     public function isOpenAccess() : bool {
         return ($this->fields['isOA_bool'] ?? 'false') == 'true';
     }

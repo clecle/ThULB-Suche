@@ -114,14 +114,14 @@ abstract class AbstractViewHelperTest extends TestCase
         if ($response->getStatusCode() > 299) {
             throw new Exception("Status code " . $response->getStatusCode() . " for $url.");
         }
+
         $jsonString = trim($response->getBody());
         $jsonObject = json_decode($jsonString, true);
         $marcObject = new SolrVZGRecord($this->getMainConfig());
         $marcObject->attachSearchService($this->getSearchService($this->getBackendManager()));
 
-        
         if ($jsonObject['response']['numFound'] < 1) {
-            $this->markTestIncomplete("No document found with ppn \"$ppn\"...");
+            $this->markTestIncomplete("No document found with ppn \"$ppn\" in \"$this->sheetName\" ...");
         }
         try {
             $marcObject->setRawData($jsonObject['response']['docs'][0]);

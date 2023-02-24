@@ -20,65 +20,67 @@
 
     <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
 
-    <table class="table table-striped">
-      <?php
-        echo $this->renderArray(
-          $arrTemplate, $this->profile,
-          [
-            $this->transEsc('Name') => 'name',
-            $this->transEsc('Username') => 'user_id',
-            $this->transEsc('Address') => 'address1',
-            $this->transEsc('Email') => 'email',
-            $this->transEsc('Profile Expiration') => 'expires',
-          ]
-        );
-
-        $accountinfo = [
-            'group'    => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
-            'status'   => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
-            'totalDue' => $this->safeMoneyFormat($this->totalDue / 100),
-            'note'     => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
-          ];
-        echo $this->renderArray(
-          $arrTemplate, $accountinfo,
-          [$this->transEsc('User Group') => 'group']
-        );
-        echo $this->renderArray(
-          $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
-          $accountinfo,
-          [$this->transEsc('User Status') => 'status']
-        );
-        if($this->totalDue) {
-          echo $this->renderArray(
-            ($this->profile['statuscode'] != 3 && $this->profile['statuscode'] != 4)
-              ? $arrTemplate : $arrImportantTemplate,
-            $accountinfo,
-            [$this->transEsc('Your Fines') => 'totalDue']
-          );
-        }
-        echo $this->renderArray(
-          $arrImportantTemplate, $accountinfo,
-          [$this->transEsc('User Note') => 'note']
-        );
-        ?>
-      <?php if ($showHomeLibForm): ?>
-        <tr><th><?= $this->transEsc('Preferred Library')?>:</th>
+    <?php if ($this->profile): ?>
+      <table class="table table-striped">
         <?php
-          $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
-              ? $this->profile['home_library'] : $this->defaultPickupLocation
-        ?>
-        <td>
-          <form id="profile_form" class="form-inline" method="post">
-            <select id="home_library" name="home_library" class="form-control">
-              <?php foreach ($this->pickup as $lib): ?>
-                <option value="<?= $this->escapeHtmlAttr($lib['locationID'])?>"<?= ($selected == $lib['locationID'])?' selected="selected"':''?>><?= $this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
-              <?php endforeach; ?>
-            </select>
-            <input class="btn btn-default" type="submit" value="<?= $this->transEscAttr('Save')?>" />
-          </form>
-        </td>
-      <?php endif; ?>
-    </table>
+          echo $this->renderArray(
+            $arrTemplate, $this->profile,
+            [
+              $this->transEsc('Name') => 'name',
+              $this->transEsc('Username') => 'user_id',
+              $this->transEsc('Address') => 'address1',
+              $this->transEsc('Email') => 'email',
+              $this->transEsc('Profile Expiration') => 'expires',
+            ]
+          );
+
+          $accountinfo = [
+              'group'    => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
+              'status'   => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
+              'totalDue' => $this->safeMoneyFormat($this->totalDue / 100),
+              'note'     => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
+            ];
+          echo $this->renderArray(
+            $arrTemplate, $accountinfo,
+            [$this->transEsc('User Group') => 'group']
+          );
+          echo $this->renderArray(
+            $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
+            $accountinfo,
+            [$this->transEsc('User Status') => 'status']
+          );
+          if($this->totalDue) {
+            echo $this->renderArray(
+              ($this->profile['statuscode'] != 3 && $this->profile['statuscode'] != 4)
+                ? $arrTemplate : $arrImportantTemplate,
+              $accountinfo,
+              [$this->transEsc('Your Fines') => 'totalDue']
+            );
+          }
+          echo $this->renderArray(
+            $arrImportantTemplate, $accountinfo,
+            [$this->transEsc('User Note') => 'note']
+          );
+          ?>
+        <?php if ($showHomeLibForm): ?>
+          <tr><th><?= $this->transEsc('Preferred Library')?>:</th>
+          <?php
+            $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
+                ? $this->profile['home_library'] : $this->defaultPickupLocation
+          ?>
+          <td>
+            <form id="profile_form" class="form-inline" method="post">
+              <select id="home_library" name="home_library" class="form-control">
+                <?php foreach ($this->pickup as $lib): ?>
+                  <option value="<?= $this->escapeHtmlAttr($lib['locationID'])?>"<?= ($selected == $lib['locationID'])?' selected="selected"':''?>><?= $this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
+                <?php endforeach; ?>
+              </select>
+              <input class="btn btn-default" type="submit" value="<?= $this->transEscAttr('Save')?>" />
+            </form>
+          </td>
+        <?php endif; ?>
+      </table>
+    <?php endif; ?>
   </div>
 
   <div class="<?= $this->layoutClass('sidebar')?>">

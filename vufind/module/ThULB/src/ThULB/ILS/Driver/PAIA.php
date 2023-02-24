@@ -37,7 +37,6 @@ use Exception;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
-    VuFind\I18n\Translator\TranslatorAwareInterface,
     VuFind\Exception\ILS as ILSException,
     VuFind\Exception\Auth as AuthException;
 
@@ -665,7 +664,7 @@ class PAIA extends OriginalPAIA
     }
 
     /**
-     * Helper function for PAIA to uniformely parse JSON. Extended and fixed
+     * Helper function for PAIA to uniformly parse JSON. Extended and fixed
      * version.
      *
      * @param string $file JSON data
@@ -678,7 +677,10 @@ class PAIA extends OriginalPAIA
     {
         $responseArray = json_decode($file, true);
 
-        if (isset($responseArray['error'])) {
+        if($responseArray === null) {
+            throw new ILSException('Could not decode ILS response. (' . $file . ')', 0);
+        }
+        elseif (isset($responseArray['error'])) {
             $message = $responseArray['error'];
             if (isset($responseArray['error_description'])) {
                 $message .= ' (' . $responseArray['error_description'] . ')';

@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class GeneralNotesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected ?string $sheetName = 'Anmerkungen';
+    protected ?string $sheetName = 'Anmerkungen zur Veröffentlich';
     protected ?string $metadataKey = 'Item Description';
     protected ?string $recordDriverFunction = 'getGeneralNotes';
 }

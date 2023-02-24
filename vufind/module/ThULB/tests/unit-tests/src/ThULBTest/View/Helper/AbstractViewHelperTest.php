@@ -197,8 +197,9 @@ abstract class AbstractViewHelperTest extends TestCase
         $translator->setLocale($this->translationLocale)
                 ->addTranslationFile('ExtendedIni', null, 'default', $this->translationLocale)
                 ->addTranslationFile('ExtendedIni', 'Languages', 'Languages', $this->translationLocale)
-                ->addTranslationFile('ExtendedIni', 'CreatorRoles', 'CreatorRoles', $this->translationLocale);
-        
+                ->addTranslationFile('ExtendedIni', 'CreatorRoles', 'CreatorRoles', $this->translationLocale)
+                ->addTranslationFile('ExtendedIni', 'DDC', 'DDC', $this->translationLocale);
+
         return $translator;
     }
     

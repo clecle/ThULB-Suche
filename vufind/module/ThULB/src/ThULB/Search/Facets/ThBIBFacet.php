@@ -12,31 +12,19 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 
-    /**
-     * @var \VuFind\Config\PluginManager
-     */
-    private $configLoader;
+    private \VuFind\Config\PluginManager $configLoader;
 
-    /**
-     * Configuration of the "Thüringen-Bibliographie".
-     *
-     * @var Config
-     */
-    private $tbClassification;
+    private Config $thulbFacets;
 
     /**
      * List of all created facets.
-     *
-     * @var null|array
      */
-    private $facetList = null;
+    private ?array $facetList = null;
 
     /**
      * List of keys and their respective internal search values.
-     *
-     * @var array
      */
-    private $filterValueList = array();
+    private array $filterValueList = array();
 
     /**
      * Constructor
@@ -45,15 +33,13 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      */
     public function __construct(\VuFind\Config\PluginManager $configLoader) {
         $this->configLoader = $configLoader;
-        $this->tbClassification = $this->configLoader->get('TBClassification');
+        $this->thulbFacets = $this->configLoader->get('thulb_facets');
 
-        if ($this->tbClassification) {
-            // Create list with keys/internal values,
-            foreach($this->tbClassification->TB_Classification_Groups as $groupKey => $groupValue) {
-                $this->filterValueList[$groupKey] = $this->getGroupInternalValue($groupKey);
-                foreach($this->tbClassification->$groupKey ?? [] as $child) {
-                    $this->filterValueList[$child] = $this->getChildInternalValue($child);
-                }
+        // Create list with keys/internal values,
+        foreach($this->thulbFacets->TB_Classification_Groups as $groupKey => $groupValue) {
+            $this->filterValueList[$groupKey] = $this->getGroupInternalValue($groupKey);
+            foreach($this->thulbFacets->$groupKey ?? [] as $child) {
+                $this->filterValueList[$child] = $this->getChildInternalValue($child);
             }
         }
     }
@@ -68,12 +54,8 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      * @return array
      */
     public function getFacetList(string $field, NamedList $data, Params $params) : array {
-        if($this->facetList != null && !empty($this->facetList)) {
+        if(!empty($this->facetList)) {
             return $this->facetList;
-        }
-
-        if (!$this->tbClassification) {
-            return $this->facetList = [];
         }
 
         $data = $this->getDataAsArray($data);
@@ -83,11 +65,11 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
         $facetList = array();
 
         // Create Facet list with all parents and children
-        foreach ($this->tbClassification->TB_Classification_Groups as $groupKey => $groupValue) {
+        foreach ($this->thulbFacets->TB_Classification_Groups as $groupKey => $groupValue) {
             $parentFacet = array(
                 'internalValue' => $this->filterValueList[$groupKey],
                 'value' => $groupKey,
-                'displayText' => $this->translate("ClassLocalILN::$groupKey"),
+                'displayText' => $this->translate("ThULBFacets::$groupKey"),
                 'count' => 0,
                 'operator' => $operator,
                 'isApplied' => $params->hasFilter("$fieldWithOperator:$groupKey"),
@@ -96,13 +78,13 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
             );
 
             // Always show facet groups with defined values
-            if(isset($this->tbClassification->Group_Values->$groupKey)) {
+            if(isset($this->thulbFacets->TB_Group_Values->$groupKey)) {
                 $parentFacet['count'] = 1;
             }
 
             // Create children facets
             $childFacetList = array();
-            foreach ($this->tbClassification->$groupKey ?? [] as $child) {
+            foreach ($this->thulbFacets->$groupKey ?? [] as $child) {
                 $internalValue = $this->filterValueList[$child];
                 if(!isset($data[$internalValue]) || $data[$internalValue] < 1) {
                     continue;
@@ -111,7 +93,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
                 $childFacetList[] = array(
                     'internalValue' => $internalValue,
                     'value' => $child,
-                    'displayText' => $this->translate("ClassLocalILN::$child"),
+                    'displayText' => $this->translate("ThULBFacets::$child"),
                     'count' => $data[$internalValue],
                     'operator' => $operator,
                     'isApplied' => $params->hasFilter("$fieldWithOperator:$child"),
@@ -142,9 +124,9 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      */
     public function getFilterValue(string $value) : string {
         $returnValue = $value;
-        if (isset($this->filterValueList[$value]) && $this->tbClassification) {
+        if (isset($this->filterValueList[$value]) && $this->thulbFacets) {
             $returnValue = $this->filterValueList[$value];
-            if(!isset($this->tbClassification->TB_Classification_Groups[$value])) {
+            if(!isset($this->thulbFacets->TB_Classification_Groups[$value])) {
                 return "\"$returnValue\"";
             }
         }
@@ -171,13 +153,13 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      * @return string
      */
     private function getGroupInternalValue(string $group) : string {
-        if ($this->tbClassification->Group_Values->$group ?? false) {
-            return $this->tbClassification->Group_Values->$group;
+        if ($this->thulbFacets->TB_Group_Values->$group ?? false) {
+            return $this->thulbFacets->TB_Group_Values->$group;
         }
 
-        if ($this->tbClassification->$group ?? false) {
+        if ($this->thulbFacets->$group ?? false) {
             $queryParts = array();
-            foreach ($this->tbClassification->$group ?? [] as $child) {
+            foreach ($this->thulbFacets->$group ?? [] as $child) {
                 $queryParts[] = $this->getChildInternalValue($child);
             }
             return '("' . implode('" OR "', $queryParts) . '")';

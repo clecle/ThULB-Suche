@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class MapCoordinatesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Koordinaten bei Karten';
-    protected $metadataKey = 'Map Coordinates';
-    protected $recordDriverFunction = 'getCartographicCoordinates';
+    protected ?string $sheetName = 'Koordinaten bei Karten';
+    protected ?string $metadataKey = 'Map Coordinates';
+    protected ?string $recordDriverFunction = 'getCartographicCoordinates';
 }

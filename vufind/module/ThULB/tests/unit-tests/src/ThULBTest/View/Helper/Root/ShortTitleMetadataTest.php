@@ -8,7 +8,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class ShortTitleMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Titel';
-    protected $metadataKey = 'keine';
-    protected $recordDriverFunction = 'getShortTitle';
+    protected ?string $sheetName = 'Titel';
+    protected ?string $metadataKey = 'keine';
+    protected ?string $recordDriverFunction = 'getShortTitle';
 }

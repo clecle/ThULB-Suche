@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class BibliographicCitationsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Bibliographische Zitate';
-    protected $metadataKey = 'Bibliographic Citations';
-    protected $recordDriverFunction = 'getBibliographicCitation';      
+    protected ?string $sheetName = 'Bibliographische Zitate';
+    protected ?string $metadataKey = 'Bibliographic Citations';
+    protected ?string $recordDriverFunction = 'getBibliographicCitation';
 }

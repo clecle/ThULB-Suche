@@ -19,7 +19,6 @@ class DynMessagesController extends AbstractBase
     private $_languageCache;
     private $_tags;
 
-
     /**
      * Constructor
      *
@@ -34,7 +33,7 @@ class DynMessagesController extends AbstractBase
         $this->accessPermission = 'access.AdminModule';
 
         // File paths
-        $this->_basePath = APPLICATION_PATH . '/local_thulb';
+        $this->_basePath = getenv('VUFIND_LOCAL_DIR');
         $this->_iniGerman = $this->_basePath . '/languages/dynMessages_de.ini';
         $this->_iniEnglish = $this->_basePath . '/languages/dynMessages_en.ini';
         $this->_languageCache = $this->_basePath . '/cache/languages';
@@ -84,7 +83,7 @@ class DynMessagesController extends AbstractBase
             }
         }
 
-        return $this->redirect()->toUrl('/DynMessages/edit');
+        return $this->redirect()->toRoute('DynMessages');
     }
 
     /**

@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class PartInfoMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Teil und Abteilung';
-    protected $metadataKey = 'PartInfo';
-    protected $recordDriverFunction = 'getPartInfo';      
+    protected ?string $sheetName = 'Teil und Abteilung';
+    protected ?string $metadataKey = 'PartInfo';
+    protected ?string $recordDriverFunction = 'getPartInfo';
 }

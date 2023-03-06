@@ -53,6 +53,8 @@
         <span><?= $this->transEsc($cluster['label'])?></span>
         <?php if($cluster['label'] == 'Th_Biblio'): ?>
           <img alt="<?= $this->transEscAttr($cluster['label'])?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" />
+        <?php elseif($cluster['label'] == 'Location'): ?>
+          <i class="fa fa-info-circle" onclick="event.stopPropagation(); VuFind.lightbox.showAlert('<?= $this->transEsc('location_facet_info'); ?>', 'info');"></i>
         <?php endif; ?>
       </div>
       <div id="side-collapse-<?= $this->escapeHtmlAttr($title) ?>" class="collapse<?php if(!in_array($title, $collapsedFacets)): ?> in<?php endif ?>">
@@ -61,7 +63,8 @@
           [
             'facet' => $title,
             'cluster' => $cluster,
-            'collapsedFacets' => $collapsedFacets          ]
+            'collapsedFacets' => $collapsedFacets
+          ]
         ); ?>
       </div>
     </div>

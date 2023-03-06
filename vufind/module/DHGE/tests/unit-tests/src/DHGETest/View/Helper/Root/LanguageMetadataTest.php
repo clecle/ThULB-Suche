@@ -32,8 +32,8 @@ namespace DHGETest\View\Helper\Root;
  */
 class LanguageMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Sprache';
-    protected $metadataKey = 'Languages';
-    protected $recordDriverFunction = 'getLanguages';
-    protected $template = 'data-languages.phtml';
+    protected ?string $sheetName = 'Sprache';
+    protected ?string $metadataKey = 'Languages';
+    protected ?string $recordDriverFunction = 'getLanguages';
+    protected ?string $template = 'data-languages.phtml';
 }

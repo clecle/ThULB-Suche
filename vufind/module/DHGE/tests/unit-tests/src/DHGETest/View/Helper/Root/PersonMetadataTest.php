@@ -34,11 +34,11 @@ namespace DHGETest\View\Helper\Root;
 
 class PersonMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Personen';
-    protected $metadataKey = 'Persons';
-    protected $recordDriverFunction = 'getDeduplicatedAuthors';
-    protected $template = 'data-authors.phtml';
-    protected $options = [
+    protected ?string $sheetName = 'Personen';
+    protected ?string $metadataKey = 'Persons';
+    protected ?string $recordDriverFunction = 'getDeduplicatedAuthors';
+    protected ?string $template = 'data-authors.phtml';
+    protected array $options = [
         'context' => [
             'types' => ['primary', 'secondary'],
             'schemaLabel' => 'author',

@@ -148,6 +148,26 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Retrieve raw data from object (primarily for use in staff view and
+     * autocomplete; avoid using whenever possible).
+     *
+     * @return mixed
+     */
+    public function getRawData()
+    {
+        ksort($this->fields, SORT_NATURAL | SORT_FLAG_CASE);
+        foreach ($this->fields as $key => $field) {
+            if(is_array($field)) {
+                sort($field, SORT_NATURAL | SORT_FLAG_CASE);
+
+                $this->fields[$key] = $field;
+            }
+        }
+
+        return $this->fields;
+    }
+
+    /**
      * Get the short (pre-subtitle) title of the record.
      *
      * @return string
@@ -288,7 +308,18 @@ class SolrVZGRecord extends SolrMarc
         $params = parent::getThumbnail($size);
         
         $params['contenttype'] = $this->fields['format'] ? $this->fields['format'][0] : '';
-        
+
+        $collection_details = $this->fields['collection_details'];
+
+        // is Main-Config Content > IIIF set?
+        if ($this->mainConfig->Content->IIIF ?? false) {
+            // get IIIF array: "collection-Name" = "IIIF-API-url"
+            $collections = $this->mainConfig->Content->IIIF->toArray();
+            $IIIF_collections = array_keys($collections);
+            // add only, if SOLR-Field "collection_details" contains the same Value as given in
+            // Main-Config - should be one, usually!
+            $params['collection_details'] = array_intersect($collection_details, $IIIF_collections);
+        }
         return $params;
     }
 
@@ -542,10 +573,20 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getPrimaryAuthors() : array
+    public function getPrimaryAuthors($excludeRoles = []) : array
     {
-        $author = $this->getFormattedMarcData('100a (100b)(, 100c)');
-        return $author ? [$author] : [];
+        $relevantFields = [
+            '100' => ['a', 'b', 'c']
+        ];
+        $formattingRules = [
+            '100' => '100a (100b)(, 100c)'
+        ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -575,7 +616,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSecondaryAuthors() : array
+    public function getSecondaryAuthors($excludeRoles = []) : array
     {
         $relevantFields = [
             '700' => ['a', 'b', 'c']
@@ -583,8 +624,12 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = [
             '700' => '700a (700b)(, 700c)'
         ];
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
 
-        return $this->getFormattedData($relevantFields, $formattingRules);
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -645,7 +690,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getCorporateAuthors() : array
+    public function getCorporateAuthors($excludeRoles = []) : array
     {
         $relevantFields = array(
             '110' => ['a', 'b', 'c', 'd', 'g'],
@@ -655,7 +700,12 @@ class SolrVZGRecord extends SolrMarc
             '110' => '110a (/ 110b, (\((110c, 110d)\)))( 110g)',
             '710' => '710a (/ 710b, (\((710c, 710d)\)))( 710g)'
         );
-        return $authors = $this->getFormattedData($relevantFields, $formattingRules);
+        $conditions = [];
+        if($excludeRoles) {
+            $conditions[] = $this->createFieldCondition('subfield', '4', 'nin', $excludeRoles);
+        }
+
+        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
     }
 
     /**
@@ -815,10 +865,19 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getISBNs() : array
     {
-        $relevantFields = array('020' => ['9', 'c']);
-        $formattingRules = array('020' => '0209 : 020c');
-        $conditions = array ($this->createFieldCondition('subfield', 'z', '==', false));
-        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+        $conditions = array($this->createFieldCondition('subfield', 'z', '==', false));
+
+        $data = [];
+        foreach($this->getFieldsConditional('020', $conditions) as $field) {
+            $fieldData = array(
+                '0209' => $this->getSubfield($field, '9') ?: $this->getSubfield($field, 'a'),
+                '020c' => $this->getSubfield($field, 'c') ?: null
+            );
+
+            $data[] = $this->getFormattedMarcData('0209 : 020c', true, true, $fieldData);
+        }
+
+        return $data;
     }
 
     /**
@@ -832,6 +891,16 @@ class SolrVZGRecord extends SolrMarc
         $formattingRules = array('024' => '0249 024c');
         $conditions = array ($this->createFieldCondition('indicator', 1, '==', '2'));
         return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+    }
+
+    /**
+     * Get an array of all ISSNs associated with the record (may be empty).
+     *
+     * @return array
+     */
+    public function getISSNs()
+    {
+        return $this->getMarcReader()->getFieldsSubfields('022', ['a'], null);
     }
 
     /**
@@ -2255,6 +2324,31 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get the DDC notations of the record.
+     *
+     * @return array
+     */
+    public function getDdcNotationDNB() : array {
+        $fields = $this->getFieldsConditional('082', [
+            $this->createFieldCondition('indicator', '1', '==', '0'),
+            $this->createFieldCondition('indicator', '2', '==', '4'),
+            $this->createFieldCondition('subfield', '2', 'in', ['ddc', false])
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data = array_merge(
+                $data, $this->getMarcReader()->getSubfields($field, 'a')
+            );
+        }
+
+        $data = array_unique($data);
+        sort($data);
+
+        return $data;
+    }
+
+    /**
      * Get the local classification of the record.
      *
      * @return array
@@ -2321,6 +2415,10 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $source;
+    }
+
+    public function getSummary() : array {
+        return [$this->getFirstFieldValue('520')];
     }
 
     public function isOpenAccess() : bool {

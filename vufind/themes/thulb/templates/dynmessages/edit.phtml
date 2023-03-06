@@ -8,13 +8,18 @@
 
 <div class="<?=$this->layoutClass('mainbody')?>">
   <div class="tag-information">
-    <span>Information:</span> Zeilenumbrüche die durch die Enter-Taste eingefügt wurden werden automatisch in HTML-Zeilenumbrüche umgewandelt.
-    Zudem werden alle HTML-Tags, außer dem &lt;a&gt;-Tag, automatisch aus dem Text entfernt.
+    <b><u><?= $this->transEsc('Information'); ?>:</u></b><br>
+    <?= $this->transEsc('DynMessages_information'); ?><br><br>
+    <?= $this->transEsc('Examples'); ?>:<br>
+    <a href="https://www.gbv.de"><?= $this->transEsc('open in current tab'); ?></a>: &lt;a href="https://www.gbv.de"&gt;<?= $this->transEsc('open in current tab'); ?>&lt;/a&gt;<br>
+    <a href="https://www.gbv.de" target="_blank"><?= $this->transEsc('open in new tab'); ?></a>: &lt;a https://www.gbv.de" target="_blank"&gt;<?= $this->transEsc('open in new tab'); ?>&lt;/a&gt;<br>
+    <i><?= $this->transEsc('italic text'); ?></i>: &lt;i&gt;<?= $this->transEsc('italic text'); ?>&lt;/i&gt;<br>
+    <strong><?= $this->transEsc('bold text'); ?></strong>: &lt;strong&gt;<?= $this->transEsc('bold text'); ?>&lt;/strong&gt;
   </div>
 
-  <?php echo $this->flashmessages(); ?>
+  <?= $this->flashmessages(); ?>
 
-  <form action="/DynMessages/save" method="post">
+  <form action="<?=$this->url('DynMessages-save')?>" method="post">
     <table>
       <thead>
         <tr>
@@ -28,13 +33,13 @@
         <?php if(!array_key_exists($tag, $german) || !array_key_exists($tag, $english)) continue; ?>
         <tr>
           <td class="tag-col">
-            <?php echo $content; ?>
+            <?= $content; ?>
           </td>
           <td class="text-col de">
-            <textarea class="text-input" rows=5 name="german[<?php echo $tag; ?>]"><?php echo $german[$tag]; ?></textarea>
+            <textarea class="text-input" rows=5 name="german[<?= $tag; ?>]"><?= $german[$tag]; ?></textarea>
           </td>
           <td class="text-col en">
-            <textarea class="text-input" rows=5 name="english[<?php echo $tag; ?>]"><?php echo $english[$tag]; ?></textarea>
+            <textarea class="text-input" rows=5 name="english[<?= $tag; ?>]"><?= $english[$tag]; ?></textarea>
           </td>
         </tr>
       <?php endforeach; ?>

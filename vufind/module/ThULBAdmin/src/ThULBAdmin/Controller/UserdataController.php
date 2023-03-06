@@ -157,7 +157,7 @@ class UserdataController extends AbstractBase {
             }
         }
 
-        return $this->redirect()->toUrl('/ReassignUserdata');
+        return $this->redirect()->toRoute('Userdata-reassign');
     }
 
     public function deleteAction () : ViewModel {

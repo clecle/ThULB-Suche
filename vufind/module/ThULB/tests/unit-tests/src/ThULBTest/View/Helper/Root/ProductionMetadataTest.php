@@ -7,7 +7,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class ProductionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Herstellungsangabe';
-    protected $metadataKey = 'Production';
-    protected $recordDriverFunction = 'getProduction';
+    protected ?string $sheetName = 'Herstellungsangabe';
+    protected ?string $metadataKey = 'Production';
+    protected ?string $recordDriverFunction = 'getProduction';
 }

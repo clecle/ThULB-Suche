@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class MapProjectionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Projektion bei Karten';
-    protected $metadataKey = 'Map Projection';
-    protected $recordDriverFunction = 'getCartographicProjection';
+    protected ?string $sheetName = 'Projektion bei Karten';
+    protected ?string $metadataKey = 'Map Projection';
+    protected ?string $recordDriverFunction = 'getCartographicProjection';
 }

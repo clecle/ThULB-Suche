@@ -1,0 +1,7 @@
+<?php $i = 0; ?>
+<?php foreach ($data as $notation): ?>
+  <?= ($i++ > 0) ? '<br />' : '' ?>
+  <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode("ddc $notation")?>%22&amp;type=TopicBrowse">
+      <?= $notation . ' ' . $this->transEsc('DDC::' . $notation, [], ''); ?>
+  </a>
+<?php endforeach; ?>

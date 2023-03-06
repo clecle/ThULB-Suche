@@ -25,294 +25,41 @@
 
 namespace DHGETest\View\Helper\Root;
 
-use Box\Spout\Common\Type;
-use Box\Spout\Reader\ReaderFactory;
-use DHGETest\View\Helper\AbstractViewHelperTest;
-use ThULB\View\Helper\Root\RecordDataFormatterFactory;
-use VuFind\View\Helper\Root\RecordDataFormatter;
-use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
+use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Reader\XLSX\Reader;
+use Laminas\Config\Config;
+use Laminas\Config\Reader\Ini as IniReader;
+use ThULBTest\View\Helper\Root\AbstractRecordDataFormatterTest as ThULBAbstractRecordDataFormatterTest;
 
 /**
  * Generalized testing class for the record data formatter view helper. It makes
  * it easy, to add new tests by simple inheritance.
- *
- * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
+abstract class AbstractRecordDataFormatterTest extends ThULBAbstractRecordDataFormatterTest
 {
-    const USED_FIELDS_MARKER = 'Genutzte Felder';
-    const NAME_DE_MARKER = 'Deutsche Bezeichnung in Vollanzeige';
-    const NAME_EN_MARKER = 'Englische Bezeichnung in Vollanzeige';
+    const FINDEX_QUERY_STRING = '?wt=json&fq=collection_details:(((GBV_ILN_250%20OR%20GBV_ILN_281)%20AND%20GBV_KXP)%20OR%20ZDB-1-BEP%20OR%20ZDB-1-RWF%20OR%20ZDB-1-EFD)&q=id:';
 
-    /**
-     * Provides the name of the sheet of rda.xlsx, that holds the test cases
-     *
-     * @var string
-     */
-    protected $sheetName;
+    protected array $parentThemes = ['root', 'bootstrap', 'thulb'];
 
-    /**
-     * Optional name of the template, that is used by the view helper. This
-     * variable needs to be provided, if $recordDriverFunction is not used.
-     *
-     * @var string
-     */
-    protected $template;
+    protected string $theme = 'dhge';
 
-    /**
-     * Options for the spec builder of the record data formatter
-     *
-     * @var type
-     */
-    protected $options = [];
-
-    /**
-     * Optional name of the function of the record driver, that provides the
-     * data for the view helper. This variable needs to be provided, if
-     * $template is not used.
-     *
-     * @var string
-     */
-    protected $recordDriverFunction;
-
-    /**
-     * Key for the meta data that is tested, like it is used in the
-     * translation ini files.
-     *
-     * @var string
-     */
-    protected $metadataKey;
-
-    /**
-     * Titles for the metadata in different languages. They get extracted from
-     * the sheet.
-     *
-     * @var array
-     */
-    protected $metadataTitles = [];
-
-    /**
-     * Main testing function. In normal cases, it is enough, to provide either
-     * a template path that has to be used by the helper or a record driver
-     * function in the derived class variables $template and $recordDriverFunction.
-     * If both are needed for the view helper, provide both.
-     *
-     * In more complex theoretical cases overwrite this function or use other
-     * functions "test[...]()" besides this one.
-     */
-    public function testFormatting()
-    {
-        $key = is_null($this->metadataKey) ? 'test' : $this->metadataKey;
-
-        foreach ($this->getRelevantData() as list($comment, $ppn, $longViewDe, $longViewEn, $shortView, $link)) {
-            $record = $this->getRecordFromFindex($ppn);
-            $this->setTranslationLocale('de');
-            $record->setTranslator($this->getTranslator());
-            $formatter = $this->getFormatter();
-
-            $spec = $this->getFormatterSpecBuilder();
-            if (!is_null($this->template)) {
-                $spec->setTemplateLine(
-                    $key,
-                    is_null($this->recordDriverFunction) ? true : $this->recordDriverFunction,
-                    $this->template,
-                    $this->options
-                );
-            } else if (!is_null($this->recordDriverFunction)) {
-                $spec->setLine($this->metadataKey, $this->recordDriverFunction);
-            } else {
-                $this->markTestSkipped('No information about template or record driver function provided in class  ' . get_class($this));
-            }
-
-            $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', DE ===';
-
-            // Test for german metadata presentation:
-            $data = $formatter->getData($record, $spec->getArray());
-            if(empty($data)) {
-                $this->markTestSkipped('No Data to compare found for this record.' . "\n" . $comment);
-            }
-
-            $this->assertEquals(
-                $this->normalizeUtf8String($longViewDe),
-                $this->convertHtmlToString($data[0]['value']),
-                $comment
-            );
-
-            // Test for english metadata presentation:
-            if ($longViewEn) {
-                $this->setTranslationLocale('en');
-                $record->setTranslator($this->getTranslator());
-                $formatter = $this->getFormatter();
-                $data = $formatter->getData($record, $spec->getArray());
-                $comment = '=== Sheet: ' . $this->sheetName . ', PPN: ' . $ppn . ', EN ===';
-                $this->assertEquals(
-                    $this->normalizeUtf8String($longViewEn),
-                    $this->convertHtmlToString($data[0]['value']),
-                    $comment
-                );
-            }
-
-            // Test for metadata title in different languages:
-            if (!is_null($this->metadataKey) && !empty($this->metadataTitles)) {
-                foreach ($this->metadataTitles as $locale => $title) {
-                    $this->setTranslationLocale($locale);
-                    $viewHelpers = $this->getViewHelpers($this->getMockContainer());
-                    $comment = '=== Sheet: ' . $this->sheetName . ', Titel ' . $locale . ' ===';
-                    $this->assertEquals(
-                        $this->normalizeUtf8String($title),
-                        $this->normalizeUtf8String($viewHelpers['translate']($this->metadataKey)),
-                        $comment
-                    );
-                }
-            }
+    protected function getMainConfig() : Config {
+        if (is_null($this->config)) {
+            $iniReader = new IniReader();
+            $this->config = new Config($iniReader->fromFile(DHGE_CONFIG_FILE), true);
         }
+
+        return $this->config;
     }
 
     /**
-     * Transforms the helpers html output to a string, that represents what is
-     * shown in the browser.
-     *
-     * @param string $helperOutput
-     * @return string
+     * @throws IOException
      */
-    protected function convertHtmlToString($helperOutput)
-    {
-        $htmlLines = explode('<br />', $helperOutput);
-        $stringLines = [];
-
-        foreach ($htmlLines as $singleLine) {
-            $stringLines[] = trim(strip_tags(preg_replace('/\n/', '', $singleLine)));
-        }
-
-        $string = implode("\n", $stringLines);
-        $string = html_entity_decode($string, ENT_QUOTES | ENT_HTML5);
-
-        return $this->normalizeUtf8String($string);
-    }
-
-
-    /**
-     * German umlaut characters can be represented in different ways and can be seen as
-     * different, even if they are normally equal (e.g. 'ä' !== 'ä' in utf8). This function
-     * converts these characters to make them equal.
-     *
-     * @param string $utf8String
-     * @return string
-     */
-    protected function normalizeUtf8String($utf8String)
-    {
-        $output = iconv('UTF-8', 'ASCII//TRANSLIT', $utf8String);
-        return preg_replace('/\s{2,}/', ' ', $output);
-    }
-
-
-    /**
-     * Extracts the relevant rows from the test cases spreadsheet. Additionally
-     * it extracts eventually denfined metadata titles from the sheet and stores
-     * them in the $metadataTitles array.
-     *
-     * @return array
-     */
-    protected function getRelevantData()
-    {
-        $relevantRows = [];
-
-        /** @var \Box\Spout\Writer\Common\Sheet $sheet */
-        foreach ($this->getSpreadSheetReader()->getSheetIterator() as $sheet) {
-            if ($sheet->getName() === $this->sheetName) {
-                $isRelevantRow = false;
-                /** @var array $row */
-                foreach ($sheet->getRowIterator() as $row) {
-                    if (strpos($row[0], self::NAME_DE_MARKER) !== false) {
-                        $this->metadataTitles['de'] = $row[1];
-                    } else if (strpos($row[0], self::NAME_EN_MARKER) !== false) {
-                        $this->metadataTitles['en'] = $row[1];
-                    } else if (strpos($row[0], self::USED_FIELDS_MARKER) !== false) {
-                        $isRelevantRow = true;
-                        continue;
-                    }
-                    if ($isRelevantRow) {
-                        if (empty($row[0])) {
-                            break;
-                        }
-                        $relevantRows[] = array_slice($row, 0, 6);
-                    }
-                }
-                break;
-            }
-        }
-        if (empty($relevantRows)) {
-            $this->markTestSkipped('No sheet found for ' . get_class($this) .
-                '. Add it to rda.xlsx and define it in the test class.');
-        }
-
-        return $relevantRows;
-    }
-
-    protected function getSpreadSheetReader()
-    {
-        $spreadsheetReader = ReaderFactory::create(Type::XLSX);
+    protected function getSpreadSheetReader() : Reader {
+        $spreadsheetReader = ReaderEntityFactory::createXLSXReader();
         $spreadsheetReader->open(PHPUNIT_FIXTURES_DHGE . '/spreadsheet/rda.xlsx');
 
         return $spreadsheetReader;
-    }
-
-    /**
-     * Build a formatter, including necessary mock view w/ helpers.
-     *
-     * @return RecordDataFormatter
-     */
-    protected function getFormatter()
-    {
-        // Build the formatter:
-        $factory = new RecordDataFormatterFactory();
-        $container = $this->getMockContainer();
-        $formatter = $factory($container, RecordDataFormatter::class);
-
-        // Create a view object with a set of helpers:
-        $helpers = $this->getViewHelpers($container);
-        $view = $this->getPhpRenderer($helpers);
-
-        // Mock out the router to avoid errors:
-        $match = new \Laminas\Router\RouteMatch([]);
-        $match->setMatchedRouteName('foo');
-        $view->plugin('url')
-            ->setRouter($this->createMock('Laminas\Router\RouteStackInterface'))
-            ->setRouteMatch($match);
-
-        // Inject the view object into all of the helpers:
-        $formatter->setView($view);
-        foreach ($helpers as $helper) {
-            $helper->setView($view);
-        }
-
-        return $formatter;
-    }
-
-    protected function getFormatterSpecBuilder()
-    {
-        return new SpecBuilder();
-    }
-
-    protected function getMockContainer() {
-        $container = new \VuFindTest\Container\MockContainer($this);
-        $container->set(
-            \VuFind\RecordDriver\PluginManager::class,
-            new \VuFind\RecordDriver\PluginManager($container)
-        );
-        $container->set(
-            \VuFind\Config\PluginManager::class,
-            new \VuFind\Config\PluginManager($container)
-        );
-        $container->set(
-            \VuFind\Config\SearchSpecsReader::class,
-            new \VuFind\Config\SearchSpecsReader()
-        );
-        $container->set(
-            'SharedEventManager',
-            new \Laminas\EventManager\SharedEventManager()
-        );
-
-        return $container;
     }
 }

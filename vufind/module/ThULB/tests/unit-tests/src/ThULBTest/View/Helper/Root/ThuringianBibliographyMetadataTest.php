@@ -33,8 +33,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class ThuringianBibliographyMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Thüringen-Bibliographie';
-    protected $metadataKey = 'Th_Biblio';
-    protected $recordDriverFunction = 'getThuBiblioClassification';
-    protected $template = "data-thuBiblioClassification.phtml";
+    protected ?string $sheetName = 'Thüringen-Bibliographie';
+    protected ?string $metadataKey = 'Th_Biblio';
+    protected ?string $recordDriverFunction = 'getThuBiblioClassification';
+    protected ?string $template = "data-thuBiblioClassification.phtml";
 }

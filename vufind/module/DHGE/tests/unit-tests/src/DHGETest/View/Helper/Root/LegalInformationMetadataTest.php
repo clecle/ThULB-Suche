@@ -32,8 +32,8 @@ namespace DHGETest\View\Helper\Root;
  */
 class LegalInformationMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Rechteinformation';
-    protected $metadataKey = 'Legal information';
-    protected $recordDriverFunction = 'getLegalInformation';
-    protected $template = 'data-legalInformation.phtml';
+    protected ?string $sheetName = 'Rechteinformation';
+    protected ?string $metadataKey = 'Legal information';
+    protected ?string $recordDriverFunction = 'getLegalInformation';
+    protected ?string $template = 'data-legalInformation.phtml';
 }

@@ -32,8 +32,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class RelatedItemsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Verwandte Ressourcen';
-    protected $metadataKey = 'Related Items';
-    protected $recordDriverFunction = 'getAllRecordLinks';
-    protected $template = 'data-allRecordLinks.phtml';
+    protected ?string $sheetName = 'Verwandte Ressourcen';
+    protected ?string $metadataKey = 'Related Items';
+    protected ?string $recordDriverFunction = 'getAllRecordLinks';
+    protected ?string $template = 'data-allRecordLinks.phtml';
 }

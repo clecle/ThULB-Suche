@@ -8,7 +8,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class OtherTitlesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Weitere Titel';
-    protected $metadataKey = 'Other Titles';
-    protected $recordDriverFunction = 'getOtherTitles';
+    protected ?string $sheetName = 'Weitere Titel';
+    protected ?string $metadataKey = 'Other Titles';
+    protected ?string $recordDriverFunction = 'getOtherTitles';
 }

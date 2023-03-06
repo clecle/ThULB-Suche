@@ -33,8 +33,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class RvkNotationMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'RVK_Notation';
-    protected $metadataKey = 'RVK notation';
-    protected $recordDriverFunction = 'getRvkNotation';
-    protected $template = 'data-rvkNotation.phtml';
+    protected ?string $sheetName = 'RVK_Notation';
+    protected ?string $metadataKey = 'RVK notation';
+    protected ?string $recordDriverFunction = 'getRvkNotation';
+    protected ?string $template = 'data-rvkNotation.phtml';
 }

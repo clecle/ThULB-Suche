@@ -32,7 +32,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class ReproductionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Sekundäre Ausgabe';
-    protected $metadataKey = 'Reproduction';
-    protected $recordDriverFunction = 'getReproduction';
+    protected ?string $sheetName = 'Sekundäre Ausgabe';
+    protected ?string $metadataKey = 'Reproduction';
+    protected ?string $recordDriverFunction = 'getReproduction';
 }

@@ -33,8 +33,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class SubjectsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Schlagworte';
-    protected $metadataKey = 'Subjects';
-    protected $recordDriverFunction = 'getAllSubjectHeadings';
-    protected $template = "data-allSubjectHeadings.phtml";
+    protected ?string $sheetName = 'Schlagworte';
+    protected ?string $metadataKey = 'Subjects';
+    protected ?string $recordDriverFunction = 'getAllSubjectHeadings';
+    protected ?string $template = "data-allSubjectHeadings.phtml";
 }

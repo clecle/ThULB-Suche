@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 
 use IOException;
+use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mime\Message;
 use Laminas\Mime\Mime;
@@ -287,7 +288,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      *
      * @return ViewModel
      */
-    public function newPasswordAction() : ViewModel
+    public function newPasswordAction() : ViewModel | Response
     {
         $view = parent::newPasswordAction();
 
@@ -461,6 +462,24 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         }
 
         return true;
+    }
+
+    public function profileAction() {
+        $view = parent::profileAction();
+
+        $patron = $this->catalogLogin();
+        if (is_array($patron)) {
+            $catalog = $this->getILS();
+            $fines = $catalog->getMyFines($patron);
+
+            $totalDue = 0;
+            foreach ($fines as $fine) {
+                $totalDue += $fine['balance'] ?? 0;
+            }
+            $view->totalDue = $totalDue;
+        }
+
+        return $view;
     }
 
 }

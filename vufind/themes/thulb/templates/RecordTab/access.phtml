@@ -135,12 +135,16 @@
               </div>
             <?php elseif($callno == 'bestellt'): ?>
               <?php $orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? ''; ?>
+              <?php $sdUrl = $this->thulb_serviceDesk('reserve-media', [
+                'ppn' => $this->driver->getUniqueID(),
+                'titleData' => $this->driver->getTitle()
+              ]); ?>
               <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
                 <div class="col-description bold"><?= $this->transEsc("Status")?>:</div>
                 <div class="col-text">
                   <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
                     <?php if($orderStatusCode == 'b'): ?>
-                      <a href="#"><?= $this->transEsc('Reserve medium'); ?></a>
+                      <a href="<?= $sdUrl; ?>"><?= $this->transEsc('Reserve medium'); ?></a>
                     <?php endif; ?>
                 </div>
               </div>

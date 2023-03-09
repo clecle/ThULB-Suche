@@ -143,7 +143,7 @@
                 <div class="col-description bold"><?= $this->transEsc("Status")?>:</div>
                 <div class="col-text">
                   <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
-                    <?php if($orderStatusCode == 'b'): ?>
+                    <?php if($orderStatusCode != 't'): ?>
                       <a href="<?= $sdUrl; ?>"><?= $this->transEsc('Reserve medium'); ?></a>
                     <?php endif; ?>
                 </div>

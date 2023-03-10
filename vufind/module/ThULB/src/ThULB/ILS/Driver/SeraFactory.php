@@ -33,7 +33,7 @@ class SeraFactory implements FactoryInterface
         }
 
         $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('Sera');
+            ->get('thulb');
         return new $requestedName($config);
     }
 }

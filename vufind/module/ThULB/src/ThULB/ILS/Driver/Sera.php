@@ -14,10 +14,10 @@ class Sera extends AbstractBase implements
     use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
-    protected $seraConfig;
+    protected Config $thulbConfig;
 
-    public function __construct(Config $seraConfig) {
-        $this->seraConfig = $seraConfig;
+    public function __construct(Config $thulbConfig) {
+        $this->thulbConfig = $thulbConfig;
     }
 
     public function init() {}
@@ -39,11 +39,11 @@ class Sera extends AbstractBase implements
 
         $headers = [
             'Accept' => 'application/json',
-            'Authorization' => 'Bearer ' . $this->seraConfig->API->Token
+            'Authorization' => 'Bearer ' . $this->thulbConfig->SERA->Token
         ];
 
         $response = $this->httpService->post(
-            $this->seraConfig->API->URL,
+            $this->thulbConfig->SERA->URL,
             $postData,
             \Laminas\Http\Client::ENC_URLENCODED,
             10000,

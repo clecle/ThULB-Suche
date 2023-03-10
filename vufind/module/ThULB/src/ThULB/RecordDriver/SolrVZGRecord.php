@@ -1963,13 +1963,16 @@ class SolrVZGRecord extends SolrMarc
     public function getProduction() : array {
         $productions = array();
         foreach($this->getMarcReader()->getFields('264') as $currentField) {
-            if($currentField['i2'] == 0) {
+            if($currentField['i2'] == 3) {
                 $a = $this->getSubfields($currentField, 'a');
 
                 $b = $this->getSubfield($currentField, 'b');
                 $b = $b ? ' : ' . $b : '';
 
-                $productions[] = implode('; ', $a) . $b;
+                $c = $this->getSubfield($currentField, 'c');
+                $c = $c ? ', ' . $c : '';
+
+                $productions[] = implode('; ', $a) . $b . $c;
             }
         }
 

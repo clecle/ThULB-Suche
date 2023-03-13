@@ -65,7 +65,7 @@
                 'url' => $contentLink['link'],
                 'titleData' => $this->driver->getTitle()
         ]); ?>
-        <a href="<?= $sdUrl; ?>" target="_blank"><?= $this->transEsc('Broken link?'); ?></a>
+        <a href="<?= $sdUrl; ?>" class="external-link" target="_blank"><?= $this->transEsc('Broken link?'); ?></a>
       </div>
       <div class="col-md-10 pb-1">
         <?php if($linkData['remotetitle'] ?? false):?>
@@ -144,7 +144,7 @@
                 <div class="col-text">
                   <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
                     <?php if($orderStatusCode != 't'): ?>
-                      <a href="<?= $sdUrl; ?>"><?= $this->transEsc('Reserve medium'); ?></a>
+                      <a href="<?= $sdUrl; ?>" class="external-link" target="_blank"><?= $this->transEsc('Reserve medium'); ?></a>
                     <?php endif; ?>
                 </div>
               </div>

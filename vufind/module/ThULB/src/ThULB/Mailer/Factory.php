@@ -35,6 +35,8 @@ class Factory extends OriginalFactory
             $class->setDefaultReplyTo($config->Mail->default_reply_to);
         }
 
+        $class->setServiceLocator($container);
+
         return $class;
     }
 }

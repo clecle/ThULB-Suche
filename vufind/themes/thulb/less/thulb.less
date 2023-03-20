@@ -1648,23 +1648,17 @@ a.checkbox-filter > span > i.fa-info-circle,
 }
 
 .broken-link-icon {
-@extend .fa, .fa-exclamation-triangle;
+  &:extend (.fa, .fa-exclamation-triangle);
 
   font-size: 14px;
 }
 
-.broken-link-description {
+#resultlist .media .broken-link {
   display: none;
 }
 
-#resultlist .media .broken-link {
-  display: block;
-  width: 1.28571429em;
-
-  .broken-link-icon {
-    margin-right: 0.3rem;
-    font-size: 18px;
-  }
+#resultlist .result:hover .media .broken-link {
+  display: inline;
 }
 
 .online-content-wrapper {
@@ -1677,10 +1671,6 @@ a.checkbox-filter > span > i.fa-info-circle,
 
   a + a {
     margin-top: 10px;
-  }
-
-  .broken-link-description {
-    display: inline;
   }
 }
 

@@ -20,8 +20,9 @@
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('ThULB-Suche Support'); ?></a></li>
         <li><a href="https://mailform.thulb.uni-jena.de/?mail=ZGlzY292ZXJ5X3RodWxiQHVuaS1qZW5hLmRl" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('broken-link'); ?>" target="_blank"><?= $this->transEsc('Report problems accessing e-resources'); ?></a> </li>
+        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('ThULB-Suche Support'); ?></a></li>
       </ul>
     </li>
     <li class="visible-xs"><a href="https://www.thulb.uni-jena.de/impressum.html" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>

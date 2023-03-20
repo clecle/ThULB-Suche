@@ -132,6 +132,9 @@
           <?= $this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
         <?php endif; ?>
 
+        <?= $this->render('record/broken-link.phtml'); ?>
+        <br>
+
         <?php /* Hierarchy tree link */ ?>
         <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
           <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>

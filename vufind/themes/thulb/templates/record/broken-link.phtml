@@ -1,0 +1,11 @@
+<?php if($this->driver->getSourceIdentifier() == 'Summon' ||
+         $this->driver->isFormat('eBook|eJournal|electronic Article|electronic Resource', true)): ?>
+<?php $sdUrl = $this->thulb_serviceDesk('broken-link', [
+    'url' => $this->serverUrl($this->recordLinker()->getUrl($this->driver)),
+    'titleData' => $this->driver->getTitle()
+]); ?>
+<a href="<?= $sdUrl; ?>" class="broken-link" title="<?= $this->transEsc('Broken link?'); ?>" target="_blank">
+    <i class="broken-link-icon"></i>
+    <span class="broken-link-description external-link"><?= $this->transEsc('Broken link?'); ?></span>
+</a>
+<?php endif; ?>

@@ -1654,7 +1654,7 @@ a.checkbox-filter > span > i.fa-info-circle,
 }
 
 .broken-link-icon {
-  @extend .fa, .fa-exclamation-triangle;
+  @extend .fa, .fa-unlink;
 
   font-size: 14px;
 }

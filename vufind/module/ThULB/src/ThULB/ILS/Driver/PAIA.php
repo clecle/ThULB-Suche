@@ -33,8 +33,10 @@
  */
 
 namespace ThULB\ILS\Driver;
+
 use Exception;
 use VuFind\Exception\Forbidden as ForbiddenException;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
     VuFind\Exception\ILS as ILSException,
@@ -46,11 +48,88 @@ use VuFind\ILS\Driver\PAIA as OriginalPAIA,
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 class PAIA extends OriginalPAIA
+    implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
     
     const DAIA_DOCUMENT_ID_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
     const PAIA_INVALID_CREDENTIALS_MSG = '0:access_denied (invalid patron or password)';
+
+    /**
+     * Perform an HTTP request.
+     *
+     * Custom: Added Accept-Language parameter in header.
+     *
+     * @param string $id id for query in daia
+     *
+     * @return string
+     * @throws ILSException
+     */
+    protected function doHTTPRequest($id) : string
+    {
+        $http_headers = [
+            'Content-type: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+            'Accept: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+            'Accept-Language: ' . strtolower($this->getTranslatorLocale())
+        ];
+
+        $params = [
+            'id' => $id,
+            'format' => $this->daiaResponseFormat,
+        ];
+
+        try {
+            $result = $this->httpService->get(
+                $this->baseUrl,
+                $params,
+                $this->daiaTimeout,
+                $http_headers
+            );
+        } catch (\Exception $e) {
+            $msg = 'HTTP request exited with Exception ' . $e->getMessage() .
+                ' for record: ' . $id;
+            $this->throwAsIlsException($e, $msg);
+        }
+
+        if (!$result->isSuccess()) {
+            throw new ILSException(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received, retrieving availability information for record: ' . $id
+            );
+        }
+
+        // check if result matches daiaResponseFormat
+        if ($this->contentTypesResponse != null) {
+            if ($this->contentTypesResponse[$this->daiaResponseFormat]) {
+                $contentTypesResponse = array_map(
+                    'trim',
+                    explode(
+                        ',',
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    )
+                );
+                [$responseMediaType] = array_pad(
+                    explode(
+                        ';',
+                        $result->getHeaders()->get('Content-type')->getFieldValue(),
+                        2
+                    ),
+                    2,
+                    null
+                ); // workaround to avoid notices if encoding is not set in header
+                if (!in_array(trim($responseMediaType), $contentTypesResponse)) {
+                    throw new ILSException(
+                        'DAIA-ResponseFormat not supported. Received: ' .
+                        $responseMediaType . ' - ' .
+                        'Expected: ' .
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    );
+                }
+            }
+        }
+
+        return $result->getBody();
+    }
 
     /**
      * Place Hold
@@ -62,12 +141,12 @@ class PAIA extends OriginalPAIA
      *
      * @param array $holdDetails An array of item and patron data
      *
-     * @return mixed An array of data on the request including
+     * @return array An array of data on the request including
      *               whether it was successful and a system message (if available)
      *
      * @throws ForbiddenException
      */
-    public function placeHold($holdDetails)
+    public function placeHold($holdDetails) : array
     {
         $details = parent::placeHold($holdDetails);
         
@@ -710,7 +789,7 @@ class PAIA extends OriginalPAIA
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function checkRequestIsValid($id, $data, $patron)
+    public function checkRequestIsValid($id, $data, $patron) : array|bool
     {
         if (isset($patron['status']) && $patron['status']  == 2) {
             return [

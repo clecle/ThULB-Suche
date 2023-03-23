@@ -122,7 +122,10 @@ $config = array(
             ),
             'ils_driver' => array(
                 'factories' => array(
-                    'VuFind\ILS\Driver\PAIA' => 'ThULB\ILS\Driver\Factory::getPAIA',
+                    \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
+                ),
+                'aliases' => array(
+                    \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
                 )
             ),
             'recommend' => array(

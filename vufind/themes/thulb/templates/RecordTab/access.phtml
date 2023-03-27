@@ -59,7 +59,7 @@
     <div class="row">
       <?php if(empty($contentLink)) continue; ?>
       <?php $linkData = $contentLink['data'] ?? []; ?>
-      <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+      <div class="flex flex-dir-col pb-1 pl-1 pr-2">
         <div class="online-content-wrapper mr-2 mb-2">
           <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
           <?= $this->render('record/broken-link.phtml'); ?>

@@ -1,24 +1,26 @@
 /*global Hunt, VuFind */
 VuFind.register('onlineContent', function onlineContent() {
-    function displayOnlineContent(result, el) {
-
-        var onlineContentEl = el.find('.online-content');
-
-        var loadingImg = $(onlineContentEl).prev();
-        if($(loadingImg).is('img')) {
-            $(loadingImg).hide();
+    function displayOnlineContent(result, onlineContentEl) {
+        let loadingImg = onlineContentEl.prev();
+        if(loadingImg.is('img')) {
+            loadingImg.hide();
         }
 
         if ("undefined" !== typeof result) {
-            $(onlineContentEl).empty();
-            $(result).each(function (y, html) {
-                $(onlineContentEl).append(html);
-            });
+            let actionRow = onlineContentEl.parent();
+            let brokenLink = result.pop();
+            if($(brokenLink).hasClass('broken-link')) {
+                actionRow.append(result, actionRow.find('a'), brokenLink);
+            }
+            else {
+                actionRow.append(result, brokenLink, actionRow.find('a'));
+            }
         }
         else {
-            $(onlineContentEl).parent().hide();
+            onlineContentEl.hide();
         }
     }
+
     var ItemStatusHandler = {
         name: "default",
         // Object that holds item IDs, states and elements
@@ -31,8 +33,6 @@ VuFind.register('onlineContent', function onlineContent() {
         itemStatusDelay: 200,
 
         onlineContentLookupDone: function onlineContentLookupDone(response) {
-            console.log(response.data);
-
             for(var i = 0; i < response.data.length; i++) {
                 var id = response.data[i].id;
                 this.items[id].result = response.data[i].result;
@@ -47,11 +47,11 @@ VuFind.register('onlineContent', function onlineContent() {
                 return;
             }
             // display the error message on each of the ajax status place holder
-            $('.js-item-pending').addClass('text-danger').empty().removeClass('hidden')
+            $('.js-item-pending').addClass('text-danger').empty()
                 .append(typeof response.responseJSON.data === 'string' ? response.responseJSON.data : VuFind.translate('error_occurred'));
         },
         itemQueueAjax: function itemQueueAjax(id, el) {
-            el.addClass('js-item-pending').removeClass('hidden');
+            el.addClass('js-item-pending');
             // If this id has already been queued, just add it to the elements or display a
             // cached result.
             if (typeof this.items[id] !== 'undefined') {
@@ -100,18 +100,17 @@ VuFind.register('onlineContent', function onlineContent() {
     };
 
     function checkOnlineContent(el) {
-        var onlineContentEl = $(el).find('.online-content');
+        var onlineContentEl = $(el);
+        var currentOnlineContent = onlineContentEl.data('onlineContent');
 
-        $(onlineContentEl).each(function (index, element) {
-            var currentOnlineContent = $(element).data('onlineContent');
-
-            var loadingImg = $(onlineContentEl).prev();
-            if($(loadingImg).is('img')) {
+        if(currentOnlineContent) {
+            var loadingImg = onlineContentEl.prev();
+            if ($(loadingImg).is('img')) {
                 $(loadingImg).show();
             }
 
-            ItemStatusHandler.itemQueueAjax(currentOnlineContent, $(el));
-        });
+            ItemStatusHandler.itemQueueAjax(currentOnlineContent, onlineContentEl);
+        }
     }
 
     // Assign actions to the OpenURL links. This can be called with a container e.g. when

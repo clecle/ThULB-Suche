@@ -1238,7 +1238,7 @@ class SolrVZGRecord extends SolrMarc
             switch (trim($linkType)){
             case 'id':
                 foreach ($linkFields as $current) {
-                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX), '*');
+                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX, true), '*');
                     if ($bibLink) {
                         $link = ['type' => 'bib', 'value' => $bibLink];
                     }
@@ -1262,7 +1262,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'dnb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'dnb', 'value' => $bibLink];
                     }
@@ -1270,7 +1270,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'zdb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'zdb', 'value' => $bibLink];
                     }

@@ -123,9 +123,11 @@ $config = array(
             'ils_driver' => array(
                 'factories' => array(
                     \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
+                    \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
                 ),
                 'aliases' => array(
                     \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
+                    'sera' => \ThULB\ILS\Driver\Sera::class,
                 )
             ),
             'recommend' => array(
@@ -218,6 +220,7 @@ $config = array(
             'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
             'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
         ),
     ),

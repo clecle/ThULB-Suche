@@ -1667,7 +1667,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return bool
      */
-    public function isFormat(string $format = '', bool $pcre = null) : bool {
+    public function isFormat(string $format = '', bool $pcre = false) : bool {
         $formats = $this->getFormats();
         if(is_array($formats) && count($formats) > 0) {
             if (($pcre && preg_match("/$format/", $formats[0]))

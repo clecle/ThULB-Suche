@@ -303,7 +303,7 @@ class PAIA extends OriginalPAIA
                 ? $doc['canrenew'] : false;
 
             // item (0..1) URI of a particular copy
-            $result['item_id'] = (isset($doc['item']) ? $doc['item'] : '');
+            $result['item_id'] = $doc['item'] ?? '';
 
             $result['renew_details']
                 = ($result['renewable']) ? $result['item_id'] : '';
@@ -317,18 +317,16 @@ class PAIA extends OriginalPAIA
             // requested (0..1) URI that was originally requested
 
             // about (0..1) textual description of the document
-            $result['title'] = (isset($doc['about']) ? $doc['about'] : null);
+            $result['title'] = $doc['about'] ?? null;
 
             // queue (0..1) number of waiting requests for the document or item
-            $result['request'] = (isset($doc['queue']) ? $doc['queue'] : null);
+            $result['request'] = $doc['queue'] ?? null;
 
             // renewals (0..1) number of times the document has been renewed
-            $result['renew'] = (isset($doc['renewals']) ? $doc['renewals'] : null);
+            $result['renew'] = $doc['renewals'] ?? null;
 
             // reminder (0..1) number of times the patron has been reminded
-            $result['reminder'] = (
-                isset($doc['reminder']) ? $doc['reminder'] : null
-            );
+            $result['reminder'] = $doc['reminder'] ?? null;
 
             // custom PAIA field
             // starttime (0..1) date and time when the status began
@@ -357,7 +355,7 @@ class PAIA extends OriginalPAIA
             // canceled
 
             // error (0..1) error message, for instance if a request was rejected
-            $result['message'] = (isset($doc['error']) ? $doc['error'] : '');
+            $result['message'] = $doc['error'] ?? '';
 
             // storageid (0..1) location URI
 
@@ -367,9 +365,9 @@ class PAIA extends OriginalPAIA
             $result['departmentId'] = $this->getDepIdFromItem($doc, $result['callnumber']);
 
             // status: provided (the document is ready to be used by the patron)
-            $result['available'] = $doc['status'] == 4 ? true : false;
+            $result['available'] = $doc['status'] == 4;
             
-            $result['queue'] = isset($doc['queue']) ? $doc['queue'] : 0;
+            $result['queue'] = $doc['queue'] ?? 0;
 
             // Optional VuFind fields
             /*
@@ -454,6 +452,9 @@ class PAIA extends OriginalPAIA
                 }
             }
         }
+
+        // @TODO: extract epn from id
+        $status['epn'] = substr($item['temporary-hack-do-not-use'], 0, -1);
 
         if (!$status['availability'] 
             && !isset($status['duedate'])

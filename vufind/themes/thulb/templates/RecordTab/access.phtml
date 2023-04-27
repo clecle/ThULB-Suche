@@ -59,34 +59,32 @@
     <div class="row">
       <?php if(empty($contentLink)) continue; ?>
       <?php $linkData = $contentLink['data'] ?? []; ?>
-      <div class="col-md-2 pb-1">
-        <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
-        <?php $sdUrl = $this->thulb_serviceDesk('broken-link', [
-                'url' => $contentLink['link'],
-                'titleData' => $this->driver->getTitle()
-        ]); ?>
-        <a href="<?= $sdUrl; ?>" target="_blank"><?= $this->transEsc('Broken link?'); ?></a>
-      </div>
-      <div class="col-md-10 pb-1">
-        <?php if($linkData['remotetitle'] ?? false):?>
-          [<?php echo $linkData['remotetitle']; ?>]
-        <?php endif; ?>
+      <div class="flex flex-dir-col pb-1 pl-1 pr-2">
+        <div class="online-content-wrapper mr-2 mb-2">
+          <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
+          <?= $this->render('record/broken-link.phtml'); ?>
+        </div>
+        <div class="col-text">
+          <?php if($linkData['remotetitle'] ?? false):?>
+            [<?php echo $linkData['remotetitle']; ?>]
+          <?php endif; ?>
 
-        <?php /* BESTANDSANGABEN */ ?>
-        <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
+          <?php /* BESTANDSANGABEN */ ?>
+          <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
 
-        <?php /* ANMERKGUNGEN */ ?>
-        <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
+          <?php /* ANMERKGUNGEN */ ?>
+          <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
 
-        <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
-          <div class="item-notes">
-            <?= $this->transEsc('explain_reference') ?>
-          </div>
-        <?php endif; ?>
+          <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+            <div class="item-notes">
+              <?= $this->transEsc('explain_reference') ?>
+            </div>
+          <?php endif; ?>
 
-        <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
-          <?= $this->render('RecordTab/access/citations.phtml'); ?>
-        <?php endif; ?>
+          <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
+            <?= $this->render('RecordTab/access/citations.phtml'); ?>
+          <?php endif; ?>
+        </div>
       </div>
     </div>
     <?php endforeach; ?>
@@ -128,10 +126,26 @@
         <?php if (isset($row['barcode']) && $row['barcode'] != ""): ?>
           <div class="row" vocab="http://schema.org/" typeof="Offer">
             <?php $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
-            <?php if ($callno): ?>
+            <?php if ($callno && $callno != 'bestellt'): ?>
               <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
                 <div class="col-description bold"><?= $this->transEsc("Call Number")?>:</div>
                 <div class="col-text"><strong><?= $callno ?></strong></div>
+              </div>
+            <?php elseif($callno == 'bestellt'): ?>
+              <?php $orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? ''; ?>
+              <?php $sdUrl = $this->thulb_serviceDesk('reserve-media', [
+                'ppn' => $this->driver->getUniqueID(),
+                'titleData' => $this->driver->getTitle(),
+                'username' => $user['username'] ?? ''
+              ]); ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Status")?>:</div>
+                <div class="col-text">
+                  <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
+                    <?php if($orderStatusCode != 't'): ?>
+                      <a href="<?= $sdUrl; ?>" class="external-link" target="_blank"><?= $this->transEsc('Reserve medium'); ?></a>
+                    <?php endif; ?>
+                </div>
               </div>
             <?php endif; ?>
 

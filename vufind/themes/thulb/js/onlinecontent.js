@@ -57,7 +57,7 @@ VuFind.register('onlineContent', function onlineContent() {
             if (typeof this.items[id] !== 'undefined') {
                 if ('done' === this.items[id].state) {
                     displayOnlineContent(this.items[id].result, el);
-                } else {
+                } else if(!this.items[id].elements.some(e => e.is(el))) {
                     this.items[id].elements.push(el);
                 }
                 return;

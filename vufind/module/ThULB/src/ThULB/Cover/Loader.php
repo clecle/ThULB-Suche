@@ -5,9 +5,7 @@
  */
 namespace ThULB\Cover;
 
-use VuFind\Content\Covers\PluginManager as ApiManager;
-use VuFindCode\ISBN;
-use VuFindCode\ISMN;
+use Laminas\Http\Client\Adapter\Exception\TimeoutException;
 
 /**
  * Book Cover Generator
@@ -108,5 +106,17 @@ class Loader extends \VuFind\Cover\Loader
             $ids['collection_details'] = $this->collection_details;
         }
         return $ids;
+    }
+
+    protected function fetchFromAPI() {
+        try {
+            return parent::fetchFromAPI();
+        }
+        catch (TimeoutException $ignore) {}
+        catch (\Exception $e) {
+            $this->logError($e->getMessage());
+        }
+
+        return false;
     }
 }

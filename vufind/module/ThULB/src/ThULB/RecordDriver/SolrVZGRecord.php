@@ -1238,7 +1238,7 @@ class SolrVZGRecord extends SolrMarc
             switch (trim($linkType)){
             case 'id':
                 foreach ($linkFields as $current) {
-                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX), '*');
+                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX, true), '*');
                     if ($bibLink) {
                         $link = ['type' => 'bib', 'value' => $bibLink];
                     }
@@ -1262,7 +1262,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'dnb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'dnb', 'value' => $bibLink];
                     }
@@ -1270,7 +1270,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'zdb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'zdb', 'value' => $bibLink];
                     }
@@ -1667,7 +1667,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return bool
      */
-    public function isFormat(string $format = '', bool $pcre = null) : bool {
+    public function isFormat(string $format = '', bool $pcre = false) : bool {
         $formats = $this->getFormats();
         if(is_array($formats) && count($formats) > 0) {
             if (($pcre && preg_match("/$format/", $formats[0]))
@@ -2411,6 +2411,10 @@ class SolrVZGRecord extends SolrMarc
         elseif (in_array('DBT@UrMEL', $this->fields['collection_details'])) {
             $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
             $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
+        }
+        elseif (in_array('Collections@UrMEL', $this->fields['collection_details'])) {
+            $source['name'] = 'Historische Bestände (Collections@UrMEL)';
+            $source['url'] = 'https://collections.thulb.uni-jena.de/templates/master/template_collections/index.xml';
         }
         elseif (in_array('NL', $this->fields['collection'])) {
             $source['name'] = 'Nationallizenz';

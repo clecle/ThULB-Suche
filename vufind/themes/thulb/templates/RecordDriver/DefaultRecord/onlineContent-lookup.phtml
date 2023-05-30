@@ -1,7 +1,4 @@
-<?= $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'onlinecontent.js', 'SET');?>
+<?php $this->headScript()->appendFile('onlinecontent.js'); ?>
 
-<div class="flex-center center-text ajaxItem">
-  <img src="/themes/thulb/images/Ajax-loader.gif" class="online-content-loading" style="display: none">
-  <span class="online-content" data-online-content="<?= $this->escapeHtml($this->driver->getSourceIdentifier() . ':' . $this->driver->getUniqueID())?>">
-  </span>
-</div>
+<img src="/themes/thulb/images/Ajax-loader.gif" class="online-content-loading" style="display: none">
+<span class="online-content ajaxItem hidden" data-online-content="<?= $this->escapeHtml($this->driver->getSourceIdentifier() . ':' . $this->driver->getUniqueID())?>"></span>

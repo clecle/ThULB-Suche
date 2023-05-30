@@ -43,7 +43,7 @@ $config = array(
     'service_manager' => [
         'factories' => [
             \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
-            'ThULB\Mailer\Mailer' => 'ThULB\Mailer\Factory',
+            \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'ThULB\Search\Solr\HierarchicalFacetHelper' => 'Laminas\ServiceManager\Factory\InvokableFactory',
@@ -125,10 +125,11 @@ $config = array(
             ),
             'ils_driver' => array(
                 'factories' => array(
-                    'VuFind\ILS\Driver\PAIA' => 'ThULB\ILS\Driver\Factory::getPAIA',
+                    \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
                     \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
                 ),
                 'aliases' => array(
+                    \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
                     'sera' => \ThULB\ILS\Driver\Sera::class,
                 )
             ),

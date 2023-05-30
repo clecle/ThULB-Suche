@@ -6,6 +6,7 @@ $config = array(
         'factories' => array(
             'VuFind\Controller\CartController' => 'ThULB\Controller\Factory::getCartController',
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
+            \ThULB\Controller\ILLController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
@@ -17,6 +18,8 @@ $config = array(
         'aliases' => array(
             'Holds' => \ThULB\Controller\HoldsController::class,
             'holds' => \ThULB\Controller\HoldsController::class,
+            'ill' => \ThULB\Controller\ILLController::class,
+            'ILL' => \ThULB\Controller\ILLController::class,
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
             \VuFind\Controller\SearchController::class => \ThULB\Controller\SearchController::class,
@@ -220,7 +223,8 @@ $config = array(
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
             'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
-            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
+            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class,
+            'thulb_userType' => \ThULB\View\Helper\Root\UserType::class
         ),
     ),
 
@@ -240,6 +244,10 @@ $config = array(
 );
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
+$routeGenerator->addStaticRoute($config, 'ILL/staffrequest');
+$routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
+$routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');

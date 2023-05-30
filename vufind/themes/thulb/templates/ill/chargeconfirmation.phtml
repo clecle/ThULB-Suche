@@ -1,0 +1,65 @@
+<?php
+  $employee = in_array($this->thulb_userType(), [3, 4, 6, 8]);
+
+  $fineMessage = match (true) {
+      $this->newTotalDue > 15 && !$employee, $this->newTotalDue > 70 && $employee => 'ill_fine_message_low',
+      $this->newTotalDue > 30 && !$employee, $this->newTotalDue > 100 && $employee => 'ill_fine_message_high',
+      default => '',
+  };
+?>
+
+<div>
+  <h2><?= $this->translate('Charge credits'); ?></h2>
+
+  <?= $this->flashmessages(); ?>
+
+  <?php if(!$this->hasIllAccount): ?>
+    <div class="alert alert-warning">
+      <?= $this->translate('ill_no_account'); ?>
+    </div>
+  <?php endif; ?>
+
+  <?php if($fineMessage): ?>
+    <div class="alert alert-error">
+        <?= $this->translate($fineMessage, ['fees' => $this->newTotalDue]); ?>
+    </div>
+  <?php endif; ?>
+
+  <table>
+    <tr>
+      <th><?= $this->transEsc('ill_current_credits'); ?>:</th>
+      <td><?= $this->oldQuantity ?? 0; ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->transEsc('ill_charge_credits'); ?>:</th>
+      <td><?= $this->chargeQuantity ?? 0; ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->transEsc('ill_new_credits'); ?>:</th>
+      <td><?= $this->newQuantity ?? 0; ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->transEsc('Your Fines'); ?>:</th>
+      <td><?= $this->safeMoneyFormat($this->oldTotalDue ?? 0); ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->transEsc('Cost'); ?>:</th>
+      <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
+    </tr>
+    <tr>
+      <th><?= $this->transEsc('New Fines'); ?>:</th>
+      <td><?= $this->safeMoneyFormat($this->newTotalDue ?? 0); ?></td>
+    </tr>
+    <tr>
+      <th>&nbsp;</th>
+      <td>
+        <form action="/ILL/chargeconfirmation" method="post">
+          <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+          <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
+
+          <input class="btn btn-primary" type="submit" value="<?= $this->transEsc('ill_charge_credits'); ?>">
+        </form>
+      </td>
+    </tr>
+  </table>
+</div>

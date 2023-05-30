@@ -1,3 +1,7 @@
+<?php
+  $user = $this->auth()->isLoggedIn();
+?>
+
 <h4><?= $this->transEsc('Your Account')?></h4>
 <div class="myresearch-menu">
   <?php if ('ils-none' !== $this->ils()->getOfflineMode()): ?>
@@ -31,26 +35,47 @@
         <i class="fa fa-fw fa-user" aria-hidden="true"></i> <?= $this->transEsc('Your Profile')?>
       </a>
     <?php endif; ?>
-    <?php $user = $this->auth()->isLoggedIn(); if ($user && $user->libraryCardsEnabled()): ?>
+    <?php if ($user && $user->libraryCardsEnabled()): ?>
       <a href="<?= $this->url('librarycards-home')?>" class="<?= $this->active == 'librarycards' ? ' active' : ''?>">
         <i class="fa fa-fw fa-barcode" aria-hidden="true"></i> <?= $this->transEsc('Library Cards')?>
       </a>
     <?php endif; ?>
-  <?php endif; ?>
-  <?php if ($this->auth()->isLoggedIn() && $this->auth()->getManager()->supportsPasswordChange()): ?>
-    <a href="<?= $this->url('myresearch-changepassword') ?>" class="<?= $this->active == 'newpassword' ? ' active' : ''?>">
-      <i class="fa fa-fw fa-lock" aria-hidden="true"></i> <?= $this->transEsc('Change Password') ?>
+    <?php if ($this->auth()->isLoggedIn() && $this->auth()->getManager()->supportsPasswordChange()): ?>
+      <a href="<?= $this->url('myresearch-changepassword') ?>" class="<?= $this->active == 'newpassword' ? ' active' : ''?>">
+        <i class="fa fa-fw fa-lock" aria-hidden="true"></i> <?= $this->transEsc('Change Password') ?>
+      </a>
+    <?php else: ?>
+      <a href="<?= $this->url('myresearch-changepasswordlink') ?>" class="<?= $this->active == 'newpasswordlink' ? ' active' : ''?>">
+        <i class="fa fa-fw fa-lock" aria-hidden="true"></i> <?= $this->transEsc('Change Password') ?>
+      </a>
+    <?php endif; ?>
+    <a href="<?= $this->url('myresearch-letterofauthorization') ?>" class="<?= $this->active == 'letterofauthorization' ? ' active' : ''?>">
+      <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Create Letter of Authorization') ?>
     </a>
-  <?php else: ?>
-    <a href="<?= $this->url('myresearch-changepasswordlink') ?>" class="<?= $this->active == 'newpasswordlink' ? ' active' : ''?>">
-      <i class="fa fa-fw fa-lock" aria-hidden="true"></i> <?= $this->transEsc('Change Password') ?>
-    </a>
   <?php endif; ?>
-  <a href="<?= $this->url('myresearch-letterofauthorization') ?>" class="<?= $this->active == 'letterofauthorization' ? ' active' : ''?>">
-    <i class="fa fa-fw fa-id-card-o" aria-hidden="true"></i> <?= $this->transEsc('Create Letter of Authorization') ?>
-  </a>
 </div>
-<?php if ($this->userlist()->getMode() !== 'disabled' && $user = $this->auth()->isLoggedIn()): ?>
+
+<?php if($user && $this->config()->get('thulb')->ILL->enabled): ?>
+  <h4><?= $this->transEsc('Interlibrary Loan')?></h4>
+  <div class="myresearch-menu">
+    <a href="<?= $this->url('ill-chargecredits')?>" class="<?= $this->active == 'chargecredits' ? ' active' : ''?>">
+      <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_charge_credits')?>
+    </a>
+    <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'forgotpassword' ? ' active' : ''?>">
+      <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_forgot_password')?>
+    </a>
+    <?php if(in_array($this->thulb_userType(), [3, 4, 5, 6, 8])): ?>
+      <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'old-orders' ? ' active' : ''?>">
+        <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_order_history')?>
+      </a>
+    <?php endif; ?>
+    <a href="<?= $this->url('ill-deleteaccount')?>" class="<?= $this->active == 'deleteaccount' ? ' active' : ''?>">
+      <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_delete_account')?>
+    </a>
+  </div>
+<?php endif; ?>
+
+<?php if ($this->userlist()->getMode() !== 'disabled' && $user): ?>
   <h4><?= $this->transEsc('Your Lists')?></h4>
   <div class="myresearch-menu">
   <?php if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>

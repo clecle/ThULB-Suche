@@ -10,10 +10,11 @@ return array(
             'ThULB\View\Helper\Root\RecordLinker' => 'ThULB\View\Helper\Root\Factory::getRecordLinker',
             'VuFind\View\Helper\Root\RecordDataFormatter' => 'ThULB\View\Helper\Root\RecordDataFormatterFactory',
             'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
+            'ThULB\View\Helper\Root\Session' => \ThULB\View\Helper\Root\InvokableFactoryWithSessionManager::class,
             \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
             \ThULB\View\Helper\Record\SeraHelper::class => \ThULB\View\Helper\Record\SeraHelperFactory::class,
-            \ThULB\View\Helper\Root\ServiceDesk::class => \ThULB\View\Helper\Root\ServiceDeskFactory::class
+            \ThULB\View\Helper\Root\ServiceDesk::class => \ThULB\View\Helper\Root\ServiceDeskFactory::class,
+            \ThULB\View\Helper\Root\UserType::class => \ThULB\View\Helper\Root\InvokableFactoryWithSessionManager::class,
         ],
         'aliases' => array (
             'citation' => \ThULB\View\Helper\Root\Citation::class,
@@ -25,7 +26,8 @@ return array(
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
             'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
-            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
+            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class,
+            'thulb_userType' => \ThULB\View\Helper\Root\UserType::class,
         ),
     ],
     'favicon' => 'thulb_favicon.png',

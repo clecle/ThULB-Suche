@@ -1,0 +1,66 @@
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('ill_charge_credits'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Charge credits') . '</li>';
+
+  $this->headScript()->appendFile('ill.js');
+  $this->headScript()->appendScript(<<<JS
+  function calculatePrice() {
+    $('#chargeCost').html(
+        new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(
+            $('#chargeQuantity').val() * illCreditPrice
+    ))
+  };
+  JS);
+?>
+
+<div class="<?= $this->layoutClass('mainbody'); ?> ill-charge">
+  <h2><?= $this->transEsc('ill_charge_credits')?></h2>
+  <?= $this->flashmessages(); ?>
+
+  <form action="/ILL/chargeconfirmation" method="post" data-lightbox>
+    <?php if(!$this->hasIllAccount): ?>
+      <div class="alert alert-warning"><?= $this->translate('ill_no_account'); ?></div>
+    <?php endif; ?>
+
+    <div class="flex-group">
+      <div class="col-ill-description"><?= $this->transEsc('ill_current_credits'); ?>:</div>
+      <div class="col-ill-text"><?= $this->oldQuantity; ?></div>
+    </div>
+    <div class="flex-group">
+      <div class="col-ill-description"><?= $this->transEsc('ill_charge_credits'); ?>:</div>
+      <div class="col-ill-text">
+        <input type="number" id="chargeQuantity" name="chargeQuantity" oninput="calculatePrice()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
+      </div>
+    </div>
+    <div class="flex-group">
+      <div class="col-ill-description"><?= $this->transEsc('Total'); ?>:</div>
+      <div class="col-ill-text">
+        <span id="chargeCost"><?= $this->safeMoneyFormat(1 * $this->creditPrice); ?></span>
+      </div>
+    </div>
+    <div class="ill-consent">
+      <input type="checkbox" name="consent" value="true" />
+      <div><?= $this->transEsc('ill_account_consent'); ?></div>
+    </div>
+    <div class="flex-center center-text">
+        <button class="btn btn-primary" ><?= $this->transEsc('ill_charge_credits'); ?></button>
+    </div>
+  </form>
+
+  <?php if(in_array($this->thulb_userType(), [3, 4, 6, 8])): ?>
+    <h2><?= $this->translate('ill_request_for_business'); ?></h2>
+    <div class="alert alert-warning"><?= $this->translate('ill_request_business_info_1'); ?></div>
+    <p><?= $this->translate('ill_request_business_info_2'); ?></p>
+    <p><?= $this->translate('ill_request_business_info_3', ['%%email%%' => $this->config()->get('thulb')->ILL->departmentEmail]); ?></p>
+    <div class="flex-center center-text">
+      <button class="btn btn-primary" ><?= $this->transEsc('ill_request_business'); ?></button>
+    </div>
+  <?php endif; ?>
+</div>
+
+<div class="<?= $this->layoutClass('sidebar')?>">
+  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'chargecredits'])?>
+</div>

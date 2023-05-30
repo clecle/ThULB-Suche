@@ -67,18 +67,6 @@ class Factory
     }
 
     /**
-     * Construct the Session helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return AbstractHelper
-     */
-    public static function getSession(ServiceManager $sm) : AbstractHelper
-    {
-        return new Session($sm->get('VuFind\SessionManager'));
-    }
-
-    /**
      * Construct the Unpaywall helper.
      *
      * @param ServiceManager $sm Service manager.

@@ -920,4 +920,21 @@ class PAIA extends OriginalPAIA
 
         return $details;
     }
+
+    protected function paiaParseUserDetails($patron, $user_response)
+    {
+        $details = parent::paiaParseUserDetails($patron, $user_response);
+
+        $type = $details['type'][0] ?? false;
+        if($type) {
+            // remove everything before the last number
+            $details['user_type'] = preg_replace('/^.*:/', '', $type);
+
+            $session = $this->getSession();
+            $session->userType = $details['user_type'] ?? null;
+
+        }
+
+        return $details;
+    }
 }

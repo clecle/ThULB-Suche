@@ -1646,3 +1646,42 @@ a.checkbox-filter > span > i.fa-info-circle,
     display: flex;
   }
 }
+
+.ill-charge {
+  margin: auto;
+
+  .col-ill-description {
+    width: 50%;
+    padding: 5px;
+    text-align: right;
+  }
+
+  .col-ill-text {
+    width: 50%;
+    padding: 5px;
+    text-align: left;
+
+    input {
+      text-align: center;
+
+      &[type=number] {
+        padding-left: 18px;
+      }
+    };
+  }
+
+  .flex-group {
+    margin: 0;
+  }
+
+  .ill-consent {
+    display: flex;
+    margin: 0 10%;
+    padding: 5px;
+
+    input {
+      align-self: start;
+      margin-right: 10px;
+    }
+  }
+}

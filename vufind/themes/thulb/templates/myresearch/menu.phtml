@@ -64,11 +64,6 @@
     <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'forgotpassword' ? ' active' : ''?>">
       <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_forgot_password')?>
     </a>
-    <?php if(in_array($this->thulb_userType(), [3, 4, 5, 6, 8])): ?>
-      <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'old-orders' ? ' active' : ''?>">
-        <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_order_history')?>
-      </a>
-    <?php endif; ?>
     <a href="<?= $this->url('ill-deleteaccount')?>" class="<?= $this->active == 'deleteaccount' ? ' active' : ''?>">
       <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_delete_account')?>
     </a>

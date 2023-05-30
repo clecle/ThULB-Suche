@@ -41,10 +41,12 @@
         <span id="chargeCost"><?= $this->safeMoneyFormat(1 * $this->creditPrice); ?></span>
       </div>
     </div>
-    <div class="ill-consent">
-      <input type="checkbox" name="consent" value="true" />
-      <div><?= $this->transEsc('ill_account_consent'); ?></div>
-    </div>
+    <?php if(!$this->hasIllAccount): ?>
+      <div class="ill-consent">
+        <input type="checkbox" name="consent" value="true" />
+        <div><?= $this->transEsc('ill_account_consent'); ?></div>
+      </div>
+    <?php endif; ?>
     <div class="flex-center center-text">
         <button class="btn btn-primary" ><?= $this->transEsc('ill_charge_credits'); ?></button>
     </div>

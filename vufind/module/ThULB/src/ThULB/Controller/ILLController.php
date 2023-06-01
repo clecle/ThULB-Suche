@@ -60,13 +60,17 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             'chargeQuantityLimit' => $this->illConfig->chargeQuantityLimit,
         ]);
 
-        $sip2 = $this->getPicaConnection();
-        $view->hasIllAccount = $sip2->startPatronSession($user->username);
-        if($view->hasIllAccount) {
-            $view->oldQuantity = $sip2->getPatronFinesTotal() * -1;
+        try {
+            $sip2 = $this->getPicaConnection();
+            $view->hasIllAccount = $sip2->startPatronSession($user->username);
+            if ($view->hasIllAccount) {
+                $view->oldQuantity = $sip2->getPatronFinesTotal() * -1;
+            }
         }
-
-        $sip2->endPatronSession();
+        catch (ErrorException | \Exception $e) {
+            $this->logError($e);
+            $view->exception = $e;
+        }
 
         return $view;
     }
@@ -88,17 +92,21 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
 
         try {
             $sip2 = $this->getPicaConnection();
-            $hasAccount = $sip2->startPatronSession($user->username);
+            $view->hasAccount = $sip2->startPatronSession($user->username);
 
             if($request->getPost('confirmation', false) !== 'true') {
-                $view->oldQuantity = $hasAccount ? ($sip2->getPatronFinesTotal() * -1) : 0;
+                $view->oldQuantity = $view->hasAccount ? ($sip2->getPatronFinesTotal() * -1) : 0;
                 $view->newQuantity = $view->oldQuantity + $view->chargeQuantity;
                 $view->oldTotalDue = $this->getTotalDue();
                 $view->newTotalDue = $view->oldTotalDue + $view->cost;
+                if($view->workrelated = $request->getPost('workrelated', false)) {
+                    $view->department = $request->getPost('department', false);
+                    $view->facility = $request->getPost('facility', false);
+                }
             }
             else {
-                if($hasAccount) {
-//                    $this->chargeIllFee($sip2, $username, $view->chargeQuantity, $view->cost);
+                if($view->hasAccount && !$request->getPost('workrelated', false)) {
+                    $this->chargeIllFee($sip2, $user->username, $view->chargeQuantity, $view->cost);
                 }
                 else {
                     $this->sendEmail(
@@ -121,8 +129,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         }
         catch (ErrorException | \Exception $e) {
             $this->logError($e);
-            $this->flashMessage('error', 'An error occurred. Try again later.');
-            throw $e;
+            $view->exception = $e;
         }
 
         return $view;
@@ -149,7 +156,16 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->flashMessage('success', 'ill_send_mail_success');
         }
 
-        return new ViewModel();
+        $view = new ViewModel();
+        try {
+            $view->hasAccount = $this->getPicaConnection()->startPatronSession($user->username);
+        }
+        catch (ErrorException | \Exception $e) {
+            $this->logError($e);
+            $view->exception = $e;
+        }
+
+        return $view;
     }
 
     public function deleteaccountAction() : ViewModel {
@@ -173,7 +189,16 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->flashMessage('success', 'ill_send_mail_success');
         }
 
-        return new ViewModel();
+        $view = new ViewModel();
+        try {
+            $view->hasAccount = $this->getPicaConnection()->startPatronSession($user->username);
+        }
+        catch (ErrorException | \Exception $e) {
+            $this->logError($e);
+            $view->exception = $e;
+        }
+
+        return $view;
     }
 
     /**
@@ -201,7 +226,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                     'disable_compression' => true
                 ),
 
-                'maxretry' => 0,
+                'maxretry' => 5,
                 'debug' => false
             ), true, 'Gossip'
         );

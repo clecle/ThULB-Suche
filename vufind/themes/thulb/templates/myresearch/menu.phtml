@@ -56,12 +56,12 @@
 </div>
 
 <?php if($user && $this->config()->get('thulb')->ILL->enabled): ?>
-  <h4><?= $this->transEsc('Interlibrary Loan')?></h4>
+  <h4><?= $this->transEsc('My Interlibrary loan')?></h4>
   <div class="myresearch-menu">
     <a href="<?= $this->url('ill-chargecredits')?>" class="<?= $this->active == 'chargecredits' ? ' active' : ''?>">
       <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_charge_credits')?>
     </a>
-    <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'forgotpassword' ? ' active' : ''?>">
+    <a href="<?= $this->url('ill-forgotpassword')?>" class="<?= $this->active == 'forgotillpassword' ? ' active' : ''?>">
       <i class="fa fa-fw fa-book" aria-hidden="true"></i> <?= $this->transEsc('ill_forgot_password')?>
     </a>
     <a href="<?= $this->url('ill-deleteaccount')?>" class="<?= $this->active == 'deleteaccount' ? ' active' : ''?>">
@@ -83,10 +83,10 @@
     </a>
     <?php $lists = $user->getLists() ?>
     <?php foreach ($lists as $list): ?>
-        <a href="<?= $this->url('userList', ['id' => $list['id']])?>" class="<?= $this->active == 'list' . $list['id'] ? ' active' : ''?>">
-          <?= $this->escapeHtml($list['title'])?>
-          <span class="badge"><?= $list->cnt?></span>
-        </a>
+      <a href="<?= $this->url('userList', ['id' => $list['id']])?>" class="<?= $this->active == 'list' . $list['id'] ? ' active' : ''?>">
+        <?= $this->escapeHtml($list['title'])?>
+        <span class="badge"><?= $list->cnt?></span>
+      </a>
     <?php endforeach; ?>
     <a href="<?= $this->url('editList', ['id'=>'NEW'])?>" class="">
       <i class="fa fa-fw fa-star" aria-hidden="true"></i> <?= $this->transEsc('Create a List') ?>

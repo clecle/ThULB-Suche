@@ -9,57 +9,73 @@
 ?>
 
 <div>
-  <h2><?= $this->translate('Charge credits'); ?></h2>
+  <h2><?= $this->translate('ill_charge_credits'); ?></h2>
 
-  <?= $this->flashmessages(); ?>
+  <?php if(!isset($this->exception)): ?>
+    <?= $this->flashmessages(); ?>
 
-  <?php if(!$this->hasIllAccount): ?>
-    <div class="alert alert-warning">
-      <?= $this->translate('ill_no_account'); ?>
-    </div>
+    <?php if(!$this->hasAccount): ?>
+      <div class="alert alert-warning">
+        <?= $this->translate('ill_new_account_request'); ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if($fineMessage): ?>
+      <div class="alert alert-danger">
+        <?= $this->translate($fineMessage, ['%%fees%%' => $this->safeMoneyFormat($this->newTotalDue)]); ?>
+      </div>
+    <?php endif; ?>
+
+    <table class="illtable m-auto">
+      <tr>
+        <th><?= $this->transEsc('ill_current_credits'); ?>:</th>
+        <td><?= $this->oldQuantity ?? 0; ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('ill_charge_credits'); ?>:</th>
+        <td><?= $this->chargeQuantity ?? 0; ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('ill_new_credits'); ?>:</th>
+        <td><?= $this->newQuantity ?? 0; ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('Your Fines'); ?>:</th>
+        <td><?= $this->safeMoneyFormat($this->oldTotalDue ?? 0); ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('Cost'); ?>:</th>
+        <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('New Fines'); ?>:</th>
+        <td><?= $this->safeMoneyFormat($this->newTotalDue ?? 0); ?></td>
+      </tr>
+      <?php if($this->workrelated ?? false): ?>
+        <tr>
+          <th>&nbsp;</th>
+        </tr>
+        <tr>
+          <th><?= $this->transEsc('ill_work_related_facility'); ?>:</th>
+          <td><?= $this->facility; ?></td>
+        </tr>
+        <tr>
+          <th><?= $this->transEsc('ill_work_related_department'); ?>:</th>
+          <td><?= $this->department; ?></td>
+        </tr>
+      <?php endif; ?>
+      <tr>
+        <td class="center-text" colspan="2">
+          <form action="/ILL/chargeconfirmation" method="post">
+            <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+            <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
+
+            <input class="btn btn-primary mt-2" type="submit" value="<?= $this->transEsc('ill_charge_credits'); ?>">
+          </form>
+        </td>
+      </tr>
+    </table>
+  <?php else: ?>
+    <?= $this->render('error/index.phtml'); ?>
   <?php endif; ?>
-
-  <?php if($fineMessage): ?>
-    <div class="alert alert-error">
-        <?= $this->translate($fineMessage, ['fees' => $this->newTotalDue]); ?>
-    </div>
-  <?php endif; ?>
-
-  <table>
-    <tr>
-      <th><?= $this->transEsc('ill_current_credits'); ?>:</th>
-      <td><?= $this->oldQuantity ?? 0; ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->transEsc('ill_charge_credits'); ?>:</th>
-      <td><?= $this->chargeQuantity ?? 0; ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->transEsc('ill_new_credits'); ?>:</th>
-      <td><?= $this->newQuantity ?? 0; ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->transEsc('Your Fines'); ?>:</th>
-      <td><?= $this->safeMoneyFormat($this->oldTotalDue ?? 0); ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->transEsc('Cost'); ?>:</th>
-      <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
-    </tr>
-    <tr>
-      <th><?= $this->transEsc('New Fines'); ?>:</th>
-      <td><?= $this->safeMoneyFormat($this->newTotalDue ?? 0); ?></td>
-    </tr>
-    <tr>
-      <th>&nbsp;</th>
-      <td>
-        <form action="/ILL/chargeconfirmation" method="post">
-          <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
-          <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
-
-          <input class="btn btn-primary" type="submit" value="<?= $this->transEsc('ill_charge_credits'); ?>">
-        </form>
-      </td>
-    </tr>
-  </table>
 </div>

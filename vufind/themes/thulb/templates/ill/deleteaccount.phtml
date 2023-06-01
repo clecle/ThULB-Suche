@@ -9,12 +9,20 @@ $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') .
   <h2><?= $this->transEsc('ill_delete_account')?></h2>
   <?= $this->flashmessages()?>
 
-  <p><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
-  <form href="/ILL/deleteaccount" method="post">
-    <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+  <?php if(!$this->hasAccount): ?>
+    <div class="alert alert-warning">
+      <?= $this->translate('ill_no_account'); ?>
+    </div>
+  <?php elseif($this->exception ?? false): ?>
+    <?= $this->render('error/index.phtml'); ?>
+  <?php else: ?>
+    <p><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
+    <form href="/ILL/deleteaccount" method="post">
+      <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
 
-    <input class="btn btn-primary" type="submit" value="<?= $this->transEsc('ill_delete_account'); ?>" />
-  </form>
+      <input class="btn btn-primary" type="submit" value="<?= $this->transEsc('ill_delete_account'); ?>" />
+    </form>
+  <?php endif; ?>
 </div>
 
 <div class="<?= $this->layoutClass('sidebar')?>">

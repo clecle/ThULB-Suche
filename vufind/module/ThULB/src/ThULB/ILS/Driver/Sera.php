@@ -4,22 +4,24 @@ namespace ThULB\ILS\Driver;
 
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface as LoggerAwareInterface;
-use Laminas\Mvc\I18n\Translator;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\AbstractBase;
+use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface as HttpServiceAwareInterface;
+use VuFindHttp\HttpServiceAwareTrait;
 
 class Sera extends AbstractBase implements
-    HttpServiceAwareInterface, LoggerAwareInterface
+    HttpServiceAwareInterface, LoggerAwareInterface, TranslatorAwareInterface
 {
-    use \VuFindHttp\HttpServiceAwareTrait;
-    use \VuFind\Log\LoggerAwareTrait;
+    use HttpServiceAwareTrait;
+    use LoggerAwareTrait;
+    use TranslatorAwareTrait;
 
     protected Config $thulbConfig;
-    protected Translator $translator;
 
-    public function __construct(Config $thulbConfig, Translator $translator) {
+    public function __construct(Config $thulbConfig) {
         $this->thulbConfig = $thulbConfig;
-        $this->translator = $translator;
     }
 
     public function init() {}
@@ -138,7 +140,7 @@ class Sera extends AbstractBase implements
             $lastRequisitionIDNumber = $this->getLastRequisitionIDNumber();
 
             $dateTime = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
-            $extraInformation = $this->translator->translate(
+            $extraInformation = $this->translate(
                 'ill_requisition_extra_information', [
                     '%%date%%' => (new \DateTimeImmutable())->format('Y-m-d'),
                     '%%quantity%%' => $quantity
@@ -158,7 +160,7 @@ class Sera extends AbstractBase implements
             ));
         }
         catch (\Exception $e) {
-
+            $this->logError($e);
         }
 
         return false;

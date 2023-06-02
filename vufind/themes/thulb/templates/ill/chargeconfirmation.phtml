@@ -69,6 +69,7 @@
           <form action="/ILL/chargeconfirmation" method="post">
             <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
             <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
+            <input type="hidden" name="confirmation" value="true">
 
             <input class="btn btn-primary mt-2" type="submit" value="<?= $this->transEsc('ill_charge_credits'); ?>">
           </form>

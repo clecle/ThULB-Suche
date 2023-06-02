@@ -314,7 +314,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         if($sera->chargeIllFee($username, $chargeQuantity, $cost)) {
             try {
                 if ($sip2->feePay('14', '00', "$chargeQuantity.00", 'XXX')) {
-                    $this->flashMessage('success', 'ill_charge_success.', ['%%cost%%' => $cost]);
+                    $this->flashMessage('success', 'ill_charge_success', ['%%cost%%' => $cost]);
                 }
                 else {
                     $this->sendChargeErrorEmail($cost);

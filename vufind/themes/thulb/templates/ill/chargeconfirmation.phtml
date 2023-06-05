@@ -39,19 +39,20 @@
         <th><?= $this->transEsc('ill_new_credits'); ?>:</th>
         <td><?= $this->newQuantity ?? 0; ?></td>
       </tr>
-      <tr>
-        <th><?= $this->transEsc('Your Fines'); ?>:</th>
-        <td><?= $this->safeMoneyFormat($this->oldTotalDue ?? 0); ?></td>
-      </tr>
-      <tr>
-        <th><?= $this->transEsc('Cost'); ?>:</th>
-        <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
-      </tr>
-      <tr>
-        <th><?= $this->transEsc('New Fines'); ?>:</th>
-        <td><?= $this->safeMoneyFormat($this->newTotalDue ?? 0); ?></td>
-      </tr>
-      <?php if($this->workrelated ?? false): ?>
+      <?php if(!($this->workrelated ?? false)): ?>
+        <tr>
+          <th><?= $this->transEsc('Your Fines'); ?>:</th>
+          <td><?= $this->safeMoneyFormat($this->oldTotalDue ?? 0); ?></td>
+        </tr>
+        <tr>
+          <th><?= $this->transEsc('Cost'); ?>:</th>
+          <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
+        </tr>
+        <tr>
+          <th><?= $this->transEsc('New Fines'); ?>:</th>
+          <td><?= $this->safeMoneyFormat($this->newTotalDue ?? 0); ?></td>
+        </tr>
+      <?php else: ?>
         <tr>
           <th>&nbsp;</th>
         </tr>

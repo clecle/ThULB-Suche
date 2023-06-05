@@ -117,7 +117,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                             'lastname' => $user->lastname,
                             'username' => $user->username,
                             'quantity' => $view->chargeQuantity,
-                            'cost' => $view->cost
+                            'cost' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
                         ]
                     );
 
@@ -275,7 +275,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                 'username' => $user->username,
             ]
         );
-        $this->flashMessage('error', 'ill_charge_success.', ['%%cost%%' => $cost]);
+        $this->flashMessage('error', 'ill_charge_success.', [
+            '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($cost)
+        ]);
     }
 
     protected function getTotalDue() : int {
@@ -314,7 +316,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         if($sera->chargeIllFee($username, $chargeQuantity, $cost)) {
             try {
                 if ($sip2->feePay('14', '00', "$chargeQuantity.00", 'XXX')) {
-                    $this->flashMessage('success', 'ill_charge_success', ['%%cost%%' => $cost]);
+                    $this->flashMessage('success', 'ill_charge_success', [
+                        '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($cost)
+                    ]);
                 }
                 else {
                     $this->sendChargeErrorEmail($cost);

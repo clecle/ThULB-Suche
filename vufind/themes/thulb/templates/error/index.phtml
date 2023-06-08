@@ -39,10 +39,10 @@
     <p><?= $this->transEsc('An error has occurred')?></p>
     <p><?= $this->transEsc($this->message)?></p>
     <p>
-      <?= $this->transEsc('Please contact the Library Reference Department for assistance')?>
-      <br/>
-      <?php $supportEmail = $this->escapeHtmlAttr($this->systemEmail()); ?>
-      <a href="mailto:<?= $supportEmail?>"><?= $supportEmail?></a>
+      <?= $this->translate('Please contact the Library Reference Department for assistance', [
+          '%%sdlink%%' => $this->thulb_serviceDesk('support'),
+          '%%email%%' => $this->escapeHtmlAttr($this->systemEmail())
+      ])?>
     </p>
   </div>
 <?php endif; ?>

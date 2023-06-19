@@ -142,7 +142,7 @@ class Sera extends AbstractBase implements
             $dateTime = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
             $extraInformation = $this->translate(
                 'ill_requisition_extra_information', [
-                    '%%date%%' => (new \DateTimeImmutable())->format('Y-m-d'),
+                    '%%date%%' => (new \DateTimeImmutable())->format('d.m.Y'),
                     '%%quantity%%' => $quantity
                 ]
             );
@@ -164,9 +164,5 @@ class Sera extends AbstractBase implements
         }
 
         return false;
-    }
-
-    public function checkConnection () {
-        return is_numeric($this->getLastRequisitionIDNumber());
     }
 }

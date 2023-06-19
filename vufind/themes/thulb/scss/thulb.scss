@@ -1274,6 +1274,9 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.flex-gap-2 {
+  gap: 10px;
+}
 .m-auto {
   margin: auto;
   width: fit-content;
@@ -1289,6 +1292,9 @@ div.modal-body .facet-tree-container {
 }
 .mr-2 {
   margin-right: 10px !important;
+}
+.mt-0 {
+  margin-top: 0 !important;
 }
 .mt-2 {
   margin-top: 10px !important;
@@ -1660,42 +1666,83 @@ a.checkbox-filter > span > i.fa-info-circle,
   margin: auto;
 
   .col-ill-description {
-    width: 50%;
     padding: 5px;
     text-align: right;
+    font-weight: bold;
   }
 
   .col-ill-text {
-    width: 50%;
     padding: 5px;
-    text-align: left;
+    text-align: center;
 
-    input {
-      text-align: center;
+    &.credit-input {
+      display: flex;
+      flex-wrap: nowrap;
 
-      &[type=number] {
-        padding-left: 18px;
+      * {
+        border-radius: 0 !important;
       }
-    };
+
+      & :first-child {
+        border-bottom-left-radius: 4px !important;
+        border-top-left-radius: 4px !important;
+      }
+
+      & :last-child {
+        border-bottom-right-radius: 4px !important;
+        border-top-right-radius: 4px !important;
+      }
+
+      input[type=number] {
+        flex-grow: 1;
+        text-align: center;
+        -moz-appearance: textfield;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
   }
 
   .flex-group {
     margin: 0;
   }
 
-  .ill-consent {
+  .ill-checkbox {
     display: flex;
-    margin: 0 10%;
     padding: 5px;
 
-    input {
-      align-self: start;
+    input[type=checkbox] {
+      align-self: flex-start;
       margin-right: 10px;
     }
+
+    label {
+      margin-bottom: 0;
+    }
+  }
+
+  .ill-consent {
+    text-align: initial;
+  }
+
+  .ill-work-related {
+    justify-content: flex-end;
   }
 }
 
 .illtable th {
   padding-right: 20px;
   text-align: right;
+}
+
+.text-red {
+  color: red;
+}
+
+.display-block {
+  display: block;
 }

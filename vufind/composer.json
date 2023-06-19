@@ -18,17 +18,10 @@
             "wikimedia/composer-merge-plugin": true
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://git.thulb.uni-jena.de/cle/sip2wrapper"
-        }
-    ],
     "require": {
         "php": ">=7.3.0",
         "ahand/mobileesp": "dev-master",
         "cap60552/php-sip2": "1.0.0",
-        "cle/sip2wrapper": "dev-master",
         "colinmollenhour/credis": "1.12.1",
         "composer/package-versions-deprecated": "1.11.99.5",
         "composer/semver": "3.2.5",

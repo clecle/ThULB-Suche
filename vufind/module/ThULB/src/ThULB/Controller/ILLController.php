@@ -2,7 +2,6 @@
 
 namespace ThULB\Controller;
 
-use cle\Sip2Wrapper\Sip2Wrapper;
 use Laminas\Config\Config;
 use Laminas\Http\Response;
 use Laminas\Log\LoggerAwareInterface;
@@ -61,11 +60,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         ]);
 
         try {
-            $sip2 = $this->getPicaConnection();
-            $view->hasIllAccount = $sip2->startPatronSession($user->username);
-            if ($view->hasIllAccount) {
-                $view->oldQuantity = $sip2->getPatronFinesTotal() * -1;
-            }
+            $illInformation = $this->getIllInformation($user->username);
+            $view->hasIllAccount = !empty($illInformation);
+            $view->oldQuantity = $illInformation['balance'] ?? 0;
         }
         catch (ErrorException | \Exception $e) {
             $this->logError($e);
@@ -91,45 +88,74 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $view->cost = $view->chargeQuantity * $this->illConfig->creditPrice;
 
         try {
-            $sip2 = $this->getPicaConnection();
-            $view->hasAccount = $sip2->startPatronSession($user->username);
-
-            if($request->getPost('confirmation', false) !== 'true') {
-                $view->oldQuantity = $view->hasAccount ? ($sip2->getPatronFinesTotal() * -1) : 0;
-                $view->newQuantity = $view->oldQuantity + $view->chargeQuantity;
-                $view->oldTotalDue = $this->getTotalDue();
-                $view->newTotalDue = $view->oldTotalDue + $view->cost;
-                if($view->workrelated = $request->getPost('workrelated', false)) {
-                    $view->department = $request->getPost('department', false);
-                    $view->facility = $request->getPost('facility', false);
-                }
-            }
-            else {
-                if($view->hasAccount && !$request->getPost('workrelated', false)) {
-                    $this->chargeIllFee($sip2, $user->username, $view->chargeQuantity, $view->cost);
-                }
-                else {
-                    $this->sendEmail(
-                        $this->translate('ill_create_account_subject'),
-                        'Email/ill/create_account', [
-                            'email' => $user->email,
-                            'firstname' => $user->firstname,
-                            'lastname' => $user->lastname,
-                            'username' => $user->username,
-                            'quantity' => $view->chargeQuantity,
-                            'cost' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
-                        ]
-                    );
-
-                    $this->flashMessage('success', 'ill_send_mail_success');
-                }
-
-                return $this->redirect()->toUrl('/ILL/chargecredits');
-            }
+            $illInformation = $this->getIllInformation($user->username);
         }
         catch (ErrorException | \Exception $e) {
             $this->logError($e);
             $view->exception = $e;
+        }
+
+        $view->hasAccount = !empty($illInformation);
+
+        if ($request->getPost('workrelated', false)) {
+            $this->sendEmail(
+                'Antrag auf dienstliches Fernleihguthaben',
+                'Email/ill/work-related', [
+                    'email' => $user->email,
+                    'firstname' => $user->firstname,
+                    'lastname' => $user->lastname,
+                    'username' => $user->username,
+                    'quantity' => $view->chargeQuantity,
+                    'department' => $request->getPost('department', ''),
+                    'facility' => $request->getPost('facility', ''),
+                ]
+            );
+
+            $this->flashMessage('success', 'ill_send_mail_success');
+        }
+        elseif(!$view->hasAccount) {
+            $this->sendEmail(
+                'Antrag auf Einrichtung eines Fernleihkontos',
+                'Email/ill/create-account', [
+                    'email' => $user->email,
+                    'firstname' => $user->firstname,
+                    'lastname' => $user->lastname,
+                    'username' => $user->username,
+                    'quantity' => $view->chargeQuantity,
+                    'cost' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
+                ]
+            );
+
+            $this->flashMessage('success', 'ill_send_mail_success');
+        }
+        elseif($request->getPost('confirmation', false) !== 'true') {
+            $view->newQuantity = ($illInformation['balance'] ?? 0) + $view->chargeQuantity;
+            $view->oldTotalDue = $this->getTotalDue();
+            $view->newTotalDue = $view->oldTotalDue + $view->cost;
+            if($view->workrelated = $request->getPost('workrelated', false)) {
+                $view->department = $request->getPost('department', false);
+                $view->facility = $request->getPost('facility', false);
+            }
+        }
+        else {
+            $ilsPM = $this->serviceLocator->get(\VuFind\ILS\Driver\PluginManager::class);
+
+            if($ilsPM->get('Sera')->chargeIllFee($user->username, $view->quantity, $view->cost)) {
+                try {
+                    $ilsPM->get('cbsuserdpo')->chargeCredits($user->username, $view->quantity);
+
+                    $this->flashMessage('success', 'ill_charge_success', [
+                        '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
+                    ]);
+                }
+                catch (\Exception $e) {
+                    $this->logError($e);
+                    $this->sendChargeErrorEmail($view->quantity, $view->cost);
+
+                    $view->exception = $e;
+                    $view->chargeException = true;
+                }
+            }
         }
 
         return $view;
@@ -144,7 +170,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $request = $this->getRequest();
         if($request->isPost() && $this->doCsrfValidation()) {
             $this->sendEmail(
-                $this->translate('ill_forgot_password_subject'),
+                'Fernleihpasswort',
                 'Email/ill/forgot-password', [
                     'email' => $user->email,
                     'firstname' => $user->firstname,
@@ -156,28 +182,28 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->flashMessage('success', 'ill_send_mail_success');
         }
 
-        $view = new ViewModel();
-        try {
-            $view->hasAccount = $this->getPicaConnection()->startPatronSession($user->username);
-        }
-        catch (ErrorException | \Exception $e) {
-            $this->logError($e);
-            $view->exception = $e;
-        }
-
-        return $view;
+        return new ViewModel();
     }
 
     public function deleteaccountAction() : ViewModel {
+        // Force login if necessary:
+        if (!$this->getUser()) {
+            return $this->forceLogin();
+        }
+
+        return new ViewModel();
+    }
+
+    public function deleteaccountconfirmationAction () : ViewModel {
         // Force login if necessary:
         if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
 
         $request = $this->getRequest();
-        if($request->isPost() && $this->doCsrfValidation()) {
+        if($request->isPost() && $this->doCsrfValidation() && $request->getPost('confirmation', false)) {
             $this->sendEmail(
-                $this->translate('ill_delete_account_subject'),
+                'Fernleihkonto löschen',
                 'Email/ill/delete-account', [
                     'email' => $user->email,
                     'firstname' => $user->firstname,
@@ -189,49 +215,23 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->flashMessage('success', 'ill_send_mail_success');
         }
 
-        $view = new ViewModel();
-        try {
-            $view->hasAccount = $this->getPicaConnection()->startPatronSession($user->username);
-        }
-        catch (ErrorException | \Exception $e) {
-            $this->logError($e);
-            $view->exception = $e;
-        }
-
-        return $view;
+        return new ViewModel();
     }
 
-    /**
-     * @throws \Exception
-     */
-    protected function getPicaConnection() : Sip2Wrapper {
-        $sip2 = new Sip2Wrapper (
-            array(
-                'hostname' => $this->illConfig->host,
-                'port' => $this->illConfig->port,
-                'location' => $this->illConfig->location,
-                'institutionId' => $this->illConfig->institutionId,
-                'withCrc' => true,
-                'language' => '001',
+    public function getIllInformation(string $username) : array {
+        try {
+            $userInfo = $this->serviceLocator->get(\VuFind\ILS\Driver\PluginManager::class)
+                ->get('cbsuserdpo')->getUserInformation($username);
+        }
+        catch (ErrorException $e) {
+            if($e->getCode() == '404') {
+                return [];
+            }
 
-                'socket_timeout' => '60',
-                'socket_tls_enable' => true,
-                'socket_tls_options' => array (
-                    'verify_peer' => true,
-                    'verify_peer_name' => true,
-                    'allow_self_signed' => true,
-                    'ciphers' => 'HIGH:!SSLv2',
-                    'capture_peer_cert' => true,
-                    'capture_peer_cert_chain' => true,
-                    'disable_compression' => true
-                ),
+            throw $e;
+        }
 
-                'maxretry' => 5,
-                'debug' => false
-            ), true, 'Gossip'
-        );
-
-        return $sip2->login($this->illConfig->user, $this->illConfig->pass);
+        return $userInfo;
     }
 
     /**
@@ -243,7 +243,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
      *
      * @return bool Success of sending the email.
      */
-    protected function sendEmail(string $subject, string $template, array $data = []) : bool{
+    protected function sendEmail(string $subject, string $template, array $data = []) : bool {
         try {
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
@@ -264,20 +264,19 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         return true;
     }
 
-    protected function sendChargeErrorEmail($cost) {
+    protected function sendChargeErrorEmail(string $quantity, string $cost) {
         $user = $this->getUser();
         $this->sendEmail(
-            $this->translate('ill_delete_account_subject'),
-            'Email/ill/delete-account', [
+            'Fehler beim Buchen von Fernleihguthaben',
+            'Email/ill/charge-error', [
                 'email' => $user->email,
                 'firstname' => $user->firstname,
                 'lastname' => $user->lastname,
                 'username' => $user->username,
+                'quantity' => $quantity,
+                'cost' => $cost
             ]
         );
-        $this->flashMessage('error', 'ill_charge_success.', [
-            '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($cost)
-        ]);
     }
 
     protected function getTotalDue() : int {
@@ -307,34 +306,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         return true;
     }
 
-    protected function chargeIllFee(Sip2Wrapper $sip2, string $username, string $chargeQuantity, string $cost) : bool {
-        $sera = $this->serviceLocator->get(\VuFind\ILS\Driver\PluginManager::class)->get('Sera');
-        if (!$sera->checkConnection()) {
-            throw new ErrorException('SERA connection could not be created.');
-        }
-
-        if($sera->chargeIllFee($username, $chargeQuantity, $cost)) {
-            try {
-                if ($sip2->feePay('14', '00', "$chargeQuantity.00", 'XXX')) {
-                    $this->flashMessage('success', 'ill_charge_success', [
-                        '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($cost)
-                    ]);
-                }
-                else {
-                    $this->sendChargeErrorEmail($cost);
-                }
-            }
-            catch (\Exception $e) {
-                $this->sendChargeErrorEmail($cost);
-
-                throw $e;
-            }
-        }
-
-        return true;
-    }
-
-    protected function flashMessage(string $namespace, string $message, array $tokens = []) {
+    protected function flashMessage(string $namespace, string $message, array $tokens = []) : void {
         $this->flashMessenger()->addMessage([
             'html' => true,
             'msg' => $message,

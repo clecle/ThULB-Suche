@@ -127,10 +127,12 @@ $config = array(
                 'factories' => array(
                     \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
                     \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
+                    \ThULB\ILS\Driver\CBSUserdpo::class => \ThULB\ILS\Driver\CBSUserdpoFactory::class,
                 ),
                 'aliases' => array(
                     \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
                     'sera' => \ThULB\ILS\Driver\Sera::class,
+                    'cbsuserdpo' => \ThULB\ILS\Driver\CBSUserdpo::class,
                 )
             ),
             'recommend' => array(
@@ -246,7 +248,6 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
-$routeGenerator->addStaticRoute($config, 'ILL/staffrequest');
 $routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');

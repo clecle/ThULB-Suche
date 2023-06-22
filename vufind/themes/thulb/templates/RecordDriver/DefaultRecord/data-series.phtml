@@ -8,7 +8,7 @@
     <?php if (!empty($field['name'])): ?>
       <?php if (isset($field['id']) && $field['id']) : ?>
         <?php $url = $this->recordLinker()->related(['type' => 'bib', 'value' => $field['id']]); ?>
-        <a href="<?= $url?>"><?= $this->escapeHtml($field['name'])?></a>
+        <a href="<?= $url?>" target="_blank"><?= $this->escapeHtml($field['name'])?></a>
       <?php else: ?>
         <?= $this->escapeHtml($field['name'])?>
       <?php endif; ?>
@@ -20,6 +20,6 @@
       <?php endif; ?>
     <?php endif; ?>
   <?php else: ?>
-    <a href="<?= $this->record($this->driver)->getLink('series', $field)?>"><?= $this->escapeHtml($field)?></a><br/>
+    <a href="<?= $this->record($this->driver)->getLink('series', $field)?>" target="_blank"><?= $this->escapeHtml($field)?></a><br/>
   <?php endif; ?>
 <?php endfor; ?>

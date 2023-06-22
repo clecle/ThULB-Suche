@@ -50,6 +50,8 @@ class ServiceDesk extends AbstractHelper
         }
 
         $paramQuery = !empty($queryParams) ? ("?" . http_build_query($queryParams)) : '';
-        return $this->baseUrl . $this->forms[$formName] . $paramQuery;
+        $url = $this->baseUrl . $this->forms[$formName] . $paramQuery;
+
+        return $formName == 'broken-link' ? '/Vpn/check?sdurl=' . urlencode($url) : $url;
     }
 }

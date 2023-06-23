@@ -112,13 +112,22 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $departmentConfig;
 
+    /**
+     * ThULB configuration
+     *
+     * @var Config
+     */
+    protected $thulbConfig;
+
     protected $holdingData = null;
 
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
-                                $marcFormatConfig = null, $departmentConfig = null)
+                                $marcFormatConfig = null, $departmentConfig = null, $thulbConfig = null)
     {
         $this->marcFormatConfig = $marcFormatConfig;
         $this->departmentConfig = $departmentConfig;
+        $this->thulbConfig = $thulbConfig;
+
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
@@ -2396,32 +2405,29 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSource() : array
-    {
-        $source = [];
-        if (in_array('KXP', $this->fields['collection'])) {
-            if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-                $source['name'] = 'K10plus-Verbundkatalog';
-                $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+    public function getSource() : array {
+        if($recordSources = $this->thulbConfig->RecordSources) {
+            foreach ($recordSources->toArray() as $source) {
+                foreach (explode(',', $source['conditions']) as $condition) {
+                    list($field, $value) = explode(':', $condition);
+                    if(!isset($this->fields[$field])) {
+                        continue 2;
+                    }
+
+                    $fieldData = is_array($this->fields[$field]) ? $this->fields[$field] : [$this->fields[$field]];
+                    if (!in_array($value, $fieldData)) {
+                        continue 2;
+                    }
+                }
+
+                return [
+                    'name' => $source['name'],
+                    'url' => $source['url'] ?? null,
+                ];
             }
-            elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
-            }
-        }
-        elseif (in_array('DBT@UrMEL', $this->fields['collection_details'])) {
-            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
-            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
-        }
-        elseif (in_array('Collections@UrMEL', $this->fields['collection_details'])) {
-            $source['name'] = 'Historische Bestände (Collections@UrMEL)';
-            $source['url'] = 'https://collections.thulb.uni-jena.de/templates/master/template_collections/index.xml';
-        }
-        elseif (in_array('NL', $this->fields['collection'])) {
-            $source['name'] = 'Nationallizenz';
-            $source['url'] = 'https://www.nationallizenzen.de/';
         }
 
-        return $source;
+        return [];
     }
 
     public function getSummary() : array {

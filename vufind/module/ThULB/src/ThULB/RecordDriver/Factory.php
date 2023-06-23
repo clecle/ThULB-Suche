@@ -45,7 +45,8 @@ class Factory
             null,
             $sm->get('VuFind\Config')->get('searches'),
             $sm->get('VuFind\Config')->get('marcFormat'),
-            $sm->get('VuFind\Config')->get('DepartmentsDAIA')
+            $sm->get('VuFind\Config')->get('DepartmentsDAIA'),
+            $sm->get('VuFind\Config')->get('thulb'),
         );
         $driver->attachILS(
             $sm->get('VuFind\ILSConnection'),

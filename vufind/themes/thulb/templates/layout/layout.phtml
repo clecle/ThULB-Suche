@@ -181,6 +181,10 @@ JS;
       <img src="/themes/thulb/images/Ajax-loader.gif"
            id="img-load" />
       <div id="content" class="container">
+        <noscript >
+          <div class="alert alert-warning hidden-print center-text"><?= $this->transEsc('noscript warning'); ?></div>
+        </noscript>
+        
         <div id="overlay" class="col-xs-12">
           <p>&nbsp;</p>
         </div>

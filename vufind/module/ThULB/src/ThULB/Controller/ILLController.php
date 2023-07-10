@@ -140,9 +140,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         else {
             $ilsPM = $this->serviceLocator->get(\VuFind\ILS\Driver\PluginManager::class);
 
-            if($ilsPM->get('Sera')->chargeIllFee($user->username, $view->quantity, $view->cost)) {
+            if($ilsPM->get('Sera')->chargeIllFee($user->username, $view->chargeQuantity, $view->cost)) {
                 try {
-                    $ilsPM->get('cbsuserdpo')->chargeCredits($user->username, $view->quantity);
+                    $ilsPM->get('cbsuserdpo')->chargeCredits($user->username, $view->chargeQuantity);
 
                     $this->flashMessage('success', 'ill_charge_success', [
                         '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
@@ -150,7 +150,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                 }
                 catch (\Exception $e) {
                     $this->logError($e);
-                    $this->sendChargeErrorEmail($view->quantity, $view->cost);
+                    $this->sendChargeErrorEmail($view->chargeQuantity, $view->cost);
 
                     $view->exception = $e;
                     $view->chargeException = true;

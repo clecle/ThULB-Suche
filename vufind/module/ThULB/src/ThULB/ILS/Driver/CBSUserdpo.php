@@ -76,7 +76,7 @@ class CBSUserdpo extends AbstractBase implements
 
         $response =  $this->httpService->post(
             $this->thulbConfig->ILL->host . '/users/' . $username . '/deposit',
-            json_encode(['paidAmount' => (int) $quantity * 100]),
+            json_encode(['amountPaid' => (int) $quantity * 100]),
             \Laminas\Http\Client::ENC_URLENCODED,
             10000,
             $headers

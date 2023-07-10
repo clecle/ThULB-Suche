@@ -96,9 +96,7 @@
   <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
     <?php if($holdingKey == 'Remote') continue; ?>
     <h3 class="flex flex-wrap-xs">
-      <?php if(!preg_match('/Handapparat|Remote/', $holding['location'])): ?>
-        <div class="col-description"><?= $this->transEsc('Location') ?>:</div>
-      <?php endif; ?>
+      <div class="col-description"><?= $this->transEsc('Location') ?>:</div>
       <div class="col-text"><?= $this->thulb_holdingHelper()->getLocation($holding, true);?></div>
     </h3>
     <div class="striped" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">

@@ -556,6 +556,10 @@ class PAIA extends OriginalPAIA
                 $result_item['departmentId'] = $this->getDepIdFromItem($item, $result_item['callnumber']);
                 // get location
                 $result_item['location'] = $this->getItemDepartment($item);
+                // get location api id
+                $result_item['locationapiid'] = substr($result_item['location'], -1);
+                // remove location api id from location
+                $result_item['location'] = substr($result_item['location'], 0, -2);
                 // custom DAIA field
                 $result_item['locationid'] = $this->getItemDepartmentId($item);
                 // get location link

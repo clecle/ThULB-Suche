@@ -44,6 +44,7 @@ $config = array(
     'service_manager' => [
         'factories' => [
             \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+            \ThULB\Content\LocationData\ThULB::class => \ThULB\Content\LocationData\ThULBFactory::class,
             \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
             'ThULB\Record\Loader' => 'VuFind\Record\LoaderFactory',
             'ThULB\Search\Facets\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -217,14 +218,15 @@ $config = array(
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'thulb_metaDataHelper' => 'ThULB\View\Helper\Record\MetaDataHelper',
-            'thulb_holdingHelper' => 'ThULB\View\Helper\Record\HoldingHelper',
-            'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
-            'thulb_removeZWNJ' => 'ThULB\View\Helper\Root\RemoveZWNJ',
-            'thulb_removeThBibFilter' => 'ThULB\View\Helper\Root\RemoveThBibFilter',
             'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
+            'thulb_holdingHelper' => \ThULB\View\Helper\Record\HoldingHelper::class,
+            'thulb_locationData' => \ThULB\View\Helper\Root\LocationData::class,
+//            'thulb_metaDataHelper' => \ThULB\View\Helper\Record\MetaDataHelper::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+//            'thulb_removeThBibFilter' => \ThULB\View\Helper\Root\RemoveThBibFilter::class,
+            'thulb_removeZWNJ' => \ThULB\View\Helper\Root\RemoveZWNJ::class,
             'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
+            'thulb_serverType' => \ThULB\View\Helper\Root\ServerType::class,
             'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
         ),
     ),
@@ -248,5 +250,6 @@ $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
+$routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
 
 return $config;

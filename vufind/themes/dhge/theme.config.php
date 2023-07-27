@@ -4,10 +4,12 @@ return array(
     'favicon' => 'logo_favicon.png',
     'helpers' => array (
         'factories' => array (
-            \DHGE\View\Helper\Root\Session::class => 'DHGE\View\Helper\Root\Factory::getSession'
+            \DHGE\View\Helper\Root\DoiLinker::class => 'DHGE\View\Helper\Root\Factory::getDoiLinker',
+            \DHGE\View\Helper\Root\Session::class => 'DHGE\View\Helper\Root\Factory::getSession',
         ),
         'aliases' => array (
-            'dhge_session' => DHGE\View\Helper\Root\Session::class,
+            'dhge_doiLinker' => \DHGE\View\Helper\Root\DoiLinker::class,
+            'dhge_session' => \DHGE\View\Helper\Root\Session::class,
         ),
     ),
 );

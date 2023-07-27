@@ -99,7 +99,7 @@ class OnlineContentLookup extends AbstractBase
                 }
                 $response[] = array (
                     'id' => $source . ':' . $result->getUniqueID(),
-                    'result' => $html
+                    'links' => $html
                 );
             }
         }

@@ -3,7 +3,7 @@
 namespace ThULB\AjaxHandler;
 
 use Exception;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use VuFind\Auth\Manager;
 use VuFind\Role\PermissionDeniedManager;
 use VuFind\Role\PermissionManager;

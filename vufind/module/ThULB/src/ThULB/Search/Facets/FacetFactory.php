@@ -3,7 +3,7 @@
 namespace ThULB\Search\Facets;
 
 use Exception;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 
 class FacetFactory
 {

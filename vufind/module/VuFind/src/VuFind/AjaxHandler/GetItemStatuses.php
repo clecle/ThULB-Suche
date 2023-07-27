@@ -353,7 +353,7 @@ class GetItemStatuses extends AbstractBase implements
      * Support method for getItemStatuses() -- process a single bibliographic record
      * for "group" location setting.
      *
-     * @param array  $record            Information on items linked to a single
+     * @param array  $records            Information on items linked to a single
      *                                  bib record
      * @param array  $messages          Custom status HTML
      *                                  (keys = available/unavailable)
@@ -362,12 +362,12 @@ class GetItemStatuses extends AbstractBase implements
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting)
+    protected function getItemStatusGroup($records, $messages, $callnumberSetting)
     {
         // Summarize call number, location and availability info across all items:
         $locations = [];
         $use_unknown_status = $available = false;
-        foreach ($record as $info) {
+        foreach ($records as $info) {
             // Find an available copy
             if ($info['availability']) {
                 $available = $locations[$info['location']]['available'] = true;
@@ -423,14 +423,14 @@ class GetItemStatuses extends AbstractBase implements
 
         // Send back the collected details:
         return [
-            'id' => $record[0]['id'],
+            'id' => $records[0]['id'],
             'availability' => ($available ? 'true' : 'false'),
             'availability_message' => $availability_message,
             'location' => false,
             'locationList' => $locationList,
             'reserve' =>
-                ($record[0]['reserve'] == 'Y' ? 'true' : 'false'),
-            'reserve_message' => $record[0]['reserve'] == 'Y'
+                ($records[0]['reserve'] == 'Y' ? 'true' : 'false'),
+            'reserve_message' => $records[0]['reserve'] == 'Y'
                 ? $this->translate('on_reserve')
                 : $this->translate('Not On Reserve'),
             'callnumber' => false,

@@ -25,6 +25,7 @@
  */
 
 namespace ThULB\View\Helper\Root;
+use DHGE\View\Helper\Root\DoiLinker;
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\View\Helper\AbstractHelper;
 
@@ -36,37 +37,6 @@ use Laminas\View\Helper\AbstractHelper;
 class Factory 
 {
     /**
-     * Construct the Record helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return Record
-     */
-    public static function getRecord(ServiceManager $sm) : Record
-    {
-        $helper = new Record(
-            $sm->get('VuFind\Config')->get('config'),
-            $sm->get(\VuFind\RecordTab\PluginManager::class)->get(\ThULB\RecordTab\NonArticleCollectionList::class)
-        );
-        $helper->setCoverRouter(
-            $sm->get('VuFind\Cover\Router')
-        );
-        return $helper;
-    }
-
-    /**
-     * Construct the RecordLink helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return RecordLinker
-     */
-    public static function getRecordLinker(ServiceManager $sm) : RecordLinker
-    {
-        return new RecordLinker($sm->get('VuFind\RecordRouter'));
-    }
-
-    /**
      * Construct the Session helper.
      *
      * @param ServiceManager $sm Service manager.
@@ -76,20 +46,5 @@ class Factory
     public static function getSession(ServiceManager $sm) : AbstractHelper
     {
         return new Session($sm->get('VuFind\SessionManager'));
-    }
-
-    /**
-     * Construct the Unpaywall helper.
-     *
-     * @param ServiceManager $sm Service manager.
-     *
-     * @return DoiLinker
-     */
-    public static function getDoiLinker(ServiceManager $sm) : DoiLinker
-    {
-        $config = $sm->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
-        $pluginManager = $sm->get(\VuFind\DoiLinker\PluginManager::class);
-        return new DoiLinker($pluginManager, $config->DOI->resolver ?? null);
     }
 }

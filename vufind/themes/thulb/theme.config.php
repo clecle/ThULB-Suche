@@ -1,30 +1,35 @@
 <?php
 return array(
     'extends' => 'bootstrap3',
-    'helpers' => [
-        'factories' => [
-            \ThULB\View\Helper\Root\Citation::class => \VuFind\View\Helper\Root\CitationFactory::class,
-            \ThULB\View\Helper\Root\DoiLinker::class => 'ThULB\View\Helper\Root\Factory::getDoiLinker',
-            \ThULB\View\Helper\Root\Flashmessages::class => \VuFind\View\Helper\Root\FlashmessagesFactory::class,
-            'ThULB\View\Helper\Root\Record' => 'ThULB\View\Helper\Root\Factory::getRecord',
-            'ThULB\View\Helper\Root\RecordLinker' => 'ThULB\View\Helper\Root\Factory::getRecordLinker',
-            'VuFind\View\Helper\Root\RecordDataFormatter' => 'ThULB\View\Helper\Root\RecordDataFormatterFactory',
-            'ThULB\View\Helper\Root\ServerType' => 'Laminas\ServiceManager\Factory\InvokableFactory',
-            'ThULB\View\Helper\Root\Session' => 'ThULB\View\Helper\Root\Factory::getSession',
+    'helpers' => array(
+        'factories' => array(
             \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
-        ],
-        'aliases' => array (
-            'citation' => \ThULB\View\Helper\Root\Citation::class,
-            'flashmessages' => 'ThULB\View\Helper\Root\Flashmessages',
-            'record' => 'ThULB\View\Helper\Root\Record',
-            'recordLinker' => 'ThULB\View\Helper\Root\RecordLinker',
-            'thulb_serverType' => 'ThULB\View\Helper\Root\ServerType',
-            'thulb_session' => 'ThULB\View\Helper\Root\Session',
-            'thulb_doiLinker' => \ThULB\View\Helper\Root\DoiLinker::class,
-            'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            \ThULB\View\Helper\Root\Citation::class => \VuFind\View\Helper\Root\CitationFactory::class,
+            \ThULB\View\Helper\Root\Flashmessages::class => \VuFind\View\Helper\Root\FlashmessagesFactory::class,
+            \ThULB\View\Helper\Root\Record::class => \ThULB\View\Helper\Root\RecordFactory::class,
+            \ThULB\View\Helper\Root\RecordLinker::class => \VuFind\View\Helper\Root\RecordLinkerFactory::class,
+            \ThULB\View\Helper\Root\ServerType::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+            \ThULB\View\Helper\Root\Session::class => 'ThULB\View\Helper\Root\Factory::getSession',
+            \VuFind\View\Helper\Root\RecordDataFormatter::class => \ThULB\View\Helper\Root\RecordDataFormatterFactory::class,
         ),
-    ],
+        'aliases' => array(
+            'citation' => \ThULB\View\Helper\Root\Citation::class,
+            'flashmessages' => \ThULB\View\Helper\Root\Flashmessages::class,
+            'record' => \ThULB\View\Helper\Root\Record::class,
+            'recordLinker' => \ThULB\View\Helper\Root\RecordLinker::class,
+            'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_serverType' => \ThULB\View\Helper\Root\ServerType::class,
+            'thulb_session' => \ThULB\View\Helper\Root\Session::class,
+        ),
+    ),
     'favicon' => 'thulb_favicon.png',
+    'icons' => array(
+        'aliases' => array(
+            'status-available' => 'FontAwesome:check',
+            'status-unavailable' => 'FontAwesome:remove',
+            'status-unknown' => 'FontAwesome:circle',
+        )
+    ),
     'js' => array(
         'thulb.js',
         'jquery-ui.min.js',

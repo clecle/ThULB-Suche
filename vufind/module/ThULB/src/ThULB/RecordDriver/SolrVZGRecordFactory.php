@@ -1,6 +1,7 @@
 <?php
+
 /**
- * DOI helper factory.
+ * Factory for SolrDefault record drivers.
  *
  * PHP version 7
  *
@@ -20,58 +21,63 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  RecordDrivers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-namespace ThULB\View\Helper\Record;
 
-use Exception;
-use Psr\Container\ContainerInterface;
-use Psr\Container\ContainerExceptionInterface as ContainerException;
+namespace ThULB\RecordDriver;
+
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
-use Throwable;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
+use VuFind\RecordDriver\SolrDefaultWithoutSearchServiceFactory;
 
 /**
- * DOI helper factory.
+ * Factory for SolrDefault record drivers.
  *
  * @category VuFind
- * @package  View_Helpers
+ * @package  RecordDrivers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class OnlineContentFactory implements FactoryInterface
+class SolrVZGRecordFactory extends SolrDefaultWithoutSearchServiceFactory
 {
     /**
      * Create an object
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
-     * @param array|null         $options       Extra options (optional)
+     * @param null|array         $options       Extra options (optional)
      *
      * @return object
      *
-     * @throws ServiceNotFoundException     if unable to resolve the service.
-     * @throws ServiceNotCreatedException   if an exception is raised when creating a service.
-     * @throws ContainerException&Throwable if any other error occurs
-     * @throws Exception
+     * @throws ServiceNotFoundException if unable to resolve the service.
+     * @throws ServiceNotCreatedException if an exception is raised when
+     * creating a service.
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
         array $options = null
-    ) : object {
-        if (!empty($options)) {
-            throw new Exception('Unexpected options sent to factory.');
-        }
-
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
-        $pluginManager = $container->get(\VuFind\DoiLinker\PluginManager::class);
-        return new $requestedName($pluginManager, $config->DOI->resolver ?? null);
+    ) {
+        $driver = new $requestedName(
+            $container->get('VuFind\Config')->get('config'),
+            null,
+            $container->get('VuFind\Config')->get('searches'),
+            $container->get('VuFind\Config')->get('marcFormat'),
+            $container->get('VuFind\Config')->get('DepartmentsDAIA')
+        );
+        $driver->attachILS(
+            $container->get('VuFind\ILSConnection'),
+            $container->get('VuFind\ILSHoldLogic'),
+            $container->get('VuFind\ILSTitleHoldLogic')
+        );
+        $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
+        return $driver;
     }
 }

@@ -37,7 +37,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
      * Support method for getItemStatuses() -- process a single bibliographic record
      * for "group" location setting.
      *
-     * @param array  $record            Information on items linked to a single
+     * @param array  $records           Information on items linked to a single
      *                                  bib record
      * @param array  $messages          Custom status HTML
      *                                  (keys = available/unavailable)
@@ -46,24 +46,29 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array
+    protected function getItemStatusGroup($records, $messages, $callnumberSetting) : array
     {
-        $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
+        $statusGroup = parent::getItemStatusGroup($records, $messages, $callnumberSetting);
 
-        // Use message for status 'unknown' only if there are no other items without status 'unknown'
+        // Use message for status 'unknown' only if there are all items have status 'unknown'
         $available = null;
         $hasUnknown = false;
-        foreach ($statusGroup['locationList'] as $key => $location) {
-            if(isset($location['status_unknown']) && $location['status_unknown']) {
+        foreach ($records as $record) {
+            if($record['use_unknown_message'] ?? false) {
                 $hasUnknown = true;
             }
             else {
-                $available = $available || $location['availability'];
+                $available = $available || $record['availability'];
             }
         }
         if($hasUnknown && $available !== null) {
             $msg = $available ? 'available' : 'unavailable';
             $statusGroup['availability_message'] = $messages[$msg];
+        }
+
+        // style all 'unknown' as 'unavailable'
+        foreach ($statusGroup['locationList'] as &$location) {
+            $location['status_unknown'] = false;
         }
 
         // Sort locations by displayed name

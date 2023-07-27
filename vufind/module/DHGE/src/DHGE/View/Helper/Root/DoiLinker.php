@@ -1,6 +1,6 @@
 <?php
 
-namespace ThULB\View\Helper\Root;
+namespace DHGE\View\Helper\Root;
 
 use Laminas\View\Helper\AbstractHelper;
 

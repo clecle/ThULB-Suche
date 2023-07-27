@@ -3,7 +3,7 @@
 namespace ThULB\AjaxHandler;
 
 use Exception;
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 
 class HideMessageFactory implements FactoryInterface

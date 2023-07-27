@@ -4,6 +4,7 @@ namespace ThULB\Module\Configuration;
 $config = array(
     'controllers' => array(
         'factories' => array(
+            \ThULB\Controller\CartController::class => \VuFind\Controller\CartControllerFactory::class,
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
             \ThULB\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
@@ -11,13 +12,16 @@ $config = array(
             \ThULB\Controller\SearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\SummonController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\SummonrecordController::class => \VuFind\Controller\AbstractBaseFactory::class,
-            \ThULB\Controller\CartController::class => \VuFind\Controller\CartControllerFactory::class,
+            \ThULB\Controller\VpnController::class => \VuFind\Controller\AbstractBaseFactory::class,
         ),
         'aliases' => array(
             'Holds' => \ThULB\Controller\HoldsController::class,
             'holds' => \ThULB\Controller\HoldsController::class,
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
+            'Vpn' => \ThULB\Controller\VpnController::class,
+            'vpn' => \ThULB\Controller\VpnController::class,
+            'VPN' => \ThULB\Controller\VpnController::class,
             \VuFind\Controller\CartController::class =>  \ThULB\Controller\CartController::class,
             \VuFind\Controller\HoldsController::class => \ThULB\Controller\HoldsController::class,
             \VuFind\Controller\MyResearchController::class => \ThULB\Controller\MyResearchController::class,
@@ -25,6 +29,7 @@ $config = array(
             \VuFind\Controller\SearchController::class => \ThULB\Controller\SearchController::class,
             \VuFind\Controller\SummonController::class => \ThULB\Controller\SummonController::class,
             \VuFind\Controller\SummonrecordController::class => \ThULB\Controller\SummonrecordController::class,
+            \VuFind\Controller\CoverController::class => \ThULB\Controller\CoverController::class,
         )
     ),
     'controller_plugins' => array (
@@ -43,9 +48,11 @@ $config = array(
             \ThULB\Record\Loader::class => \VuFind\Record\LoaderFactory::class,
             \ThULB\Search\Facets\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             \ThULB\Search\Solr\HierarchicalFacetHelper::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+            'ThULB\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
         ),
         'aliases' => array(
             \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
+            'VuFind\Cover\Loader' => 'ThULB\Cover\Loader',
             'VuFind\HierarchicalFacetHelper' => \ThULB\Search\Solr\HierarchicalFacetHelper::class,
             'VuFind\Mailer' => \ThULB\Mailer\Mailer::class,
             \VuFind\Mailer\Mailer::class => \ThULB\Mailer\Mailer::class,
@@ -85,9 +92,11 @@ $config = array(
             'content_covers' => array(
                 'factories' => array(
                     \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \ThULB\Content\Covers\IIIF::class => \VuFind\Service\ServiceWithConfigIniFactory::class,
                 ),
                 'aliases' => array(
-                    'google' => \ThULB\Content\Covers\Google::class
+                    'google' => \ThULB\Content\Covers\Google::class,
+                    'iiif' => \ThULB\Content\Covers\IIIF::class
                 )
             ),
             'db_row' => array(
@@ -105,22 +114,14 @@ $config = array(
                     \VuFind\DoiLinker\Unpaywall::class => \ThULB\DoiLinker\Unpaywall::class,
                 )
             ),
-//            'hierarchy_treedataformatter' => array(
-//                'invokables' => array(
-//                    \VuFind\Hierarchy\TreeDataFormatter\Json::class => \ThULB\Hierarchy\TreeDataFormatter\Json::class,
-//                ),
-//            ),
-//            'hierarchy_treedatasource' => array(
-//                'factories' => array(
-//                    \VuFind\Hierarchy\TreeDataSource\Solr::class => 'ThULB\Hierarchy\TreeDataSource\Factory::getSolr',
-//                )
-//            ),
             'ils_driver' => array(
                 'factories' => array(
                     \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
+                    \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
                 ),
                 'aliases' => array(
                     \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
+                    'sera' => \ThULB\ILS\Driver\Sera::class,
                 )
             ),
             'recommend' => array(
@@ -216,6 +217,8 @@ $config = array(
             'thulb_serverType' => \ThULB\View\Helper\Root\ServerType::class,
             'thulb_removeZWNJ' => \ThULB\View\Helper\Root\RemoveZWNJ::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
+            'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
+            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
         ),
     ),
 

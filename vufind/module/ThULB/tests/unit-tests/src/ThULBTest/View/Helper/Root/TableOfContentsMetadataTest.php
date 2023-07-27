@@ -8,7 +8,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class TableOfContentsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Inhaltsangaben';
-    protected $metadataKey = 'Table of Contents';
-    protected $recordDriverFunction = 'getToc';
+    protected ?string $sheetName = 'Inhaltsangaben';
+    protected ?string $metadataKey = 'Table of Contents';
+    protected ?string $recordDriverFunction = 'getToc';
 }

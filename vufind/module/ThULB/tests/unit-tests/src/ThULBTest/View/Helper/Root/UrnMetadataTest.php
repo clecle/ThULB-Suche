@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class UrnMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'URN';
-    protected $metadataKey = 'URN';
-    protected $recordDriverFunction = 'getURN';
+    protected ?string $sheetName = 'URN';
+    protected ?string $metadataKey = 'URN';
+    protected ?string $recordDriverFunction = 'getURN';
 }

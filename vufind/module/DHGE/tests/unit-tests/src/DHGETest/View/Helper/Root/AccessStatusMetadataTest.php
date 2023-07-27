@@ -34,8 +34,8 @@ namespace DHGETest\View\Helper\Root;
 
 class AccessStatusMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Access Status';
-    protected $metadataKey = 'Access Status';
-    protected $recordDriverFunction = 'getAccessRestrictions';
-    protected $template = 'data-accessStatus.phtml';
+    protected ?string $sheetName = 'Access Status';
+    protected ?string $metadataKey = 'Access Status';
+    protected ?string $recordDriverFunction = 'getAccessRestrictions';
+    protected ?string $template = 'data-accessStatus.phtml';
 }

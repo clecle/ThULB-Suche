@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class ZdbNumberMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'ZDB-Nummer';
-    protected $metadataKey = 'ZDB';
-    protected $template = 'data-zdb.phtml';
+    protected ?string $sheetName = 'ZDB-Nummer';
+    protected ?string $metadataKey = 'ZDB';
+    protected ?string $template = 'data-zdb.phtml';
 }

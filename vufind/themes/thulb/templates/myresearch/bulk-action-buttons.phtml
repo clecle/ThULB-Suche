@@ -36,7 +36,7 @@
     <?php endif; ?>
     <!--<button class="btn btn-thulb" type="submit" name="print" value="<?= $this->transEscAttr('Print')?>" title="<?= $this->transEscAttr('print_selected')?>" data-lightbox-ignore><i class="fa fa-printer" aria-hidden="true"></i></button>-->
     <?php if ($this->cart()->isActive()): ?>
-      <button class="btn btn-thulb" id="<?= $this->idPrefix?>updateCart" type="submit" name="add" name="bookbag" title="<?= $this->transEscAttr('Add to Book Bag')?>"><i class="fa fa-star" aria-hidden="true"></i></button>
+      <button class="btn btn-thulb" id="<?= $this->idPrefix?>updateCart" type="submit" name="add" value="<?= $this->transEscAttr('Add to Book Bag')?>" title="<?= $this->transEscAttr('Add to Book Bag')?>"><i class="fa fa-star" aria-hidden="true"></i></button>
     <?php endif; ?>
   </div>
 </div>

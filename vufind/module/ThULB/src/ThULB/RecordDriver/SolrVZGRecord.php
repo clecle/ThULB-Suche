@@ -112,13 +112,22 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $departmentConfig;
 
+    /**
+     * ThULB configuration
+     *
+     * @var Config
+     */
+    protected $thulbConfig;
+
     protected $holdingData = null;
 
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
-                                $marcFormatConfig = null, $departmentConfig = null)
+                                $marcFormatConfig = null, $departmentConfig = null, $thulbConfig = null)
     {
         $this->marcFormatConfig = $marcFormatConfig;
         $this->departmentConfig = $departmentConfig;
+        $this->thulbConfig = $thulbConfig;
+
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
@@ -145,6 +154,26 @@ class SolrVZGRecord extends SolrMarc
 
         return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
             && !$noStatus && count($allCopies) !== count($ordered));
+    }
+
+    /**
+     * Retrieve raw data from object (primarily for use in staff view and
+     * autocomplete; avoid using whenever possible).
+     *
+     * @return mixed
+     */
+    public function getRawData()
+    {
+        ksort($this->fields, SORT_NATURAL | SORT_FLAG_CASE);
+        foreach ($this->fields as $key => $field) {
+            if(is_array($field)) {
+                sort($field, SORT_NATURAL | SORT_FLAG_CASE);
+
+                $this->fields[$key] = $field;
+            }
+        }
+
+        return $this->fields;
     }
 
     /**
@@ -288,7 +317,18 @@ class SolrVZGRecord extends SolrMarc
         $params = parent::getThumbnail($size);
         
         $params['contenttype'] = $this->fields['format'] ? $this->fields['format'][0] : '';
-        
+
+        $collection_details = $this->fields['collection_details'];
+
+        // is Main-Config Content > IIIF set?
+        if ($this->mainConfig->Content->IIIF ?? false) {
+            // get IIIF array: "collection-Name" = "IIIF-API-url"
+            $collections = $this->mainConfig->Content->IIIF->toArray();
+            $IIIF_collections = array_keys($collections);
+            // add only, if SOLR-Field "collection_details" contains the same Value as given in
+            // Main-Config - should be one, usually!
+            $params['collection_details'] = array_intersect($collection_details, $IIIF_collections);
+        }
         return $params;
     }
 
@@ -834,10 +874,19 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getISBNs() : array
     {
-        $relevantFields = array('020' => ['9', 'c']);
-        $formattingRules = array('020' => '0209 : 020c');
-        $conditions = array ($this->createFieldCondition('subfield', 'z', '==', false));
-        return $this->getFormattedData($relevantFields, $formattingRules, $conditions);
+        $conditions = array($this->createFieldCondition('subfield', 'z', '==', false));
+
+        $data = [];
+        foreach($this->getFieldsConditional('020', $conditions) as $field) {
+            $fieldData = array(
+                '0209' => $this->getSubfield($field, '9') ?: $this->getSubfield($field, 'a'),
+                '020c' => $this->getSubfield($field, 'c') ?: null
+            );
+
+            $data[] = $this->getFormattedMarcData('0209 : 020c', true, true, $fieldData);
+        }
+
+        return $data;
     }
 
     /**
@@ -1198,7 +1247,7 @@ class SolrVZGRecord extends SolrMarc
             switch (trim($linkType)){
             case 'id':
                 foreach ($linkFields as $current) {
-                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX), '*');
+                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX, true), '*');
                     if ($bibLink) {
                         $link = ['type' => 'bib', 'value' => $bibLink];
                     }
@@ -1222,7 +1271,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'dnb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'dnb', 'value' => $bibLink];
                     }
@@ -1230,7 +1279,7 @@ class SolrVZGRecord extends SolrMarc
                 break;
             case 'zdb':
                 foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX);
+                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX, true);
                     if ($bibLink) {
                         $link = ['type' => 'zdb', 'value' => $bibLink];
                     }
@@ -1627,7 +1676,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return bool
      */
-    public function isFormat(string $format = '', bool $pcre = null) : bool {
+    public function isFormat(string $format = '', bool $pcre = false) : bool {
         $formats = $this->getFormats();
         if(is_array($formats) && count($formats) > 0) {
             if (($pcre && preg_match("/$format/", $formats[0]))
@@ -1923,13 +1972,16 @@ class SolrVZGRecord extends SolrMarc
     public function getProduction() : array {
         $productions = array();
         foreach($this->getMarcReader()->getFields('264') as $currentField) {
-            if($currentField['i2'] == 0) {
+            if($currentField['i2'] == 3) {
                 $a = $this->getSubfields($currentField, 'a');
 
                 $b = $this->getSubfield($currentField, 'b');
                 $b = $b ? ' : ' . $b : '';
 
-                $productions[] = implode('; ', $a) . $b;
+                $c = $this->getSubfield($currentField, 'c');
+                $c = $c ? ', ' . $c : '';
+
+                $productions[] = implode('; ', $a) . $b . $c;
             }
         }
 
@@ -2297,7 +2349,9 @@ class SolrVZGRecord extends SolrMarc
 
         $data = [];
         foreach($fields as $field) {
-            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
+            $data = array_merge(
+                $data, $this->getMarcReader()->getSubfields($field, 'a')
+            );
         }
 
         $data = array_unique($data);
@@ -2351,28 +2405,33 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSource() : array
-    {
-        $source = [];
-        if (in_array('KXP', $this->fields['collection'])) {
-            if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-                $source['name'] = 'K10plus-Verbundkatalog';
-                $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+    public function getSource() : array {
+        if($recordSources = $this->thulbConfig->RecordSources) {
+            foreach ($recordSources->toArray() as $source) {
+                foreach (explode(',', $source['conditions']) as $condition) {
+                    list($field, $value) = explode(':', $condition);
+                    if(!isset($this->fields[$field])) {
+                        continue 2;
+                    }
+
+                    $fieldData = is_array($this->fields[$field]) ? $this->fields[$field] : [$this->fields[$field]];
+                    if (!in_array($value, $fieldData)) {
+                        continue 2;
+                    }
+                }
+
+                return [
+                    'name' => $source['name'],
+                    'url' => $source['url'] ?? null,
+                ];
             }
-            elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
-            }
-        }
-        elseif (in_array('DBT@UrMEL', $this->fields['collection_details'])) {
-            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
-            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
-        }
-        elseif (in_array('NL', $this->fields['collection'])) {
-            $source['name'] = 'Nationallizenz';
-            $source['url'] = 'https://www.nationallizenzen.de/';
         }
 
-        return $source;
+        return [];
+    }
+
+    public function getSummary() : array {
+        return [$this->getFirstFieldValue('520')];
     }
 
     public function isOpenAccess() : bool {

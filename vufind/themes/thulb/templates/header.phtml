@@ -63,7 +63,11 @@
               </a>
               <ul class="dropdown-menu">
                 <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
-                  <li  class="langOption<?= $this->layout()->userLang == $langCode ? ' active' : ''?>"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
+                  <?php if ($this->layout()->userLang != $langCode): ?>
+                    <li  class="langOption"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
+                  <?php else: ?>
+                    <li class="active"><span><?= $this->displayLanguageOption($langName)?></span></li>
+                  <?php endif; ?>
                 <?php endforeach; ?>
               </ul>
             </li>

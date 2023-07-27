@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class IsmnMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'ISMN';
-    protected $metadataKey = 'ISMN';
-    protected $recordDriverFunction = 'getISMNs';
+    protected ?string $sheetName = 'ISMN';
+    protected ?string $metadataKey = 'ISMN';
+    protected ?string $recordDriverFunction = 'getISMNs';
 }

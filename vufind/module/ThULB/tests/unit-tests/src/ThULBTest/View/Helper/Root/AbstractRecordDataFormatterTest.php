@@ -25,12 +25,20 @@
 
 namespace ThULBTest\View\Helper\Root;
 
-use VuFind\View\Helper\Root\RecordDataFormatter;
-use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
-use Box\Spout\Reader\ReaderFactory;
-use Box\Spout\Common\Type;
+use Box\Spout\Common\Entity\Row;
+use Box\Spout\Common\Exception\IOException;
+use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
+use Box\Spout\Reader\Exception\ReaderNotOpenedException;
+use Box\Spout\Reader\XLSX\Reader;
+use Box\Spout\Reader\XLSX\Sheet;
+use Exception;
+use Interop\Container\Exception\ContainerException;
+use Laminas\Router\RouteMatch;
+use Throwable;
 use ThULB\View\Helper\Root\RecordDataFormatterFactory;
 use ThULBTest\View\Helper\AbstractViewHelperTest;
+use VuFind\View\Helper\Root\RecordDataFormatter;
+use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use VuFindTest\Container\MockContainer;
 
 /**
@@ -48,41 +56,41 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
     /**
      * Provides the name of the sheet of rda.xlsx, that holds the test cases
      * 
-     * @var string
+     * @var ?string
      */
-    protected $sheetName;
+    protected ?string $sheetName = null;
     
     /**
      * Optional name of the template, that is used by the view helper. This
      * variable needs to be provided, if $recordDriverFunction is not used.
      * 
-     * @var string 
+     * @var ?string
      */
-    protected $template;
+    protected ?string $template = null;
     
     /**
      * Options for the spec builder of the record data formatter
      *
-     * @var type 
+     * @var array
      */
-    protected $options = [];
+    protected array $options = [];
 
     /**
      * Optional name of the function of the record driver, that provides the
      * data for the view helper. This variable needs to be provided, if 
      * $template is not used.
      *
-     * @var string 
+     * @var ?string
      */
-    protected $recordDriverFunction;
+    protected ?string $recordDriverFunction = null;
     
     /**
-     * Key for the meta data that is tested, like it is used in the
+     * Key for the metadata that is tested, like it is used in the
      * translation ini files.
      * 
-     * @var string 
+     * @var ?string
      */
-    protected $metadataKey;
+    protected ?string $metadataKey = null;
     
     /**
      * Titles for the metadata in different languages. They get extracted from
@@ -90,19 +98,20 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
      *
      * @var array
      */
-    protected $metadataTitles = [];
+    protected array $metadataTitles = [];
 
     /**
      * Main testing function. In normal cases, it is enough, to provide either
      * a template path that has to be used by the helper or a record driver
      * function in the derived class variables $template and $recordDriverFunction.
      * If both are needed for the view helper, provide both.
-     * 
+     *
      * In more complex theoretical cases overwrite this function or use other
      * functions "test[...]()" besides this one.
+     *
+     * @throws Exception|ContainerException|Throwable
      */
-    public function testFormatting()
-    {
+    public function testFormatting() {
         $key = is_null($this->metadataKey) ? 'test' : $this->metadataKey;
         
         foreach ($this->getRelevantData() as list($comment, $ppn, $longViewDe, $longViewEn, $shortView, $link)) {
@@ -176,8 +185,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
      * @param string $helperOutput
      * @return string
      */
-    protected function convertHtmlToString($helperOutput)
-    {
+    protected function convertHtmlToString(string $helperOutput) : string {
         $htmlLines = explode('<br />', $helperOutput);
         $stringLines = [];
         
@@ -200,43 +208,44 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
      * @param string $utf8String
      * @return string
      */
-    protected function normalizeUtf8String($utf8String)
-    {
+    protected function normalizeUtf8String(string $utf8String) : string {
         $output = iconv('UTF-8', 'ASCII//TRANSLIT', $utf8String);
         return preg_replace('/\s{2,}/', ' ', $output);
     }
 
 
     /**
-     * Extracts the relevant rows from the test cases spreadsheet. Additionally
-     * it extracts eventually denfined metadata titles from the sheet and stores
+     * Extracts the relevant rows from the test cases' spreadsheet. Additionally,
+     * it extracts eventually defined metadata titles from the sheet and stores
      * them in the $metadataTitles array.
-     * 
+     *
      * @return array
+     *
+     * @throws ReaderNotOpenedException|IOException
      */
-    protected function getRelevantData()
-    {
+    protected function getRelevantData() : array {
         $relevantRows = [];
         
-        /** @var \Box\Spout\Writer\Common\Sheet $sheet */
+        /** @var Sheet $sheet */
         foreach ($this->getSpreadSheetReader()->getSheetIterator() as $sheet) {
             if ($sheet->getName() === $this->sheetName) {
                 $isRelevantRow = false;
-                /** @var array $row */
+                /** @var Row $row */
                 foreach ($sheet->getRowIterator() as $row) {
-                    if (strpos($row[0], self::NAME_DE_MARKER) !== false) {
-                        $this->metadataTitles['de'] = $row[1];
-                    } else if (strpos($row[0], self::NAME_EN_MARKER) !== false) {
-                        $this->metadataTitles['en'] = $row[1];
-                    } else if (strpos($row[0], self::USED_FIELDS_MARKER) !== false) {
+                    $rowArray = $row->toArray();
+                    if (str_contains($rowArray[0], self::NAME_DE_MARKER)) {
+                        $this->metadataTitles['de'] = $rowArray[1];
+                    } else if (str_contains($rowArray[0], self::NAME_EN_MARKER)) {
+                        $this->metadataTitles['en'] = $rowArray[1];
+                    } else if (str_contains($rowArray[0], self::USED_FIELDS_MARKER)) {
                         $isRelevantRow = true;
                         continue;
                     }
                     if ($isRelevantRow) {
-                        if (empty($row[0])) {
+                        if (empty($rowArray[0])) {
                             break;
                         }
-                        $relevantRows[] = array_slice($row, 0, 6);
+                        $relevantRows[] = array_slice($rowArray, 0, 6);
                     }
                 }
                 break;
@@ -250,9 +259,11 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         return $relevantRows;
     }
 
-    protected function getSpreadSheetReader()
-    {
-        $spreadsheetReader = ReaderFactory::create(Type::XLSX);
+    /**
+     * @throws IOException
+     */
+    protected function getSpreadSheetReader() : Reader {
+        $spreadsheetReader = ReaderEntityFactory::createXLSXReader();
         $spreadsheetReader->open(PHPUNIT_FIXTURES_THULB . '/spreadsheet/rda.xlsx');
         
         return $spreadsheetReader;
@@ -262,9 +273,10 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
      * Build a formatter, including necessary mock view w/ helpers.
      *
      * @return RecordDataFormatter
+     *
+     * @throws ContainerException|Throwable
      */
-    protected function getFormatter()
-    {
+    protected function getFormatter() : RecordDataFormatter {
         // Build the formatter:
         $factory = new RecordDataFormatterFactory();
         $container = $this->getMockContainer();
@@ -275,13 +287,13 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         $view = $this->getPhpRenderer($helpers);
 
         // Mock out the router to avoid errors:
-        $match = new \Laminas\Router\RouteMatch([]);
+        $match = new RouteMatch([]);
         $match->setMatchedRouteName('foo');
         $view->plugin('url')
             ->setRouter($this->createMock('Laminas\Router\RouteStackInterface'))
             ->setRouteMatch($match);
 
-        // Inject the view object into all of the helpers:
+        // Inject the view object into all the helpers:
         $formatter->setView($view);
         foreach ($helpers as $helper) {
             $helper->setView($view);
@@ -290,13 +302,12 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         return $formatter;
     }
     
-    protected function getFormatterSpecBuilder()
-    {
+    protected function getFormatterSpecBuilder() : SpecBuilder {
         return new SpecBuilder();
     }
 
-    protected function getMockContainer() {
-        $container = new \VuFindTest\Container\MockContainer($this);
+    protected function getMockContainer() : MockContainer {
+        $container = new MockContainer($this);
         $container->set(
             \VuFind\RecordDriver\PluginManager::class,
             new \VuFind\RecordDriver\PluginManager($container)
@@ -312,6 +323,15 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
         $container->set(
             'SharedEventManager',
             new \Laminas\EventManager\SharedEventManager()
+        );
+        $container->set(
+            \Laminas\Cache\Service\StorageAdapterFactory::class,
+            new \Laminas\Cache\Service\StorageAdapterFactory(
+                new \Laminas\Cache\Storage\AdapterPluginManager($container),
+                new \Laminas\Cache\Service\StoragePluginFactory(
+                    $container->get(\Laminas\Cache\Storage\PluginManager::class)
+                )
+            )
         );
 
         return $container;

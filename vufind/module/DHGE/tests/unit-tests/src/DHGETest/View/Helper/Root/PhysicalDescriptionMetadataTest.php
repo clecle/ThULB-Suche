@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class PhysicalDescriptionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Umfang';
-    protected $metadataKey = 'Physical Description';
-    protected $recordDriverFunction = 'getPhysicalDescriptions';
+    protected ?string $sheetName = 'Umfang';
+    protected ?string $metadataKey = 'Physical Description';
+    protected ?string $recordDriverFunction = 'getPhysicalDescriptions';
 }

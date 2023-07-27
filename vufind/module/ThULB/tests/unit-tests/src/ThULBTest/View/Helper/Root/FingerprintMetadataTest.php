@@ -32,8 +32,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class FingerprintMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Fingerprint';
-    protected $metadataKey = 'Fingerprint';
-    protected $recordDriverFunction = 'getFingerprint';
-    protected $template = 'data-fingerprint.phtml';
+    protected ?string $sheetName = 'Fingerprint';
+    protected ?string $metadataKey = 'Fingerprint';
+    protected ?string $recordDriverFunction = 'getFingerprint';
+    protected ?string $template = 'data-fingerprint.phtml';
 }

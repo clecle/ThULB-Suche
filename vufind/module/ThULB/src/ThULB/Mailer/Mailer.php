@@ -2,6 +2,7 @@
 
 namespace ThULB\Mailer;
 
+use Interop\Container\ContainerInterface;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Mailer\Mailer as OriginalMailer;
 use VuFind\RecordDriver\AbstractBase;
@@ -11,7 +12,9 @@ use Laminas\View\Renderer\PhpRenderer;
 
 class Mailer extends OriginalMailer {
 
-    private $defaultReplyTo = null;
+    private ?string $defaultReplyTo = null;
+    private ?ContainerInterface $serviceLocator = null;
+
     /**
      * Send an email message representing a link.
      *
@@ -30,7 +33,11 @@ class Mailer extends OriginalMailer {
      */
     public function sendLink($to, $from, $msg, $url, $view, $subject = null,
                              $cc = null, $replyTo = null
-    ) {
+    ) : void {
+        if($this->serviceLocator) {
+            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->isLoggedIn();
+            $replyTo = $replyTo ?: $user->email;
+        }
         $replyTo = $replyTo ?: $this->defaultReplyTo;
         parent::sendLink($to, $from, $msg, $url, $view, $subject, $cc, $replyTo);
     }
@@ -53,7 +60,11 @@ class Mailer extends OriginalMailer {
      */
     public function sendRecord($to, $from, $msg, $record, $view, $subject = null,
                                $cc = null, $replyTo = null
-    ) {
+    ) : void {
+        if($this->serviceLocator) {
+            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->isLoggedIn();
+            $replyTo = $replyTo ?: $user->email;
+        }
         $replyTo = $replyTo ?: $this->defaultReplyTo;
         parent::sendRecord($to, $from, $msg, $record, $view, $subject, $cc, $replyTo);
     }
@@ -63,7 +74,11 @@ class Mailer extends OriginalMailer {
      *
      * @param string $replyTo
      */
-    public function setDefaultReplyTo(string $replyTo) {
+    public function setDefaultReplyTo(string $replyTo) : void {
         $this->defaultReplyTo = $replyTo;
+    }
+
+    public function setServiceLocator(ContainerInterface $serviceLocator) : void {
+        $this->serviceLocator = $serviceLocator;
     }
 }

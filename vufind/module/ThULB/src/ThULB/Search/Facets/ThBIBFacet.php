@@ -77,7 +77,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
             );
 
             // Always show facet groups with defined values
-            if(isset($this->thulbFacets->Group_Values->$groupKey)) {
+            if(isset($this->thulbFacets->TB_Group_Values->$groupKey)) {
                 $parentFacet['count'] = 1;
             }
 
@@ -152,8 +152,8 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      * @return string
      */
     private function getGroupInternalValue(string $group) : string {
-        if ($this->thulbFacets->Group_Values->$group ?? false) {
-            return $this->thulbFacets->Group_Values->$group;
+        if ($this->thulbFacets->TB_Group_Values->$group ?? false) {
+            return $this->thulbFacets->TB_Group_Values->$group;
         }
 
         if ($this->thulbFacets->$group ?? false) {

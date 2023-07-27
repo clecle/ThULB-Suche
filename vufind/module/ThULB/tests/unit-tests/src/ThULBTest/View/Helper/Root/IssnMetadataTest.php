@@ -32,7 +32,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class IssnMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'ISSN';
-    protected $metadataKey = 'ISSN';
-    protected $recordDriverFunction = 'getISSNs';
+    protected ?string $sheetName = 'ISSN';
+    protected ?string $metadataKey = 'ISSN';
+    protected ?string $recordDriverFunction = 'getISSNs';
 }

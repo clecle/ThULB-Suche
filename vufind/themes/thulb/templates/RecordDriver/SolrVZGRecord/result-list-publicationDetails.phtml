@@ -24,7 +24,7 @@
     <?php $containerLink = $this->driver->getContainerLink(); ?>
     <?php /* TODO: handle highlighting more elegantly here: */?>
     <?php if($containerLink): ?>
-      <a href="<?= $this->recordLinker()->related($containerLink)?>"><?= $this->highlight($journalTitle) ?></a><?= ($journalRef) ? ', ' . $journalRef : ''?>
+      <a href="<?= $this->recordLinker()->related($containerLink)?>" target="_blank"><?= $this->highlight($journalTitle) ?></a><?= ($journalRef) ? ', ' . $journalRef : ''?>
     <?php else: ?>
       <?= $this->highlight($journalTitle) ?><?= ($journalRef) ? ', ' . $journalRef : ''?>
     <?php endif; ?>

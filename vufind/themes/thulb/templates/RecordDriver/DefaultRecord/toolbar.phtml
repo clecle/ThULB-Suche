@@ -8,6 +8,7 @@
   $cart = $this->cart();
   $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId();
 ?>
+
 <ul class="nav nav nav-pills hidden-print pull-right" style="padding-top: 15px;">
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
     <li><a title="<?= $this->transEscAttr('Cite this')?>" class="cite-record" data-lightbox href="<?= $this->recordLinker()->getActionUrl($this->driver, 'Cite')?>" rel="nofollow"><i class="fa fa-quote-left" aria-hidden="true"></i></a></li>

@@ -33,7 +33,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class PrintingPlacesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Druckort';
-    protected $metadataKey = 'Printing places';
-    protected $recordDriverFunction = 'getPrintingPlaces';
+    protected ?string $sheetName = 'Druckort';
+    protected ?string $metadataKey = 'Printing places';
+    protected ?string $recordDriverFunction = 'getPrintingPlaces';
 }

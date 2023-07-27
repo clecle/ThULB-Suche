@@ -34,7 +34,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class LanguageNotesMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Angaben zu Sprache und Schrif';
-    protected $metadataKey = 'LanguageNotes';
-    protected $template = 'data-language_notes.phtml';
+    protected ?string $sheetName = 'Angaben zu Sprache und Schrif';
+    protected ?string $metadataKey = 'LanguageNotes';
+    protected ?string $template = 'data-language_notes.phtml';
 }

@@ -3,6 +3,10 @@
   $cover = $coverDetails['html'];
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+
+  $cart = $this->cart();
+  $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId();
+
   if ($cover):
     ob_start(); ?>
     <div class="hidden-xs media-<?= $thumbnailAlignment ?> <?= $this->escapeHtmlAttr($coverDetails['size'])?>">
@@ -11,11 +15,6 @@
     <?php $thumbnail = ob_get_contents(); ?>
   <?php ob_end_clean(); ?>
 <?php endif; ?>
-
-<?php
-  $cart = $this->cart();
-  $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId();
-?>
 
 <input type="hidden" value="<?= $this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
 <input type="hidden" value="<?= $this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />

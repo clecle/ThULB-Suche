@@ -34,7 +34,7 @@ namespace ThULBTest\View\Helper\Root;
 
 class TypeOfContentMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Art des Inhalts';
-    protected $metadataKey = 'Type of content';
-    protected $recordDriverFunction = 'getTypeofContent';
+    protected ?string $sheetName = 'Art des Inhalts';
+    protected ?string $metadataKey = 'Type of content';
+    protected ?string $recordDriverFunction = 'getTypeofContent';
 }

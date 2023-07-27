@@ -34,11 +34,11 @@ namespace DHGETest\View\Helper\Root;
 
 class CorpAuthorMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Körperschaft';
-    protected $metadataKey = 'Corporate Author';
-    protected $recordDriverFunction = 'getDeduplicatedAuthors';
-    protected $template = 'data-authors.phtml';
-    protected $options = [
+    protected ?string $sheetName = 'Körperschaft';
+    protected ?string $metadataKey = 'Corporate Author';
+    protected ?string $recordDriverFunction = 'getDeduplicatedAuthors';
+    protected ?string $template = 'data-authors.phtml';
+    protected array $options = [
                     'context' => [
                         'type' => 'corporate',
                         'schemaLabel' => 'creator',

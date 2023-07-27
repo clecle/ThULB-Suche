@@ -33,7 +33,7 @@ namespace ThULBTest\View\Helper\Root;
  */
 class NumberingMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Erscheinungsverlauf';
-    protected $metadataKey = 'Numbering';
-    protected $template = 'data-numbering.phtml';
+    protected ?string $sheetName = 'Erscheinungsverlauf';
+    protected ?string $metadataKey = 'Numbering';
+    protected ?string $template = 'data-numbering.phtml';
 }

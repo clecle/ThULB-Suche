@@ -32,7 +32,7 @@ namespace DHGETest\View\Helper\Root;
  */
 class EditionMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Ausgabe';
-    protected $metadataKey = 'Edition';
-    protected $recordDriverFunction = 'getEdition';
+    protected ?string $sheetName = 'Ausgabe';
+    protected ?string $metadataKey = 'Edition';
+    protected ?string $recordDriverFunction = 'getEdition';
 }

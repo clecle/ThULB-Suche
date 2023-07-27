@@ -33,8 +33,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class LocalClassificationMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Lokale Klassifikation';
-    protected $metadataKey = 'Local classification';
-    protected $recordDriverFunction = 'getLocalClassification';
-    protected $template = 'data-localClassification.phtml';
+    protected ?string $sheetName = 'Lokale Klassifikation';
+    protected ?string $metadataKey = 'Local classification';
+    protected ?string $recordDriverFunction = 'getLocalClassification';
+    protected ?string $template = 'data-localClassification.phtml';
 }

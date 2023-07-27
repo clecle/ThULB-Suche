@@ -33,11 +33,12 @@
  */
 
 namespace ThULB\ILS\Driver;
+
 use Exception;
 use VuFind\Exception\Forbidden as ForbiddenException;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\PAIA as OriginalPAIA,
-    VuFind\I18n\Translator\TranslatorAwareInterface,
     VuFind\Exception\ILS as ILSException,
     VuFind\Exception\Auth as AuthException;
 
@@ -47,11 +48,88 @@ use VuFind\ILS\Driver\PAIA as OriginalPAIA,
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
 class PAIA extends OriginalPAIA
+    implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
     
     const DAIA_DOCUMENT_ID_PREFIX = 'http://uri.gbv.de/document/opac-de-27:ppn:';
     const PAIA_INVALID_CREDENTIALS_MSG = '0:access_denied (invalid patron or password)';
+
+    /**
+     * Perform an HTTP request.
+     *
+     * Custom: Added Accept-Language parameter in header.
+     *
+     * @param string $id id for query in daia
+     *
+     * @return string
+     * @throws ILSException
+     */
+    protected function doHTTPRequest($id) : string
+    {
+        $http_headers = [
+            'Content-type: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+            'Accept: ' . $this->contentTypesRequest[$this->daiaResponseFormat],
+            'Accept-Language: ' . strtolower($this->getTranslatorLocale())
+        ];
+
+        $params = [
+            'id' => $id,
+            'format' => $this->daiaResponseFormat,
+        ];
+
+        try {
+            $result = $this->httpService->get(
+                $this->baseUrl,
+                $params,
+                $this->daiaTimeout,
+                $http_headers
+            );
+        } catch (\Exception $e) {
+            $msg = 'HTTP request exited with Exception ' . $e->getMessage() .
+                ' for record: ' . $id;
+            $this->throwAsIlsException($e, $msg);
+        }
+
+        if (!$result->isSuccess()) {
+            throw new ILSException(
+                'HTTP status ' . $result->getStatusCode() .
+                ' received, retrieving availability information for record: ' . $id
+            );
+        }
+
+        // check if result matches daiaResponseFormat
+        if ($this->contentTypesResponse != null) {
+            if ($this->contentTypesResponse[$this->daiaResponseFormat]) {
+                $contentTypesResponse = array_map(
+                    'trim',
+                    explode(
+                        ',',
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    )
+                );
+                [$responseMediaType] = array_pad(
+                    explode(
+                        ';',
+                        $result->getHeaders()->get('Content-type')->getFieldValue(),
+                        2
+                    ),
+                    2,
+                    null
+                ); // workaround to avoid notices if encoding is not set in header
+                if (!in_array(trim($responseMediaType), $contentTypesResponse)) {
+                    throw new ILSException(
+                        'DAIA-ResponseFormat not supported. Received: ' .
+                        $responseMediaType . ' - ' .
+                        'Expected: ' .
+                        $this->contentTypesResponse[$this->daiaResponseFormat]
+                    );
+                }
+            }
+        }
+
+        return $result->getBody();
+    }
 
     /**
      * Place Hold
@@ -63,12 +141,12 @@ class PAIA extends OriginalPAIA
      *
      * @param array $holdDetails An array of item and patron data
      *
-     * @return mixed An array of data on the request including
+     * @return array An array of data on the request including
      *               whether it was successful and a system message (if available)
      *
      * @throws ForbiddenException
      */
-    public function placeHold($holdDetails)
+    public function placeHold($holdDetails) : array
     {
         $details = parent::placeHold($holdDetails);
         
@@ -225,7 +303,7 @@ class PAIA extends OriginalPAIA
                 ? $doc['canrenew'] : false;
 
             // item (0..1) URI of a particular copy
-            $result['item_id'] = (isset($doc['item']) ? $doc['item'] : '');
+            $result['item_id'] = $doc['item'] ?? '';
 
             $result['renew_details']
                 = ($result['renewable']) ? $result['item_id'] : '';
@@ -239,18 +317,16 @@ class PAIA extends OriginalPAIA
             // requested (0..1) URI that was originally requested
 
             // about (0..1) textual description of the document
-            $result['title'] = (isset($doc['about']) ? $doc['about'] : null);
+            $result['title'] = $doc['about'] ?? null;
 
             // queue (0..1) number of waiting requests for the document or item
-            $result['request'] = (isset($doc['queue']) ? $doc['queue'] : null);
+            $result['request'] = $doc['queue'] ?? null;
 
             // renewals (0..1) number of times the document has been renewed
-            $result['renew'] = (isset($doc['renewals']) ? $doc['renewals'] : null);
+            $result['renew'] = $doc['renewals'] ?? null;
 
             // reminder (0..1) number of times the patron has been reminded
-            $result['reminder'] = (
-                isset($doc['reminder']) ? $doc['reminder'] : null
-            );
+            $result['reminder'] = $doc['reminder'] ?? null;
 
             // custom PAIA field
             // starttime (0..1) date and time when the status began
@@ -279,7 +355,7 @@ class PAIA extends OriginalPAIA
             // canceled
 
             // error (0..1) error message, for instance if a request was rejected
-            $result['message'] = (isset($doc['error']) ? $doc['error'] : '');
+            $result['message'] = $doc['error'] ?? '';
 
             // storageid (0..1) location URI
 
@@ -289,9 +365,9 @@ class PAIA extends OriginalPAIA
             $result['departmentId'] = $this->getDepIdFromItem($doc, $result['callnumber']);
 
             // status: provided (the document is ready to be used by the patron)
-            $result['available'] = $doc['status'] == 4 ? true : false;
+            $result['available'] = $doc['status'] == 4;
             
-            $result['queue'] = isset($doc['queue']) ? $doc['queue'] : 0;
+            $result['queue'] = $doc['queue'] ?? 0;
 
             // Optional VuFind fields
             /*
@@ -376,6 +452,9 @@ class PAIA extends OriginalPAIA
                 }
             }
         }
+
+        // @TODO: extract epn from id
+        $status['epn'] = substr($item['temporary-hack-do-not-use'], 0, -1);
 
         if (!$status['availability'] 
             && !isset($status['duedate'])
@@ -665,7 +744,7 @@ class PAIA extends OriginalPAIA
     }
 
     /**
-     * Helper function for PAIA to uniformely parse JSON. Extended and fixed
+     * Helper function for PAIA to uniformly parse JSON. Extended and fixed
      * version.
      *
      * @param string $file JSON data
@@ -678,7 +757,10 @@ class PAIA extends OriginalPAIA
     {
         $responseArray = json_decode($file, true);
 
-        if (isset($responseArray['error'])) {
+        if($responseArray === null) {
+            throw new ILSException('Could not decode ILS response. (' . $file . ')', 0);
+        }
+        elseif (isset($responseArray['error'])) {
             $message = $responseArray['error'];
             if (isset($responseArray['error_description'])) {
                 $message .= ' (' . $responseArray['error_description'] . ')';
@@ -708,7 +790,7 @@ class PAIA extends OriginalPAIA
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function checkRequestIsValid($id, $data, $patron)
+    public function checkRequestIsValid($id, $data, $patron) : array|bool
     {
         if (isset($patron['status']) && $patron['status']  == 2) {
             return [

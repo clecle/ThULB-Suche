@@ -32,8 +32,8 @@ namespace ThULBTest\View\Helper\Root;
  */
 class LineageItemsMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Vorheriger Späterer Titel';
-    protected $metadataKey = 'Lineage Items';
-    protected $recordDriverFunction = 'getLineageRecordLinks';
-    protected $template = 'data-allRecordLinks.phtml';
+    protected ?string $sheetName = 'Vorheriger Späterer Titel';
+    protected ?string $metadataKey = 'Lineage Items';
+    protected ?string $recordDriverFunction = 'getLineageRecordLinks';
+    protected ?string $template = 'data-allRecordLinks.phtml';
 }

@@ -97,6 +97,11 @@ class OnlineContentLookup extends AbstractBase
                             ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData, 'additionalBtnClass' => 'btn-xs'])
                     );
                 }
+
+                if($html) {
+                    $html[] = $this->phpRenderer->render('record/broken-link.phtml', ['driver' => $result]);
+                }
+
                 $response[] = array (
                     'id' => $source . ':' . $result->getUniqueID(),
                     'links' => $html

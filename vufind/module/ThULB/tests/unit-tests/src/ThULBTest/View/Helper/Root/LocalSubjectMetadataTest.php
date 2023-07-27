@@ -27,8 +27,8 @@ namespace ThULBTest\View\Helper\Root;
 
 class LocalSubjectMetadataTest extends AbstractRecordDataFormatterTest
 {
-    protected $sheetName = 'Lokale Schlagwörter';
-    protected $metadataKey = 'Local subject terms';
-    protected $recordDriverFunction = 'getLocalSubjects';
-    protected $template = 'data-localSubjects.phtml';
+    protected ?string $sheetName = 'Lokale Schlagwörter';
+    protected ?string $metadataKey = 'Local subject terms';
+    protected ?string $recordDriverFunction = 'getLocalSubjects';
+    protected ?string $template = 'data-localSubjects.phtml';
 }

@@ -8,7 +8,10 @@ use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container as SessionContainer;
 use Laminas\View\Model\ViewModel;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Log\LoggerAwareTrait;
@@ -56,7 +59,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             'hasIllAccount'       => false,
             'oldQuantity'         => 0,
             'creditPrice'         => $this->illConfig->creditPrice,
-            'chargeQuantityLimit' => $this->illConfig->chargeQuantityLimit,
+            'chargeQuantityLimit' => $this->getChargeQuantityLimit(),
         ]);
 
         try {
@@ -292,6 +295,25 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         }
 
         return $totalDue / 100;
+    }
+
+    /**
+     * Returns charge quantity limit based on user type.
+     *
+     * @return int
+     */
+    protected function getChargeQuantityLimit() : int {
+        try {
+            $paiaSession = new SessionContainer('PAIA', $this->serviceLocator->get(\Laminas\Session\SessionManager::class));
+
+            return match ((int)$paiaSession->userType ?? -1) {
+                3, 4, 5, 6, 8 => $this->illConfig->employeeChargeQuantityLimit,
+                default => $this->illConfig->chargeQuantityLimit
+            };
+        }
+        catch (ContainerExceptionInterface | NotFoundExceptionInterface $ignore) {}
+
+        return $this->illConfig->chargeQuantityLimit;
     }
 
     protected function doCsrfValidation() : bool {

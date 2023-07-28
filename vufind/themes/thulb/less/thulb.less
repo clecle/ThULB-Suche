@@ -635,12 +635,18 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-wrap: wrap;
 }
 
-.flex-wrap-xs {
+.flex-wrap-xs,
+.flex-wrap-md {
   flex-wrap: nowrap;
 }
 
 @media (max-width: 575px) {
   .flex-wrap-xs {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 991px) {
+  .flex-wrap-md {
     flex-wrap: wrap;
   }
 }
@@ -1292,6 +1298,9 @@ div.modal-body .facet-tree-container {
 .mt-2 {
   margin-top: 10px;
 }
+.p-2 {
+  padding: 10px;
+}
 .pb-1 {
   padding-bottom: 5px;
 }
@@ -1655,45 +1664,134 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 }
 
-.ill-charge {
+.ill-charge-page {
   margin: auto;
 
   .col-ill-description {
-    width: 50%;
     padding: 5px;
-    text-align: right;
+    white-space: nowrap;
+    vertical-align: middle;
+
+    label {
+      margin: 0;
+    }
   }
 
   .col-ill-text {
-    width: 50%;
     padding: 5px;
-    text-align: left;
+    width: 100%;
+    vertical-align: middle;
+    white-space: nowrap;
 
-    input {
-      text-align: center;
+    .credit-input {
+      display: flex;
+      flex-wrap: nowrap;
 
-      &[type=number] {
-        padding-left: 18px;
+      * {
+        border-radius: 0 !important;
       }
-    };
+
+      & :first-child {
+        border-bottom-left-radius: 4px !important;
+        border-top-left-radius: 4px !important;
+      }
+
+      & :last-child {
+        border-bottom-right-radius: 4px !important;
+        border-top-right-radius: 4px !important;
+      }
+
+      input[type=number] {
+        flex-grow: 1;
+        text-align: center;
+        min-width: 30px;
+        -moz-appearance: textfield;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+    }
   }
 
-  .flex-group {
-    margin: 0;
+  .ill-charge-wrapper {
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    border: 1px solid #E0E0E0;
+  }
+
+  .ill-charge-cost-wrapper {
+    min-width: 65px;
+    text-align: right;
+  }
+
+  .ill-charge-credits {
+    flex-basis: 50%;
+    flex-grow: 1;
+    padding: 5px;
+  }
+
+  .ill-charge-info {
+    flex-basis: 50%;
+    flex-grow: 1;
+    border-radius: 5px;
+    background-color: #fff;
+    border: 1px solid #E0E0E0;
+  }
+
+  .ill-checkbox {
+    display: flex;
+    padding: 5px;
+
+    input[type=checkbox] {
+      align-self: flex-start;
+      margin-right: 10px;
+    }
+
+    label {
+      margin-bottom: 0;
+    }
+  }
+
+  .ill-work-related {
+    input[type=text] {
+      width: 100%;
+    }
   }
 
   .ill-consent {
-    display: flex;
-    margin: 0 10%;
-    padding: 5px;
-
-    input {
-      align-self: start;
-      margin-right: 10px;
-    }
+    text-align: initial;
   }
 }
+
 .illtable th {
   padding-right: 20px;
   text-align: right;
+}
+
+.text-red {
+  color: red;
+}
+
+.d-block {
+  display: block;
+}
+
+.d-table {
+  display: table;
+}
+.d-table-row {
+  display: table-row;
+}
+
+.d-table-cell {
+  display: table-cell;
+}
+
+@media (max-width: 440px) {
+  .d-flex-xs {
+    display: flex;
+  }
 }

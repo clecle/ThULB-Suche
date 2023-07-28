@@ -1,4 +1,16 @@
 function calculatePrice() {
+    let el = $('#chargeQuantity');
+    let val = Number(el.val());
+    let min = Number(el.prop('min'));
+    let max = Number(el.prop('max'));
+
+    if(val < min) {
+        el.val(min);
+    }
+    if(val > max) {
+        el.val(max);
+    }
+
     $('#chargeCost').html(
         new Intl.NumberFormat("de-DE", { style: "currency", currency: "EUR" }).format(
             $('#chargeQuantity').val() * creditPrice
@@ -7,22 +19,26 @@ function calculatePrice() {
 
 function increaseCredits() {
     let el = $('#chargeQuantity');
-    if(el.val() < el.prop('max')) {
-        el.val(Number(el.val()) + 1);
+    let val = Number(el.val());
+    let max = Number(el.prop('max'));
+    if(val < max) {
+        el.val(++val);
         calculatePrice();
     }
 }
 
 function decreaseCredits() {
     let el = $('#chargeQuantity');
-    if(el.val() > el.prop('min')) {
-        el.val(Number(el.val()) - 1);
+    let val = Number(el.val());
+    let min = Number(el.prop('min'));
+    if(val > min) {
+        el.val(--val);
         calculatePrice();
     }
 }
 
 function toggleWorkRelated() {
     $('#department, #facility').each(function () {
-        $(this).prop('required', !$(this).prop('required')).toggle();
+        $(this).prop('required', !$(this).prop('required')).toggleClass('hidden');
     });
 }

@@ -11,62 +11,75 @@
   JS);
 ?>
 
-<div class="<?= $this->layoutClass('mainbody'); ?> ill-charge">
+<div class="<?= $this->layoutClass('mainbody'); ?> ill-charge-page">
   <?php if(!isset($this->exception)): ?>
     <h2><?= $this->transEsc('ill_credits_charge')?></h2>
     <?= $this->flashmessages(); ?>
 
+    <?php if(!$this->hasIllAccount): ?>
+      <div class="alert alert-warning"><?= $this->translate('ill_new_account_request'); ?></div>
+    <?php else: ?>
+      <div class="alert alert-info"><?= $this->translate('ill_credits_info'); ?></div>
+    <?php endif; ?>
+
     <form action="/ILL/chargeconfirmation" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
-      <?php if(!$this->hasIllAccount): ?>
-        <div class="alert alert-warning"><?= $this->translate('ill_new_account_request'); ?></div>
-      <?php endif; ?>
+      <div class="flex flex-wrap-md ill-charge-wrapper p-2">
+        <div class="ill-charge-credits">
+          <div class="d-table d-flex-xs flex-dir-col">
+            <div class="d-table-row">
+              <div class="col-ill-description d-table-cell"><?= $this->transEsc('ill_credits_current'); ?>:</div>
+              <div class="col-ill-text d-table-cell"><?= $this->oldQuantity; ?></div>
+            </div>
 
-      <div class="flex-group">
-        <div class="col-sm-6 col-ill-description"><?= $this->transEsc('ill_credits_current'); ?>:</div>
-        <div class="col-sm-2 col-ill-text"><?= $this->oldQuantity; ?></div>
-      </div>
-
-      <div class="flex-group flex-center">
-        <div class="col-sm-6 col-ill-description"><span><?= $this->transEsc('ill_credits_charge'); ?>:</span></div>
-        <div class="col-sm-2 col-ill-text credit-input">
-          <button type="button" name="decreaseQuantity" class="btn btn-primary" onclick="decreaseCredits()">-</button>
-          <input type="number" id="chargeQuantity" name="chargeQuantity" class="form-control" oninput="calculatePrice()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
-          <button type="button" name="increaseQuantity" class="btn btn-primary" onclick="increaseCredits()">+</button>
-        </div>
-      </div>
-
-      <div class="flex-group">
-        <div class="col-sm-6 col-ill-description"><?= $this->transEsc('Total'); ?>:</div>
-        <div class="col-sm-2 col-ill-text">
-          <span id="chargeCost" class="text-red"><?= $this->safeMoneyFormat(1 * $this->creditPrice); ?></span>
-        </div>
-      </div>
-
-      <p class="flex-center center-text text-red"><?= $this->transEsc('ill_no_refund'); ?></p>
-
-      <?php if(!$this->hasIllAccount): ?>
-        <div class="flex-center center-text">
-          <div class="col-sm-8 ill-consent ill-checkbox">
-            <input type="checkbox" id="consent" name="consent" value="true" required />
-            <label for="consent" class="font-weight-default"><?= $this->transEsc('ill_new_account_consent'); ?></label>
+            <div class="d-table-row">
+              <div class="col-ill-description d-table-cell"><label for="chargeQuantity"><?= $this->transEsc('ill_credits_charge'); ?>:<br>(max: <?= $this->chargeQuantityLimit; ?>)</label></div>
+              <div class="col-ill-text d-table-cell d-flex-xs flex-wrap-xs">
+                <div class="flex flex-center bold">
+                  <div class="flex credit-input">
+                    <button type="button" name="decreaseQuantity" class="btn btn-primary btn-sm" onclick="decreaseCredits()">-</button>
+                    <input type="number" id="chargeQuantity" name="chargeQuantity" class="form-control input-sm" oninput="calculatePrice()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
+                    <button type="button" name="increaseQuantity" class="btn btn-primary btn-sm" onclick="increaseCredits()">+</button>
+                  </div>
+                  <div class="ill-charge-cost-wrapper ml-2">
+                    = <span id="chargeCost" class="text-red ml-1"><?= $this->safeMoneyFormat(1 * $this->creditPrice); ?></span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <?php if(!$this->hasIllAccount): ?>
+            <div class="flex-center center-text">
+              <div class="ill-consent ill-checkbox">
+                <input type="checkbox" id="consent" name="consent" value="true" required />
+                <label for="consent" class="font-weight-default"><?= $this->transEsc('ill_new_account_consent'); ?></label>
+              </div>
+            </div>
+          <?php endif; ?>
         </div>
-      <?php endif; ?>
+
+        <div class="ill-charge-info p-2">
+          <div><?= $this->transEsc('ill_pay_with_thoska'); ?></div>
+          <div class="mt-2"><?= $this->transEsc('ill_no_refund'); ?></div>
+        </div>
+      </div>
 
       <?php if(in_array($this->thulb_userType(), [3, 4, 5, 6, 8])): ?>
-        <div class="col-sm-6 ill-checkbox ill-work-related">
-          <input type="checkbox" id="workrelated" name="workrelated" value="true" onchange="toggleWorkRelated()"/>
-          <label for="workrelated" class="control-label"><?= $this->transEsc('ill_work_related'); ?></label>
-        </div>
-        <div class="row m-auto">
-          <div class="flex-group flex-gap-2">
-            <input type="text" class="form-control" id="facility" name="facility" placeholder="<?= $this->transEsc('ill_work_related_facility'); ?>" />
-            <input type="text" class="form-control" id="department" name="department" placeholder="<?= $this->transEsc('ill_work_related_department'); ?>" />
+        <div class="ill-work-related">
+          <div class="ill-checkbox mt-2">
+            <input type="checkbox" id="workrelated" name="workrelated" value="true" onchange="toggleWorkRelated()"/>
+            <label for="workrelated" class="control-label"><?= $this->transEsc('ill_work_related'); ?></label>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <input type="text" class="form-control hidden mb-2 ml-1" id="facility" name="facility" placeholder="<?= $this->transEsc('ill_work_related_facility'); ?>" />
+              <input type="text" class="form-control hidden mb-2 ml-1" id="department" name="department" placeholder="<?= $this->transEsc('ill_work_related_department'); ?>" />
+            </div>
           </div>
         </div>
       <?php endif; ?>
 
-      <div class="row flex-center center-text">
+      <div class="row col-sm-6 flex-center center-text">
         <button class="btn btn-primary mt-2" ><?= $this->transEsc('ill_credits_charge'); ?></button>
       </div>
     </form>

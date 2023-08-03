@@ -22,7 +22,7 @@
   } elseif (!empty($this->facet['value'])) {
     $displayText = $this->escapeHtml($this->facet['value']);
   }
-  $displayText = '<span class="facet-value">' . $displayText . '</span>';
+  $displayText = '<span class="facet-value ml-1">' . $displayText . '</span>';
 
   if (!$this->facet['isApplied'] && $this->facet['operator'] == 'OR') {
     $displayText = $this->icon('facet-unchecked') . $displayText;

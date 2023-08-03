@@ -278,6 +278,10 @@ footer {
 .more-less-btn-wrapper > .btn {
   width: 100%;
   justify-content: center !important;
+
+  span + span {
+    margin-left: 5px;
+  }
 }
 
 /* ------ MyResearch ------ */
@@ -1670,4 +1674,8 @@ a.checkbox-filter > span > i.fa-info-circle,
       margin-left: 0;
     }
   }
+}
+
+.facet-loading-overlay {
+  display: none !important;
 }

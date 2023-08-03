@@ -2,21 +2,21 @@
 
 namespace ThULB\AjaxHandler;
 
+use Laminas\Mvc\Controller\Plugin\Params;
+use Laminas\Session\Container as SessionContainer;
 use VuFind\AjaxHandler\AbstractBase;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
-use Laminas\Mvc\Controller\Plugin\Params;
-use Laminas\Session\SessionManager;
 
 class HideMessage extends AbstractBase
     implements TranslatorAwareInterface
 {
     use TranslatorAwareTrait;
 
-    private $sessionManager;
+    private SessionContainer $sessionContainer;
 
-    public function __construct(SessionManager $sessionManager) {
-        $this->sessionManager = $sessionManager;
+    public function __construct(SessionContainer $sessionContainer) {
+        $this->sessionContainer = $sessionContainer;
     }
 
     /**
@@ -29,12 +29,12 @@ class HideMessage extends AbstractBase
     public function handleRequest(Params $params) : array {
         $identifier = $params->fromPost('message', $params->fromQuery('message'));
 
-        if(isset($identifier) && !empty($identifier)) {
+        if(!empty($identifier)) {
             $identifier = $identifier . '_expires';
             //$expires = time() + 7 * 24 * 60 * 60;       // hide message for 7 days
             $expires = time() + 24 * 60 * 60;       // hide message for 1 day
 
-            $this->sessionManager->getStorage()->offsetSet($identifier, $expires);
+            $this->sessionContainer->$identifier = $expires;
         }
 
         return $this->formatResponse(true);

@@ -28,7 +28,10 @@ class HideMessageFactory implements FactoryInterface
             throw new Exception('Unexpected options passed to factory.');
         }
         return new $requestedName(
-            $container->get('VuFind\SessionManager')
+            new \Laminas\Session\Container(
+                'SessionHelper',
+                $container->get(\Laminas\Session\SessionManager::class)
+            )
         );
     }
 }

@@ -11,7 +11,7 @@ return array(
             \ThULB\View\Helper\Root\RecordLinker::class => \VuFind\View\Helper\Root\RecordLinkerFactory::class,
             \ThULB\View\Helper\Root\ServerType::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \ThULB\View\Helper\Root\ServiceDesk::class => \ThULB\View\Helper\Root\ServiceDeskFactory::class,
-            \ThULB\View\Helper\Root\Session::class => 'ThULB\View\Helper\Root\Factory::getSession',
+            \ThULB\View\Helper\Root\Session::class => \VuFind\View\Helper\Root\SessionFactory::class,
             \VuFind\View\Helper\Root\RecordDataFormatter::class => \ThULB\View\Helper\Root\RecordDataFormatterFactory::class,
         ),
         'aliases' => array(

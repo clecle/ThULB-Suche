@@ -53,7 +53,7 @@ class ThULBFactory implements FactoryInterface
             $cache = $container
                 ->get(\Laminas\Cache\Service\StorageAdapterFactory::class)
                 ->createFromArrayConfiguration($settings);
-            $object->setCache($cache);
+            $object->setCacheStorage($cache);
         }
 
         return $object;

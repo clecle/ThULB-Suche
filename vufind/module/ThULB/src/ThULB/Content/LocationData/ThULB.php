@@ -2,7 +2,6 @@
 
 namespace ThULB\Content\LocationData;
 
-use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface as LoggerAwareInterface;
 use VuFindHttp\HttpServiceAwareInterface as HttpServiceAwareInterface;
@@ -10,18 +9,18 @@ use VuFindHttp\HttpServiceAwareInterface as HttpServiceAwareInterface;
 class ThULB implements
     HttpServiceAwareInterface, LoggerAwareInterface
 {
-    use \VuFindHttp\HttpServiceAwareTrait;
+    use \VuFind\Cache\CacheTrait;
     use \VuFind\Log\LoggerAwareTrait;
+    use \VuFindHttp\HttpServiceAwareTrait;
 
     protected Config $thulbConfig;
-    protected StorageInterface $cache;
 
     public function __construct($thulbConfig) {
         $this->thulbConfig = $thulbConfig;
-    }
 
-    public function setCache(StorageInterface $cache) : void {
-        $this->cache = $cache;
+        if($thulbConfig->cacheOptions['ttl'] ?? false) {
+            $this->cacheLifetime = $thulbConfig->cacheOptions['ttl'];
+        }
     }
 
     public function getLocationData(int $locationID = null) : array {
@@ -30,17 +29,15 @@ class ThULB implements
             $apiUrl .= '&location=' . $locationID;
         }
 
-        $cacheKey = null;
         if (isset($this->cache)) {
-            $cacheKey = md5($apiUrl);
-            if($result = $this->getCacheItem($cacheKey)) {
-                return $result;
+            if($result = $this->getCacheItem($apiUrl)) {
+                return $this->formatResult($result);
             }
         }
 
         try {
             $result = $this->httpService->get($apiUrl)->getBody();
-            $this->setCacheItem($cacheKey, $result);
+            $this->setCacheItem($apiUrl, $result);
 
             return $this->formatResult($result);
         }
@@ -51,10 +48,10 @@ class ThULB implements
         return [];
     }
 
-    protected function setCacheItem($cacheKey, $item) {
+    protected function setCacheItem($cacheKey, $item) : void {
         if ($cacheKey) {
             try {
-                $this->cache->setItem($cacheKey, $item);
+                $this->putCachedData($cacheKey, $item);
             }
             catch (\Laminas\Cache\Exception\RuntimeException $ex) {
                 // Try to determine if caching failed due to response size
@@ -79,7 +76,7 @@ class ThULB implements
 
     protected function getCacheItem($cacheKey) : ?array {
         try {
-            if ($result = $this->cache->getItem($cacheKey)) {
+            if ($result = $this->getCachedData($cacheKey)) {
                 $this->debug('Returning cached results');
                 return $this->formatResult($result);
             }

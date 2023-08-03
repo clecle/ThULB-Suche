@@ -70,7 +70,8 @@ class SolrVZGRecordFactory extends SolrDefaultWithoutSearchServiceFactory
             null,
             $container->get('VuFind\Config')->get('searches'),
             $container->get('VuFind\Config')->get('marcFormat'),
-            $container->get('VuFind\Config')->get('DepartmentsDAIA')
+            $container->get('VuFind\Config')->get('DepartmentsDAIA'),
+            $container->get('VuFind\Config')->get('thulb'),
         );
         $driver->attachILS(
             $container->get('VuFind\ILSConnection'),

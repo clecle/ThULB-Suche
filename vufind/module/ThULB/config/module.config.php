@@ -5,6 +5,7 @@ $config = array(
     'controllers' => array(
         'factories' => array(
             \ThULB\Controller\CartController::class => \VuFind\Controller\CartControllerFactory::class,
+            \ThULB\Controller\CoverController::class => \VuFind\Controller\CoverControllerFactory::class,
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
             \ThULB\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,

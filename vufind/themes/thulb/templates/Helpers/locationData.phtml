@@ -1,11 +1,16 @@
-<?php if($holding['items'][0]['locationapiid'] ?? false): ?>
-  <?php $locationData = $this->thulb_locationData($holding['items'][0]['locationapiid']); ?>
+<?php $locationApiId = $holding['items'][0]['locationapiid'] ?? false; ?>
+<?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
+  <?php $locationData = $this->thulb_locationData($locationApiId); ?>
   <?php if(!empty($locationData)): ?>
     <?php $weekday = date('N'); ?>
-    <div class="location-data-wrapper">
-      <div class="location-data">
+    <div class="location-data-wrapper hidden-xs">
+      <div id="location-data-<?= $locationApiId; ?>" class="location-data">
+        <h4><?= $locationData['name']; ?></h4>
         <h5><?= $this->transEsc('Address'); ?>:</h5>
-        <div><?= $locationData['address']; ?></div>
+        <div class="ws-nowrap">
+          <?= $locationData['address']; ?>
+          <a href="<?= $locationData['googleMapsUrl']; ?>" target="_blank" data-lightbox-ignore><i class="fa fa-map-marker"></i></a>
+        </div>
         <h5><?= $this->transEsc('Phone Number'); ?>:</h5>
         <div><?= $locationData['phone']; ?></div>
         <h5><?= $this->transEsc('Opening hours'); ?>:</h5>
@@ -18,8 +23,7 @@
           <?php endforeach; ?>
         </table>
         <div class="flex flex-space-evenly">
-          <a href="<?= $locationData['googleMapsUrl']; ?>" target="_blank"><i class="fa fa-map-marker"></i></a>
-          <a href="<?= $holding['locationhref']; ?>" target="_blank"><i class="fa fa-cloud"></i></a>
+          <a href="<?= $holding['locationhref']; ?>" target="_blank" data-lightbox-ignore><?= $this->transEsc('Further information'); ?></a>
         </div>
       </div>
     </div>

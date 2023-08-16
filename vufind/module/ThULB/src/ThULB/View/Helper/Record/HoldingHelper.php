@@ -177,4 +177,14 @@ class HoldingHelper extends AbstractHelper
     }
     return $holding_chron;
   }
+
+  public function groupByLocationApiId($holdings) {
+      $ret = [];
+      foreach($holdings as $holdingKey => $holding) {
+          $holdingApiId = $holding['items'][0]['locationapiid'] ?? 999;
+          $ret[$holdingApiId][$holdingKey] = $holding;
+      }
+
+      return $ret;
+  }
 }

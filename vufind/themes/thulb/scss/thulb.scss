@@ -651,6 +651,11 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-wrap: nowrap;
 }
 
+.flex-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
 @media (max-width: 575px) {
   .flex-wrap-xs {
     flex-wrap: wrap;
@@ -1344,6 +1349,12 @@ form#newpassword .form-group.flex-center {
 }
 
 .access-tab {
+  &.active {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+  }
+
   .col-description {
     width: 85px;
     margin-right: 10px;
@@ -1671,10 +1682,19 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 }
 
+.location-data-wrapper {
+  border-left: solid 1px #e5e5e5;
+}
+
 .location-data {
   min-width: 225px;
-  border-left: solid 1px #e5e5e5;
+  width: min-content;
   padding: 0 10px;
+
+  height: auto;
+  align-self: flex-start;
+  position: sticky;
+  top: 20px;
 
   i {
     padding: 5px;
@@ -1684,4 +1704,12 @@ a.checkbox-filter > span > i.fa-info-circle,
 .location {
   padding: 0 10px;
   border-bottom: solid 1px #e5e5e5;
+}
+
+.access-location-group {
+  flex-grow: 1;
+}
+
+.ws-nowrap {
+  white-space: nowrap;
 }

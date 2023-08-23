@@ -1,0 +1,36 @@
+<?php
+  // Set page title.
+  $this->headTitle($this->translate('Search Home'));
+
+  // Set default value if necessary:
+  if (!isset($this->searchClassId)) {
+    $this->searchClassId = 'Solr';
+  }
+
+  // Load search actions and settings (if any):
+  $options = $this->searchOptions($this->searchClassId);
+  $basicSearch = $options->getSearchAction();
+  $advSearch = $options->getAdvancedSearchAction();
+
+  $this->layout()->breadcrumbs = false;
+?>
+
+<div class="searchHomeContent">
+  <?php
+  $ilsStatusScript = <<<JS
+      $(document).ready(function() {
+        $.ajax({
+            dataType: 'json',
+            method: 'GET',
+            data: {'offlineModeMsg':'ils_offline_home_message'},
+            url: VuFind.path + '/AJAX/JSON?method=getIlsStatus',
+            success: function(response) {
+                $('.searchHomeContent').append(response.data);
+            }
+        });
+        $("#searchForm_lookfor").focus();
+      });
+JS;
+  ?>
+  <?= $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
+</div>

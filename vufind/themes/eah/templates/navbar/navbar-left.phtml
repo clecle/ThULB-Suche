@@ -1,0 +1,36 @@
+<div class="collapse navbar-collapse" id="tsnavbar">
+  <ul class="nav navbar-nav">
+    <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+      <li class="language dropdown visible-xs">
+        <a href="#_" class="dropdown-toggle" data-toggle="dropdown">
+          <?= strtoupper($this->layout()->userLang); ?> <b class="caret"></b>
+        </a>
+        <ul class="dropdown-menu">
+          <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+            <?php if ($this->layout()->userLang != $langCode): ?>
+              <li  class="langOption"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
+            <?php else: ?>
+              <li class="active"><span><?= $this->displayLanguageOption($langName)?></span></li>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </ul>
+      </li>
+    <?php endif; ?>
+    <li><a href="https://katalog.bibliothek.eah-jena.de/DB=2/" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
+    <li><a href="https://www.eah-jena.de/bibliothek/kontakt-wir-ueber-uns/kontakt-oeffnungszeiten" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+    <li><a href="#_" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+    <li><a href="https://www.eah-jena.de/bibliothek/anmelden-ausleihen/fernleihe" target="_blank"><?= $this->transEsc('Header_interlibrary_loan')?></a></li>
+    <li><a href="#_" target="_blank"><?= $this->transEsc('Header_acquisition_suggestion')?></a></li>
+
+    <li class="dropdown">
+      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('more')?> <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="https://www.eah-jena.de/bibliothek/suchen-finden/datenbanken" target="_blank"><?= $this->transEsc('Databases')?></a></li>
+        <li><a href="https://www.eah-jena.de/bibliothek/suchen-finden/zeitschriften-e-journals" target="_blank"><?= $this->transEsc('Journals')?></a></li>
+        <li><a href="https://www.eah-jena.de/bibliothek/suchen-finden/normen" target="_blank"><?= $this->transEsc('Header_norms')?></a></li>
+        <li><a href="https://www.thulb.uni-jena.de" target="_blank"><?= $this->transEsc('Header_thulb')?></a></li>
+        <li><a href="https://www.stadtbibliothek-jena.de/de/startseite/700073" target="_blank"><?= $this->transEsc('Header_eab_jena')?></a></li>
+      </ul>
+    </li>
+  </ul>
+</div>

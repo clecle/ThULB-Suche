@@ -6,7 +6,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use \VuFind\Search\Results\ResultsFactory as OriginalResultsFactory;
+use \VuFind\Search\Solr\ResultsFactory as OriginalResultsFactory;
 
 class ResultsFactory extends OriginalResultsFactory
 {

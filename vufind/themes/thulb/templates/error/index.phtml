@@ -4,7 +4,7 @@
 
   $this->layout()->breadcrumbs = '<li class="active">Error</li>';
 ?>
-<?php if ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && strpos($_SERVER['REQUEST_URI'], '/Search/Results') === 0): ?>
+<?php if ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && str_starts_with($_SERVER['REQUEST_URI'], '/Search/Results')): ?>
   <div class="alert alert-danger">
     <h2><?= $this->transEsc('Index not reachable')?></h2>
     <p>
@@ -19,7 +19,7 @@
       <?= $this->translate('Use contact form for error question')?>
     </p>
   </div>
-<?php elseif ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && strpos($_SERVER['REQUEST_URI'], '/Summon/Results') === 0): ?>
+<?php elseif ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && str_starts_with($_SERVER['REQUEST_URI'], '/Summon/Results')): ?>
   <div class="alert alert-danger">
     <h2><?= $this->transEsc('Index not reachable')?></h2>
     <p>

@@ -13,7 +13,7 @@ class ServiceDesk extends AbstractHelper
     protected array $forms = array();
 
     public function __construct(Config $config) {
-        $this->enabled = $config->ServiceDesk->enabled;
+        $this->enabled = $config->ServiceDesk->enabled ?? false;
 
         if($this->enabled) {
             $this->baseUrl = $config->ServiceDesk->baseUrl;

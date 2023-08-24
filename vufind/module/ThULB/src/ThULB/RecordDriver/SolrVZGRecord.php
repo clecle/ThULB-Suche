@@ -1913,7 +1913,7 @@ class SolrVZGRecord extends SolrMarc
                 $parts = explode($searchString, $subject);
                 if (is_array($parts) && $parts) {
                     foreach ($parts as $i => $part) {
-                        $parts[$i] = trim($replace(' ' . $part . ' ', $searches, $highlights));
+                        $parts[$i] = $replace($part, $searches, $highlights);
                     }
 
                     return implode($highlightString, $parts);
@@ -1922,7 +1922,7 @@ class SolrVZGRecord extends SolrMarc
                 return $subject;
             };
 
-            $modifiedString = trim($replace(' ' . $plainString . ' ', array_keys($replacements), array_values($replacements)));
+            $modifiedString = trim($replace($plainString, array_keys($replacements), array_values($replacements)));
         }
 
         return $modifiedString;

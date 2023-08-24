@@ -70,11 +70,13 @@ class OnlineContent extends AbstractHelper
             'Solr' => array (
                 'Holding' => 'driver',
                 'Libkey' => 'doiLinks',
-                'Solr' => 'driver'
+                'Solr' => 'driver',
+                'DOI' => 'driver'
             ),
             'Summon' => array (
                 'Libkey' => 'doiLinks',
                 'Holding' => 'driver',
+                'DOI' => 'driver'
             )
         );
 
@@ -137,6 +139,29 @@ class OnlineContent extends AbstractHelper
         }
 
         return [];
+    }
+
+    /**
+     * Get the fulltext link data from the doi.
+     *
+     * @param DefaultRecord $driver
+     *
+     * @return array
+     */
+    protected function getDOIFulltextLink(DefaultRecord $driver) : array {
+        $solrFt = [];
+
+        if ($doi = $driver->getCleanDOI()) {
+            $solrFt[] = array(
+                'type' => 'fulltext',
+                'label' => 'Full text / PDF',
+                'link' => 'https:doi.org/' . $doi,
+                'source' => $driver->getSourceIdentifier(),
+                'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted'
+            );
+        }
+
+        return $solrFt;
     }
 
     /**

@@ -17,11 +17,6 @@ $config = array(
             ),
         ),
     ),
-    'view_helpers' => array(
-        'invokables' => array(
-            'thulb_holdingHelper' => \DHGE\View\Helper\Record\HoldingHelper::class,
-        ),
-    ),
 );
 
 return $config;

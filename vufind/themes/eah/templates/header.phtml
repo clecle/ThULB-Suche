@@ -25,8 +25,7 @@
 <nav class="navbar navbar-default">
   <div class="container">
     <div class="row">
-      <div class="navbar-header">
-        <?= $this->render('navbar/navbar-left.phtml'); ?>
+      <div class="col-sm-3 navbar-header pull-right">
         <ul class="nav navbar-nav navbar-right">
         <?php if (!isset($this->layout()->renderingError)): ?>
           <?php $cart = $this->cart(); if ($cart->isActive()): ?>
@@ -101,6 +100,8 @@
           <span class="icon-bar"></span>
         </button>
       </div>
+
+      <?= $this->render('navbar/navbar-left.phtml'); ?>
     </div>
   </div>
 </nav>

@@ -1488,7 +1488,6 @@ form#newpassword .form-group.flex-center {
     flex-direction: row;
     justify-content: flex-end;
     align-items: center;
-    width: 100%;
 
     #tsnavbar {
       padding: 0;
@@ -1535,6 +1534,12 @@ form#newpassword .form-group.flex-center {
 
 .navbar > .container .navbar-brand {
   margin-left: 0;
+}
+
+@media (max-width: 767px) {
+  .navbar-default .navbar-header {
+    width: 100%;
+  }
 }
 
 .access-reference {

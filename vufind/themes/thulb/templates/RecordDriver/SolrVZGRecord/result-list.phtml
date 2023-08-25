@@ -1,5 +1,6 @@
 <?php
-  $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'small', $this->recordLinker()->getUrl($this->driver));
+  $recordLinker = $this->recordLinker($this->results);
+  $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'small', $recordLinker->getUrl($this->driver));
   $cover = $coverDetails['html'];
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -29,11 +30,11 @@
       <div class="col-xs-11 middle">
         <div>
           <?php if ($this->driver->getSourceIdentifier() == "Summon"): ?>
-            <a href="<?= $this->recordLinker()->getUrl($this->driver)?>" class="title Summontitle getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
+            <a href="<?= $recordLinker->getUrl($this->driver)?>" class="title Summontitle getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
               <?= $this->record($this->driver)->getTitleHtml()?>
             </a>
           <?php else: ?>
-            <a href="<?= $this->recordLinker()->getUrl($this->driver)?>" class="title getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
+            <a href="<?= $recordLinker->getUrl($this->driver)?>" class="title getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
                 <?= $this->record($this->driver)->getTitleHtml()?>
             </a>
           <?php endif; ?>
@@ -50,14 +51,14 @@
             $i = 0;
             foreach ($dedupData as $source => $current) {
               if (++$i == 1) {
-                ?><span class="currentSource"><a href="<?= $this->recordLinker()->getUrl($this->driver)?>"><?= $this->transEsc("source_$source", array(), $source)?></a></span><?php
+                ?><span class="currentSource"><a href="<?= $recordLinker->getUrl($this->driver)?>"><?= $this->transEsc("source_$source", array(), $source)?></a></span><?php
               } else {
                 if ($i == 2) {
                   ?> <span class="otherSources">(<?= $this->transEsc('Other Sources')?>: <?php
                 } else {
                   ?>, <?php
                 }
-                ?><a href="<?= $this->recordLinker()->getUrl($current['id'])?>"><?= $this->transEsc("source_$source", array(), $source)?></a><?php
+                ?><a href="<?= $recordLinker->getUrl($current['id'])?>"><?= $this->transEsc("source_$source", array(), $source)?></a><?php
               }
             }
             if ($i > 1) {
@@ -138,7 +139,7 @@
             <div class="hierarchyTreeLink">
               <input type="hidden" value="<?= $this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
               <i class="fa fa-fw fa-sitemap" aria-hidden="true"></i>
-              <a class="hierarchyTreeLinkText" data-lightbox href="<?= $this->recordLinker()->getTabUrl($this->driver, 'HierarchyTree')?>?hierarchy=<?= urlencode($hierarchyID)?>#tabnav" title="<?= $this->transEscAttr('hierarchy_tree')?>" data-lightbox-href="<?= $this->recordLink()->getTabUrl($this->driver, 'AjaxTab')?>?hierarchy=<?= urlencode($hierarchyID)?>" data-lightbox-post="tab=hierarchytree">
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?= $recordLinker->getTabUrl($this->driver, 'HierarchyTree')?>?hierarchy=<?= urlencode($hierarchyID)?>#tabnav" title="<?= $this->transEscAttr('hierarchy_tree')?>" data-lightbox-href="<?= $this->recordLink()->getTabUrl($this->driver, 'AjaxTab')?>?hierarchy=<?= urlencode($hierarchyID)?>" data-lightbox-post="tab=hierarchytree">
                 <?= $this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?= $this->escapeHtml($hierarchyTitle)?><?php endif; ?>
               </a>
             </div>

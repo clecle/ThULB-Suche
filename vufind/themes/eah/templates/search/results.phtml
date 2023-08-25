@@ -50,10 +50,12 @@
   $this->headScript()->appendFile("observer_manager.js");
   $this->headScript()->appendFile("check_item_statuses.js");
   $this->headScript()->appendFile("check_save_statuses.js");
+
+  $recordTotal = $this->results->getResultTotal();
 ?>
 
 <div id="searchcontent"<?= isset($searchClassId) ? 'class="search-' . $searchClassId . '";' : '';?>>
-  <div class="<?= $this->layoutClass('mainbody')?>">
+  <div class="<?= $this->layoutClass('mainbody')?><?= $recordTotal == 0 ? ' width-fill-parent' : ''; ?>">
     <div id="resultlist">
         <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
           <?php foreach ($this->results->getRecommendations('top') as $current): ?>

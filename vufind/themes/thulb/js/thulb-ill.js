@@ -41,4 +41,6 @@ function toggleWorkRelated() {
     $('#department, #facility').each(function () {
         $(this).prop('required', !$(this).prop('required')).toggleClass('hidden');
     });
+
+    $('#ill-cost').toggle();
 }

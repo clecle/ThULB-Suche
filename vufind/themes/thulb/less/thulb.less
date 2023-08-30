@@ -635,14 +635,29 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-wrap: wrap;
 }
 
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
 .flex-wrap-xs,
 .flex-wrap-md {
   flex-wrap: nowrap;
 }
 
+.flex-break {
+  flex-basis: 100%;
+  height: 0;
+}
+
 @media (max-width: 575px) {
   .flex-wrap-xs {
     flex-wrap: wrap;
+  }
+}
+@media (max-width: $screen-xs-max) {
+  .flex-break-sm {
+    flex-basis: 100% !important;
+    height: 0;
   }
 }
 @media (max-width: 991px) {
@@ -1280,8 +1295,12 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.flex-gap-2 {
+  gap: 10px;
+}
 .m-auto {
   margin: auto;
+  width: fit-content;
 }
 .mb-2 {
   margin-bottom: 10px !important;
@@ -1295,8 +1314,11 @@ div.modal-body .facet-tree-container {
 .mr-2 {
   margin-right: 10px !important;
 }
+.mt-0 {
+  margin-top: 0 !important;
+}
 .mt-2 {
-  margin-top: 10px;
+  margin-top: 10px !important;
 }
 .p-2 {
   padding: 10px;
@@ -1667,10 +1689,15 @@ a.checkbox-filter > span > i.fa-info-circle,
 .ill-charge-page {
   margin: auto;
 
+  .ill-row {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
   .col-ill-description {
-    padding: 5px;
     white-space: nowrap;
-    vertical-align: top;
 
     label {
       margin: 0;
@@ -1679,43 +1706,28 @@ a.checkbox-filter > span > i.fa-info-circle,
 
   .col-ill-text {
     padding: 5px;
-    width: 100%;
     vertical-align: top;
+    margin-left: auto;
+    width: fit-content;
   }
 
   .credit-input {
     display: flex;
-    flex-wrap: wrap;
     border: 1px solid #ccc;
     border-radius: 5px;
     overflow: hidden;
     width: 150px;
+    flex-wrap: nowrap;
 
-    &.glow {
-      /* from input:focus */
-      border-color: #568ebe;
-      outline: 0;
-      -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(86, 142, 190, 0.6);
-      box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 8px rgba(86, 142, 190, 0.6);
-    }
-
-    div {
-      flex-grow: 1;
-      flex-wrap: nowrap;
-
-      .btn {
-        border-radius: 0 !important;
-        outline: none;
-      }
-
-      input, input:focus {
-        border: none !important;
-      }
+    .btn {
+      border-radius: 0 !important;
+      outline: none;
     }
 
     input[type=number] {
       flex-grow: 1;
       text-align: center;
+      border-radius: 0 !important;
       min-width: 30px;
       -moz-appearance: textfield;
     }
@@ -1737,33 +1749,33 @@ a.checkbox-filter > span > i.fa-info-circle,
     }
   }
 
-  .ill-charge-wrapper {
-    background-color: #f3f3f3;
-    border-radius: 5px;
-    border: 1px solid #E0E0E0;
-  }
-
   .ill-charge-credits {
-    flex-basis: 50%;
+    min-width: 330px;
+    flex-basis: 40%;
     flex-grow: 1;
-    padding: 5px;
+
+    & > :not(:last-child) {
+      border-bottom: 1px solid #000;
+    }
   }
 
-  .ill-charge-info {
-    flex-basis: 65%;
+  .ill-info {
+    flex-basis: 40%;
     flex-grow: 1;
-    border-radius: 5px;
-    background-color: #fff;
-    border: 1px solid #E0E0E0;
+
+    .alert {
+      margin: 0;
+    }
   }
 
   .ill-checkbox {
     display: flex;
-    padding: 5px;
+    align-items: baseline;
+    flex-basis: 100%;
 
     input[type=checkbox] {
-      align-self: flex-start;
       margin-right: 10px;
+      margin-top: 0;
     }
 
     label {
@@ -1772,10 +1784,9 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 
   .ill-work-related {
-    border-radius: 5px;
-    background-color: #fafafa;
-    border: 1px solid #E0E0E0;
-    flex-basis: 100%;
+    & > * {
+      flex-grow: 1;
+    }
 
     input[type=text] {
       width: 100%;
@@ -1783,7 +1794,7 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 
   .ill-consent {
-    text-align: initial;
+    flex-wrap: nowrap;
   }
 }
 

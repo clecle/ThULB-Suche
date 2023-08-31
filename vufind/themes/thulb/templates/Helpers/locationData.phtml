@@ -3,7 +3,7 @@
   <?php $locationData = $this->thulb_locationData($locationApiId); ?>
   <?php if(!empty($locationData)): ?>
     <?php $weekday = date('N'); ?>
-    <div class="location-data-wrapper hidden-xs">
+    <div class="location-data-wrapper hidden-sm">
       <div id="location-data-<?= $locationApiId; ?>" class="location-data">
         <h4><?= $locationData['name']; ?></h4>
         <h5><?= $this->transEsc('Address'); ?>:</h5>

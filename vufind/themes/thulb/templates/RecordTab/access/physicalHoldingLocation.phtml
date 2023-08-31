@@ -4,7 +4,7 @@
     <span class="col-text"><?= $this->thulb_holdingHelper()->getLocation($holding, true);?></span>
     <?php $locationApiId = $holding['items'][0]['locationapiid'] ?? false; ?>
     <?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
-      <button class="btn btn-xs btn-primary visible-xs" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());">Öffnungszeiten</button>
+      <button class="btn btn-xs btn-primary visible-xs visible-sm" data-target="modal-test" onclick="$('#modal > .modal-dialog').addClass('modal-location'); VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());">Öffnungszeiten</button>
     <?php endif; ?>
   </h3>
   <div class="flex flex-wrap-reverse-xs">

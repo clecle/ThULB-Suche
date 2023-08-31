@@ -1285,6 +1285,11 @@ div.dataCheck table {
   }
 }
 
+.modal-dialog {
+  max-width: fit-content;
+  margin: 10px auto
+}
+
 div.modal-body .facet-tree-container {
   border-top: 1px solid #ddd;
   border-left: 1px solid #ddd;

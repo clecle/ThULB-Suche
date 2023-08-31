@@ -36,7 +36,7 @@ class ThULB implements
         }
 
         try {
-            $result = $this->httpService->get($apiUrl)->getBody();
+            $result = $this->httpService->get($apiUrl, [], 10)->getBody();
             $this->setCacheItem($apiUrl, $result);
 
             return $this->formatResult($result);

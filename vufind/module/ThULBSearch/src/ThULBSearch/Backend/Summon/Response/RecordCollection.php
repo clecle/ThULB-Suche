@@ -55,7 +55,7 @@ class RecordCollection extends OriginalRecordCollection
 
             foreach ($this->response['facetFields'] as $facetField) {
                 foreach ($facetField['counts'] as $facetItem) {
-                    $blenderFacets[$facetField['fieldName']][$facetItem['value']] = $facetItem['count'];
+                    $blenderFacets[$facetField['displayName']][$facetItem['value']] = $facetItem['count'];
                 }
             }
 

@@ -95,11 +95,12 @@
 <?php if (!empty($holdings)): ?>
   <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
     <?php if($holdingKey == 'Remote') continue; ?>
+    <?php $isMag = ($holding['items'][0] ?? false) && ($holding['items'][0]['departmentId'] ?? false) == 'Mag'; ?>
     <h3 class="flex flex-wrap-xs">
       <div class="col-description"><?= $this->transEsc('Location') ?>:</div>
       <div class="col-text">
-        <?= $this->thulb_holdingHelper()->getLocation($holding, true);?>
-        <?php if(($holding['items'][0] ?? false) && ($holding['items'][0]['departmentId'] ?? false) == 'Mag'): ?>
+        <?= $this->thulb_holdingHelper()->getLocation($holding, !$isMag);?>
+        <?php if($isMag): ?>
           <i class="fa fa-info-circle brand-text-green" onclick="VuFind.lightbox.showAlert('<?= $this->transEsc('location_mag_info', ["'" => "\\'"]); ?>', 'info');"></i>
         <?php endif; ?>
       </div>

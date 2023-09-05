@@ -34,9 +34,9 @@ body {
   flex-direction: column;
   min-height: 100%;
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-image: url('../images/Muster.png');
+  background-image: url('../images/Muster.svg');
   background-repeat: no-repeat;
-  background-position: bottom right;
+  background-position: top -200px right -600px;
   background-attachment: fixed;
 }
 
@@ -431,8 +431,9 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .brand-landing-page-logo {
   display: block;
-  height: 70px;
+  max-height: 80px;
   margin: 100px auto 40px;
+  max-width: calc(100% - 30px);
 }
 
 .brand-bg-green {
@@ -559,27 +560,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 .startpage_searchbox {
   margin-top: 2%;
   margin-bottom: 5%;
-}
-
-.tutorial {
-  color: white;
-  text-align: center;
-  background-color: $brand-primary;
-  padding: 20px;
-  margin-top: 20px;
-  display: table;
-}
-.tutorial_sub > h1 {
-  font-weight: bold;
-}
-.tutorial_sub > h5 {
-  text-transform: uppercase;
-}
-.tutorial_sub > img {
-  padding-top: 20px;
-}
-.tutorial_txt {
-  min-height: 40px;
 }
 
 .testingbg {
@@ -1484,20 +1464,9 @@ form#newpassword .form-group.flex-center {
   background-color: $brand-dark-blue;
   color: white;
 
-  .navbar-header {
+  .navbar-header .navbar-nav {
     display: flex;
-    flex-wrap: nowrap;
-    flex-direction: row;
     justify-content: flex-end;
-    align-items: center;
-
-    #tsnavbar {
-      padding: 0;
-    }
-
-    .navbar-nav {
-      display: flex;
-    }
   }
 
   .navbar-toggle .icon-bar {
@@ -1512,11 +1481,19 @@ form#newpassword .form-group.flex-center {
 
       & > a {
         color: white;
+        padding: 0 15px;
+        display: flex;
+        align-items: center;
+        height: 50px;
 
         &:hover,
         &:focus {
           background-color: $brand-primary;
           color: white;
+        }
+
+        .caret {
+          margin-left: 4px;
         }
       }
     }
@@ -1527,7 +1504,6 @@ form#newpassword .form-group.flex-center {
   }
 
   .navbar-right {
-    margin-left: auto;
     i {
       font-size: 25px;
     }
@@ -1659,13 +1635,8 @@ body > header {
   }
 }
 
-#cartSummary #cartItems {
-  display: flex;
-  align-items: center;
-
-  & > * + * {
-    margin-left: 5px;
-  }
+#cartSummary #cartItems > * + * {
+  margin-left: 5px;
 }
 
 .user-icon {
@@ -1693,6 +1664,10 @@ div.striped {
 
 .authority-form input[type="checkbox"] {
   align-self: start;
+}
+
+.fa-info-circle {
+  cursor: pointer;
 }
 
 a.checkbox-filter > span > i.fa-info-circle,

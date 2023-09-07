@@ -74,11 +74,11 @@ class ThULB implements
         }
     }
 
-    protected function getCacheItem($cacheKey) : ?array {
+    protected function getCacheItem($cacheKey) : ?string {
         try {
             if ($result = $this->getCachedData($cacheKey)) {
                 $this->debug('Returning cached results');
-                return $this->formatResult($result);
+                return $result;
             }
         }
         catch (\Exception $ex) {

@@ -400,9 +400,16 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 .eah-top {
   .eah-logos-position {
-    position: absolute;
-    top: 10px;
-    width: 100%;
+    height: 100px;
+    padding-top: 15px;
+
+    background: linear-gradient(
+      to bottom,
+      $brand-green 0%,
+      $brand-green 50%,
+      $brand-dark-blue 50%,
+      $brand-dark-blue 100%
+    );
   }
 
   .eah-logos {
@@ -1553,6 +1560,10 @@ form#newpassword .form-group.flex-center {
   }
   .dl-horizontal dd {
     margin-left: 200px;
+  }
+
+  #tsnavbar {
+    padding: 0;
   }
 }
 

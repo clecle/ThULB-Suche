@@ -36,10 +36,13 @@ class ThULB implements
         }
 
         try {
-            $result = $this->httpService->get($apiUrl, [], 10)->getBody();
-            $this->setCacheItem($apiUrl, $result);
+            $response = $this->httpService->get($apiUrl, [], 10);
+            if ($response->getStatusCode() == 200) {
+                $body = $response->getBody();
+                $this->setCacheItem($apiUrl, $body);
 
-            return $this->formatResult($result);
+                return $this->formatResult($body);
+            }
         }
         catch (\Exception $ex) {
             $this->logError($ex);

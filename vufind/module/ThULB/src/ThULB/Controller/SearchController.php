@@ -101,14 +101,6 @@ class SearchController extends OriginalController
             $view->exception = $e;
         }
 
-        $_curr = memory_get_usage();
-        $_currK = $_curr / 1024;
-        $_currM = $_currK / 1024;
-        $_peak = memory_get_peak_usage();
-        $_peakK = $_peak / 1024;
-        $_peakM = $_peakK / 1024;
-        $stop = true;
-
         return $view;
     }
 

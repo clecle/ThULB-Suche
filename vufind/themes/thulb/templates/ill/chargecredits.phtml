@@ -32,7 +32,8 @@
               <div class="col-ill-text">
                 <div class="flex credit-input">
                   <button type="button" name="decreaseQuantity" class="btn btn-primary btn-sm" onclick="decreaseCredits()">-</button>
-                  <input type="number" id="chargeQuantity" name="chargeQuantity" class="form-control input-sm" oninput="calculatePrice()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
+                  <input type="number" id="chargeQuantity" name="chargeQuantity" class="form-control input-sm" oninput="calculatePrice()" onfocus="this.select()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
+                  <label for="chargeQuantity"> / <?= $this->chargeQuantityLimit; ?></label>
                   <button type="button" name="increaseQuantity" class="btn btn-primary btn-sm" onclick="increaseCredits()">+</button>
                 </div>
               </div>

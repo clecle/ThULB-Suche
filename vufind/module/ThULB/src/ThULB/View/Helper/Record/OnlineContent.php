@@ -151,7 +151,9 @@ class OnlineContent extends AbstractHelper
     protected function getDOIFulltextLink(DefaultRecord $driver) : array {
         $solrFt = [];
 
-        if ($doi = $driver->getCleanDOI()) {
+        $isFormat = $driver->tryMethod('isFormat', ['eBook|eJournal|electronic Article', true]);
+
+        if ($isFormat && $doi = $driver->getCleanDOI()) {
             $solrFt[] = array(
                 'type' => 'fulltext',
                 'label' => 'Full text / PDF',

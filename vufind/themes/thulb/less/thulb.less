@@ -1327,11 +1327,17 @@ div.modal-body .facet-tree-container {
 .pl-2 {
   padding-left: 10px;
 }
+.pl-3 {
+  padding-left: 15px;
+}
 .pl-6 {
   padding-left: 30px !important;
 }
 .pr-2 {
   padding-right: 10px;
+}
+.pr-3 {
+  padding-right: 15px;
 }
 .pt-2 {
   padding-top: 10px;
@@ -1351,32 +1357,6 @@ form#newpassword .form-group.flex-center {
 
 .bold {
   font-weight: bold;
-}
-
-.access-tab {
-  &.active {
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
-  }
-
-  .col-description {
-    width: 85px;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-
-  .col-text {
-    flex-grow: 1;
-  }
-}
-
-@media (max-width: 575px) {
-  .access-tab {
-    .col-text {
-      width: 100%;
-    }
-  }
 }
 
 .navbar {
@@ -1601,6 +1581,7 @@ body > header {
 
 div.online-access {
   margin: 10px 15px;
+  width: 100%;
 }
 
 div.striped {
@@ -1687,6 +1668,35 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 }
 
+.location-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  margin: 0 -15px;
+
+  .col-description {
+    width: 85px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+
+  .col-text {
+    flex-grow: 1;
+  }
+
+  h3 .col-text {
+    margin-right: 15px;
+  }
+}
+
+@media (max-width: 575px) {
+  .location-wrapper {
+    .col-text {
+      width: 100%;
+    }
+  }
+}
+
 .location-data-wrapper {
   border-left: solid 1px #e5e5e5;
 }
@@ -1707,12 +1717,12 @@ a.checkbox-filter > span > i.fa-info-circle,
 }
 
 .location {
-  padding: 0 10px;
   border-bottom: solid 1px #e5e5e5;
 }
 
 .access-location-group {
   flex-grow: 1;
+  width: 50%;
 }
 
 .ws-nowrap {
@@ -1726,6 +1736,7 @@ a.checkbox-filter > span > i.fa-info-circle,
 @media (max-width: @screen-sm-max) {
   .btn-opening-hours {
     display: block;
+    height: fit-content;
   }
 
   .location-data-wrapper {

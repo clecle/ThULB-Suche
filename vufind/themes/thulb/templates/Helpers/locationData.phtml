@@ -3,16 +3,19 @@
   <?php $locationData = $this->thulb_locationData($locationApiId); ?>
   <?php if(!empty($locationData)): ?>
     <?php $weekday = date('N'); ?>
-    <div class="location-data-wrapper">
-      <div id="location-data-<?= $locationApiId; ?>" class="location-data">
+    <div id="location-data-<?= $locationApiId; ?>" class="location-data-wrapper">
+      <div class="location-data">
         <h4><?= $locationData['name']; ?></h4>
+
         <h5><?= $this->transEsc('Address'); ?>:</h5>
         <div class="ws-nowrap">
           <?= $locationData['address']; ?>
           <a href="<?= $locationData['googleMapsUrl']; ?>" target="_blank" data-lightbox-ignore><i class="fa fa-map-marker"></i></a>
         </div>
+
         <h5><?= $this->transEsc('Phone Number'); ?>:</h5>
         <div><?= $locationData['phone']; ?></div>
+
         <h5><?= $this->transEsc('Opening hours'); ?>:</h5>
         <table class="mb-2">
           <?php foreach($locationData['openingHours'] as $jdday => $day): ?>
@@ -22,9 +25,8 @@
             </tr>
           <?php endforeach; ?>
         </table>
-        <div class="flex flex-space-evenly">
-          <a href="<?= $holding['locationhref']; ?>" target="_blank" data-lightbox-ignore><?= $this->transEsc('Further information'); ?></a>
-        </div>
+
+        <a href="<?= $holding['locationhref']; ?>" target="_blank" data-lightbox-ignore><?= $this->transEsc('Further location information'); ?></a>
       </div>
     </div>
   <?php endif; ?>

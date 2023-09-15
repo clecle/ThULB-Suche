@@ -1,10 +1,10 @@
 <div class="location">
-  <h3 class="flex flex-wrap-xs">
+  <h3 class="flex flex-wrap-xs pl-3 pr-3">
     <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
     <span class="col-text"><?= $this->thulb_holdingHelper()->getLocation($holding, true);?></span>
     <?php $locationApiId = $holding['items'][0]['locationapiid'] ?? false; ?>
     <?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
-      <button class="btn btn-xs btn-primary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Opening hours'); ?></button>
+      <button class="btn btn-xs btn-primary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
     <?php endif; ?>
   </h3>
   <div class="flex flex-wrap-reverse-xs">

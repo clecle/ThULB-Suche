@@ -17,6 +17,7 @@
     <?= $this->flashmessages(); ?>
 
     <form action="/ILL/chargeconfirmation" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
+      <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
       <div class="flex flex-wrap-reverse flex-gap-2">
         <div class="ill-charge-credits">
           <div>
@@ -78,7 +79,7 @@
           <?php endif; ?>
 
           <div class="ill-row">
-            <button class="btn btn-primary mt-2"><?= $this->transEsc('ill_credits_charge'); ?></button>
+            <button class="btn btn-primary mt-2"><?= $this->transEsc('ill_credits_charge_submit'); ?></button>
           </div>
         </div>
 

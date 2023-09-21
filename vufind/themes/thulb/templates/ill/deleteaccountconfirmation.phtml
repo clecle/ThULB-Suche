@@ -1,6 +1,6 @@
 <div>
-  <h2 class="m-auto"><?= $this->translate('ill_delete_account_confirmation'); ?></h2>
   <?= $this->flashmessages(); ?>
+  <p class="m-auto fs-18px"><?= $this->translate('ill_delete_account_confirmation'); ?></p>
 
   <form href="/ILL/deleteaccountconfirmation" method="post">
     <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />

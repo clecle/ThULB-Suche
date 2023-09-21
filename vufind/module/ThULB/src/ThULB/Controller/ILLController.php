@@ -84,7 +84,11 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $view = new ViewModel();
 
         $request = $this->getRequest();
-        if(!$request->isPost() || ($view->chargeQuantity = $request->getPost('chargeQuantity', 0)) < 1) {
+        if(!$request->isPost()
+            || !$this->doCsrfValidation()
+            || !$request->getPost('submit', false)
+            || ($view->chargeQuantity = $request->getPost('chargeQuantity', 0)) < 1)
+        {
             return $this->redirect()->toUrl('/ILL/chargecredits');
         }
 
@@ -96,25 +100,34 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         catch (ErrorException | \Exception $e) {
             $this->logError($e);
             $view->exception = $e;
+            return $view;
         }
 
         $view->hasAccount = !empty($illInformation);
 
         if ($request->getPost('workrelated', false)) {
-            $this->sendEmail(
-                'Antrag auf dienstliches Fernleihguthaben',
-                'Email/ill/work-related', [
-                    'email' => $user->email,
-                    'firstname' => $user->firstname,
-                    'lastname' => $user->lastname,
-                    'username' => $user->username,
-                    'quantity' => $view->chargeQuantity,
-                    'department' => $request->getPost('department', ''),
-                    'facility' => $request->getPost('facility', ''),
-                ]
-            );
+            if(($department = $request->getPost('department', false))
+                && ($facility = $request->getPost('facility', false)))
+            {
+                $this->sendEmail(
+                    'Antrag auf dienstliches Fernleihguthaben',
+                    'Email/ill/work-related', [
+                        'email' => $user->email,
+                        'firstname' => $user->firstname,
+                        'lastname' => $user->lastname,
+                        'username' => $user->username,
+                        'quantity' => $view->chargeQuantity,
+                        'department' => $department,
+                        'facility' => $facility,
+                    ]
+                );
 
-            $this->flashMessage('success', 'ill_send_mail_success');
+                $this->flashMessage('success', 'ill_send_mail_success');
+            }
+            else {
+                $this->flashMessage('error', 'ill_charge_no_department_or_facility');
+                return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
+            }
         }
         elseif(!$view->hasAccount) {
             $this->sendEmail(
@@ -171,7 +184,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         }
 
         $request = $this->getRequest();
-        if($request->isPost() && $this->doCsrfValidation()) {
+        if($request->isPost() && $request->getPost('forgot-password', false) && $this->doCsrfValidation()) {
             $this->sendEmail(
                 'Fernleihpasswort',
                 'Email/ill/forgot-password', [

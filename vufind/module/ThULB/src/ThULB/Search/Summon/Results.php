@@ -157,6 +157,17 @@ class Results extends OriginalResults
         if (null === $this->responseFacets) {
             $this->performAndProcessSearch();
         }
+
+        // change special facets to work with the buildFacetList method
+        foreach($this->responseFacets as $key => $facet) {
+            if(is_numeric($key)) {
+                $this->responseFacets[$facet['displayName']] = array (
+                    $facet['displayName'] => 1
+                );
+                unset($this->responseFacets[$key]);
+            }
+        }
+
         $facetList = $this->buildFacetList($this->responseFacets, $filter);
         return $this->sortFacets($facetList);
     }

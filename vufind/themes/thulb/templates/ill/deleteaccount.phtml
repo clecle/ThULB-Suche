@@ -9,10 +9,10 @@ $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') .
   <h2><?= $this->transEsc('ill_delete_account')?></h2>
   <?= $this->flashmessages()?>
 
-  <p><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
+  <p class="mt-2"><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
   <a href="/ILL/deleteaccountconfirmation" class="btn btn-primary" data-lightbox><?= $this->transEsc('ill_delete_account'); ?></a>
 </div>
 
 <div class="<?= $this->layoutClass('sidebar')?>">
-    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'deleteaccount'])?>
+  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'deleteaccount'])?>
 </div>

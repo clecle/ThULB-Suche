@@ -1345,8 +1345,8 @@ div.modal-body .facet-tree-container {
   padding-top: 10px;
 }
 
-@media (max-width: @screen-sm-max) {
-  .mt-0-sm {
+@media (max-width: @screen-xs-max) {
+  .mt-0-xs {
     margin-top: 0 !important;
   }
 }
@@ -1776,7 +1776,7 @@ a.checkbox-filter > span > i.fa-info-circle,
     flex-grow: 1;
 
     & > :not(:last-child) {
-      border-bottom: 1px solid #000;
+      border-bottom: 1px solid #ddd;
     }
   }
 
@@ -1807,6 +1807,10 @@ a.checkbox-filter > span > i.fa-info-circle,
   .ill-work-related {
     & > * {
       flex-grow: 1;
+    }
+
+    #workrelated:checked + label {
+      margin-bottom: 10px;
     }
 
     input[type=text] {

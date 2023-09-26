@@ -42,7 +42,7 @@
 
             <?php if(in_array($this->thulb_userType(), [3, 4, 5, 6, 8])): ?>
               <div class="ill-row ill-work-related">
-                <div class="ill-checkbox mb-2">
+                <div class="ill-checkbox">
                   <input type="checkbox" id="workrelated" name="workrelated" value="true" onchange="toggleWorkRelated()"/>
                   <label for="workrelated" class="control-label"><?= $this->transEsc('ill_work_related'); ?></label>
                 </div>

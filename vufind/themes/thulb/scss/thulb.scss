@@ -1285,7 +1285,7 @@ div.dataCheck table {
   }
 }
 
-.modal-dialog {
+.modal-dialog:has(div.location-data){
   max-width: fit-content;
   margin: 10px auto
 }

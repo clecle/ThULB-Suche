@@ -10,13 +10,13 @@ interface IFacet
     /**
      * Populates or creates the facet list for this field.
      *
-     * @param string    $field The field of this list.
-     * @param NamedList $data   The data to populate the facet list with.
-     * @param Params    $params Params of the search.
+     * @param string $field  The field of this list.
+     * @param array  $data   The data to populate the facet list with.
+     * @param Params $params Params of the search.
      *
      * @return array
      */
-    public function getFacetList(string $field, NamedList $data, Params $params) : array;
+    public function getFacetList(string $field, array $data, Params $params) : array;
 
     /**
      * Return the filter value associated with the given value.

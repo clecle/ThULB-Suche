@@ -29,6 +29,7 @@ use Exception;
 use ThULB\Search\Results\SortedFacetsTrait;
 use VuFind\Search\Summon\Params;
 use VuFind\Search\Summon\Results as OriginalResults;
+use VuFindSearch\Command\SearchCommand;
 
 /**
  * Params
@@ -77,7 +78,8 @@ class Results extends OriginalResults
             throw new Exception("$facetSort facet sort not supported by Summon.");
         }
         foreach ($facetFields as $facet) {
-            $params->addFacet($facet, null, $isOrFacet);
+            $mode = $params->getFacetOperator($facet) === 'OR' ? 'or' : 'and';
+            $params->addFacet("$facet,$mode,$page,$limit");
 
             // Clear existing filters for the selected field if necessary:
             if ($removeFilter) {
@@ -85,7 +87,7 @@ class Results extends OriginalResults
             }
         }
         $params = $params->getBackendParameters();
-        
+
         // FIX: manipulate params to use lightbox limit instead of standard
         //      facet limit in the current context
         $facetSetting = $params->get('facets');
@@ -93,10 +95,16 @@ class Results extends OriginalResults
             $facetSetting[0] = preg_replace('/[\d]+$/', $limit, $facetSetting[0]);
             $params->set('facets', $facetSetting);
         }
-        
-        $collection = $this->getSearchService()->search(
-            'Summon', $query, 0, 0, $params
+
+        $command = new SearchCommand(
+            $this->backendId,
+            $query,
+            0,
+            0,
+            $params
         );
+        $collection = $this->getSearchService()->invoke($command)
+            ->getResult();
 
         $facets = $collection->getFacets();
         if (isset($facets[0]) && $facets[0]['counts']) {
@@ -143,5 +151,24 @@ class Results extends OriginalResults
             $this->suggestions[$current['originalQuery']]['suggestions'][]
                 = $current['suggestedQuery'];
         }
+    }
+
+    public function getFacetList($filter = null) {
+        if (null === $this->responseFacets) {
+            $this->performAndProcessSearch();
+        }
+
+        // change special facets to work with the buildFacetList method
+        foreach($this->responseFacets as $key => $facet) {
+            if(is_numeric($key)) {
+                $this->responseFacets[$facet['displayName']] = array (
+                    $facet['displayName'] => 1
+                );
+                unset($this->responseFacets[$key]);
+            }
+        }
+
+        $facetList = $this->buildFacetList($this->responseFacets, $filter);
+        return $this->sortFacets($facetList);
     }
 }

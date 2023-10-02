@@ -261,6 +261,29 @@ footer {
   .author-list { flex: 0 1 100%; }
 }
 
+.facet-group .facet {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  background-color: unset;
+
+  & > .text {
+    display: flex;
+    flex-grow: 1;
+    text-indent: unset;
+    padding: 0;
+  }
+}
+
+.more-less-btn-wrapper > .btn {
+  width: 100%;
+  justify-content: center !important;
+
+  span + span {
+    margin-left: 5px;
+  }
+}
+
 /* ------ MyResearch ------ */
 .form-login .btn-link ~ .btn-link { padding-left: 0; } // Login link spacing
 .myresearch-menu a {
@@ -800,7 +823,7 @@ div.facet-tree-parent > i {
   flex-shrink: 0;
   margin-left: 3px; }
 
-.facet-tree-container ul:last-child,
+.facet-tree-container:last-child,
 .facet-tree-parent {
   border-bottom: 1px solid #ddd;
 }
@@ -1592,6 +1615,10 @@ a.checkbox-filter > span > i.fa-info-circle,
   margin-left: 5px;
 }
 
+.groupLocation .icon {
+  margin-right: 5px;
+}
+
 @media (max-width: 767px) {
   .flex-visible-xs {
     display: flex;
@@ -1647,4 +1674,12 @@ a.checkbox-filter > span > i.fa-info-circle,
       margin-left: 0;
     }
   }
+}
+
+.facet-loading-overlay {
+  display: none !important;
+}
+
+.width-fill-parent {
+  width: 100% !important;
 }

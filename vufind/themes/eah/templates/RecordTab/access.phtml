@@ -1,0 +1,245 @@
+<?php
+  // Set up convenience variables:
+  $account = $this->auth()->getManager();
+  $user = $account->isLoggedIn();
+  $openUrl = $this->openUrl($this->tab->getRecordDriver(), 'holdings');
+  $openUrlActive = $openUrl->isActive();
+
+  // Account for replace_other_urls setting
+  $offlineMode = $this->ils()->getOfflineMode();
+
+  try {
+    $holdings = $this->driver->getHoldings();
+  }
+  catch (\VuFind\Exception\ILS $e) {
+    $holdings = ['holdings' => []];
+    $offlineMode = 'ils-offline';
+  }
+
+  $onlineContentLinks = $this->thulb_onlineContent($this->driver);
+?>
+
+<?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
+
+<?php if (!empty($holdings['blocks'])):?>
+  <div id="account-block-msg" class="alert alert-danger">
+      <?= $this->transEsc('account_block_options_missing', ['%%details%%' => implode('; ', $holdings['blocks'])]) ?>
+  </div>
+<?php endif; ?>
+
+<?php // ILS offline ?>
+<?= ($offlineMode == "ils-offline" && empty($holdings)) ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
+
+<?php // unused ??? ?>
+<?php if (($this->ils()->getHoldsMode() == 'driver' && !empty($holdings['holdings'])) || $this->ils()->getTitleHoldsMode() == 'driver'): ?>
+  <?php if ($account->loginEnabled() && $offlineMode != 'ils-offline'): ?>
+    <?php if (!$user): ?>
+      <div class="alert alert-info">
+        <a href="<?= $this->recordLinker()->getTabUrl($this->driver, 'Holdings')?>?login=true&amp;catalogLogin=true" data-lightbox><?= $this->transEsc("Login")?></a> <?= $this->transEsc("hold_login")?>
+      </div>
+    <?php elseif (!$user->cat_username): ?>
+      <div class="alert alert-info">
+        <?= $this->translate("hold_profile_html", ['%%url%%' => $this->recordLinker()->getTabUrl($this->driver, 'Holdings') . '?catalogLogin=true'])?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+<?php endif; ?>
+
+<?php // unused ??? ?>
+<?php $holdingTitleHold = $this->driver->tryMethod('getRealTimeTitleHold'); if (!empty($holdingTitleHold)): ?>
+  <a class="placehold" data-lightbox title="<?= $this->transEscAttr('request_place_text')?>" href="<?= $this->recordLinker()->getRequestUrl($holdingTitleHold)?>">
+    <i class="fa fa-flag" aria-hidden="true"></i>&nbsp;<?= $this->transEsc('title_hold_place')?>
+  </a>
+<?php endif; ?>
+
+<?php // online holdings ?>
+<?php if(!empty($onlineContentLinks)): ?>
+  <div class="online-access striped" summary="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?>">
+    <?php foreach($onlineContentLinks as $contentLink): ?>
+    <div class="row">
+      <?php if(empty($contentLink)) continue; ?>
+      <?php $linkData = $contentLink['data'] ?? []; ?>
+      <div class="flex flex-dir-col pb-1 pl-1 pr-2">
+        <div class="online-content-wrapper mr-2 mb-2">
+          <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
+          <?= $this->render('record/broken-link.phtml'); ?>
+        </div>
+        <div class="col-text">
+          <?php if($linkData['remotetitle'] ?? false):?>
+            [<?php echo $linkData['remotetitle']; ?>]
+          <?php endif; ?>
+
+          <?php /* BESTANDSANGABEN */ ?>
+          <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
+
+          <?php /* ANMERKGUNGEN */ ?>
+          <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
+
+          <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+            <div class="item-notes">
+              <?= $this->transEsc('explain_reference') ?>
+            </div>
+          <?php endif; ?>
+
+          <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
+            <?= $this->render('RecordTab/access/citations.phtml'); ?>
+          <?php endif; ?>
+        </div>
+      </div>
+    </div>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
+
+<?php // physical holdings ?>
+<?php if (!empty($holdings)): ?>
+  <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
+    <?php if($holdingKey == 'Remote') continue; ?>
+    <?php $isMag = ($holding['items'][0] ?? false) && ($holding['items'][0]['departmentId'] ?? false) == 'Mag'; ?>
+    <h3 class="flex flex-wrap-xs">
+      <div class="col-description"><?= $this->transEsc('Location') ?>:</div>
+      <div class="col-text">
+        <?= $this->thulb_holdingHelper()->getLocation($holding, !$isMag);?>
+        <?php if($isMag): ?>
+          <i class="fa fa-info-circle brand-text-green" onclick="VuFind.lightbox.showAlert('<?= $this->transEsc('location_mag_info', ["'" => "\\'"]); ?>', 'info');"></i>
+        <?php endif; ?>
+      </div>
+    </h3>
+    <div class="striped" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
+      <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
+        <div class="row">
+          <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+            <?php // Translation for summary is a special case for backwards-compatibility ?>
+            <div class="col-description bold"><?= $textFieldName == 'summary' ? $this->transEsc("Volume Holdings") : $this->transEsc(ucfirst($textFieldName))?>:</div>
+            <div class="col-text">
+              <?php foreach ($textFields as $current): ?>
+                <?= $this->escapeHtml($current)?><br/>
+              <?php endforeach; ?>
+            </div>
+          </div>
+        </div>
+      <?php endforeach; endif; ?>
+
+      <?php foreach ($holding['items'] as $row): ?>
+        <?php
+          // AJAX Check record?
+          $check = isset($row['check']) && $row['check'];
+          $checkStorageRetrievalRequest = isset($row['checkStorageRetrievalRequest']) && $row['checkStorageRetrievalRequest'];
+          $checkILLRequest = isset($row['checkILLRequest']) && $row['checkILLRequest'];
+        ?>
+        <?php if (isset($row['barcode']) && $row['barcode'] != ""): ?>
+          <div class="row" vocab="http://schema.org/" typeof="Offer">
+            <?php $callno = $this->thulb_holdingHelper()->getCallnumber($row); ?>
+            <?php if ($callno && $callno != 'bestellt'): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Call Number")?>:</div>
+                <div class="col-text"><strong><?= $callno ?></strong></div>
+              </div>
+            <?php elseif($callno == 'bestellt'): ?>
+              <?php $orderStatusCode = $this->thulb_sera($row['epn'])['orderstatus_code'] ?? ''; ?>
+              <?php $sdUrl = $this->thulb_serviceDesk('reserve-media', [
+                'ppn' => $this->driver->getUniqueID(),
+                'titleData' => $this->driver->getTitle(),
+                'username' => $user['username'] ?? ''
+              ]); ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Status")?>:</div>
+                <div class="col-text">
+                  <strong><?= $this->transEsc('Sera::' . ($orderStatusCode ?: $callno)); ?></strong>
+                    <?php if($orderStatusCode != 't'): ?>
+                      <a href="<?= $sdUrl; ?>" class="external-link" target="_blank"><?= $this->transEsc('Reserve medium'); ?></a>
+                    <?php endif; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+
+            <?php if(!empty($row['remotehref']) && $holding['location'] == "Remote"): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc('Link')?>:</div>
+                <div class="col-text">
+                  <a href="<?php echo $row['remotehref']; ?>" target="_blank" class="btn btn-primary">
+                    <?= $this->transEsc($row['remotedesc'] ?? 'Full text online'); ?>
+                  </a>
+                  <?php if(!empty($row['remotetitle'])):?>
+                    [<?php echo $row['remotetitle']; ?>]
+                  <?php endif; ?>
+                  <?php if(isset($row['remotedesc']) && $row['remotedesc'] === $this->transEsc('get_citation')): ?>
+                    <div class="item-notes">
+                      <?= $this->transEsc('explain_reference') ?>
+                    </div>
+                  <?php endif; ?>
+                </div>
+                <?= $this->render('RecordTab/access/citations.phtml'); ?>
+              </div>
+            <?php endif; ?>
+
+            <?php /* ANMERKGUNGEN & BESTAND */ ?>
+            <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $row]); ?>
+            <?php if(trim($chronologyHtml)): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Item Chronology")?>:</div>
+                <div class="col-text"><?= $chronologyHtml; ?></div>
+              </div>
+            <?php endif;?>
+
+            <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $row]);; ?>
+            <?php if(trim($commentsHtml)): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Item Notes")?>:</div>
+                <div class="col-text"><?= $commentsHtml; ?></div>
+              </div>
+            <?php endif; ?>
+
+            <?php if(!empty($row['remotehref']) && $holding['location'] != "Remote"): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc('See also')?>:</div>
+                <div class="col-text">
+                  <a href="<?php echo $row['remotehref']; ?>"><?php echo $row['remotedomain']; ?></a>
+                    <?php if(!empty($row['remotetitle'])):?>
+                      [<?php echo $row['remotetitle']; ?>]
+                    <?php endif; ?>
+                </div>
+              </div>
+            <?php endif; ?>
+
+            <?php if ($holding['location'] != "Remote" && $callno != "Unknown" && $callno != "bestellt"
+                    && ($row['departmentId'] ?? '') != 'DMag'
+                    && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
+              <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+                <div class="col-description bold"><?= $this->transEsc("Availability Status")?>:</div>
+                <div class="col-text"><?= $this->thulb_holdingHelper()->getAvailability($row);?></div>
+              </div>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
+      <?php endforeach; ?>
+
+      <?php if (!empty($holding['purchase_history'])): ?>
+        <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+          <div class="col-description bold"><?= $this->transEsc("Most Recent Received Issues")?>:</div>
+          <div class="col-text">
+            <?php foreach ($holding['purchase_history'] as $current): ?>
+              <?= $this->escapeHtml($current['issue'])?><br/>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      <?php endif; ?>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<?php // unused ??? ?>
+<?php $history = $this->driver->getRealTimeHistory(); ?>
+<?php if (is_array($history) && !empty($history)): ?>
+  <h3><?= $this->transEsc("Most Recent Received Issues")?></h3>
+  <table class="table table-striped">
+    <?php foreach ($history as $row): ?>
+      <tr><td><?= $this->escapeHtml($row['issue'])?></td></tr>
+    <?php endforeach; ?>
+  </table>
+<?php endif; ?>
+
+<?php if(is_callable([$this->driver, 'isFormat']) && $this->driver->isFormat('Journal')
+    && $this->record($this->driver)->hasNonArticleTab($this)): ?>
+    <?= $this->transEsc('see volumes tab for listing and ordering of volumes'); ?>
+<?php endif; ?>

@@ -24,7 +24,7 @@
       <a title="<?= $this->transEscAttr('Export Record') ?>" class="export-toggle dropdown-toggle" data-toggle="dropdown" href="<?= $this->recordLinker()->getActionUrl($this->driver, 'Export')?>" rel="nofollow"><i class="fa fa-share" aria-hidden="true"></i></a>
       <ul class="dropdown-menu" role="menu">
         <?php foreach ($exportFormats as $exportFormat): ?>
-          <li><a <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?= $this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?= $this->recordLinker()->getActionUrl($this->driver, 'Export')?>?style=<?= $this->escapeHtmlAttr($exportFormat)?>" rel="nofollow"><?= $this->transEsc($this->export()->getLabelForFormat($exportFormat))?></a></li>
+          <li><a <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?= $this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?= $this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true])); ?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>" rel="nofollow"><?= $this->transEsc($this->export()->getLabelForFormat($exportFormat))?></a></li>
         <?php endforeach; ?>
       </ul>
     </li>

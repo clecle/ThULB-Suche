@@ -33,28 +33,28 @@ $config = array(
             ),
             'ils_driver' => array(
                 'factories' => array(
-                    'DHGE\ILS\Driver\PAIA' => 'DHGE\ILS\Driver\Factory::getPAIA',
+                    \DHGE\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
                 ),
                 'aliases' => array(
-                    'VuFind\ILS\Driver\PAIA' => 'DHGE\ILS\Driver\PAIA'
+                    \VuFind\ILS\Driver\PAIA::class => \DHGE\ILS\Driver\PAIA::class,
                 )
             ),
             'recorddriver' => array(
                 'factories' => array(
-                    \DHGE\RecordDriver\SolrVZGRecord::class => 'DHGE\RecordDriver\Factory::getSolrMarc',
+                    \DHGE\RecordDriver\SolrVZGRecord::class => \ThULB\RecordDriver\SolrVZGRecordFactory::class,
                 ),
                 'aliases' => array(
                     \ThULB\RecordDriver\SolrVZGRecord::class => \DHGE\RecordDriver\SolrVZGRecord::class
                 ),
                 'delegators' => array(
-                    \DHGE\RecordDriver\SolrVZGRecord::class => ['VuFind\RecordDriver\IlsAwareDelegatorFactory'],
+                    \DHGE\RecordDriver\SolrVZGRecord::class => [\VuFind\RecordDriver\IlsAwareDelegatorFactory::class],
                 )
             ),
         ),
     ),
     'view_helpers' => array(
         'invokables' => array(
-            'thulb_holdingHelper' => 'DHGE\View\Helper\Record\HoldingHelper',
+            'thulb_holdingHelper' => \DHGE\View\Helper\Record\HoldingHelper::class,
         ),
     ),
 );

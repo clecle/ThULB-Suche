@@ -325,6 +325,14 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             new \Laminas\EventManager\SharedEventManager()
         );
         $container->set(
+            \VuFind\Config\PathResolver::class,
+            (new \VuFind\Config\PathResolverFactory)($container, \VuFind\Config\PathResolver::class),
+        );
+        $container->set(
+            \VuFindHttp\HttpService::class,
+            new \VuFindHttp\HttpService()
+        );
+        $container->set(
             \Laminas\Cache\Service\StorageAdapterFactory::class,
             new \Laminas\Cache\Service\StorageAdapterFactory(
                 new \Laminas\Cache\Storage\AdapterPluginManager($container),

@@ -28,8 +28,8 @@
 namespace ThULB\Search\Solr;
 
 use Exception;
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
+use Psr\Container\ContainerInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Throwable;
 use VuFind\Search\Params\ParamsFactory as OriginalParamsFactory;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;

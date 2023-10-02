@@ -157,7 +157,7 @@ class OnlineContent extends AbstractHelper
             $solrFt[] = array(
                 'type' => 'fulltext',
                 'label' => 'Full text / PDF',
-                'link' => 'https:doi.org/' . $doi,
+                'link' => 'https://doi.org/' . $doi,
                 'source' => $driver->getSourceIdentifier(),
                 'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted'
             );

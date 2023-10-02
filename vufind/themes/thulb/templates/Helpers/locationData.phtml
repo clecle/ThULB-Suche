@@ -7,10 +7,11 @@
       <div class="location-data">
         <h4><?= $locationData['name']; ?></h4>
 
-        <h5><?= $this->transEsc('Address'); ?>:</h5>
+        <h5><?= $this->transEsc('Address'); ?>: <a href="<?= $locationData['googleMapsUrl']; ?>" target="_blank" data-lightbox-ignore><i class="fa fa-map-marker"></i></a></h5>
         <div class="ws-nowrap">
-          <?= $locationData['address']; ?>
-          <a href="<?= $locationData['googleMapsUrl']; ?>" target="_blank" data-lightbox-ignore><i class="fa fa-map-marker"></i></a>
+          <?php foreach (explode('/', $locationData['address']) as $addressPart): ?>
+            <?= $addressPart; ?><br>
+          <?php endforeach; ?>
         </div>
 
         <h5><?= $this->transEsc('Phone Number'); ?>:</h5>
@@ -19,9 +20,15 @@
         <h5><?= $this->transEsc('Opening hours'); ?>:</h5>
         <table class="mb-2">
           <?php foreach($locationData['openingHours'] as $jdday => $day): ?>
+            <?php
+              $class = '';
+              if (($weekday % 7) == $jdday) {
+                $class = $locationData['openCloseToday']['nowOpen'] ? 'bold text-success' : 'bold text-danger';
+              }
+            ?>
             <tr>
-              <td class="pr-2 <?= ($weekday % 7) == $jdday ? 'bold' : ''; ?>"><?= $this->transEsc($day['day']); ?>:</td>
-              <td class="<?= ($weekday % 7) == $jdday ? 'bold' : ''; ?>" ><?= $this->transEsc($day['formattedTime']); ?></td>
+              <td class="pr-2 <?= $class; ?>"><?= $this->transEsc($day['day']); ?>:</td>
+              <td class="<?= $class; ?>" ><?= $this->transEsc($day['formattedTime']); ?></td>
             </tr>
           <?php endforeach; ?>
         </table>

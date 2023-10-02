@@ -131,6 +131,12 @@ class ThULB implements
                 );
             }
 
+            $now = date('H:i');
+            $tmp['openCloseToday']['nowOpen'] =
+                $tmp['openCloseToday']['status'] == 'open'
+                && $tmp['openCloseToday']['opens'] <= $now
+                && $tmp['openCloseToday']['closes'] >= $now;
+
             $result[] = $tmp;
         }
 

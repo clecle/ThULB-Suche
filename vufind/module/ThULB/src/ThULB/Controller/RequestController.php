@@ -22,10 +22,10 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     use LoggerAwareTrait;
     use ChangePasswordTrait;
 
-    protected $departmentsConfig;
-    protected $mainConfig;
+    protected Config $mainConfig;
+    protected Config $thulbConfig;
 
-    protected $inventory = array();
+    protected array $inventory = array();
 
     /**
      * Constructor
@@ -39,7 +39,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         parent::__construct($sm, $config);
 
         $this->mainConfig = $config;
-        $this->departmentsConfig = $sm->get('VuFind\Config')->get('DepartmentsDAIA');
+        $this->thulbConfig = $sm->get('VuFind\Config')->get('thulb');
         $this->setLogger($sm->get('VuFind\Logger'));
 
         $this->accessPermission = "access.JournalRequest";
@@ -72,7 +72,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             return null;
         }
 
-        $savePath = $this->mainConfig->JournalRequest->request_save_path;
+        $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
         if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
             throw new IOException('File not writable: "' . $savePath . '"');
         }
@@ -153,7 +153,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getInventoryForRequest() : array {
         if(!$this->inventory) {
-            $archiveIds = array_keys($this->departmentsConfig->DepartmentArchiveEmail->toArray());
+            $archiveIds = array_keys($this->thulbConfig->JournalRequest->ArchiveEmail->toArray());
             $holdings = $this->loadRecord()->getRealTimeHoldings();
             foreach ($holdings['holdings'] as $location => $holding) {
                 foreach ($holding['items'] as $index => $item) {
@@ -186,7 +186,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function createPDF(array $formData, string $fileName) : bool {
         try {
-            $savePath = $this->mainConfig->JournalRequest->request_save_path;
+            $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 
             $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
 
@@ -225,7 +225,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function sendRequestEmail(string $fileName, string $recipient) : bool{
         try {
-            $savePath = $this->mainConfig->JournalRequest->request_save_path;
+            $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 
             // first create the parts
             $text = new Part();
@@ -340,15 +340,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getArchiveEmailForCallnumber(string $callnumber) : ?string {
         if(APPLICATION_ENV == 'development' || APPLICATION_ENV == 'testing') {
-            return $this->departmentsConfig->JournalRequestTest->email;
+            return $this->thulbConfig->JournalRequest->test_email;
         }
 
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
-        if (isset($this->departmentsConfig->DepartmentArchiveEmail[$departmentId])) {
-            return $this->departmentsConfig->DepartmentArchiveEmail[$departmentId];
-        }
-
-        return null;
+        return $this->thulbConfig->JournalRequest->ArchiveEmail[$departmentId] ?: null;
     }
 
     /**
@@ -360,11 +356,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getInformationEmailForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
-        if (isset($this->departmentsConfig->DepartmentInformationEmail[$departmentId])) {
-            return $this->departmentsConfig->DepartmentInformationEmail[$departmentId];
-        }
-
-        return null;
+        return $this->thulbConfig->JournalRequest->InformationEmail[$departmentId] ?: null;
     }
 
     /**
@@ -376,11 +368,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getBorrowCounterForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
-        if (isset($this->departmentsConfig->DepartmentBorrowCounter[$departmentId])) {
-            return $this->departmentsConfig->DepartmentBorrowCounter[$departmentId];
-        }
-
-        return null;
+        return $this->thulbConfig->JournalRequest->BorrowCounter[$departmentId] ?: null;
     }
 
     /**
@@ -392,11 +380,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      */
     protected function getLocationUrlForCallnumber(string $callnumber) : ?string {
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
-        if (isset($this->departmentsConfig->DepartmentLocationUrl[$departmentId])) {
-            return $this->departmentsConfig->DepartmentLocationUrl[$departmentId];
-        }
-
-        return null;
+        return $this->thulbConfig->JournalRequest->LocationUrl[$departmentId] ?: null;
     }
 
     /**

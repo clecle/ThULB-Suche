@@ -1757,3 +1757,17 @@ a.checkbox-filter > span > i.fa-info-circle,
 .width-fill-parent {
   width: 100% !important;
 }
+
+.mag-button {
+  background: none!important;
+  border: none;
+  padding: 0 !important;
+
+  color: $brand-green;
+  cursor: pointer;
+
+  &:focus,
+  &:focus-visible {
+    outline: dotted 1px #000;
+  }
+}

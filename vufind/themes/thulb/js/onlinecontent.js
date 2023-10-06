@@ -1,136 +1,151 @@
 /*global Hunt, VuFind */
 VuFind.register('onlineContent', function onlineContent() {
-    function displayOnlineContent(result, onlineContentEl) {
-        let loadingImg = onlineContentEl.prev();
+    function displayOnlineContent(result, el) {
+
+        let onlineContentEl = $(el).find('.online-content');
+
+        let loadingImg = $(onlineContentEl).prev();
         if(loadingImg.is('img')) {
             loadingImg.hide();
         }
 
         if ("undefined" !== typeof result) {
-            let actionRow = onlineContentEl.parent();
-            let brokenLink = result.pop();
+            let actionRow = onlineContentEl.parent().parent();
+            let brokenLink = result.links.pop();
             if($(brokenLink).hasClass('broken-link')) {
-                actionRow.append(result, actionRow.find('a'), brokenLink);
+                actionRow.append(result.links, actionRow.find('a'), brokenLink);
             }
             else {
-                actionRow.append(result, brokenLink, actionRow.find('a'));
+                actionRow.append(result.links, brokenLink, actionRow.find('a'));
             }
         }
         else {
-            onlineContentEl.hide();
+            onlineContentEl.parent().hide();
         }
     }
 
-    var ItemStatusHandler = {
-        name: "default",
-        // Object that holds item IDs, states and elements
-        items: {},
-        url: '/AJAX/JSON?method=onlineContentLookup',
-        itemStatusRunning: false,
-        dataType: 'json',
-        method: 'POST',
-        itemStatusTimer: null,
-        itemStatusDelay: 200,
+    function onlineContentAjaxSuccess(items, response) {
+        let idMap = {};
 
-        onlineContentLookupDone: function onlineContentLookupDone(response) {
-            for(var i = 0; i < response.data.length; i++) {
-                var id = response.data[i].id;
-                this.items[id].result = response.data[i].result;
-                this.items[id].state = 'done';
-                for (var e = 0; e < this.items[id].elements.length; e++) {
-                    displayOnlineContent(this.items[id].result, this.items[id].elements[e]);
-                }
+        // make map of ids to element arrays
+        items.forEach(function mapItemId(item) {
+            if (typeof idMap[item.id] === "undefined") {
+                idMap[item.id] = [];
             }
-        },
-        onlineContentLookupFail: function onlineContentLookupFail(response, textStatus) {
-            if (textStatus === 'error' || textStatus === 'abort' || typeof response.responseJSON === 'undefined') {
-                return;
-            }
-            // display the error message on each of the ajax status place holder
-            $('.js-item-pending').addClass('text-danger').empty()
-                .append(typeof response.responseJSON.data === 'string' ? response.responseJSON.data : VuFind.translate('error_occurred'));
-        },
-        itemQueueAjax: function itemQueueAjax(id, el) {
-            el.addClass('js-item-pending');
-            // If this id has already been queued, just add it to the elements or display a
-            // cached result.
-            if (typeof this.items[id] !== 'undefined') {
-                if ('done' === this.items[id].state) {
-                    displayOnlineContent(this.items[id].result, el);
-                } else if(!this.items[id].elements.some(e => e.is(el))) {
-                    this.items[id].elements.push(el);
-                }
-                return;
-            }
-            clearTimeout(this.itemStatusTimer);
-            this.items[id] = {
-                id: id,
-                state: 'queued',
-                elements: [el]
-            };
-            this.itemStatusTimer = setTimeout(this.runItemAjaxForQueue.bind(this), this.itemStatusDelay);
-        },
 
-        runItemAjaxForQueue: function runItemAjaxForQueue() {
-            if (this.itemStatusRunning) {
-                this.itemStatusTimer = setTimeout(this.runItemAjaxForQueue.bind(this), this.itemStatusDelay);
+            idMap[item.id].push(item.el);
+        });
+
+        // display data
+        response.data.forEach(function displayOnlineContentResponse(onlineContent) {
+            if (typeof idMap[onlineContent.id] === "undefined") {
                 return;
             }
-            var ids = [];
-            var self = this;
-            $.each(this.items, function selectQueued() {
-                if ('queued' === this.state) {
-                    self.items[this.id].state = 'running';
-                    ids.push(this.id);
-                }
-            });
-            $.ajax({
-                dataType: this.dataType,
-                method: this.method,
-                url: VuFind.path + this.url,
-                context: this,
-                data: { 'onlineContent': ids }
-            })
-            .done(this.onlineContentLookupDone)
-            .fail(this.onlineContentLookupFail)
-            .always(function queueAjaxAlways() {
-                this.itemStatusRunning = false;
-            });
-        }//end runItemAjaxForQueue
-    };
+
+            idMap[onlineContent.id].forEach((el) => displayOnlineContent(onlineContent, el));
+        });
+
+        VuFind.emit("online-content-done");
+    }
+
+    function onlineContentAjaxFailure(items, response, textStatus) {
+        if (
+            textStatus === "error" ||
+            textStatus === "abort" ||
+            typeof response.responseJSON === "undefined"
+        ) {
+            VuFind.emit("online-content-done");
+
+            return;
+        }
+
+        // display the error message on each of the ajax status placeholder
+        items.forEach(function displayOnlineContentFailure(item) {
+            $(item.el)
+                .find(".js-item-pending")
+                .addClass("text-danger")
+                .empty()
+                .removeClass("hidden")
+                .append(
+                    typeof response.responseJSON.data === "string"
+                        ? response.responseJSON.data
+                        : VuFind.translate("error_occurred")
+                );
+        });
+
+        VuFind.emit("online-content-done");
+    }
+
+    function makeOnlineContentQueue({
+        url = "/AJAX/JSON?method=onlineContentLookup",
+        dataType = "json",
+        method = "POST",
+        delay = 200,
+    } = {}) {
+        return new AjaxRequestQueue({
+            run: function runItemAjaxQueue(items) {
+                return new Promise(function runItemAjaxPromise(done, error) {
+                    const sid = VuFind.getCurrentSearchId();
+
+                    $.ajax({
+                        // todo: replace with fetch
+                        url: VuFind.path + url,
+                        data: { onlineContent: items.map((item) => item.id), sid },
+                        dataType,
+                        method,
+                    })
+                    .done(done)
+                    .catch(error);
+                });
+            },
+            success: onlineContentAjaxSuccess,
+            failure: onlineContentAjaxFailure,
+            delay,
+        });
+    }
+
+    var onlineContentQueue = makeOnlineContentQueue();
 
     function checkOnlineContent(el) {
-        var onlineContentEl = $(el);
-        var currentOnlineContent = onlineContentEl.data('onlineContent');
+        var onlineContentEl = el.querySelector(".online-content");
 
-        if(currentOnlineContent) {
-            var loadingImg = onlineContentEl.prev();
-            if ($(loadingImg).is('img')) {
-                $(loadingImg).show();
-            }
-
-            ItemStatusHandler.itemQueueAjax(currentOnlineContent, onlineContentEl);
+        if (
+            onlineContentEl === null ||
+            el.classList.contains("js-item-pending") ||
+            el.classList.contains("js-item-done")
+        ) {
+            return;
         }
+
+        // update element to reflect lookup
+        el.classList.add("js-item-pending");
+
+        const loadingImg = el.querySelector("img.online-content-loading");
+        if (loadingImg) {
+            loadingImg.classList.remove("hidden");
+        }
+
+        // queue the element into the queue
+        onlineContentQueue.add({ el, id: onlineContentEl.dataset.onlineContent });
     }
 
-    // Assign actions to the OpenURL links. This can be called with a container e.g. when
-    // combined results fetched with AJAX are loaded.
-    function init(_container) {
-        var container = _container || $('body');
-        // assign action to the openUrlWindow link class
-        if (typeof Hunt === 'undefined') {
+    function checkAllOnlineContents(container = document) {
+        container.querySelectorAll(".ajaxItem").forEach(checkOnlineContent);
+    }
+
+    function init($container = document) {
+        const container = unwrapJQuery($container);
+
+        if (VuFind.isPrinting()) {
             checkOnlineContent(container);
         } else {
-            new Hunt(
-                container.find('.ajaxItem').toArray(),
-                { enter: checkOnlineContent }
+            VuFind.observerManager.createIntersectionObserver(
+                'onlineContents',
+                checkOnlineContent,
+                container.querySelectorAll('.ajax-online-content')
             );
         }
     }
 
-
-    return {
-        init: init,
-        embedOnlineContent: checkOnlineContent
-    };
+    return { init: init, check: checkAllOnlineContents, checkRecord: checkOnlineContent };
 });

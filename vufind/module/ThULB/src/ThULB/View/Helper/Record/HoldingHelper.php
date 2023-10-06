@@ -135,6 +135,16 @@ class HoldingHelper extends AbstractHelper
     return $locationText;
   }
 
+  public function getLocationInfoMessage($holding) : ?string {
+      $msg = null;
+      $thulbConfig = $this->getView()->config()->get('thulb');
+      if(($holding['items'][0] ?? false) && ($configData = $thulbConfig->LocationInfoMsg ?? null)) {
+          $msg = $configData->toArray()[$holding['items'][0]['departmentId'] ?? false] ?? null;
+      }
+
+      return $msg;
+  }
+
   public function getCallNumber(&$item) : string
   { 
     return $item['callnumber'] ?: '';

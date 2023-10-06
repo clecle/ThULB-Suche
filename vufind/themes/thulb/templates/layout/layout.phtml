@@ -55,6 +55,7 @@
             'libphonenumber_tooshort' => 'libphonenumber_tooshort',
             'libphonenumber_tooshortidd' => 'libphonenumber_tooshortidd',
             'loading' => 'Loading',
+            'loading_ellipsis' => 'Loading',
             'more' => 'more',
             'number_thousands_separator' => [
                 'number_thousands_separator', null, ','
@@ -181,6 +182,10 @@ JS;
       <img src="/themes/thulb/images/Ajax-loader.gif"
            id="img-load" />
       <div id="content" class="container">
+        <noscript >
+          <div class="alert alert-warning hidden-print center-text"><?= $this->transEsc('noscript warning'); ?></div>
+        </noscript>
+        
         <div id="overlay" class="col-xs-12">
           <p>&nbsp;</p>
         </div>

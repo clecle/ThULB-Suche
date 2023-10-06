@@ -1,0 +1,119 @@
+<?php
+  $account = $this->auth()->getManager();
+  $currentPage = strtolower($this->currentPath());
+  $isLandingPage = !$account->isLoggedIn()
+      && ($currentPage == '/'
+          || $currentPage == '/eah/'
+          || str_starts_with($currentPage, '/search/home'));
+?>
+<div class="eah-top">
+  <div class="eah-logos-position">
+    <div class="container">
+      <div class="eah-logos">
+        <a href="https://www.eah-jena.de/bibliothek" target="_blank">
+          <img class="brand-top-eah-logo" src="<?= $this->imageLink('Hochschule_Dreieck.svg'); ?>" />
+        </a>
+        <?php if(!$isLandingPage): ?>
+          <a href="<?= $this->url('home'); ?>">
+            <img class="brand-top-logo" src="<?= $this->imageLink('KATALOGplus_weiß.svg'); ?>" />
+          </a>
+        <?php endif; ?>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="row">
+      <div class="navbar-header pull-right">
+        <ul class="nav navbar-nav navbar-right">
+        <?php if (!isset($this->layout()->renderingError)): ?>
+          <?php $cart = $this->cart(); if ($cart->isActive()): ?>
+            <li id="cartSummary">
+              <a id="cartItems" data-lightbox title="<?= $this->transEscAttr('View Book Bag')?>" href="<?= $this->url('cart-home')?>">
+                <i class="fa fa-star" aria-hidden="true"></i> <strong><?= count($cart->getItems())?></strong>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
+            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+              <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>">
+                <img class="user-icon" src="<?= $this->imageLink('Bibliothekskonto.svg'); ?>" alt="<?= $this->transEsc('Your Account'); ?>"/>
+              </a>
+            </li>
+            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+              <a title="<?= $this->transEscAttr("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout">
+                <img class="user-icon" src="<?= $this->imageLink('Bibliothekskonto_Abmeldung.svg'); ?>" alt="<?= $this->transEsc('Logout'); ?>"/>
+              </a>
+            </li>
+            <li id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
+              <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>">
+                  <img class="user-icon" src="<?= $this->imageLink('Bibliothekskonto.svg'); ?>" alt="<?= $this->transEsc('Institutional Login'); ?>"/>
+                </a>
+              <?php else: ?>
+                <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>">
+                  <img class="user-icon" src="<?= $this->imageLink('Bibliothekskonto.svg'); ?>" alt="<?= $this->transEsc('Userlogin'); ?>"/>
+                </a>
+              <?php endif; ?>
+            </li>
+          <?php endif; ?>
+
+          <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
+            <li class="theme dropdown">
+              <form method="post" name="themeForm" id="themeForm">
+                <input type="hidden" name="ui"/>
+              </form>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Theme")?> <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <?php foreach ($this->layout()->themeOptions as $current): ?>
+                  <li<?= $current['selected'] ? ' class="active"' : ''?>><a href="#" onClick="document.themeForm.ui.value='<?= $this->escapeHtmlAttr($current['name'])?>';document.themeForm.submit()"><?= $this->transEsc($current['desc'])?></a></li>
+                <?php endforeach; ?>
+              </ul>
+            </li>
+          <?php endif; ?>
+
+          <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+            <li class="language dropdown hidden-xs">
+              <form method="post" name="langForm" id="langForm">
+                <input type="hidden" name="mylang"/>
+              </form>
+              <a href="#_" class="dropdown-toggle" data-toggle="dropdown">
+                <?= strtoupper($this->layout()->userLang); ?> <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+                  <?php if ($this->layout()->userLang != $langCode): ?>
+                    <li  class="langOption"><a href="#" onClick="document.langForm.mylang.value='<?= $langCode?>';document.langForm.submit()"><?= $this->displayLanguageOption($langName)?></a></li>
+                  <?php else: ?>
+                    <li class="active"><span><?= $this->displayLanguageOption($langName)?></span></li>
+                  <?php endif; ?>
+                <?php endforeach; ?>
+              </ul>
+            </li>
+          <?php endif; ?>
+        <?php endif; ?>
+
+          <li>
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#tsnavbar" aria-expanded="false">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <?= $this->render('navbar/navbar-left.phtml'); ?>
+    </div>
+  </div>
+</nav>
+
+<?php if($isLandingPage): ?>
+  <img class="brand-landing-page-logo" src="<?= $this->imageLink('KATALOGplus_bunt.svg'); ?>" />
+<?php endif; ?>
+
+<div class="container hidden-print">
+    <?= $this->layout()->searchbox ?>
+</div>

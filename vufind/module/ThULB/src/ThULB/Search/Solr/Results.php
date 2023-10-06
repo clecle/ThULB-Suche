@@ -31,7 +31,6 @@ use ThULB\Search\Results\SortedFacetsTrait;
 use VuFind\Record\Loader;
 use VuFind\Search\Base\Params;
 use VuFind\Search\Solr\Results as OriginalResults;
-use VuFindSearch\Backend\Solr\Response\Json\Facets;
 use VuFindSearch\Service as SearchService;
 
 /**
@@ -45,7 +44,6 @@ class Results extends OriginalResults
         getFacetList as public trait_getFacetList;
     }
 
-    /* @var Facets */
     protected $responseFacets;
 
     /**
@@ -63,21 +61,18 @@ class Results extends OriginalResults
     }
 
     /**
-     * Returns the stored list of facets for the last search
+     * A helper method that converts the list of facets for the last search from
+     * RecordCollection's facet list.
      *
-     * @param array $filter Array of field => on-screen description listing
-     *                      all the desired facet fields; set to null to
-     *                      get all configured values.
+     * @param array      $facetList Facet list
+     * @param array|null $filter    Array of field => on-screen description listing all the
+     *                              desired facet fields; set to null to get all configured values.
      *
-     * @return array        Facets data arrays
+     * @return array Facets data arrays
+     * @throws \Exception
      */
-    public function getFacetList($filter = null) : array
+    public function buildFacetList(array $facetList, array $filter = null) : array
     {
-        // Make sure we have processed the search before proceeding:
-        if (null === $this->responseFacets) {
-            $this->performAndProcessSearch();
-        }
-
         // If there is no filter, we'll use all facets as the filter:
         if (null === $filter) {
             $filter = $this->getParams()->getFacetConfig();
@@ -87,11 +82,13 @@ class Results extends OriginalResults
         $list = [];
 
         // Loop through every field returned by the result set
-        $fieldFacets = $this->responseFacets->getFieldFacets();
         $translatedFacets = $this->getOptions()->getTranslatedFacets();
-        $hierarchicalFacets = $this->getOptions()->getHierarchicalFacets();
+        $hierarchicalFacets
+            = is_callable([$this->getOptions(), 'getHierarchicalFacets'])
+            ? $this->getOptions()->getHierarchicalFacets()
+            : [];
         foreach (array_keys($filter) as $field) {
-            $data = $fieldFacets[$field] ?? [];
+            $data = $facetList[$field] ?? [];
             // Skip empty arrays:
             if (count($data) < 1) {
                 continue;
@@ -105,6 +102,7 @@ class Results extends OriginalResults
             // Should we translate values for the current facet?
             $translate = in_array($field, $translatedFacets);
             $hierarchical = in_array($field, $hierarchicalFacets);
+            $operator = $this->getParams()->getFacetOperator($field);
 
             // Use custom facet class if available
             if($this->facetManager->has($field)) {
@@ -117,9 +115,6 @@ class Results extends OriginalResults
 
             // Loop through values:
             foreach ($data as $value => $count) {
-                // Initialize the array of data about the current facet:
-                $currentSettings = compact('value', 'count');
-
                 $displayText = $this->getParams()
                     ->getFacetValueRawDisplayText($field, $value);
 
@@ -134,17 +129,20 @@ class Results extends OriginalResults
                         ->formatDisplayText($displayText);
                 }
 
-                $currentSettings['displayText'] = $translate
+                $displayText = $translate
                     ? $this->getParams()->translateFacetValue($field, $displayText)
                     : $displayText;
-                $currentSettings['operator']
-                    = $this->getParams()->getFacetOperator($field);
-                $currentSettings['isApplied']
-                    = $this->getParams()->hasFilter("$field:" . $value)
+                $isApplied = $this->getParams()->hasFilter("$field:" . $value)
                     || $this->getParams()->hasFilter("~$field:" . $value);
 
                 // Store the collected values:
-                $list[$field]['list'][] = $currentSettings;
+                $list[$field]['list'][] = compact(
+                    'value',
+                    'displayText',
+                    'count',
+                    'operator',
+                    'isApplied'
+                );
             }
         }
 

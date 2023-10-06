@@ -2,7 +2,7 @@
 
 namespace ThULB\Search\Facets;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use VuFind\ServiceManager\AbstractPluginFactory;
 
 class PluginFactory extends AbstractPluginFactory

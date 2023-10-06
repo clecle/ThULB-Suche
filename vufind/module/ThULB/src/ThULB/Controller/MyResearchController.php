@@ -322,7 +322,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             return $this->forceLogin();
         }
 
-        $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
+        $savePath = $this->serviceLocator->get('VuFind\Config')->get('thulb')->LetterOfAuthorization->pdf_save_path ?? false;
         if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
             throw new IOException('File not writable: "' . $savePath . '"');
         }

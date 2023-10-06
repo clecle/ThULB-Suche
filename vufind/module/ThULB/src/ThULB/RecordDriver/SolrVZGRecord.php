@@ -112,13 +112,22 @@ class SolrVZGRecord extends SolrMarc
      */
     protected $departmentConfig;
 
+    /**
+     * ThULB configuration
+     *
+     * @var Config
+     */
+    protected $thulbConfig;
+
     protected $holdingData = null;
 
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
-                                $marcFormatConfig = null, $departmentConfig = null)
+                                $marcFormatConfig = null, $departmentConfig = null, $thulbConfig = null)
     {
         $this->marcFormatConfig = $marcFormatConfig;
         $this->departmentConfig = $departmentConfig;
+        $this->thulbConfig = $thulbConfig;
+
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
     }
 
@@ -1125,25 +1134,25 @@ class SolrVZGRecord extends SolrMarc
         $marcData = [];
         $marcFieldStrings = [];
         preg_match_all('/[\d]{3}[\da-z]/', $format, $marcFieldStrings, PREG_OFFSET_CAPTURE);
-        foreach ($marcFieldStrings[0] as $i => $marcFieldInfo) {
+        foreach ($marcFieldStrings[0] as $marcFieldInfo) {
             $fieldNumber = substr($marcFieldInfo[0], 0, 3);
             $subfieldChar = substr($marcFieldInfo[0], 3);
-            if ($data && isset($data[$fieldNumber . $subfieldChar])) {
-                $value = $data[$fieldNumber . $subfieldChar];
+            if ($data) {
+                $value = $data[$fieldNumber . $subfieldChar] ?? null;
             } else {
-                $value = empty ($data) ? $this->getFirstFieldValue($fieldNumber, [$subfieldChar]) : null;
+                $value = $this->getFirstFieldValue($fieldNumber, [$subfieldChar]);
             }
-            $value = ($ignorePlaceholders && !is_null($value) && in_array($value, static::$defaultPlaceholders)) ? null : $value;
-            if (!is_null($value)) {
+            $value = ($ignorePlaceholders && in_array($value, static::$defaultPlaceholders)) ? null : $value;
+            if (!is_null($value) && $value != '') {
                 $marcData[$fieldNumber . $subfieldChar] = $value;
                 $replacement = 'T';
                 // check for separators in the marc field and marc the separator
                 // in the format string as removable
                 if ($removeSeparators) {
                     foreach (static::$defaultSeparators as $separator) {
-                        if (substr($value, 0, strlen($separator)) === $separator) {
+                        if (str_starts_with($value, $separator)) {
                             $replacement = 'ST';
-                        } else if ((substr($value, -strlen($separator)) === $separator)) {
+                        } else if ((str_ends_with($value, $separator))) {
                             $replacement = 'TS';
                         }
                     }
@@ -1686,7 +1695,7 @@ class SolrVZGRecord extends SolrMarc
      * @return bool
      */
     public function isInArchive() : bool {
-        $depMails = $this->departmentConfig->DepartmentArchiveEmail;
+        $depMails = $this->thulbConfig->JournalRequest->ArchiveEmail;
         $archiveCodes = array_keys($depMails ? $depMails->toArray() : []);
         $holdingsLocations = $this->getHoldingsLocations();
 
@@ -1904,7 +1913,7 @@ class SolrVZGRecord extends SolrMarc
                 $parts = explode($searchString, $subject);
                 if (is_array($parts) && $parts) {
                     foreach ($parts as $i => $part) {
-                        $parts[$i] = trim($replace(' ' . $part . ' ', $searches, $highlights));
+                        $parts[$i] = $replace($part, $searches, $highlights);
                     }
 
                     return implode($highlightString, $parts);
@@ -1913,7 +1922,7 @@ class SolrVZGRecord extends SolrMarc
                 return $subject;
             };
 
-            $modifiedString = trim($replace(' ' . $plainString . ' ', array_keys($replacements), array_values($replacements)));
+            $modifiedString = trim($replace($plainString, array_keys($replacements), array_values($replacements)));
         }
 
         return $modifiedString;
@@ -2396,32 +2405,29 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSource() : array
-    {
-        $source = [];
-        if (in_array('KXP', $this->fields['collection'])) {
-            if (in_array('GBV_ILN_' . static::LIBRARY_ILN, $this->fields['collection_details'])) {
-                $source['name'] = 'K10plus-Verbundkatalog';
-                $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
+    public function getSource() : array {
+        if($recordSources = $this->thulbConfig->RecordSources) {
+            foreach ($recordSources->toArray() as $source) {
+                foreach (explode(',', $source['conditions']) as $condition) {
+                    list($field, $value) = explode(':', $condition);
+                    if(!isset($this->fields[$field])) {
+                        continue 2;
+                    }
+
+                    $fieldData = is_array($this->fields[$field]) ? $this->fields[$field] : [$this->fields[$field]];
+                    if (!in_array($value, $fieldData)) {
+                        continue 2;
+                    }
+                }
+
+                return [
+                    'name' => $source['name'],
+                    'url' => $source['url'] ?? null,
+                ];
             }
-            elseif (in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Kostenfreie Online-Ressourcen aus dem K10plus-Verbundkatalog';
-            }
-        }
-        elseif (in_array('DBT@UrMEL', $this->fields['collection_details'])) {
-            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
-            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
-        }
-        elseif (in_array('Collections@UrMEL', $this->fields['collection_details'])) {
-            $source['name'] = 'Historische Bestände (Collections@UrMEL)';
-            $source['url'] = 'https://collections.thulb.uni-jena.de/templates/master/template_collections/index.xml';
-        }
-        elseif (in_array('NL', $this->fields['collection'])) {
-            $source['name'] = 'Nationallizenz';
-            $source['url'] = 'https://www.nationallizenzen.de/';
         }
 
-        return $source;
+        return [];
     }
 
     public function getSummary() : array {

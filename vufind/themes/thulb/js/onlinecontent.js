@@ -10,10 +10,14 @@ VuFind.register('onlineContent', function onlineContent() {
         }
 
         if ("undefined" !== typeof result) {
-            onlineContentEl.empty();
-            $(result.links).each(function (y, html) {
-                onlineContentEl.append(html);
-            });
+            let actionRow = onlineContentEl.parent().parent();
+            let brokenLink = result.links.pop();
+            if($(brokenLink).hasClass('broken-link')) {
+                actionRow.append(result.links, actionRow.find('a'), brokenLink);
+            }
+            else {
+                actionRow.append(result.links, brokenLink, actionRow.find('a'));
+            }
         }
         else {
             onlineContentEl.parent().hide();

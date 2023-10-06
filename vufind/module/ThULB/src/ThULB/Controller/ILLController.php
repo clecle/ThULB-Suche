@@ -265,7 +265,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $mailer->send(
                 $this->illConfig->departmentEmail,
                 $this->mainConfig->Mail->default_from,
-                $subject,
+                $subject . ' (' . strtoupper($this->serviceLocator->get(\VuFind\Translator::class)->getLocale()) . ')',
                 $this->getViewRenderer()->render($template, $data)
             );
         }

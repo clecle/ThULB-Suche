@@ -1359,6 +1359,22 @@ form#newpassword .form-group.flex-center {
   font-weight: bold;
 }
 
+.access-tab {
+  .col-description {
+    width: 85px;
+    margin-right: 10px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 575px) {
+  .access-tab {
+    .col-text {
+      width: 100%;
+    }
+  }
+}
+
 .navbar {
   border-radius: unset !important;
   border: unset !important;
@@ -1581,7 +1597,6 @@ body > header {
 
 div.online-access {
   margin: 10px 15px;
-  width: 100%;
 }
 
 div.striped {
@@ -1668,39 +1683,6 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 }
 
-.location-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  flex-direction: row;
-  margin: 0 -15px;
-
-  .col-description {
-    width: 85px;
-    margin-right: 10px;
-    flex-shrink: 0;
-  }
-
-  .col-text {
-    flex-grow: 1;
-  }
-
-  h3 .col-text {
-    margin-right: 15px;
-  }
-}
-
-@media (max-width: 575px) {
-  .location-wrapper {
-    .col-text {
-      width: 100%;
-    }
-  }
-}
-
-.location-data-wrapper {
-  border-left: solid 1px #e5e5e5;
-}
-
 .location-data {
   min-width: 225px;
   width: min-content;
@@ -1712,17 +1694,8 @@ a.checkbox-filter > span > i.fa-info-circle,
   top: 20px;
 
   i {
-    padding: 5px;
+    padding: 0 5px;
   }
-}
-
-.location {
-  border-bottom: solid 1px #e5e5e5;
-}
-
-.access-location-group {
-  flex-grow: 1;
-  width: 50%;
 }
 
 .ws-nowrap {
@@ -1730,16 +1703,6 @@ a.checkbox-filter > span > i.fa-info-circle,
 }
 
 .btn-opening-hours {
-  display: none;
-}
-
-@media (max-width: $screen-sm-max) {
-  .btn-opening-hours {
-    display: block;
-    height: fit-content;
-  }
-
-  .location-data-wrapper {
-    display: none;
-  }
+  display: block;
+  height: fit-content;
 }

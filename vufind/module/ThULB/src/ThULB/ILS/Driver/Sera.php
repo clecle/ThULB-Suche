@@ -33,6 +33,10 @@ class Sera extends AbstractBase implements
      * @return array
      */
     public function getStatus($id) : array {
+        if(!$this->thulbConfig->SERA) {
+            return [];
+        }
+
         $postData = "sql=SELECT orderstatus_code FROM orders o" .
                         " WHERE o.iln = 31 AND o.orderstatus_code IN ('t', 'b')" .
                         " AND o.epn = " . $id;

@@ -1754,4 +1754,15 @@ a.checkbox-filter > span > i.fa-info-circle,
 .btn-opening-hours {
   display: block;
   height: fit-content;
+
+  background-color: lighten($brand-secondary, 10%);
+  border-color: darken($brand-secondary, 0%);
+  color: #000;
+
+  &:hover,
+  &:focus {
+    background-color: $brand-secondary;
+    border-color: darken($brand-secondary, 10%);
+    color: #000;
+  }
 }

@@ -264,9 +264,13 @@ class PAIA extends OriginalPAIA
                 $result[$i]['queue'] = $item['queue'];
             }
             
-            if (isset($item['storage']) && substr($item['storage'], 0, 14) === 'Sonderlesesaal') {
+            if (isset($item['storage']) && str_starts_with($item['storage'], 'Sonderlesesaal')) {
                 // storage (0..1) textual description of location of the document
                 $result[$i]['location'] = $item['storage'];
+            }
+
+            if($item['status'] ?? false) {
+                $result[$i]['status'] = $item['status'];
             }
         }
         
@@ -399,18 +403,6 @@ class PAIA extends OriginalPAIA
         usort($results, $sort);
 
         return $results;
-    }
-
-    /**
-     * Get the callnumber of this item
-     *
-     * @param array $doc Array of PAIA item.
-     *
-     * @return String|null
-     */
-    protected function getCallNumber($doc) : ?string
-    {
-        return isset($doc['label']) ? $this->removeDepIdFromCallNumber($doc['label']) : null;
     }
 
     /**

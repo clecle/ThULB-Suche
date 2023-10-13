@@ -1,9 +1,15 @@
 <?php $locationApiId = $holding['items'][0]['locationapiid'] ?? false; ?>
+<?php $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding); ?>
 <h3 class="flex flex-wrap-xs">
   <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
-  <span class="col-text"><?= $this->thulb_holdingHelper()->getLocation($holding, !is_numeric($locationApiId));?></span>
+  <span class="col-text mr-2"><?= $this->thulb_holdingHelper()->getLocation($holding, !is_numeric($locationApiId) && empty($locationInfoInfoMessage));?></span>
+  <?php if($locationInfoInfoMessage): ?>
+    <button class="mag-button" onclick="VuFind.lightbox.showAlert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');">
+      <i class="fa fa-info-circle"></i>
+    </button>
+  <?php endif; ?>
   <?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
-    <button class="btn btn-xs btn-primary btn-opening-hours ml-2" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
+    <button class="btn btn-xs btn-primary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
   <?php endif; ?>
 </h3>
 <div class="flex flex-wrap-reverse-xs">

@@ -3,7 +3,7 @@
 namespace ThULB\Controller;
 
 use Laminas\Mvc\MvcEvent;
-use \VuFind\Controller\RecordController as OriginalRecordController;
+use VuFind\Controller\RecordController as OriginalRecordController;
 use VuFind\Exception\PasswordSecurity;
 
 class RecordController extends OriginalRecordController

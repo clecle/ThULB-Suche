@@ -51,7 +51,7 @@ class Summon extends OriginalSummon
     {
         ksort($this->fields, SORT_NATURAL | SORT_FLAG_CASE);
         foreach ($this->fields as $key => $field) {
-            if(is_array($field)) {
+            if (is_array($field) && !is_array($field[0] ?? [])) {
                 sort($field, SORT_NATURAL | SORT_FLAG_CASE);
 
                 $this->fields[$key] = $field;

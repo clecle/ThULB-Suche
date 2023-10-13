@@ -7,8 +7,7 @@ use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
 use VuFind\Controller\HoldsController as OriginalHoldsController;
-use VuFind\RecordDriver\AbstractBase;
-use VuFind\Validator\Csrf;
+use VuFind\Validator\SessionCsrf;
 
 class HoldsController extends OriginalHoldsController
 {
@@ -23,7 +22,7 @@ class HoldsController extends OriginalHoldsController
         return $this->redirect()->toRoute('default', ['controller' => 'holds', 'action' => 'holdsAndSRR']);
     }
 
-    public function __construct(ServiceLocatorInterface $sm, Csrf $csrf, StorageInterface $cache)
+    public function __construct(ServiceLocatorInterface $sm, SessionCsrf $csrf, StorageInterface $cache)
     {
         parent::__construct($sm, $csrf, $cache);
     }

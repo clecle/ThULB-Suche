@@ -2,17 +2,10 @@
 
 namespace ThULB\View\Helper\Root;
 
-use Laminas\Session\SessionManager;
-use Laminas\View\Helper\AbstractHelper;
+use VuFind\View\Helper\Root\Session as OriginalSessionHelper;
 
-class Session extends AbstractHelper
+class Session extends OriginalSessionHelper
 {
-    protected $sessionManager;
-
-    public function __construct(SessionManager $sessionManager) {
-        $this->sessionManager = $sessionManager;
-    }
-
     /**
      * Checks if a message with the given identifier should be displayed.
      *
@@ -21,12 +14,7 @@ class Session extends AbstractHelper
      * @return bool
      */
     public function isMessageDisplayed($identifier) : bool {
-        $value = 0;
-        $identifier = $identifier . '_expires';
-
-        if($this->sessionManager->sessionExists()) {
-            $value = $this->sessionManager->getStorage()->offsetGet($identifier);
-        }
+        $value = $this->sessionContainer->{$identifier . '_expires'} ?? 0;
 
         return $value < time();
     }

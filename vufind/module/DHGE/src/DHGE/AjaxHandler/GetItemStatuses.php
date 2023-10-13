@@ -37,7 +37,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
      * Support method for getItemStatuses() -- process a single bibliographic record
      * for "group" location setting.
      *
-     * @param array  $record            Information on items linked to a single
+     * @param array  $records            Information on items linked to a single
      *                                  bib record
      * @param array  $messages          Custom status HTML
      *                                  (keys = available/unavailable)
@@ -46,15 +46,15 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array
+    protected function getItemStatusGroup($records, $messages, $callnumberSetting) : array
     {
-        $statusGroup = parent::getItemStatusGroup($record, $messages, $callnumberSetting);
+        $statusGroup = parent::getItemStatusGroup($records, $messages, $callnumberSetting);
 
         $statusGroup['availability_message'] = '';
 
         // Check availabilities for each library
         $libAvailability = [];
-        foreach ($record as $info) {
+        foreach ($records as $info) {
             if(!$info['use_unknown_message']) {
                 $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability'];
             }

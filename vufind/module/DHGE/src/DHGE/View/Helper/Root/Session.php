@@ -2,15 +2,16 @@
 
 namespace DHGE\View\Helper\Root;
 
-use Laminas\Session\Container;
-use ThULB\View\Helper\Root\Session as OriginalSessionHelper;
+use Laminas\Session\Container as SessionContainer;
+use Laminas\View\Helper\AbstractHelper;
 
-class Session extends OriginalSessionHelper
+class Session extends AbstractHelper
 {
-    /**
-     * @var Container
-     */
-    protected $accountSession;
+    protected SessionContainer $accountSession;
+
+    public function __construct(SessionContainer $accountSession) {
+        $this->accountSession = $accountSession;
+    }
 
     /**
      * Returns the library of the logged-in user from the session.
@@ -18,18 +19,6 @@ class Session extends OriginalSessionHelper
      * @return string|null
      */
     public function getLibrary() : ?string {
-        return $this->getAccountSession()->library ?? null;
-    }
-
-    /**
-     * Creates and returns the container for the account namespace in the session.
-     *
-     * @return Container
-     */
-    protected function getAccountSession() : Container {
-        if(!$this->accountSession) {
-            $this->accountSession = new Container('Account', $this->sessionManager);
-        }
-        return $this->accountSession;
+        return $this->accountSession->library ?? null;
     }
 }

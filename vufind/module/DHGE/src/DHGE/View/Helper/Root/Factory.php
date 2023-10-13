@@ -28,16 +28,40 @@ namespace DHGE\View\Helper\Root;
 
 use Laminas\ServiceManager\ServiceManager;
 use Laminas\View\Helper\AbstractHelper;
-use ThULB\View\Helper\Root\Factory as OriginalViewHelperFactory;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 
 /**
  * Description of Factory
  *
  * @author Richard Großer <richard.grosser@thulb.uni-jena.de>
  */
-class Factory extends OriginalViewHelperFactory
+class Factory
 {
     public static function getSession(ServiceManager $sm) : AbstractHelper {
-        return new Session($sm->get('VuFind\SessionManager'));
+        return new Session(
+            new \Laminas\Session\Container(
+                'Account',
+                $sm->get('VuFind\SessionManager')
+            )
+        );
+    }
+
+    /**
+     * Construct the Unpaywall helper.
+     *
+     * @param ServiceManager $sm Service manager.
+     *
+     * @return DoiLinker
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public static function getDoiLinker(ServiceManager $sm) : DoiLinker
+    {
+        $config = $sm->get(\VuFind\Config\PluginManager::class)
+            ->get('config');
+        $pluginManager = $sm->get(\VuFind\DoiLinker\PluginManager::class);
+        return new DoiLinker($pluginManager, $config->DOI->resolver ?? null);
     }
 }

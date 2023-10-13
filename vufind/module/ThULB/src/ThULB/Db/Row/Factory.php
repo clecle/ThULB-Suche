@@ -26,8 +26,7 @@
  */
 
 namespace ThULB\Db\Row;
-use Interop\Container\ContainerInterface;
-use Laminas\ServiceManager\ServiceManager;
+use Psr\Container\ContainerInterface;
 use VuFind\Db\Row\UserFactory as OriginalFactory;
 
 /**

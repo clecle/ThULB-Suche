@@ -47,18 +47,17 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
     /**
      * Creates the facet list for this field.
      *
-     * @param string    $field  The field of this list.
-     * @param NamedList $data   The data to populate the facet list with.
-     * @param Params    $params Params of the search.
+     * @param string $field  The field of this list.
+     * @param array  $data   The data to populate the facet list with.
+     * @param Params $params Params of the search.
      *
      * @return array
      */
-    public function getFacetList(string $field, NamedList $data, Params $params) : array {
+    public function getFacetList(string $field, array $data, Params $params) : array {
         if(!empty($this->facetList)) {
             return $this->facetList;
         }
 
-        $data = $this->getDataAsArray($data);
         $operator = $params->getFacetOperator($field);
         $fieldWithOperator = $operator == 'OR' ? "~$field" : $field;
 
@@ -166,21 +165,6 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
         }
 
         return $group;
-    }
-
-    /**
-     * Creates an array with value:count pairs of the given data.
-     *
-     * @param NamedList $data
-     *
-     * @return array
-     */
-    private function getDataAsArray(NamedList $data) : array {
-        $dataArray = array();
-        foreach($data as $value => $count) {
-            $dataArray[$value] = $count;
-        }
-        return $dataArray;
     }
 
     /**

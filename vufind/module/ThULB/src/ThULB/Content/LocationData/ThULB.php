@@ -113,10 +113,13 @@ class ThULB implements
                 )
             ];
 
+            $weekday = date('N');
+            $now = date('Hi');
             // fill opening hours of tmp
             foreach ($location['openinghours']['result']['opening_hours']['periods'] as $period) {
-                $tmp['openingHours'][$period['open']['day']] = array_merge(
-                    $tmp['openingHours'][$period['open']['day']],
+                $jdday = $period['open']['day'];
+                $tmp['openingHours'][$jdday] = array_merge (
+                    $tmp['openingHours'][$jdday],
                     array (
                         'open' => $period['open']['time'],
                         'close' => $period['close']['time'],
@@ -129,13 +132,12 @@ class ThULB implements
                         )
                     )
                 );
-            }
 
-            $now = date('H:i');
-            $tmp['openCloseToday']['nowOpen'] =
-                $tmp['openCloseToday']['status'] == 'open'
-                && $tmp['openCloseToday']['opens'] <= $now
-                && $tmp['openCloseToday']['closes'] >= $now;
+                if($weekday % 7 == $jdday) {
+                    $tmp['openCloseToday']['nowOpen'] =
+                        $period['open']['time'] <= $now && $now < $period['close']['time'];
+                }
+            }
 
             $result[] = $tmp;
         }

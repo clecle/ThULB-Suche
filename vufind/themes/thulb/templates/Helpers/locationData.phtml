@@ -23,7 +23,7 @@
             <?php
               $class = '';
               if (($weekday % 7) == $jdday) {
-                $class = $locationData['openCloseToday']['nowOpen'] ? 'bold text-success' : 'bold text-danger';
+                $class = ($locationData['openCloseToday']['nowOpen'] ?? false) ? 'bold text-success' : 'bold text-danger';
               }
             ?>
             <tr>

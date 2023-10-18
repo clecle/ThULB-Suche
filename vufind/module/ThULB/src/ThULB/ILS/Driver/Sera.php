@@ -86,6 +86,10 @@ class Sera extends AbstractBase implements
     }
 
     protected function sendRequest(string $postData) : mixed {
+        if(!$this->thulbConfig->SERA) {
+            return [];
+        }
+
         $headers = [
             'Accept' => 'application/json',
             'Authorization' => 'Bearer ' . $this->thulbConfig->SERA->Token

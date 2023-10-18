@@ -82,22 +82,18 @@
           <?php endif; ?>
           
           <div class="col-xs-11">
-            <?php
-              // If this is a non-missing Solr record, we should display a link:
-              if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')) {
-                $title = $this->record($resource)->getTitleHtml();
-                echo '<a href="' . $this->recordLinker()->getUrl($resource) .
-                  '" class="title truncate">' . $title . '</a>';
-              } else if (isset($ilsDetails['title']) && !empty($ilsDetails['title'])){
-                // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
-                echo $this->escapeHtml($ilsDetails['title']);
-                echo '<br />';
-              } else {
-                // Last resort -- indicate that no title could be found.
-                echo $this->transEsc('Title not available');
-                echo '<br />';
-              }
-            ?>
+            <?php if (is_a($resource, 'VuFind\\RecordDriver\\SolrDefault') && !is_a($resource, 'VuFind\\RecordDriver\\Missing')): ?>
+              <a href="<?= $this->recordLinker()->getUrl($resource); ?>" class="title truncate"><?= $this->record($resource)->getTitleHtml(); ?></a>
+            <?php elseif(!empty($ilsDetails['title']) && $ilsDetails['departmentId'] == 'ZAUSL'): ?>
+              <?php $title = $ilsDetails['title']; ?>
+              <?php $title = str_starts_with($title, 'FL:') ? substr($title, 3) : $title; ?>
+              <strong><?= $this->transEsc('Interlibrary loan')?>: </strong><?= $this->escapeHtml($title); ?><br />
+            <?php elseif(!empty($ilsDetails['title'])): ?>
+              <?= $this->escapeHtml($ilsDetails['title']); ?><br />
+            <?php else: ?>
+              <?= $this->transEsc('Title not available'); ?><br />
+            <?php endif; ?>
+
             <?php $listAuthors = $resource->getPrimaryAuthors(); if (!empty($listAuthors)): ?>
               <?= $this->transEsc('by')?>:
               <a href="<?= $this->record($resource)->getLink('author', $listAuthors[0])?>"><?= $this->escapeHtml($listAuthors[0])?></a><?php if (count($listAuthors) > 1): ?>, <?= $this->transEsc('more_authors_abbrev')?><?php endif; ?><br/>
@@ -172,24 +168,7 @@
               <?php endif; ?>
             <?php endif; ?>
 
-            <?php if (!isset($ilsDetails['renewable']) || !$ilsDetails['renewable']) : ?>
-              <?php if (strpos($ilsDetails['callnumber'] ?? '', 'EDV:Laptop') !== false): ?>
-                <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
-                <br />
-              <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
-                <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>
-                <br />
-              <?php elseif (isset($ilsDetails['queue']) && $ilsDetails['queue'] > 0): ?>
-                <span class="text-danger"><?= $this->transEsc('No renewal bacause of reservations')?></span>
-                <br />
-              <?php elseif (isset($ilsDetails['renew']) && $ilsDetails['renew'] > 2): ?>
-                <span class="text-danger"><?= $this->transEsc('Maximum number of renewals reached')?></span>
-                <br />
-              <?php else: ?>
-                <span class="text-danger"><?= $this->translate('Renewal not possible')?></span>
-                <br />
-              <?php endif; ?>
-            <?php endif; ?>
+            <?= $this->render('myresearch/checkedout/not-renewable', ['ilsDetails' => $ilsDetails]); ?>
 
             <?php if ($showStatus && isset($ilsDetails['message']) && !empty($ilsDetails['message'])): ?>
               <div class="alert alert-info"><?= $this->transEsc($ilsDetails['message'])?></div>

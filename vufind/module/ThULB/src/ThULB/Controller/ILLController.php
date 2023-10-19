@@ -16,7 +16,7 @@ use VuFind\Controller\AbstractBase;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Mailer\Mailer;
-use VuFind\Validator\Csrf;
+use VuFind\Validator\SessionCsrf;
 use Whoops\Exception\ErrorException;
 
 /**
@@ -29,7 +29,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
     protected Config $mainConfig;
     protected Config $illConfig;
 
-    protected Csrf $csrfValidator;
+    protected SessionCsrf $csrfValidator;
 
     public function __construct(ServiceLocatorInterface $serviceLocator) {
         parent::__construct($serviceLocator);
@@ -37,7 +37,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $this->mainConfig = $serviceLocator->get('VuFind\Config')->get('config');
         $this->illConfig = $serviceLocator->get('VuFind\Config')->get('thulb')->ILL;
 
-        $this->csrfValidator = $serviceLocator->get(Csrf::class);
+        $this->csrfValidator = $serviceLocator->get(SessionCsrf::class);
     }
 
     public function onDispatch(MvcEvent $e) : ViewModel|MvcEvent|Response {

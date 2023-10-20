@@ -110,6 +110,15 @@
   </table>
 <?php endif; ?>
 
+<?php if(empty($onlineContentLinks) && !$holdings['total'] && is_callable([$this->driver, 'isFormat']) && $this->driver->isFormat('Article|electronic Article', true)): ?>
+  <?php if($series = $this->driver->getSeries(false)): ?>
+    <?php $firstKey = array_key_first($series); ?>
+    <?= $this->transEsc('see parent work'); ?>:
+    <a href="<?= $this->recordLinker()->related(['type' => 'bib', 'value' => $series[$firstKey]['id']]); ?>" class="btn btn-secondary btn-xs" target="_blank"><?= $this->escapeHtml($series[$firstKey]['name'])?></a>
+    <?= $this->escapeHtml($series[$firstKey]['number'] ?? ''); ?>
+  <?php endif; ?>
+<?php endif; ?>
+
 <?php if(is_callable([$this->driver, 'isFormat']) && $this->driver->isFormat('Journal')
     && $this->record($this->driver)->hasNonArticleTab($this)): ?>
     <?= $this->transEsc('see volumes tab for listing and ordering of volumes'); ?>

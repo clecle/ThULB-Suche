@@ -9,7 +9,7 @@
     </button>
   <?php endif; ?>
   <?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
-    <button class="btn btn-xs btn-primary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
+    <button class="btn btn-xs btn-secondary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
   <?php endif; ?>
 </h3>
 <div class="flex flex-wrap-reverse-xs">

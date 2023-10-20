@@ -1228,6 +1228,8 @@ a.external-link:after,
     border-top-right-radius: 0 !important;
     background-color: $brand-primary-darker;
     color: #ffffff;
+    min-width: 175px;
+    padding: 0;
   }
 
   #searchForm_lookfor {

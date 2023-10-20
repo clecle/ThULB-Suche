@@ -1771,3 +1771,25 @@ a.checkbox-filter > span > i.fa-info-circle,
     outline: dotted 1px #000;
   }
 }
+
+.btn-secondary {
+  @extend .btn-primary;
+
+  color: $btn-secondary-color;
+  background-color: $btn-secondary-bg;
+  border-color: $btn-secondary-border-color;
+
+  &:hover,
+  &:focus {
+    color: $btn-secondary-color;
+    background-color: darken($btn-secondary-bg, 5%);
+    border-color: darken($btn-secondary-border-color, 5%);
+  }
+
+  &:active,
+  &:active:focus {
+    color: $btn-secondary-color;
+    background-color: darken($btn-secondary-bg, 10%);
+    border-color: darken($btn-secondary-border-color, 10%);
+  }
+}

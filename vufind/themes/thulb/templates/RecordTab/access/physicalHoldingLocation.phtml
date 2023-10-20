@@ -1,0 +1,48 @@
+<?php $locationApiId = $holding['items'][0]['locationapiid'] ?? false; ?>
+<?php $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding); ?>
+<h3 class="flex flex-wrap-xs">
+  <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
+  <span class="col-text mr-2"><?= $this->thulb_holdingHelper()->getLocation($holding, !is_numeric($locationApiId) && empty($locationInfoInfoMessage));?></span>
+  <?php if($locationInfoInfoMessage): ?>
+    <button class="mag-button" onclick="VuFind.lightbox.showAlert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');">
+      <i class="fa fa-info-circle"></i>
+    </button>
+  <?php endif; ?>
+  <?php if(in_array($locationApiId, [2, 3, 4, 8])): ?>
+    <button class="btn btn-xs btn-primary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
+  <?php endif; ?>
+</h3>
+<div class="flex flex-wrap-reverse-xs">
+  <div class="hidden"><?= $this->render('Helpers/locationData.phtml', ['holding' => $holding]); ?></div>
+
+  <div class="striped flex-grow" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
+    <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
+      <div class="row mr-0 ml-0">
+        <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+          <?php // Translation for summary is a special case for backwards-compatibility ?>
+          <div class="col-description bold"><?= $textFieldName == 'summary' ? $this->transEsc("Volume Holdings") : $this->transEsc(ucfirst($textFieldName))?>:</div>
+          <div class="col-text">
+            <?php foreach ($textFields as $current): ?>
+              <?= $this->escapeHtml($current)?><br/>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
+    <?php endforeach; endif; ?>
+
+    <?php foreach ($holding['items'] as $item): ?>
+      <?= $this->render('RecordTab/access/physicalHoldingItem.phtml', ['holding' => $holding, 'driver' => $driver, 'item' => $item]); ?>
+    <?php endforeach; ?>
+
+    <?php if (!empty($holding['purchase_history'])): ?>
+      <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
+        <div class="col-description bold"><?= $this->transEsc("Most Recent Received Issues")?>:</div>
+        <div class="col-text">
+          <?php foreach ($holding['purchase_history'] as $current): ?>
+            <?= $this->escapeHtml($current['issue'])?><br/>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>

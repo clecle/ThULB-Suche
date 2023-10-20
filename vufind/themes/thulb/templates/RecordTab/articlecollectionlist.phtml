@@ -39,7 +39,7 @@
       <div class="journal-not-found"></div>
     </div>
   </div>
-  <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
+  <form class="form-inline row" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
     <?= $this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
     <?= $this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
   </form>

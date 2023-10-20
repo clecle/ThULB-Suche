@@ -45,6 +45,7 @@ $config = array(
     'service_manager' => array(
         'factories' => array(
             \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+            \ThULB\Content\LocationData\ThULB::class => \ThULB\Content\LocationData\ThULBFactory::class,
             \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
             \ThULB\Record\Loader::class => \VuFind\Record\LoaderFactory::class,
             \ThULB\Search\Facets\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
@@ -215,6 +216,7 @@ $config = array(
     'view_helpers' => array(
         'invokables' => array(
             'thulb_holdingHelper' => \ThULB\View\Helper\Record\HoldingHelper::class,
+            'thulb_locationData' => \ThULB\View\Helper\Root\LocationData::class,
             'thulb_serverType' => \ThULB\View\Helper\Root\ServerType::class,
             'thulb_removeZWNJ' => \ThULB\View\Helper\Root\RemoveZWNJ::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
@@ -242,5 +244,6 @@ $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
+$routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
 
 return $config;

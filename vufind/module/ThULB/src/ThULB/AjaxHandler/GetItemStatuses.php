@@ -49,25 +49,30 @@ class GetItemStatuses extends OriginalGetItemStatuses
     protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array {
         // Summarize call number, location and availability info across all items:
         $locations = [];
-        $use_unknown_status = $available = null;
+        $useUnknownStatus = false;
+        $available = null;
         foreach ($record as $info) {
+            // Find an available copy
+            if (!isset($info['use_unknown_message'])) {
+                $availStr = $this->availabilityToString($info['availability'] ?? false);
+                if ('true' !== $available) {
+                    $available = $availStr;
+                }
+                if ('true' !== ($locations[$info['location']]['available'] ?? null)) {
+                    $locations[$info['location']]['available'] = $availStr;
+                }
+
+                $useUnknownStatus = false;
+                $locations[$info['location']]['status_unknown'] = false;
+            }
             // Check for a use_unknown_message flag
-            if ($available === null && ($info['use_unknown_message'] ?? false)) {
-                $use_unknown_status = true;
+            if ($available === null && $info['use_unknown_message'] ?? false) {
+                $useUnknownStatus = true;
                 $locations[$info['location']]['status_unknown'] = true;
             }
-            else {
-                $use_unknown_status = false;
-            }
-
-            // Find an available copy
-            if ($info['availability']) {
-                $available = $locations[$info['location']]['available'] = true;
-            }
-
             // Store call number/location info:
             $locations[$info['location']]['callnumbers'][] = $this->formatCallNo(
-                $info['callnumber_prefix'],
+                $info['callnumber_prefix'] ?? '',
                 $info['callnumber']
             );
         }
@@ -87,8 +92,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 'Multiple Call Numbers'
             );
             $locationInfo = [
-                'availability' =>
-                    $details['available'] ?? false,
+                'availability' => $details['available'] ?? false,
                 'location' => htmlentities(
                     $this->translateWithPrefix('location_', $location),
                     ENT_COMPAT,
@@ -97,33 +101,34 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 'callnumbers' =>
                     htmlentities($locationCallnumbers, ENT_COMPAT, 'UTF-8'),
                 'status_unknown' => $details['status_unknown'] ?? false,
-                'callnumber_handler' => $callnumberHandler
+                'callnumber_handler' => $callnumberHandler,
             ];
             $locationList[] = $locationInfo;
         }
 
+        $availabilityMessage = $this->getAvailabilityMessage(
+            $messages,
+            $available,
+            $useUnknownStatus
+        );
+
+        $reserve = ($record[0]['reserve'] ?? 'N') === 'Y';
+
         // Sort locations by displayed name
         usort($locationList, [$this, 'sortLocationList']);
 
-        $availability_message = $use_unknown_status
-            ? $messages['unknown']
-            : $messages[$available ? 'available' : 'unavailable'];
-
-        $statusGroup = [
+        // Send back the collected details:
+        return [
             'id' => $record[0]['id'],
-            'availability' => ($available ? 'true' : 'false'),
-            'availability_message' => $availability_message,
+            'availability' => $available,
+            'availability_message' => $availabilityMessage,
             'location' => false,
             'locationList' => $locationList,
-            'reserve' =>
-                ($record[0]['reserve'] == 'Y' ? 'true' : 'false'),
-            'reserve_message' => $record[0]['reserve'] == 'Y'
-                ? $this->translate('on_reserve')
-                : $this->translate('Not On Reserve'),
-            'callnumber' => false
+            'reserve' => $reserve ? 'true' : 'false',
+            'reserve_message'
+                => $this->translate($reserve ? 'on_reserve' : 'Not On Reserve'),
+            'callnumber' => false,
         ];
-
-        return $statusGroup;
     }
 
     protected function sortLocationList($location1, $location2) : int {

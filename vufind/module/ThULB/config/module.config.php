@@ -45,16 +45,18 @@ $config = array(
     'service_manager' => array(
         'factories' => array(
             \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+            \ThULB\Cache\Manager::class => \VuFind\Cache\ManagerFactory::class,
             \ThULB\Content\LocationData\ThULB::class => \ThULB\Content\LocationData\ThULBFactory::class,
+            \ThULB\Cover\Loader::class => \VuFind\Cover\LoaderFactory::class,
             \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
             \ThULB\Record\Loader::class => \VuFind\Record\LoaderFactory::class,
             \ThULB\Search\Facets\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             \ThULB\Search\Solr\HierarchicalFacetHelper::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
-            'ThULB\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
         ),
         'aliases' => array(
             \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
-            'VuFind\Cover\Loader' => 'ThULB\Cover\Loader',
+            \VuFind\Cache\Manager::class => \ThULB\Cache\Manager::class,
+            \VuFind\Cover\Loader::class => \ThULB\Cover\Loader::class,
             'VuFind\HierarchicalFacetHelper' => \ThULB\Search\Solr\HierarchicalFacetHelper::class,
             'VuFind\Mailer' => \ThULB\Mailer\Mailer::class,
             \VuFind\Mailer\Mailer::class => \ThULB\Mailer\Mailer::class,
@@ -93,11 +95,9 @@ $config = array(
             ),
             'content_covers' => array(
                 'factories' => array(
-                    \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
                     \ThULB\Content\Covers\IIIF::class => \VuFind\Service\ServiceWithConfigIniFactory::class,
                 ),
                 'aliases' => array(
-                    'google' => \ThULB\Content\Covers\Google::class,
                     'iiif' => \ThULB\Content\Covers\IIIF::class
                 )
             ),

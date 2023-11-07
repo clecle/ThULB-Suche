@@ -1378,10 +1378,10 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getSeries() : array
+    public function getSeries($includeUnavailable = true) : array
     {
         $primaryFields = []; // not used
-        return $this->getSeriesFromMARC($primaryFields);
+        return $this->getSeriesFromMARC($primaryFields, $includeUnavailable);
     }
 
     /**
@@ -1393,7 +1393,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    protected function getSeriesFromMARC($fieldInfo) : array {
+    protected function getSeriesFromMARC($fieldInfo, $includeUnavailable = true) : array {
         $matches = [];
 
         // Did we find any matching fields?
@@ -1449,9 +1449,14 @@ class SolrVZGRecord extends SolrMarc
             }
         }
         $ppnList = $this->checkAvailabilityOfPPNs($ppnList);
-        for ($i = 0; $i < count($matches); $i++) {
-            if(!empty($matches[$i]['id']) && !in_array($matches[$i]['id'], $ppnList)) {
-                $matches[$i]['id'] = null;
+        foreach ($matches as $key => $match) {
+            if(empty($match['id']) || !in_array($match['id'], $ppnList)) {
+                if($includeUnavailable) {
+                    $matches[$key]['id'] = null;
+                }
+                else {
+                    unset($matches[$key]);
+                }
             }
         }
 

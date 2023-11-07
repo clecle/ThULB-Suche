@@ -134,10 +134,12 @@ class Sera extends AbstractBase implements
 
     public function chargeIllFee(string $username, $quantity, $cost) : bool {
         try {
+            if(getenv('VUFIND_ENV') != 'production') {
+                // there is no SERA test API, use a live user
+                $username = $this->thulbConfig->SERA->testLiveUser;
+            }
+
             // get address_id_nr of the user
-            // Temporary hack to charge the fee on another user, user has to be from the live system
-            // TODO: remove
-            $username = "3402046830";
             $addressIdNr = $this->getAddressIdNr($username);
 
             // get last requisition id

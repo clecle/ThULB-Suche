@@ -39,10 +39,12 @@ use VuFind\Recommend\AbstractSummonRecommendDeferred;
 class SummonCombinedDeferred extends AbstractSummonRecommendDeferred
 {
     /**
-     * Constructor
+     * Store the configuration of the recommendation module.
+     *
+     * @return string Module name in call to AjaxHandler
      */
-    public function __construct()
+    protected function getAjaxModule()
     {
-        $this->module = 'SummonCombined';
+        return 'SummonCombined';
     }
 }

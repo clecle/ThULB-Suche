@@ -36,6 +36,7 @@ return array(
             'status-available' => 'FontAwesome:check',
             'status-unavailable' => 'FontAwesome:remove',
             'status-unknown' => 'FontAwesome:circle',
+            'facet-checked' => 'FontAwesome:check'
         )
     ),
     'js' => array(

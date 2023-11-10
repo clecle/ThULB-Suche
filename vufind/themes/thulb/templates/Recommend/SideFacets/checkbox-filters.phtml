@@ -1,22 +1,25 @@
 <?php foreach ($checkboxFilters as $current): ?>
+  <?php
+    $isHidden = !($results->getResultTotal() > 0 || $current['selected'] || $current['alwaysVisible']);
+    $href = $current['selected']
+      ? $results->getUrlQuery()->removeFilter($current['filter'])
+      : $results->getUrlQuery()->addFilter($current['filter']);
+  ?>
   <div class="facet">
-    <?php $urlAddFilter = $results->getUrlQuery()->addFilter($current['filter']); ?>
-    <?php $urlRemoveFilter = $results->getUrlQuery()->removeFilter($current['filter']); ?>
-    <a class="checkbox-filter<?php if (!($results->getResultTotal() > 0 || $current['selected'] || $current['alwaysVisible'])): ?> hidden<?php endif; ?>"
-       href="<?= $current['selected'] ? $urlRemoveFilter : $urlAddFilter; ?>"
-       data-facet="<?= $this->escapeHtmlAttr($current['filter']) ?>"
-       data-facet="<?= $this->escapeHtmlAttr($current['filter']) ?>">
+    <a class="checkbox-filter icon-link<?= $isHidden ? ' hidden' : '' ?>" href="<?= $href ?>" data-facet="<?= $this->escapeHtmlAttr($current['filter'])?>">
       <?php if ($current['selected']): ?>
         <span class="sr-only"><?= $this->transEsc('clear_tag_filter') ?></span>
       <?php endif; ?>
-      <span class="text">
-        <i class="fa fa-<?= $current['selected'] ? 'check-square-o' : 'square-o' ?>"></i>
+
+      <?= $this->icon($current['selected'] ? 'facet-checked' : 'facet-unchecked', 'icon-link__icon') ?>
+      <span class="icon-link__label">
         <?= $this->transEsc($current['desc']) ?>
 
         <?php if($current['desc'] == 'include_references'): ?>
           <i class="fa fa-info-circle" onclick="event.preventDefault(); event.stopPropagation(); VuFind.lightbox.showAlert('<?= $this->transEsc('reference_facet_info', ["'" => "\\'"]); ?>', 'info');"></i>
         <?php endif; ?>
       </span>
+
       <?php if (!$current['selected']): ?>
         <span class="badge avail-count"></span>
       <?php endif; ?>

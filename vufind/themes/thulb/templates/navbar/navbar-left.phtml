@@ -16,7 +16,7 @@
         </ul>
       </li>
     <?php endif; ?>
-    <li><a href="https://www.thulb.uni-jena.de/recherchieren/-bestellen/thulb-suche-suchtipps" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+    <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
@@ -25,16 +25,16 @@
         <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('Header_ts_support'); ?></a></li>
       </ul>
     </li>
-    <li class="visible-xs"><a href="https://www.thulb.uni-jena.de/impressum.html" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
-    <li><a href="https://kataloge.thulb.uni-jena.de/DB=1/LNG=DU/" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
+    <li class="visible-xs"><a href="<?= $this->translate('URL::imprint'); ?>" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
+    <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
         <li><a href="<?= $this->thulb_serviceDesk('acquisition-suggestion'); ?>" target="_blank"><?= $this->transEsc('Acquisition suggestion')?></a></li>
-        <li><a href="https://kxp.k10plus.de/DB=2.1/DB=2.1/LNG=DU/" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
-        <li><a href="https://fernleihe.thulb.uni-jena.de/login" target="_blank"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
-        <li><a href="https://kxp.k10plus.de/login/LNG=DU/LOGIN/REQUEST?DB=2.1" target="_blank"><?= $this->transEsc('Login GVK')?></a></li>
-        <li><a href="<?= $this->transEsc('ILL information_url'); ?>" target="_blank"><?= $this->transEsc('ILL information')?></a></li>
+        <li><a href="<?= $this->translate('URL::Order in GVK'); ?>" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
+        <li><a href="<?= $this->url('ill-chargecredits'); ?>"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
+        <li><a href="<?= $this->translate('URL::Login GVK'); ?>" target="_blank"><?= $this->transEsc('Login GVK')?></a></li>
+        <li><a href="<?= $this->translate('URL::ILL information'); ?>" target="_blank"><?= $this->transEsc('ILL information')?></a></li>
       </ul>
     </li>
     <li class="dropdown">

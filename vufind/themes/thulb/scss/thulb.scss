@@ -1323,9 +1323,14 @@ div.dataCheck table {
   }
 }
 
-.modal-dialog:has(div.location-data){
-  max-width: fit-content;
-  margin: 10px auto
+.modal-dialog:has(div.location-data) {
+  max-width: fit-content !important;
+  min-width: unset !important;
+  margin: 10px auto;
+
+  .modal-content {
+    min-width: fit-content;
+  }
 }
 
 div.modal-body .facet-tree-container {

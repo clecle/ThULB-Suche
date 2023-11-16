@@ -1,40 +1,51 @@
 <?php $this->layout()->searchbox = false; ?>
 <div class="<?=$this->layoutClass('mainbody')?>">
-  <?php echo $this->flashmessages(); ?>
+  <h2><?= $this->transEsc('Delete Userdata'); ?></h2>
+
+  <?= $this->flashmessages(); ?>
 
   <form action="/Userdata/delete" method="post">
-    <table>
-      <tr>
-        <td class="tag-col pt-2">Nutzernummer</td>
-        <td class="text-col pt-2">
-          <input type="text" name="userNumber" value="<?= $userNumber; ?>" />
-        </td>
-      </tr>
-      <tr>
-        <td class="tag-col pt-2">&nbsp;</td>
-        <td class="text-col pt-2">
-          <input type="submit" value="Prüfen" class="btn btn-primary"/>
-        </td>
-      </tr>
-    </table>
+    <div class="row">
+      <div class="col-sm-3">
+        <label for="userList">Nutzernummer(n) <br>(durch Leerzeichen oder Zeilenumbruch getrennt)</label>
+      </div>
+      <div class="col-sm-9">
+        <textarea class="width-fill-parent" type="text" id="userList" name="userList" rows="10"><?= $userList; ?></textarea>
+        <input type="submit" value="<?= $this->transEsc('Check'); ?>" class="btn btn-primary mt-2" />
+      </div>
+    </div>
   </form>
 
   <?php if(!empty($checkData)): ?>
     <div class="dataCheck">
-      <?php $userDataToDisplay = ['username' => 'Nutzernummer', 'firstname' => 'Vorname', 'lastname' => 'Nachname', 'email' => 'E-Mail']; ?>
-      <h2>zu löschender Nutzer:</h2>
-      <table>
-        <?php foreach($userDataToDisplay as $field => $desc): ?>
+      <?php $userDataToDisplay = [
+          'username' => 'Username',
+          'firstname' => 'First Name',
+          'lastname' => 'Last Name',
+          'email' => 'Email'
+        ];
+      ?>
+      <h2><?= $this->transEsc('users to delete'); ?>:</h2>
+      <div class="delete-user-table-wrapper">
+        <table class="delete-user-table">
           <tr>
-            <td class="bold"><?= $desc; ?>:</td>
-            <td><?= $checkData[$field] ?? ''; ?></td>
+            <?php foreach($userDataToDisplay as $field => $desc): ?>
+              <th class="bold"><?= $this->transEsc($desc); ?></th>
+            <?php endforeach; ?>
           </tr>
-        <?php endforeach; ?>
-      </table>
+          <?php foreach ($checkData as $userData): ?>
+            <tr>
+              <?php foreach($userDataToDisplay as $field => $desc): ?>
+                <td><?= $userData[$field] ?? ''; ?></td>
+              <?php endforeach; ?>
+            </tr>
+          <?php endforeach; ?>
+        </table>
+      </div>
     </div>
 
     <form action="/Userdata/confirmDelete" method="post" class="pt-2">
-      <input type="hidden" name="userNumber" value="<?= $userNumber; ?>">
+      <input type="hidden" name="userList" value="<?= $userList; ?>">
       <input type="submit" value="<?= $this->transEsc('Delete'); ?>" class="btn btn-primary" />
     </form>
   <?php endif; ?>

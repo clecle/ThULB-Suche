@@ -1,5 +1,7 @@
 <?php $this->layout()->searchbox = false; ?>
 <div class="<?=$this->layoutClass('mainbody')?>">
+  <h2><?= $this->transEsc('Reassign Userdata'); ?></h2>
+
   <?php echo $this->flashmessages(); ?>
 
   <form action="<?= $this->url('Userdata-reassign'); ?>" method="post">

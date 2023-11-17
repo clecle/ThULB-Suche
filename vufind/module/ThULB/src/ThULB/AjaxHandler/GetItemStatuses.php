@@ -92,7 +92,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 'Multiple Call Numbers'
             );
             $locationInfo = [
-                'availability' => $details['available'] ?? false,
+                'availability' => ($details['available'] ?? false) == 'true',
                 'location' => htmlentities(
                     $this->translateWithPrefix('location_', $location),
                     ENT_COMPAT,

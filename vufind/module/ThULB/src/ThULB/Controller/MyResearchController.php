@@ -62,12 +62,17 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     }
 
     protected $mainConfig;
+    protected $letterOfAuthorizationSavePath;
 
     public function __construct(ServiceLocatorInterface $sm)
     {
         parent::__construct($sm);
 
         $this->mainConfig = $sm->get('VuFind\Config')->get('config');
+        $this->letterOfAuthorizationSavePath =
+            $this->serviceLocator->get('VuFind\Config')->get('thulb')
+                ->LetterOfAuthorization->pdf_save_path ?? false;
+
     }
 
     /**
@@ -322,7 +327,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             return $this->forceLogin();
         }
 
-        $savePath = $this->serviceLocator->get('VuFind\Config')->get('thulb')->LetterOfAuthorization->pdf_save_path ?? false;
+        $savePath = $this->letterOfAuthorizationSavePath;
         if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
             throw new IOException('File not writable: "' . $savePath . '"');
         }
@@ -386,8 +391,6 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
                 file_put_contents($barcodeFile, $generator->getBarcode($user['username'], $generator::TYPE_CODE_39, 1));
             }
 
-            $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
-
             $pdf = new LetterOfAuthorization($this->getViewRenderer()->plugin('translate'));
             $pdf->setBarcode($barcodeFile);
             $pdf->setAuthorizedName($request->getPost('firstname') . ' ' . $request->getPost('lastname'));
@@ -398,7 +401,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             $pdf->setIssuerAddress(explode(',', $ilsUser['address1'] ?? ''));
 
             $pdf->create();
-            $pdf->Output('F', $savePath . $fileName);
+            $pdf->Output('F', $this->letterOfAuthorizationSavePath . $fileName);
         }
         catch (ErrorException $e) {
             if($this->logger != null && is_callable($this->logger, 'logException')) {
@@ -432,9 +435,8 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
                 ])
             ));
 
-            $savePath = $this->mainConfig->LetterOfAuthorization->pdf_save_path;
 
-            $fileContent = file_get_contents($savePath . $pdfFilename, 'r');
+            $fileContent = file_get_contents($this->letterOfAuthorizationSavePath . $pdfFilename, 'r');
             $attachment = new Part($fileContent);
             $attachment->type = 'application/pdf';
             $attachment->encoding = Mime::ENCODING_BASE64;

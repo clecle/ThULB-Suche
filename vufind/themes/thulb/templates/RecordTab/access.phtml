@@ -114,7 +114,7 @@
   <?php if($series = $this->driver->getSeries(false)): ?>
     <?php $firstKey = array_key_first($series); ?>
     <?= $this->transEsc('see parent work'); ?>:
-    <a href="<?= $this->recordLinker()->related(['type' => 'bib', 'value' => $series[$firstKey]['id']]); ?>" class="btn btn-secondary btn-xs" target="_blank"><?= $this->escapeHtml($series[$firstKey]['name'])?></a>
+    <a href="<?= $this->recordLinker()->related(['type' => 'bib', 'value' => $series[$firstKey]['id']]); ?>" class="underline" target="_blank"><?= $this->escapeHtml($series[$firstKey]['name'])?></a>
     <?= $this->escapeHtml($series[$firstKey]['number'] ?? ''); ?>
   <?php endif; ?>
 <?php endif; ?>

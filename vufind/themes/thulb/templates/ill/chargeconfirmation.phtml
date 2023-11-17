@@ -1,0 +1,61 @@
+<?php
+  $employee = in_array($this->thulb_userType(), [3, 4, 6, 8]);
+
+  $fineMessage = match (true) {
+      $this->newTotalDue > 30 && !$employee, $this->newTotalDue > 100 && $employee => 'ill_fine_message_high',
+      $this->newTotalDue > 15 && !$employee, $this->newTotalDue > 70 && $employee => 'ill_fine_message_low',
+      default => '',
+  };
+?>
+
+<div>
+  <h2><?= $this->translate('ill_credits_charge'); ?></h2>
+
+  <?php if(!isset($this->exception)): ?>
+    <?= $this->flashmessages(); ?>
+
+    <?php if(!$this->hasAccount): ?>
+      <div class="alert alert-warning">
+        <?= $this->translate('ill_new_account_request'); ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if($fineMessage): ?>
+      <div class="alert alert-danger">
+        <?= $this->translate($fineMessage, ['%%fees%%' => $this->safeMoneyFormat($this->newTotalDue)]); ?>
+      </div>
+    <?php endif; ?>
+
+    <table class="illtable m-auto">
+      <tr>
+        <th><?= $this->transEsc('ill_credits_requested'); ?>:</th>
+        <td><?= $this->chargeQuantity ?? 0; ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('ill_credits_new_balance'); ?>:</th>
+        <td><?= $this->newQuantity ?? 0; ?></td>
+      </tr>
+      <tr>
+        <th><?= $this->transEsc('ill_fees'); ?>:</th>
+        <td><?= $this->safeMoneyFormat($this->cost ?? 0) ?></td>
+      </tr>
+      <tr>
+        <td class="center-text" colspan="2">
+          <form action="/ILL/chargeconfirmation" method="post">
+            <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+            <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
+            <input type="hidden" name="confirmation" value="true">
+
+            <input class="btn btn-primary mt-2" type="submit" value="<?= $this->transEsc('ill_credits_charge_submit'); ?>">
+          </form>
+        </td>
+      </tr>
+    </table>
+  <?php elseif($this->chargeException ?? false): ?>
+    <div class="alert alert-danger">
+      <?= $this->translate('ill_charge_error', ['%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($this->cost)]); ?>
+    </div>
+  <?php else: ?>
+    <?= $this->render('error/index.phtml'); ?>
+  <?php endif; ?>
+</div>

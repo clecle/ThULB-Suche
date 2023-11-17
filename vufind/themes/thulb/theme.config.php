@@ -13,6 +13,7 @@ return array(
             \ThULB\View\Helper\Root\ServerType::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \ThULB\View\Helper\Root\ServiceDesk::class => \ThULB\View\Helper\Root\ServiceDeskFactory::class,
             \ThULB\View\Helper\Root\Session::class => \VuFind\View\Helper\Root\SessionFactory::class,
+            \ThULB\View\Helper\Root\UserType::class => \ThULB\View\Helper\Root\InvokableFactoryWithSessionManager::class,
             \VuFind\View\Helper\Root\RecordDataFormatter::class => \ThULB\View\Helper\Root\RecordDataFormatterFactory::class,
         ),
         'aliases' => array(
@@ -26,6 +27,7 @@ return array(
             'thulb_session' => \ThULB\View\Helper\Root\Session::class,
             'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
             'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class,
+            'thulb_userType' => \ThULB\View\Helper\Root\UserType::class,
         ),
     ),
     'favicon' => 'thulb_favicon.png',
@@ -34,6 +36,7 @@ return array(
             'status-available' => 'FontAwesome:check',
             'status-unavailable' => 'FontAwesome:remove',
             'status-unknown' => 'FontAwesome:circle',
+            'facet-checked' => 'FontAwesome:check'
         )
     ),
     'js' => array(

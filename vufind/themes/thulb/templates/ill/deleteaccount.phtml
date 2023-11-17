@@ -1,0 +1,18 @@
+<?php
+// Set up page title:
+$this->headTitle($this->translate('ill_delete_account'));
+
+// Set up breadcrumbs:
+$this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Delete account') . '</li>';
+?>
+<div class="<?= $this->layoutClass('mainbody')?>">
+  <h2><?= $this->transEsc('ill_delete_account')?></h2>
+  <?= $this->flashmessages()?>
+
+  <p class="mt-2"><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
+  <a href="/ILL/deleteaccountconfirmation" class="btn btn-primary" data-lightbox><?= $this->transEsc('ill_delete_account'); ?></a>
+</div>
+
+<div class="<?= $this->layoutClass('sidebar')?>">
+  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'deleteaccount'])?>
+</div>

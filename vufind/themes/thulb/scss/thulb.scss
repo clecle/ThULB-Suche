@@ -666,7 +666,12 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-wrap: wrap;
 }
 
-.flex-wrap-xs {
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+.flex-wrap-xs,
+.flex-wrap-md {
   flex-wrap: nowrap;
 }
 
@@ -686,6 +691,17 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
   .flex-wrap-reverse-xs {
     flex-wrap: wrap-reverse;
+  }
+}
+@media (max-width: $screen-xs-max) {
+  .flex-break-sm {
+    flex-basis: 100% !important;
+    height: 0;
+  }
+}
+@media (max-width: 991px) {
+  .flex-wrap-md {
+    flex-wrap: wrap;
   }
 }
 
@@ -866,7 +882,6 @@ div.facet-tree-parent > i {
 
 a.checkbox-filter {
   display: flex;
-  justify-content: space-between;
   padding-bottom: 1rem;
   font-weight: bold;
   color: #333333;
@@ -1282,8 +1297,15 @@ form#renewals span.text-danger {
   margin-top: 15px;
 }
 
-div.dataCheck table {
-  margin: 0 15px;
+.delete-user-table-wrapper {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.delete-user-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 
   thead, th {
     border-bottom: solid #000 1px;
@@ -1293,15 +1315,20 @@ div.dataCheck table {
     font-weight: bold;
   }
 
-  tbody tr:nth-child(odd) {
+  tr:has(th), tr:has(thead) {
+    position: sticky;
+    top: 0
+  }
+
+  tr:nth-child(odd) {
     background-color: $table-bg-accent;
   }
 
-  td {
+  td, th {
     padding: 5px 10px;
   }
 
-  td + td {
+  td + td, th + th {
     border-left: solid #000 1px;
   }
 
@@ -1310,9 +1337,14 @@ div.dataCheck table {
   }
 }
 
-.modal-dialog:has(div.location-data){
-  max-width: fit-content;
-  margin: 10px auto
+.modal-dialog:has(div.location-data) {
+  max-width: fit-content !important;
+  min-width: unset !important;
+  margin: 10px auto;
+
+  .modal-content {
+    min-width: fit-content;
+  }
 }
 
 div.modal-body .facet-tree-container {
@@ -1325,6 +1357,13 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.flex-gap-2 {
+  gap: 10px;
+}
+.m-auto {
+  margin: auto;
+  width: fit-content;
+}
 .mb-2 {
   margin-bottom: 10px !important;
 }
@@ -1342,6 +1381,18 @@ div.modal-body .facet-tree-container {
 }
 .mr-2 {
   margin-right: 10px !important;
+}
+.mt-0 {
+  margin-top: 0 !important;
+}
+.mt-2 {
+  margin-top: 10px !important;
+}
+.mt-3 {
+  margin-top: 15px !important;
+}
+.p-2 {
+  padding: 10px;
 }
 .pb-1 {
   padding-bottom: 5px;
@@ -1366,6 +1417,12 @@ div.modal-body .facet-tree-container {
 }
 .pt-2 {
   padding-top: 10px;
+}
+
+@media (max-width: $screen-xs-max) {
+  .mt-0-xs {
+    margin-top: 0 !important;
+  }
 }
 
 form#newpassword .form-group.flex-center {
@@ -1778,4 +1835,182 @@ a.checkbox-filter > span > i.fa-info-circle,
     background-color: darken($btn-secondary-bg, 10%);
     border-color: darken($btn-secondary-border-color, 10%);
   }
+}
+
+
+.ill-charge-page {
+  margin: auto;
+
+  .ill-row {
+    margin: 15px 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .col-ill-description {
+    white-space: nowrap;
+
+    label {
+      margin: 0;
+    }
+  }
+
+  .col-ill-text {
+    padding: 5px;
+    vertical-align: top;
+    margin-left: auto;
+    width: fit-content;
+  }
+
+  .credit-input {
+    display: flex;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    overflow: hidden;
+    width: 150px;
+    flex-wrap: nowrap;
+
+    &:focus-within {
+      $color-rgba: rgba(red($input-border-focus), green($input-border-focus), blue($input-border-focus), .6);
+      border-color: $input-border-focus;
+      outline: 0;
+      @include box-shadow(inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px $color-rgba);
+    }
+
+    .btn {
+      border-radius: 0 !important;
+      outline: none;
+    }
+
+    input[type=number] {
+      flex-grow: 1;
+      text-align: center;
+      border-radius: 0 !important;
+      min-width: 30px;
+      -moz-appearance: textfield;
+      border: none;
+      box-shadow: none;
+      -webkit-box-shadow: none;
+    }
+
+    label {
+      padding-right: 10px;
+      cursor: text;
+      background-color: #fff;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      white-space: nowrap;
+      color: #B0B0B0;
+      font-weight: initial;
+    }
+
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .ill-charge-credits {
+    min-width: 330px;
+    flex-basis: 40%;
+    flex-grow: 1;
+
+    & > :not(:last-child) {
+      border-bottom: 1px solid #ddd;
+    }
+  }
+
+  .ill-info {
+    flex-basis: 40%;
+    flex-grow: 1;
+
+    .alert {
+      margin: 0;
+    }
+  }
+
+  .ill-checkbox {
+    display: flex;
+    align-items: baseline;
+    flex-basis: 100%;
+
+    input[type=checkbox] {
+      margin-right: 10px;
+      margin-top: 0;
+    }
+
+    label {
+      margin-bottom: 0;
+    }
+  }
+
+  .ill-work-related {
+    & > * {
+      flex-grow: 1;
+    }
+
+    #workrelated:checked + label {
+      margin-bottom: 10px;
+    }
+
+    input[type=text] {
+      width: 100%;
+    }
+  }
+
+  .ill-consent {
+    flex-wrap: nowrap;
+  }
+}
+
+.illtable th {
+  padding-right: 20px;
+  text-align: right;
+}
+
+.ill-forgot-password {
+  & > *:not(.flex-break-sm) {
+    flex-basis: 40%;
+    flex-grow: 1;
+  }
+
+  .alert {
+    margin: 0;
+  }
+}
+
+.text-red {
+  color: red;
+}
+
+.d-block {
+  display: block;
+}
+
+.d-table {
+  display: table;
+}
+.d-table-row {
+  display: table-row;
+}
+
+.d-table-cell {
+  display: table-cell;
+}
+
+@media (max-width: 440px) {
+  .d-flex-xs {
+    display: flex;
+  }
+}
+
+.fs-18px {
+  font-size: 18px;
+}
+
+.underline {
+  text-decoration: underline;
 }

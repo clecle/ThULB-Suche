@@ -167,35 +167,37 @@ class UserdataController extends AbstractBase {
 
         $checkData = [];
 
-        if($this->getRequest()->isPost()) {
-            $userNumber = $this->getRequest()->getPost('userNumber');
+        if($this->getRequest()->isPost() && $userList = $this->getRequest()->getPost('userList', '')) {
+            $userArray = array_unique(preg_split('/\W/', $userList));
+
             $checkData = $this->dbTables
                 ->get('User')
-                ->getByUsername($userNumber, false);
+                ->select('username IN ("' . implode('", "', $userArray) . '")');
 
-            if(!$checkData) {
-                $this->flashMessenger()->addmessage('User not found', 'error');
+            if(!$checkData->count()) {
+                $this->flashMessenger()->addmessage('User not in database', 'error');
             }
         }
 
         return new ViewModel([
-            'userNumber' => $userNumber ?? '',
-            'checkData' => $checkData ? $checkData->toArray() : null
+            'userList' => $userList ?? '',
+            'checkData' => $checkData ? $checkData->toArray() : []
         ]);
     }
 
     public function confirmDeleteAction () : Response {
+        if($this->getRequest()->isPost() && $userList = $this->getRequest()->getPost('userList', '')) {
+            $userArray = array_unique(preg_split('/\W/', $userList));
+            $deletedRows = $this->dbTables
+                ->get('User')
+                ->delete('username IN ("' . implode('", "', $userArray) . '")');
 
-        if($this->getRequest()->isPost()) {
-            $userNumber = $this->getRequest()->getPost('userNumber');
-
-            if($this->dbTables->get('User')->getByUsername($userNumber)->delete()) {
-                $this->flashMessenger()->addmessage('User deleted', 'success');
+            if($deletedRows) {
+                $this->flashMessenger()->addmessage($this->translate('deleted_users', ['%%count%%' => $deletedRows]), 'success');
             }
             else {
-                $this->flashMessenger()->addmessage('Could not delete user', 'error');
+                $this->flashMessenger()->addmessage('Could not delete users', 'error');
             }
-
         }
 
         return $this->redirect()->toUrl('/Userdata/delete');

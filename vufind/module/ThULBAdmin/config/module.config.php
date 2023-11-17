@@ -21,6 +21,6 @@ $routeGenerator->addDynamicRoute($config, 'DynMessages', 'DynMessages', 'edit');
 $routeGenerator->addDynamicRoute($config, 'DynMessages-save', 'DynMessages', 'save');
 $routeGenerator->addDynamicRoute($config, 'Userdata-reassign', 'Userdata', 'reassign');
 $routeGenerator->addDynamicRoute($config, 'Userdata-save', 'Userdata', 'save');
-$routeGenerator->addDynamicRoute($config, 'DeleteUserdata', 'Userdata', 'delete');
+$routeGenerator->addDynamicRoute($config, 'Userdata-delete', 'Userdata', 'delete');
 
 return $config;

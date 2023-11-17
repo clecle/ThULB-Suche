@@ -7,6 +7,7 @@ $config = array(
             \ThULB\Controller\CartController::class => \VuFind\Controller\CartControllerFactory::class,
             \ThULB\Controller\CoverController::class => \VuFind\Controller\CoverControllerFactory::class,
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
+            \ThULB\Controller\ILLController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
@@ -18,6 +19,8 @@ $config = array(
         'aliases' => array(
             'Holds' => \ThULB\Controller\HoldsController::class,
             'holds' => \ThULB\Controller\HoldsController::class,
+            'ill' => \ThULB\Controller\ILLController::class,
+            'ILL' => \ThULB\Controller\ILLController::class,
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
             'Vpn' => \ThULB\Controller\VpnController::class,
@@ -45,16 +48,18 @@ $config = array(
     'service_manager' => array(
         'factories' => array(
             \ThULB\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+            \ThULB\Cache\Manager::class => \VuFind\Cache\ManagerFactory::class,
             \ThULB\Content\LocationData\ThULB::class => \ThULB\Content\LocationData\ThULBFactory::class,
+            \ThULB\Cover\Loader::class => \VuFind\Cover\LoaderFactory::class,
             \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
             \ThULB\Record\Loader::class => \VuFind\Record\LoaderFactory::class,
             \ThULB\Search\Facets\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             \ThULB\Search\Solr\HierarchicalFacetHelper::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
-            'ThULB\Cover\Loader' => 'VuFind\Cover\LoaderFactory',
         ),
         'aliases' => array(
             \VuFind\Auth\Manager::class => \ThULB\Auth\Manager::class,
-            'VuFind\Cover\Loader' => 'ThULB\Cover\Loader',
+            \VuFind\Cache\Manager::class => \ThULB\Cache\Manager::class,
+            \VuFind\Cover\Loader::class => \ThULB\Cover\Loader::class,
             'VuFind\HierarchicalFacetHelper' => \ThULB\Search\Solr\HierarchicalFacetHelper::class,
             'VuFind\Mailer' => \ThULB\Mailer\Mailer::class,
             \VuFind\Mailer\Mailer::class => \ThULB\Mailer\Mailer::class,
@@ -93,11 +98,9 @@ $config = array(
             ),
             'content_covers' => array(
                 'factories' => array(
-                    \ThULB\Content\Covers\Google::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
                     \ThULB\Content\Covers\IIIF::class => \VuFind\Service\ServiceWithConfigIniFactory::class,
                 ),
                 'aliases' => array(
-                    'google' => \ThULB\Content\Covers\Google::class,
                     'iiif' => \ThULB\Content\Covers\IIIF::class
                 )
             ),
@@ -120,10 +123,12 @@ $config = array(
                 'factories' => array(
                     \ThULB\ILS\Driver\PAIA::class => \VuFind\ILS\Driver\PAIAFactory::class,
                     \ThULB\ILS\Driver\Sera::class => \ThULB\ILS\Driver\SeraFactory::class,
+                    \ThULB\ILS\Driver\CBSUserdpo::class => \ThULB\ILS\Driver\CBSUserdpoFactory::class,
                 ),
                 'aliases' => array(
                     \VuFind\ILS\Driver\PAIA::class => \ThULB\ILS\Driver\PAIA::class,
                     'sera' => \ThULB\ILS\Driver\Sera::class,
+                    'cbsuserdpo' => \ThULB\ILS\Driver\CBSUserdpo::class,
                 )
             ),
             'recommend' => array(
@@ -221,7 +226,8 @@ $config = array(
             'thulb_removeZWNJ' => \ThULB\View\Helper\Root\RemoveZWNJ::class,
             'thulb_onlineContent' => \ThULB\View\Helper\Record\OnlineContent::class,
             'thulb_sera' => \ThULB\View\Helper\Record\SeraHelper::class,
-            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class
+            'thulb_serviceDesk' => \ThULB\View\Helper\Root\ServiceDesk::class,
+            'thulb_userType' => \ThULB\View\Helper\Root\UserType::class
         ),
     ),
 
@@ -241,6 +247,9 @@ $config = array(
 );
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
+$routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
+$routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');

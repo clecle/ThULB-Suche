@@ -32,8 +32,9 @@ class SeraFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('thulb');
-        return new $requestedName($config);
+        return new $requestedName(
+            $container->get(\VuFind\Config\PluginManager::class)->get('thulb'),
+            $container->get(\Laminas\Mvc\I18n\Translator::class)
+        );
     }
 }

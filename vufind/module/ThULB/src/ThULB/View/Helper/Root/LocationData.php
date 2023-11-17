@@ -19,6 +19,6 @@ class LocationData extends AbstractHelper
     public function __invoke($locationId = null) : array {
         $data = $this->thulbData->getLocationData($locationId);
 
-        return $locationId === null && !empty($data) ? $data : $data[0];
+        return $locationId === null || empty($data) ? $data : $data[0];
     }
 }

@@ -186,7 +186,7 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
      * @return string
      */
     protected function convertHtmlToString(string $helperOutput) : string {
-        $htmlLines = explode('<br />', $helperOutput);
+        $htmlLines = explode('<br />', str_replace('<br>', '<br />', $helperOutput));
         $stringLines = [];
         
         foreach ($htmlLines as $singleLine) {
@@ -332,12 +332,19 @@ abstract class AbstractRecordDataFormatterTest extends AbstractViewHelperTest
             \VuFindHttp\HttpService::class,
             new \VuFindHttp\HttpService()
         );
+
+        $adapterPluginManager = new \Laminas\Cache\Storage\AdapterPluginManager($container);
+        $adapterPluginManager->setAlias('Memcached', \Laminas\Cache\Storage\Adapter\Memcached::class);
+        $adapterPluginManager->setFactory(
+            \Laminas\Cache\Storage\Adapter\Memcached::class,
+            \Laminas\ServiceManager\Factory\InvokableFactory::class
+        );
         $container->set(
             \Laminas\Cache\Service\StorageAdapterFactory::class,
             new \Laminas\Cache\Service\StorageAdapterFactory(
-                new \Laminas\Cache\Storage\AdapterPluginManager($container),
+                $adapterPluginManager,
                 new \Laminas\Cache\Service\StoragePluginFactory(
-                    $container->get(\Laminas\Cache\Storage\PluginManager::class)
+                    new \Laminas\Cache\Storage\PluginManager($container)
                 )
             )
         );

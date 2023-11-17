@@ -72,6 +72,20 @@
   }
 }
 
+.facet__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .icon-link__icon + .icon-link__label {
+    &:extend(.ml-1);
+  }
+}
+
+.icon-link__label {
+  text-decoration: unset;
+}
+
 .checkbox-filter {
   display: block;
   padding-bottom: 1rem;

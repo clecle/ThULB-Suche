@@ -735,7 +735,12 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-wrap: wrap;
 }
 
-.flex-wrap-xs {
+.flex-wrap-reverse {
+  flex-wrap: wrap-reverse;
+}
+
+.flex-wrap-xs,
+.flex-wrap-md {
   flex-wrap: nowrap;
 }
 
@@ -755,6 +760,17 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
   .flex-wrap-reverse-xs {
     flex-wrap: wrap-reverse;
+  }
+}
+@media (max-width: $screen-xs-max) {
+  .flex-break-sm {
+    flex-basis: 100% !important;
+    height: 0;
+  }
+}
+@media (max-width: 991px) {
+  .flex-wrap-md {
+    flex-wrap: wrap;
   }
 }
 
@@ -936,7 +952,6 @@ div.facet-tree-parent > i {
 
 a.checkbox-filter {
   display: flex;
-  justify-content: space-between;
   padding-bottom: 1rem;
   font-weight: bold;
   color: #333333;
@@ -1341,8 +1356,15 @@ form#renewals span.text-danger {
   margin-top: 15px;
 }
 
-div.dataCheck table {
-  margin: 0 15px;
+.delete-user-table-wrapper {
+  max-height: 500px;
+  overflow: auto;
+}
+
+.delete-user-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
 
   thead, th {
     border-bottom: solid #000 1px;
@@ -1352,15 +1374,20 @@ div.dataCheck table {
     font-weight: bold;
   }
 
-  tbody tr:nth-child(odd) {
+  tr:has(th), tr:has(thead) {
+    position: sticky;
+    top: 0
+  }
+
+  tr:nth-child(odd) {
     background-color: $table-bg-accent;
   }
 
-  td {
+  td, th {
     padding: 5px 10px;
   }
 
-  td + td {
+  td + td, th + th {
     border-left: solid #000 1px;
   }
 
@@ -1379,6 +1406,13 @@ div.modal-body .facet-tree-container {
   display: block;
 }
 
+.flex-gap-2 {
+  gap: 10px;
+}
+.m-auto {
+  margin: auto;
+  width: fit-content;
+}
 .mb-2 {
   margin-bottom: 10px !important;
 }
@@ -1396,6 +1430,18 @@ div.modal-body .facet-tree-container {
 }
 .mr-2 {
   margin-right: 10px !important;
+}
+.mt-0 {
+  margin-top: 0 !important;
+}
+.mt-2 {
+  margin-top: 10px !important;
+}
+.mt-3 {
+  margin-top: 15px !important;
+}
+.p-2 {
+  padding: 10px;
 }
 .pb-1 {
   padding-bottom: 5px;
@@ -1420,6 +1466,12 @@ div.modal-body .facet-tree-container {
 }
 .pt-2 {
   padding-top: 10px;
+}
+
+@media (max-width: $screen-xs-max) {
+  .mt-0-xs {
+    margin-top: 0 !important;
+  }
 }
 
 form#newpassword .form-group.flex-center {
@@ -1797,6 +1849,46 @@ a.checkbox-filter > span > i.fa-info-circle,
   &:focus-visible {
     outline: dotted 1px #000;
   }
+}
+
+.ws-nowrap {
+  white-space: nowrap;
+}
+
+.btn-secondary {
+  @extend .btn-primary;
+
+  color: $btn-secondary-color;
+  background-color: $btn-secondary-bg;
+  border-color: $btn-secondary-border-color;
+
+  &:hover,
+  &:focus {
+    color: #000;
+    background-color: darken($btn-secondary-bg, 5%);
+    border-color: darken($btn-secondary-border-color, 5%);
+  }
+
+  &:active,
+  &:active:focus {
+    color: #000;
+    background-color: darken($btn-secondary-bg, 10%);
+    border-color: darken($btn-secondary-border-color, 10%);
+  }
+}
+
+.text-red {
+  color: red;
+}
+
+@media (max-width: 440px) {
+  .d-flex-xs {
+    display: flex;
+  }
+}
+
+.fs-18px {
+  font-size: 18px;
 }
 
 .underline {

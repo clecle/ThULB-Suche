@@ -1894,3 +1894,7 @@ a.checkbox-filter > span > i.fa-info-circle,
 .underline {
   text-decoration: underline;
 }
+
+.label-unknown {
+  background-color: $state-warning-text;
+}

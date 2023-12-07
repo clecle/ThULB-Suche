@@ -17,6 +17,11 @@ $config = array(
             ),
         ),
     ),
+    'view_helpers' => array(
+        'invokables' => array(
+            'thulb_holdingHelper' => \EAH\View\Helper\Record\HoldingHelper::class,
+        )
+    )
 );
 
 return $config;

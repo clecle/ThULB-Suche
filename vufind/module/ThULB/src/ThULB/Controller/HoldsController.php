@@ -67,8 +67,6 @@ class HoldsController extends OriginalHoldsController
             );
         }, $result);
 
-        $recordList = $this->ilsRecords()->getDrivers($result);
-
         // Get List of PickUp Libraries based on patron's home library
         try {
             $view->pickup = $catalog->getPickUpLocations($patron);
@@ -77,7 +75,21 @@ class HoldsController extends OriginalHoldsController
             // Do nothing; if we're unable to load information about pickup
             // locations, they are not supported and we should ignore them.
         }
-        $view->recordList = $recordList;
+
+        $orderedList = array ();
+        $reservedList = array ();
+        foreach ($this->ilsRecords()->getDrivers($result) as $record) {
+            if(($record->getExtraDetail('ils_details')['type'] ?? false) == 'reserved') {
+                $reservedList[] = $record;
+            }
+            else {
+                $orderedList[] = $record;
+            }
+        }
+
+        $view->orderedList = $orderedList;
+        $view->reservedList = $reservedList;
+
         return $view;
     }
 }

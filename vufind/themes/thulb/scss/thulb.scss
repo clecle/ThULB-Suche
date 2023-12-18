@@ -1243,6 +1243,8 @@ a.external-link:after,
     border-top-right-radius: 0 !important;
     background-color: $brand-primary-darker;
     color: #ffffff;
+    min-width: 175px;
+    padding: 0;
   }
 
   #searchForm_lookfor {
@@ -1698,6 +1700,10 @@ div.striped {
   align-self: start;
 }
 
+.fa-info-circle {
+  cursor: pointer;
+}
+
 a.checkbox-filter > span > i.fa-info-circle,
 #side-panel-standort_iln_str_mv i.fa-info-circle {
   font-size: 18px;
@@ -1834,7 +1840,6 @@ a.checkbox-filter > span > i.fa-info-circle,
     border-color: darken($btn-secondary-border-color, 10%);
   }
 }
-
 
 .ill-charge-page {
   margin: auto;
@@ -1982,21 +1987,6 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .text-red {
   color: red;
-}
-
-.d-block {
-  display: block;
-}
-
-.d-table {
-  display: table;
-}
-.d-table-row {
-  display: table-row;
-}
-
-.d-table-cell {
-  display: table-cell;
 }
 
 @media (max-width: 440px) {

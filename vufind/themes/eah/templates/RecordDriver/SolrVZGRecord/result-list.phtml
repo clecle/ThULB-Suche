@@ -1,0 +1,176 @@
+<?php
+  $recordLinker = $this->recordLinker($this->results);
+  $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'small', $recordLinker->getUrl($this->driver));
+  $cover = $coverDetails['html'];
+  $thumbnail = false;
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  if ($cover):
+    ob_start(); ?>
+    <div class="hidden-xs media-<?= $thumbnailAlignment ?> <?= $this->escapeHtmlAttr($coverDetails['size'])?>">
+      <?= $cover?>
+    </div>
+    <?php $thumbnail = ob_get_contents(); ?>
+  <?php ob_end_clean(); ?>
+<?php endif; ?>
+
+<?php
+  $cart = $this->cart();
+  $cartId = $this->driver->getSourceIdentifier() . '|' . $this->driver->getUniqueId();
+?>
+
+<input type="hidden" value="<?= $this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId" />
+<input type="hidden" value="<?= $this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource" />
+
+<div class="media">
+  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+    <?= $thumbnail ?>
+  <?php endif ?>
+  <div class="media-body">
+    <div class="row result-body">
+      <div class="col-xs-11 middle">
+        <div>
+          <?php if ($this->driver->getSourceIdentifier() == "Summon"): ?>
+            <a href="<?= $recordLinker->getUrl($this->driver)?>" class="title Summontitle getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
+              <?= $this->record($this->driver)->getTitleHtml()?>
+            </a>
+          <?php else: ?>
+            <a href="<?= $recordLinker->getUrl($this->driver)?>" class="title getFull truncate" data-view="<?= $this->params->getOptions()->getListViewOption() ?>">
+                <?= $this->record($this->driver)->getTitleHtml()?>
+            </a>
+          <?php endif; ?>
+        </div>
+        <div>
+           <?= $this->record($this->driver)->renderTemplate('result-list-publicationDetails.phtml')?>
+        </div>
+
+        <?php
+        /* Display information on duplicate records if available */
+        if ($dedupData = $this->driver->getDedupData()): ?>
+          <div class="dedupInformation">
+          <?php
+            $i = 0;
+            foreach ($dedupData as $source => $current) {
+              if (++$i == 1) {
+                ?><span class="currentSource"><a href="<?= $recordLinker->getUrl($this->driver)?>"><?= $this->transEsc("source_$source", array(), $source)?></a></span><?php
+              } else {
+                if ($i == 2) {
+                  ?> <span class="otherSources">(<?= $this->transEsc('Other Sources')?>: <?php
+                } else {
+                  ?>, <?php
+                }
+                ?><a href="<?= $recordLinker->getUrl($current['id'])?>"><?= $this->transEsc("source_$source", array(), $source)?></a><?php
+              }
+            }
+            if ($i > 1) {
+              ?>)</span><?php
+            }?>
+          </div>
+        <?php endif; ?>
+
+        <?php /* We need to find out if we're supposed to display an OpenURL link ($openUrlActive),
+            but even if we don't plan to display the link, we still want to get the $openUrl
+            value for use in generating a COinS (Z3988) tag -- see bottom of file.
+          */
+          $openUrl = $this->openUrl($this->driver, 'results');
+          $openUrlActive = $openUrl->isActive();
+          // Account for replace_other_urls setting
+          $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+        ?>
+
+        <div class="callnumAndLocation ajax-availability hidden">
+          <?php if ($this->driver->supportsAjaxStatus()): ?>
+            <strong class="hideIfDetailed"><?= $this->transEsc('Call Number')?>:</strong>
+            <span class="callnumber ajax-availability hidden">
+              <?= $this->transEsc('Loading')?>...<br/>
+            </span>
+            <strong><?= $this->transEsc('Location_s')?>:</strong>
+            <span class="location ajax-availability hidden">
+              <?= $this->transEsc('Loading')?>...
+            </span>
+            <div class="locationDetails"></div>
+          <?php else: ?>
+            <?php $summCallNo = $this->driver->getCallNumber(); if (!empty($summCallNo)): ?>
+              <strong class=""><?= $this->transEsc('Call Number')?>:</strong> <?= $this->escapeHtml($summCallNo)?>
+            <?php endif; ?>
+          <?php endif; ?>
+        </div>
+
+        <div class="badges-row">
+          <?= $this->record($this->driver)->getFormatList() ?>
+          <?= $this->record($this->driver)->getOpenAccess() ?>
+
+          <?php if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
+            <span class="status ajax-availability hidden">
+              <span class="label label-default"><?= $this->transEsc('Loading')?>...</span>
+            </span>
+          <?php endif; ?>
+
+          <?= $this->record($this->driver)->getThuringiaBibliography() ?>
+        </div>
+
+        <div class="flex-center flex-wrap action-row">
+          <?= $this->record($this->driver)->renderTemplate('onlineContent-lookup.phtml'); ?>
+          <?php if ($openUrlActive || !empty($urls)): ?>
+            <?php if ($openUrlActive): ?>
+              <br/>
+              <?= $openUrl->renderTemplate()?>
+            <?php endif; ?>
+            <?php if (!is_array($urls)) $urls = array(); ?>
+            <?php if(!$this->driver->isCollection()): ?>
+              <?php foreach($urls as $current): ?>
+                <?php if($current['desc'] != 'Inhaltsverzeichnis') continue; ?>
+                <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" class="fulltext btn btn-primary btn-xs external-link" target="new">
+                  <?= ($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->escapeHtml($current['desc'])?>
+                </a>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          <?php endif; ?>
+
+          <?= $this->record($this->driver)->getCitationReferences() ?>
+        </div>
+
+        <?= $this->record($this->driver)->getPreviews()?>
+      </div>
+
+      <div class="col-xs-1 right hidden-print favorite-action">
+        <?php /* Display qrcode if appropriate: */ ?>
+        <?php if ($QRCode = $this->record($this->driver)->getQRCode("results")): ?>
+          <?php
+            // Add JS Variables for QrCode
+            $this->jsTranslations()->addStrings(array('qrcode_hide' => 'qrcode_hide', 'qrcode_show' => 'qrcode_show'));
+          ?>
+          <span class="hidden-xs">
+            <i class="fa fa-fw fa-qrcode" aria-hidden="true"></i> <a href="<?= $this->escapeHtmlAttr($QRCode);?>" class="qrcodeLink"><?= $this->transEsc('qrcode_show')?></a>
+            <div class="qrcode hidden">
+              <script type="text/template" class="qrCodeImgTag">
+                <img alt="<?= $this->transEscAttr('QR Code')?>" src="<?= $this->escapeHtmlAttr($QRCode);?>"/>
+              </script>
+            </div><br/>
+          </span>
+        <?php endif; ?>
+
+        <?php if ($this->cart()->isActiveInSearch() && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
+          <?= $this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br/>
+        <?php endif; ?>
+
+        <?php /* Hierarchy tree link */ ?>
+        <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); if (!empty($trees)): ?>
+          <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+            <div class="hierarchyTreeLink">
+              <input type="hidden" value="<?= $this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId" />
+              <i class="fa fa-fw fa-sitemap" aria-hidden="true"></i>
+              <a class="hierarchyTreeLinkText" data-lightbox href="<?= $recordLinker->getTabUrl($this->driver, 'HierarchyTree')?>?hierarchy=<?= urlencode($hierarchyID)?>#tabnav" title="<?= $this->transEscAttr('hierarchy_tree')?>" data-lightbox-href="<?= $this->recordLink()->getTabUrl($this->driver, 'AjaxTab')?>?hierarchy=<?= urlencode($hierarchyID)?>" data-lightbox-post="tab=hierarchytree">
+                <?= $this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?= $this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+              </a>
+            </div>
+          <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?= $this->driver->supportsCoinsOpenUrl()?'<span class="Z3988" title="'.$this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()).'"></span>':''?>
+      </div>
+    </div>
+  </div>
+  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+    <?= $thumbnail ?>
+  <?php endif ?>
+</div>

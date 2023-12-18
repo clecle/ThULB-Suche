@@ -19,6 +19,10 @@ $brand-inverted:    $brand-pink;
 
 $table-bg-accent:   #f9f9f990;
 
+$btn-secondary-color: #fff;
+$btn-secondary-bg: lighten($brand-secondary, 10%);
+$btn-secondary-border-color: darken($brand-secondary, 5%);
+
 // $brand-success: #5cb85c !default;
 // $brand-info:    #5bc0de !default;
 // $brand-warning: #f0ad4e !default;

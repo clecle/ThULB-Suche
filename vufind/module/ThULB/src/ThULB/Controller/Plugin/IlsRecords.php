@@ -20,7 +20,7 @@ class IlsRecords extends OriginalIlsRecords
     public function getDrivers(array $records): array
     {
         $records = array_map(function($current) {
-            $current['id'] = str_replace(self::ID_URI_PREFIX, '', $current['id']);
+            $current['id'] = str_replace(static::ID_URI_PREFIX, '', $current['id']);
             return $current;
         }, $records);
 

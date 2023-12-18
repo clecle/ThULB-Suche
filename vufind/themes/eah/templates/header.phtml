@@ -1,10 +1,10 @@
 <?php
   $account = $this->auth()->getManager();
   $currentPage = strtolower($this->currentPath());
-  $isLandingPage = !$account->isLoggedIn()
-      && ($currentPage == '/'
-          || $currentPage == '/eah/'
-          || str_starts_with($currentPage, '/search/home'));
+  $isLandingPage =
+      $currentPage == '/'
+      || $currentPage == '/eah/'
+      || str_starts_with($currentPage, '/search/home');
 ?>
 <div class="eah-top">
   <div class="eah-logos-position">

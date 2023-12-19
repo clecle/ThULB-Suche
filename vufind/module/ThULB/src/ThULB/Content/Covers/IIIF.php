@@ -63,7 +63,7 @@ class IIIF extends \VuFind\Content\AbstractCover
         $px = match ($size) {
             "small" => $this->config->Content->IIIF_small ?? 200,
             "medium" => $this->config->Content->IIIF_medium ?? 600,
-            "large" => $this->config->Content->IIIF_large ?? 1200,
+            "large" => $this->config->Content->IIIF_large ?? 1000,
             default => 600,
         };
 

@@ -102,7 +102,12 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             || !$request->getPost('submit', false)
             || ($view->chargeQuantity = $request->getPost('chargeQuantity', 0)) < 1)
         {
-            return $this->redirect()->toUrl('/ILL/chargecredits');
+            if($request->getQuery('layout', false) == 'lightbox') {
+                return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
+            }
+            else {
+                return $this->redirect()->toUrl('/ILL/chargecredits');
+            }
         }
 
         $view->cost = $view->chargeQuantity * $this->illConfig->creditPrice;

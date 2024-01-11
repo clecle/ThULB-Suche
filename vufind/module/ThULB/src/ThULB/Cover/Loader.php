@@ -6,6 +6,7 @@
 namespace ThULB\Cover;
 
 use Laminas\Http\Client\Adapter\Exception\TimeoutException;
+use ThULB\Log\LoggerAwareTrait;
 
 /**
  * Book Cover Generator
@@ -18,6 +19,8 @@ use Laminas\Http\Client\Adapter\Exception\TimeoutException;
  */
 class Loader extends \VuFind\Cover\Loader
 {
+    use LoggerAwareTrait;
+
     /**
      * User collection_details parameter
      *
@@ -114,7 +117,7 @@ class Loader extends \VuFind\Cover\Loader
         }
         catch (TimeoutException $ignore) {}
         catch (\Exception $e) {
-            $this->logError($e->getMessage());
+            $this->logException($e);
         }
 
         return false;

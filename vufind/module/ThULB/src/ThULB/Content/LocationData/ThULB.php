@@ -4,14 +4,17 @@ namespace ThULB\Content\LocationData;
 
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface as LoggerAwareInterface;
+use ThULB\Log\LoggerAwareTrait;
+use VuFind\Cache\CacheTrait;
 use VuFindHttp\HttpServiceAwareInterface as HttpServiceAwareInterface;
+use VuFindHttp\HttpServiceAwareTrait;
 
 class ThULB implements
     HttpServiceAwareInterface, LoggerAwareInterface
 {
-    use \VuFind\Cache\CacheTrait;
-    use \VuFind\Log\LoggerAwareTrait;
-    use \VuFindHttp\HttpServiceAwareTrait;
+    use LoggerAwareTrait;
+    use CacheTrait;
+    use HttpServiceAwareTrait;
 
     protected Config $thulbConfig;
 
@@ -45,7 +48,7 @@ class ThULB implements
             }
         }
         catch (\Exception $ex) {
-            $this->logError($ex);
+            $this->logException($ex);
         }
 
         return [];

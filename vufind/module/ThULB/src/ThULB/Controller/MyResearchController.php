@@ -33,17 +33,17 @@ use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mime\Message;
 use Laminas\Mime\Mime;
 use Laminas\Mime\Part;
-use Laminas\ServiceManager\ServiceLocatorInterface;
-use Laminas\View\Model\ViewModel;
-use Picqer\Barcode\BarcodeGeneratorPNG;
-use ThULB\PDF\LetterOfAuthorization;
-use VuFind\Controller\MyResearchController as OriginalController;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
+use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\View\Model\ViewModel;
+use Picqer\Barcode\BarcodeGeneratorPNG;
+use ThULB\Log\LoggerAwareTrait;
+use ThULB\PDF\LetterOfAuthorization;
+use VuFind\Controller\MyResearchController as OriginalController;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Http\PhpEnvironment\Request;
-use VuFind\Log\LoggerAwareTrait;
 use VuFind\Mailer\Mailer;
 use Whoops\Exception\ErrorException;
 
@@ -404,9 +404,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             $pdf->Output('F', $this->letterOfAuthorizationSavePath . $fileName);
         }
         catch (ErrorException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
-            }
+            $this->logException($e);
 
             return false;
         }
@@ -456,9 +454,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             );
         }
         catch (MailException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
-            }
+            $this->logException($e);
 
             return false;
         }

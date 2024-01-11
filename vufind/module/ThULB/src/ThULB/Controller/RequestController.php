@@ -3,12 +3,6 @@
 namespace ThULB\Controller;
 
 use IOException;
-use ThULB\PDF\JournalRequest;
-use VuFind\Controller\RecordController as OriginalRecordController;
-use VuFind\Exception\Mail as MailException;
-use VuFind\Log\LoggerAwareTrait;
-use VuFind\Mailer\Mailer;
-use Whoops\Exception\ErrorException;
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mime\Message;
@@ -16,6 +10,12 @@ use Laminas\Mime\Mime;
 use Laminas\Mime\Part;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
+use ThULB\Log\LoggerAwareTrait;
+use ThULB\PDF\JournalRequest;
+use VuFind\Controller\RecordController as OriginalRecordController;
+use VuFind\Exception\Mail as MailException;
+use VuFind\Mailer\Mailer;
+use Whoops\Exception\ErrorException;
 
 class RequestController extends OriginalRecordController implements LoggerAwareInterface
 {
@@ -205,9 +205,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $pdf->Output('F', $savePath . $fileName);
         }
         catch (ErrorException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
-            }
+            $this->logException($e);
 
             return false;
         }
@@ -252,9 +250,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             );
         }
         catch (MailException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
-            }
+            $this->logException($e);
 
             return false;
         }
@@ -311,9 +307,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             );
         }
         catch (MailException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
-            }
+            $this->logException($e);
 
             return false;
         }

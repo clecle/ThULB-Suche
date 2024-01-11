@@ -4,10 +4,11 @@ namespace ThULB\ILS\Driver;
 
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface as LoggerAwareInterface;
+use ThULB\ILS\Driver\Exception\UnauthorizedException;
+use ThULB\Log\LoggerAwareTrait;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\ILS\Driver\AbstractBase;
-use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceAwareInterface as HttpServiceAwareInterface;
 use VuFindHttp\HttpServiceAwareTrait;
 
@@ -41,7 +42,12 @@ class Sera extends AbstractBase implements
                         " WHERE o.iln = 31 AND o.orderstatus_code IN ('t', 'b')" .
                         " AND o.epn = " . $id;
 
-        $response = $this->sendRequest($postData);
+        try {
+            $response = $this->sendRequest($postData);
+        }
+        catch (\Exception $e) {
+            $this->logException($e);
+        }
 
         return $response['result'][0] ?? [];
     }
@@ -85,7 +91,16 @@ class Sera extends AbstractBase implements
         return [];
     }
 
-    protected function sendRequest(string $postData) : mixed {
+    /**
+     * Sends request data to Sera API.
+     *
+     * @param string $sql
+     *
+     * @return mixed
+     *
+     * @throws UnauthorizedException
+     */
+    protected function sendRequest(string $sql) : mixed {
         if(!$this->thulbConfig->SERA) {
             return [];
         }
@@ -97,15 +112,28 @@ class Sera extends AbstractBase implements
 
         $response =  $this->httpService->post(
             $this->thulbConfig->SERA->URL,
-            'sql=' . $postData,
+            'sql=' . $sql,
             \Laminas\Http\Client::ENC_URLENCODED,
             10000,
             $headers
         );
 
+        if($response->getStatusCode() == 401) {
+            throw new UnauthorizedException('Unauthorized Request to ' . $this->thulbConfig->SERA->URL);
+        }
+
         return json_decode($response->getBody(), true);
     }
 
+    /**
+     * Get address_id_nr for the given user.
+     *
+     * @param string $username
+     *
+     * @return int|bool
+     *
+     * @throws UnauthorizedException
+     */
     protected function getAddressIdNr(string $username) : int|bool {
         $sql = "SELECT * FROM borrower WHERE borrower_bar='$username'";
         $response = $this->sendRequest($sql);
@@ -113,13 +141,29 @@ class Sera extends AbstractBase implements
         return $response['result'][0]['address_id_nr'] ?? false;
     }
 
-    protected function getLastRequisitionIDNumber() : int|bool {
+    /**
+     * Get the id_number of the last requisition.
+     *
+     * @return int|false
+     *
+     * @throws UnauthorizedException
+     */
+    protected function getLastRequisitionIDNumber() : int|false {
         $sql = "SELECT TOP 1 id_number FROM requisition ORDER BY id_number DESC";
         $response = $this->sendRequest($sql);
 
         return $response['result'][0]['id_number'] ?? false;
     }
 
+    /**
+     * Adds the new requisition.
+     *
+     * @param array $data
+     *
+     * @return bool
+     *
+     * @throws UnauthorizedException
+     */
     protected function insertRequisition(array $data) : bool {
         $sql =
             "INSERT INTO requisition " .
@@ -132,7 +176,16 @@ class Sera extends AbstractBase implements
         return $this->getLastRequisitionIDNumber() == $data['id_number'];
     }
 
-    public function chargeIllFee(string $username, $quantity, $cost) : bool {
+    /**
+     *
+     *
+     * @param string $username
+     * @param string $quantity
+     * @param string $cost
+     *
+     * @return bool
+     */
+    public function chargeIllFee(string $username, string $quantity, string $cost) : bool {
         try {
             if(getenv('VUFIND_ENV') != 'production') {
                 // there is no SERA test API, use a live user
@@ -166,7 +219,7 @@ class Sera extends AbstractBase implements
             ));
         }
         catch (\Exception $e) {
-            $this->logError($e);
+            $this->logException($e);
         }
 
         return false;

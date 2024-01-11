@@ -53,7 +53,7 @@
     </table>
   <?php elseif($this->chargeException ?? false): ?>
     <div class="alert alert-danger">
-      <?= $this->translate('ill_charge_error', ['%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($this->cost)]); ?>
+      <?= $this->translate('ill_charge_error', ['%%cost%%' => $this->safeMoneyFormat($this->cost)]); ?>
     </div>
   <?php else: ?>
     <?= $this->render('error/index.phtml'); ?>

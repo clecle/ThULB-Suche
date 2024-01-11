@@ -5,6 +5,7 @@ namespace ThULB\Controller;
 use Laminas\Config\Config;
 use Laminas\Http\Response;
 use Laminas\Log\LoggerAwareInterface;
+use Laminas\Log\Writer\Noop;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Mvc\Plugin\FlashMessenger\FlashMessenger;
 use Laminas\ServiceManager\ServiceLocatorInterface;
@@ -12,9 +13,11 @@ use Laminas\Session\Container as SessionContainer;
 use Laminas\View\Model\ViewModel;
 use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
+use ThULB\Log\LoggerAwareTrait;
 use VuFind\Controller\AbstractBase;
 use VuFind\Exception\Mail as MailException;
-use VuFind\Log\LoggerAwareTrait;
+use VuFind\Log\Logger;
+use VuFind\Log\Writer\Stream;
 use VuFind\Mailer\Mailer;
 use VuFind\Validator\SessionCsrf;
 use Whoops\Exception\ErrorException;
@@ -29,6 +32,8 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
     protected Config $mainConfig;
     protected Config $illConfig;
 
+    protected Logger $illLogger;
+
     protected SessionCsrf $csrfValidator;
 
     public function __construct(ServiceLocatorInterface $serviceLocator) {
@@ -38,6 +43,14 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $this->illConfig = $serviceLocator->get('VuFind\Config')->get('thulb')->ILL;
 
         $this->csrfValidator = $serviceLocator->get(SessionCsrf::class);
+
+        $this->illLogger = new Logger($serviceLocator->get(\VuFind\Net\UserIpReader::class));
+        if(($file = $this->illConfig->logFile ?? false) && is_file($file) && is_writeable($file)) {
+            $this->illLogger->addWriter(new Stream($file));
+        }
+        else {
+            $this->illLogger->addWriter(new Noop());
+        }
     }
 
     public function onDispatch(MvcEvent $e) : ViewModel|MvcEvent|Response {
@@ -68,7 +81,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $view->oldQuantity = $illInformation['balance'] ?? 0;
         }
         catch (ErrorException | \Exception $e) {
-            $this->logError($e);
+            $this->logException($e);
             $view->exception = $e;
         }
 
@@ -98,7 +111,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $illInformation = $this->getIllInformation($user->username);
         }
         catch (ErrorException | \Exception $e) {
-            $this->logError($e);
+            $this->logException($e);
             $view->exception = $e;
             return $view;
         }
@@ -121,8 +134,6 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                         'facility' => $facility,
                     ]
                 );
-
-                $this->flashMessage('success', 'ill_send_mail_success');
             }
             else {
                 $this->flashMessage('error', 'ill_charge_no_department_or_facility');
@@ -141,8 +152,6 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                     'cost' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
                 ]
             );
-
-            $this->flashMessage('success', 'ill_send_mail_success');
         }
         elseif($request->getPost('confirmation', false) !== 'true') {
             $view->newQuantity = ($illInformation['balance'] ?? 0) + $view->chargeQuantity;
@@ -160,12 +169,18 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                 try {
                     $ilsPM->get('cbsuserdpo')->chargeCredits($user->username, $view->chargeQuantity);
 
+                    $this->illLogger->log(Logger::INFO, 'chargeCredits', [
+                        'username' => $user->username,
+                        'quantity' => $view->chargeQuantity,
+                        'cost' => $view->cost
+                    ]);
+
                     $this->flashMessage('success', 'ill_charge_success', [
                         '%%cost%%' => $this->getViewRenderer()->safeMoneyFormat($view->cost)
                     ]);
                 }
                 catch (\Exception $e) {
-                    $this->logError($e);
+                    $this->logException($e);
                     $this->sendChargeErrorEmail($view->chargeQuantity, $view->cost);
 
                     $view->exception = $e;
@@ -194,8 +209,6 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                     'username' => $user->username,
                 ]
             );
-
-            $this->flashMessage('success', 'ill_send_mail_success');
         }
 
         return new ViewModel();
@@ -227,8 +240,6 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                     'username' => $user->username,
                 ]
             );
-
-            $this->flashMessage('success', 'ill_send_mail_success');
         }
 
         return new ViewModel();
@@ -259,19 +270,30 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
      *
      * @return bool Success of sending the email.
      */
-    protected function sendEmail(string $subject, string $template, array $data = []) : bool {
+    protected function sendEmail(string $subject, string $template, array $data = [], $showMessage = true) : bool {
+        $subject = $subject . ' (' . strtoupper($this->serviceLocator->get('VuFind\Translator')->getLocale()) . ')';
+
         try {
             $mailer = $this->serviceLocator->get(Mailer::class);
             $mailer->send(
                 $this->illConfig->departmentEmail,
                 $this->mainConfig->Mail->default_from,
-                $subject . ' (' . strtoupper($this->serviceLocator->get(\VuFind\Translator::class)->getLocale()) . ')',
+                $subject,
                 $this->getViewRenderer()->render($template, $data)
             );
+
+            $this->illLogger->log(Logger::INFO, 'sendMail: ' . $subject, $data);
+
+            if($showMessage) {
+                $this->flashMessage('success', 'ill_send_mail_success');
+            }
         }
         catch (MailException $e) {
-            if($this->logger != null && is_callable($this->logger, 'logException')) {
-                $this->logger->logException($e, $this->getEvent()->getRequest()->getServer());
+            $this->illLogger->log(Logger::ERR, 'sendMail: ' . $subject, $data);
+            $this->logException($e);
+
+            if($showMessage) {
+                $this->flashMessage('error', 'An error occurred during execution; please try again later.');
             }
 
             return false;
@@ -280,9 +302,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         return true;
     }
 
-    protected function sendChargeErrorEmail(string $quantity, string $cost) {
+    protected function sendChargeErrorEmail(string $quantity, string $cost) : bool {
         $user = $this->getUser();
-        $this->sendEmail(
+        $success = $this->sendEmail(
             'Fehler beim Buchen von Fernleihguthaben',
             'Email/ill/charge-error', [
                 'email' => $user->email,
@@ -291,8 +313,17 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                 'username' => $user->username,
                 'quantity' => $quantity,
                 'cost' => $cost
-            ]
+            ],
+            false
         );
+
+        if(!$success) {
+            $this->logError('ChargeErrorMail could not be sent.', [
+                'username' => $user->username
+            ]);
+        }
+
+        return $success;
     }
 
     protected function getTotalDue() : int {

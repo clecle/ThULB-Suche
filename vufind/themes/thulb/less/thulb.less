@@ -692,8 +692,12 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   .flex-wrap-reverse-xs {
     flex-wrap: wrap-reverse;
   }
-}
-@media (max-width: $screen-xs-max) {
+
+  .flex-center-xs {
+    display: flex;
+    align-items: center;
+  }
+
   .flex-break-sm {
     flex-basis: 100% !important;
     height: 0;
@@ -972,6 +976,23 @@ span.service_presentation {
   }
 }
 
+@media (min-width: 576px) {
+  .favourite-list .cart-controls .dropdown-menu {
+    display: block;
+    position: unset;
+    padding: unset;
+    margin: unset;
+    font-size: unset;
+    text-align: unset;
+    background-color: unset;
+    background-clip: unset;
+    border: unset;
+    border-radius: unset;
+    -webkit-box-shadow: unset;
+    box-shadow: unset;
+  }
+}
+
 span.filters-title {
   font-weight: bold;
 }
@@ -1243,6 +1264,8 @@ a.external-link:after,
     border-top-right-radius: 0 !important;
     background-color: @brand-primary-darker;
     color: #ffffff;
+    min-width: 175px;
+    padding: 0;
   }
 
   #searchForm_lookfor {
@@ -1313,15 +1336,20 @@ form#renewals span.text-danger {
     font-weight: bold;
   }
 
-  tbody tr:nth-child(odd) {
+  tr:has(th), tr:has(thead) {
+    position: sticky;
+    top: 0
+  }
+
+  tr:nth-child(odd) {
     background-color: @table-bg-accent;
   }
 
-  td {
+  td, th {
     padding: 5px 10px;
   }
 
-  td + td {
+  td + td, th + th {
     border-left: solid #000 1px;
   }
 
@@ -1368,6 +1396,9 @@ div.modal-body .facet-tree-container {
 }
 .ml-2 {
   margin-left: 10px !important;
+}
+.ml-auto {
+  margin-left: auto !important;
 }
 .mr-0 {
   margin-right: 0 !important;
@@ -1547,11 +1578,6 @@ form#newpassword .form-group.flex-center {
   border-color: @brand-primary;
 }
 
-.access-browzine {
-/*  background-color: lighten(@brand-primary, 7.5%);
-  border-color: lighten(@brand-primary, 2.5%);*/
-}
-
 .action-row .fulltext {
 /*  background-color: lighten(@brand-primary, 15%);
   border-color: lighten(@brand-primary, 10%);*/
@@ -1693,6 +1719,10 @@ div.striped {
   align-self: start;
 }
 
+.fa-info-circle {
+  cursor: pointer;
+}
+
 a.checkbox-filter > span > i.fa-info-circle,
 #side-panel-standort_iln_str_mv i.fa-info-circle {
   font-size: 18px;
@@ -1729,10 +1759,12 @@ a.checkbox-filter > span > i.fa-info-circle,
   font-size: 14px;
 }
 
+.favourite-list .media .broken-link,
 #resultlist .media .broken-link {
   display: none;
 }
 
+.favourite-list .result:hover .media .broken-link,
 #resultlist .result:hover .media .broken-link {
   display: inline;
 }
@@ -1829,7 +1861,6 @@ a.checkbox-filter > span > i.fa-info-circle,
     border-color: darken(@btn-secondary-border-color, 10%);
   }
 }
-
 
 .ill-charge-page {
   margin: auto;
@@ -1964,23 +1995,19 @@ a.checkbox-filter > span > i.fa-info-circle,
   text-align: right;
 }
 
+.ill-forgot-password {
+  & > *:not(.flex-break-sm) {
+    flex-basis: 40%;
+    flex-grow: 1;
+  }
+
+  .alert {
+    margin: 0;
+  }
+}
+
 .text-red {
   color: red;
-}
-
-.d-block {
-  display: block;
-}
-
-.d-table {
-  display: table;
-}
-.d-table-row {
-  display: table-row;
-}
-
-.d-table-cell {
-  display: table-cell;
 }
 
 @media (max-width: 440px) {
@@ -1995,4 +2022,14 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .underline {
   text-decoration: underline;
+}
+
+.visible-xxs {
+  display: none;
+}
+
+@media (max-width: 575px) {
+  .visible-xxs {
+    display: block;
+  }
 }

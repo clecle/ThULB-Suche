@@ -692,8 +692,12 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   .flex-wrap-reverse-xs {
     flex-wrap: wrap-reverse;
   }
-}
-@media (max-width: $screen-xs-max) {
+
+  .flex-center-xs {
+    display: flex;
+    align-items: center;
+  }
+
   .flex-break-sm {
     flex-basis: 100% !important;
     height: 0;
@@ -969,6 +973,23 @@ span.service_presentation {
     .edit-list-entry {
       padding-left: 0;
     }
+  }
+}
+
+@media (min-width: 576px) {
+  .favourite-list .cart-controls .dropdown-menu {
+    display: block;
+    position: unset;
+    padding: unset;
+    margin: unset;
+    font-size: unset;
+    text-align: unset;
+    background-color: unset;
+    background-clip: unset;
+    border: unset;
+    border-radius: unset;
+    -webkit-box-shadow: unset;
+    box-shadow: unset;
   }
 }
 
@@ -1376,6 +1397,9 @@ div.modal-body .facet-tree-container {
 .ml-2 {
   margin-left: 10px !important;
 }
+.ml-auto {
+  margin-left: auto !important;
+}
 .mr-0 {
   margin-right: 0 !important;
 }
@@ -1554,14 +1578,9 @@ form#newpassword .form-group.flex-center {
   border-color: $brand-primary;
 }
 
-.access-browzine {
-  /*background-color: $brand-primary;
-  border-color: $brand-primary;*/
-}
-
 .action-row .fulltext {
-  /*  background-color: lighten($brand-primary, 15%);
-    border-color: lighten($brand-primary, 10%);*/
+/*  background-color: lighten($brand-primary, 15%);
+  border-color: lighten($brand-primary, 10%);*/
   align-self: start;
 }
 
@@ -1740,10 +1759,12 @@ a.checkbox-filter > span > i.fa-info-circle,
   font-size: 14px;
 }
 
+.favourite-list .media .broken-link,
 #resultlist .media .broken-link {
   display: none;
 }
 
+.favourite-list .result:hover .media .broken-link,
 #resultlist .result:hover .media .broken-link {
   display: inline;
 }
@@ -2001,4 +2022,14 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .underline {
   text-decoration: underline;
+}
+
+.visible-xxs {
+  display: none;
+}
+
+@media (max-width: 575px) {
+  .visible-xxs {
+    display: block;
+  }
 }

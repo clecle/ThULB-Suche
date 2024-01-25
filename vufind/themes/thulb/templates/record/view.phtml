@@ -123,6 +123,10 @@
             <?= isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
           </div>
         <?php endif; ?>
+
+        <noscript>
+          <div class="alert alert-warning hidden-print center-text noscript"><?= $this->transEsc('noscript_warning_specific'); ?></div>
+        </noscript>
       </div>
     </div>
     <?php endif; ?>

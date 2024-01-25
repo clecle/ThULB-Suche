@@ -151,8 +151,13 @@ JS;
       <a class="sr-only" href="#content"><?= $this->transEsc('Skip to content') ?></a>
       <?= $this->render('header.phtml')?>
     </header>
+
     <nav class="breadcrumbs">
       <div class="container">
+        <noscript>
+          <div class="alert alert-warning hidden-print center-text"><?= $this->transEsc('noscript_warning'); ?></div>
+        </noscript>
+
         <?php if((!isset($this->layout()->showBreadcrumbs) || $this->layout()->showBreadcrumbs == true)
           && !empty($this->layout()->breadcrumbs)
           && $this->layout()->breadcrumbs !== false
@@ -179,13 +184,8 @@ JS;
       </div>
     </nav>
     <div role="main" class="main">
-      <img src="/themes/thulb/images/Ajax-loader.gif"
-           id="img-load" />
+      <img src="/themes/thulb/images/Ajax-loader.gif" id="img-load" />
       <div id="content" class="container">
-        <noscript >
-          <div class="alert alert-warning hidden-print center-text"><?= $this->transEsc('noscript warning'); ?></div>
-        </noscript>
-        
         <div id="overlay" class="col-xs-12">
           <p>&nbsp;</p>
         </div>

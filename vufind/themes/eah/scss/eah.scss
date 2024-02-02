@@ -1898,3 +1898,7 @@ a.checkbox-filter > span > i.fa-info-circle,
 .label-unknown {
   background-color: $state-warning-text;
 }
+
+.printview .action-row {
+  display: none !important;
+}

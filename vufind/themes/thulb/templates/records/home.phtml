@@ -29,6 +29,16 @@
   $this->headScript()->appendFile("check_item_statuses.js");
   $this->headScript()->appendFile("check_save_statuses.js");
 
+  // Open print dialog after all AJAX requests are finished
+  $this->HeadScript()->appendScript(<<<JS
+    // Wait 1 second to process and display the received data before opening the print dialog
+    $(document).ajaxStop(function(){
+        setTimeout(function () {
+            print();
+        }, 1000);
+    });
+  JS);
+
   $this->overrideTitle = $this->translate('View Records');
   $this->overrideSearchHeading = '';
 
@@ -38,7 +48,7 @@
 
 <img src="/themes/thulb/images/Ajax-loader.gif"
      id="img-load" />
-<div id="searchcontent">
+<div id="searchcontent" class="printview">
   <div id="overlay" class="col-xs-12">
     <p>&nbsp;</p>
   </div>

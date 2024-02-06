@@ -1,3 +1,54 @@
+<style>
+  .dropdown-submenu {
+    position: relative;
+  }
+
+  .dropdown-submenu>.dropdown-menu {
+    top: 0;
+    left: 100%;
+    margin-top: -6px;
+    margin-left: -1px;
+    -webkit-border-radius: 0 6px 6px 6px;
+    -moz-border-radius: 0 6px 6px 6px;
+    border-radius: 0 6px 6px 6px;
+  }
+
+  /*.dropdown-submenu:hover>.dropdown-menu{display:block;}*/
+  .dropdown-submenu>a:after {
+    display: block;
+    content: " ";
+    float: right;
+    width: 0;
+    height: 0;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 5px 0 5px 5px;
+    border-left-color: #cccccc;
+    margin-top: 5px;
+    margin-right: -10px;
+  }
+
+  .dropdown-submenu:hover>a:after {
+    border-left-color: #ffffff;
+  }
+
+  .dropdown-submenu.pull-left {
+    float: none;
+  }
+
+  .dropdown-submenu.pull-left>.dropdown-menu {
+    left: -100%;
+    margin-left: 10px;
+    -webkit-border-radius: 6px 0 6px 6px;
+    -moz-border-radius: 6px 0 6px 6px;
+    border-radius: 6px 0 6px 6px;
+  }
+
+  /*.dropdown-submenu .dropdown-toggle {*/
+  /*  background-color: #eee;*/
+  /*}*/
+</style>
+
 <div class="collapse navbar-collapse" id="tsnavbar">
   <ul class="nav navbar-nav">
     <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
@@ -16,32 +67,75 @@
         </ul>
       </li>
     <?php endif; ?>
-    <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Tutorials')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="https://mailform.thulb.uni-jena.de/?mail=YXVzbGVpaGVfdGh1bGJAdW5pLWplbmEuZGU" target="_blank"><?= $this->transEsc("Header_account_lending")?></a></li>
-        <li><a href="<?= $this->thulb_serviceDesk('broken-link'); ?>" target="_blank"><?= $this->transEsc('Header_access_problem'); ?></a> </li>
-        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('Header_ts_support'); ?></a></li>
+        <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+
+        <li class="dropdown dropdown-submenu">
+          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Tutorials')?> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?= $this->translate('URL::Tutorial_Useraccount'); ?>" target="_blank"><?= $this->transEsc('Useraccount')?></a></li>
+            <li><a href="<?= $this->translate('URL::Tutorial_Favorite_Liste'); ?>" target="_blank"><?= $this->transEsc('Creating a favorites list')?></a></li>
+          </ul>
+        </li>
       </ul>
     </li>
-    <li class="visible-xs"><a href="<?= $this->translate('URL::imprint'); ?>" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
-    <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
+
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
+        <li><a href="<?= $this->translate('URL::DBIS'); ?>" target="_blank"><?= $this->transEsc('Databases')?></a></li>
+
+        <li class="dropdown dropdown-submenu">
+          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('E-Zeitschriften / E-Zeitungen')?> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?= $this->translate('URL::EZB'); ?>" target="_blank"><?= $this->transEsc('Elektronische Zeitschriftenbibliothek')?></a></li>
+            <li><a href="<?= $this->translate('URL::WISO'); ?>"><?= $this->translate('Tages- und Wochenzeitungen')?></a></li>
+            <li><a href="<?= $this->translate('URL::Libkey'); ?>" target="_blank"><?= $this->transEsc('DOI-Schnellsuche für E-Journal-Artikel')?></a></li>
+            <li><a href="<?= $this->translate('URL::BrowZine'); ?>" target="_blank"><?= $this->transEsc('BrowZine')?></a></li>
+          </ul>
+        </li>
+
         <li><a href="<?= $this->thulb_serviceDesk('acquisition-suggestion'); ?>" target="_blank"><?= $this->transEsc('Acquisition suggestion')?></a></li>
+
+        <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
+
+        <li class="dropdown dropdown-submenu">
+          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Digitale Sammlungen Thüringen')?> <b class="caret"></b></a>
+          <ul class="dropdown-menu">
+            <li><a href="<?= $this->translate('URL::UrMEL_Collections'); ?>" target="_blank"><?= $this->transEsc('Drucke, Handschriften und Nachlässe')?></a></li>
+            <li><a href="<?= $this->translate('URL::UrMEL_Journals'); ?>"><?= $this->translate('Zeitungen und Zeitschriften')?></a></li>
+            <li><a href="<?= $this->translate('URL::DBT'); ?>" target="_blank"><?= $this->transEsc('E-Publikationen und Hochschulschriften')?></a></li>
+            <li><a href="<?= $this->translate('URL::Kulthura'); ?>" target="_blank"><?= $this->transEsc('Kulthura - Kultur- und Wissensportal Thüringens')?></a></li>
+          </ul>
+        </li>
+
+        <li><a href="<?= $this->translate('URL::university_library'); ?>" target="_blank"><?= $this->transEsc('Universitätsbibliographie')?></a></li>
+
+        <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('Fachinformationen')?></a></li>
+      </ul>
+    </li>
+
+    <li class="dropdown">
+      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Interlibrary Loan')?> <b class="caret"></b></a>
+      <ul class="dropdown-menu">
         <li><a href="<?= $this->translate('URL::Order in GVK'); ?>" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
         <li><a href="<?= $this->url('ill-chargecredits'); ?>"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
         <li><a href="<?= $this->translate('URL::Login GVK'); ?>" target="_blank"><?= $this->transEsc('Login GVK')?></a></li>
         <li><a href="<?= $this->translate('URL::ILL information'); ?>" target="_blank"><?= $this->transEsc('ILL information')?></a></li>
       </ul>
     </li>
+
+    <li class="visible-xs"><a href="<?= $this->translate('URL::imprint'); ?>" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
+
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Tutorials')?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="https://youtu.be/30CynQdtDk0" target="_blank"><?= $this->transEsc('Useraccount')?></a></li>
-        <li><a href="https://youtu.be/VywUJwafIEc" target="_blank"><?= $this->transEsc('Creating a favorites list')?></a></li>
+        <li><a href="https://mailform.thulb.uni-jena.de/?mail=YXVzbGVpaGVfdGh1bGJAdW5pLWplbmEuZGU" target="_blank"><?= $this->transEsc("Header_account_lending")?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('broken-link'); ?>" target="_blank"><?= $this->transEsc('Header_access_problem'); ?></a> </li>
+        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('Header_ts_support'); ?></a></li>
       </ul>
     </li>
   </ul>

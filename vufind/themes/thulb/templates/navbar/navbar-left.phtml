@@ -71,28 +71,22 @@
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Header_searchtipps')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
-
-        <li class="dropdown dropdown-submenu">
-          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Tutorials')?></a>
-          <ul class="dropdown-menu">
-            <li><a href="<?= $this->translate('URL::Tutorial_Useraccount'); ?>" target="_blank"><?= $this->transEsc('Useraccount')?></a></li>
-            <li><a href="<?= $this->translate('URL::Tutorial_Favorite_List'); ?>" target="_blank"><?= $this->transEsc('Favorite lists')?></a></li>
-          </ul>
-        </li>
+        <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('ThULB-FAQ')?></a></li>
+        <li><a href="<?= $this->translate('URL::Tutorial_Useraccount'); ?>" target="_blank"><?= $this->transEsc(  'Tutorial Useraccount')?></a></li>
+        <li><a href="<?= $this->translate('URL::Tutorial_Favorite_List'); ?>" target="_blank"><?= $this->transEsc('Tutorial favorite lists')?></a></li>
       </ul>
     </li>
 
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?> <b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="<?= $this->translate('URL::DBIS'); ?>" target="_blank"><?= $this->transEsc('Databases')?></a></li>
+        <li><a href="<?= $this->translate('URL::DBIS'); ?>" target="_blank"><?= $this->transEsc('Databases (DBIS)')?></a></li>
 
         <li class="dropdown dropdown-submenu">
           <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('E-Journals / E-Newspapers')?></a>
           <ul class="dropdown-menu">
-            <li><a href="<?= $this->translate('URL::EZB'); ?>" target="_blank"><?= $this->transEsc('Electronic journal library')?></a></li>
-            <li><a href="<?= $this->translate('URL::WISO'); ?>"><?= $this->translate('Daily and weekly newspapers')?></a></li>
+            <li><a href="<?= $this->translate('URL::EZB'); ?>" target="_blank"><?= $this->transEsc('Electronic journal library (EZB)')?></a></li>
+            <li><a href="<?= $this->translate('URL::WISO'); ?>" target="_blank"><?= $this->translate('Daily and weekly newspapers (WISO)')?></a></li>
             <li><a href="<?= $this->translate('URL::Libkey'); ?>" target="_blank"><?= $this->transEsc('DOI quick search')?></a></li>
             <li><a href="<?= $this->translate('URL::BrowZine'); ?>" target="_blank"><?= $this->transEsc('BrowZine')?></a></li>
           </ul>
@@ -106,7 +100,7 @@
           <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Digital Collections Thuringia')?></b></a>
           <ul class="dropdown-menu">
             <li><a href="<?= $this->translate('URL::UrMEL_Collections'); ?>" target="_blank"><?= $this->transEsc('Prints, manuscripts and bequests')?></a></li>
-            <li><a href="<?= $this->translate('URL::UrMEL_Journals'); ?>"><?= $this->translate('Journals and Newspapers')?></a></li>
+            <li><a href="<?= $this->translate('URL::UrMEL_Journals'); ?>" target="_blank"><?= $this->translate('Journals and Newspapers')?></a></li>
             <li><a href="<?= $this->translate('URL::DBT'); ?>" target="_blank"><?= $this->transEsc('E-publications and university publications')?></a></li>
             <li><a href="<?= $this->translate('URL::Kulthura'); ?>" target="_blank"><?= $this->transEsc("Kulthura")?></a></li>
           </ul>

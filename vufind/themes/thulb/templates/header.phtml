@@ -44,7 +44,7 @@
               <form method="post" name="themeForm" id="themeForm">
                 <input type="hidden" name="ui"/>
               </form>
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Theme")?> <b class="caret"></b></a>
+              <a href="#" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc("Theme")?></a>
               <ul class="dropdown-menu">
                 <?php foreach ($this->layout()->themeOptions as $current): ?>
                   <li<?= $current['selected'] ? ' class="active"' : ''?>><a href="#" onClick="document.themeForm.ui.value='<?= $this->escapeHtmlAttr($current['name'])?>';document.themeForm.submit()"><?= $this->transEsc($current['desc'])?></a></li>
@@ -58,9 +58,7 @@
               <form method="post" name="langForm" id="langForm">
                 <input type="hidden" name="mylang"/>
               </form>
-              <a href="#_" class="dropdown-toggle" data-toggle="dropdown">
-                <?= strtoupper($this->layout()->userLang); ?> <b class="caret"></b>
-              </a>
+              <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= strtoupper($this->layout()->userLang); ?></a>
               <ul class="dropdown-menu">
                 <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
                   <?php if ($this->layout()->userLang != $langCode): ?>

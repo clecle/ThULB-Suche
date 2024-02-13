@@ -1,61 +1,8 @@
-<style>
-  .dropdown-submenu {
-    position: relative;
-  }
-
-  .dropdown-submenu>.dropdown-menu {
-    top: 0;
-    left: 100%;
-    margin-top: -6px;
-    margin-left: -1px;
-    -webkit-border-radius: 0 6px 6px 6px;
-    -moz-border-radius: 0 6px 6px 6px;
-    border-radius: 0 6px 6px 6px;
-  }
-
-  /*.dropdown-submenu:hover>.dropdown-menu{display:block;}*/
-  .dropdown-submenu>a:after {
-    display: block;
-    content: " ";
-    float: right;
-    width: 0;
-    height: 0;
-    border-color: transparent;
-    border-style: solid;
-    border-width: 5px 0 5px 5px;
-    border-left-color: #cccccc;
-    margin-top: 5px;
-    margin-right: -10px;
-  }
-
-  .dropdown-submenu:hover>a:after {
-    border-left-color: #ffffff;
-  }
-
-  .dropdown-submenu.pull-left {
-    float: none;
-  }
-
-  .dropdown-submenu.pull-left>.dropdown-menu {
-    left: -100%;
-    margin-left: 10px;
-    -webkit-border-radius: 6px 0 6px 6px;
-    -moz-border-radius: 6px 0 6px 6px;
-    border-radius: 6px 0 6px 6px;
-  }
-
-  /*.dropdown-submenu .dropdown-toggle {*/
-  /*  background-color: #eee;*/
-  /*}*/
-</style>
-
 <div class="collapse navbar-collapse" id="tsnavbar">
   <ul class="nav navbar-nav">
     <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
       <li class="language dropdown visible-xs">
-        <a href="#_" class="dropdown-toggle" data-toggle="dropdown">
-          <?= strtoupper($this->layout()->userLang); ?> <b class="caret"></b>
-        </a>
+        <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= strtoupper($this->layout()->userLang); ?></a>
         <ul class="dropdown-menu">
           <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
             <?php if ($this->layout()->userLang != $langCode): ?>
@@ -69,7 +16,7 @@
     <?php endif; ?>
 
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Header_searchtipps')?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Header_searchtipps')?></b></a>
       <ul class="dropdown-menu">
         <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('ThULB-FAQ')?></a></li>
         <li><a href="<?= $this->translate('URL::Tutorial_Useraccount'); ?>" target="_blank"><?= $this->transEsc(  'Tutorial Useraccount')?></a></li>
@@ -78,12 +25,12 @@
     </li>
 
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Found nothing?')?></b></a>
       <ul class="dropdown-menu">
         <li><a href="<?= $this->translate('URL::DBIS'); ?>" target="_blank"><?= $this->transEsc('Databases (DBIS)')?></a></li>
 
         <li class="dropdown dropdown-submenu">
-          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('E-Journals / E-Newspapers')?></a>
+          <a href="#_" class="dropdown-toggle arrow-right arrow-down-sm" data-toggle="dropdown"><?= $this->transEsc('E-Journals / E-Newspapers')?></a>
           <ul class="dropdown-menu">
             <li><a href="<?= $this->translate('URL::EZB'); ?>" target="_blank"><?= $this->transEsc('Electronic journal library (EZB)')?></a></li>
             <li><a href="<?= $this->translate('URL::WISO'); ?>" target="_blank"><?= $this->translate('Daily and weekly newspapers (WISO)')?></a></li>
@@ -97,7 +44,7 @@
         <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('OPAC')?></a></li>
 
         <li class="dropdown dropdown-submenu">
-          <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Digital Collections Thuringia')?></b></a>
+          <a href="#_" class="dropdown-toggle arrow-right arrow-down-sm" data-toggle="dropdown"><?= $this->transEsc('Digital Collections Thuringia')?></a>
           <ul class="dropdown-menu">
             <li><a href="<?= $this->translate('URL::UrMEL_Collections'); ?>" target="_blank"><?= $this->transEsc('Prints, manuscripts and bequests')?></a></li>
             <li><a href="<?= $this->translate('URL::UrMEL_Journals'); ?>" target="_blank"><?= $this->translate('Journals and Newspapers')?></a></li>
@@ -113,7 +60,7 @@
     </li>
 
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc('Interlibrary loan')?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Interlibrary loan')?> </a>
       <ul class="dropdown-menu">
         <li><a href="<?= $this->translate('URL::Order in GVK'); ?>" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
         <li><a href="<?= $this->url('ill-chargecredits'); ?>"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
@@ -125,7 +72,7 @@
     <li class="visible-xs"><a href="<?= $this->translate('URL::imprint'); ?>" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
 
     <li class="dropdown">
-      <a href="#_" class="dropdown-toggle" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?> <b class="caret"></b></a>
+      <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?></a>
       <ul class="dropdown-menu">
         <li><a href="https://mailform.thulb.uni-jena.de/?mail=YXVzbGVpaGVfdGh1bGJAdW5pLWplbmEuZGU" target="_blank"><?= $this->transEsc("Header_account_lending")?></a></li>
         <li><a href="<?= $this->thulb_serviceDesk('broken-link'); ?>" target="_blank"><?= $this->transEsc('Header_access_problem'); ?></a> </li>

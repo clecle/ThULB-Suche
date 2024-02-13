@@ -2119,14 +2119,14 @@ a.checkbox-filter > span > i.fa-info-circle,
   }
 }
 
+.label-unknown {
+  background-color: $state-warning-text;
+}
+
 .tab-content .noscript {
   margin: 20px;
 }
 
 .printview .action-row {
   display: none !important;
-}
-
-.label-unknown {
-  background-color: $state-warning-text;
 }

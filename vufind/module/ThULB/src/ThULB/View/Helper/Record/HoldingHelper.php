@@ -47,7 +47,7 @@ class HoldingHelper extends AbstractHelper
           $availabilityString .= $this->view->transEsc("On Reserve - Ask at Circulation Desk") . '<br />';
       }
       if (isset($itemRow['use_unknown_message']) && $itemRow['use_unknown_message']) {
-          $availabilityString .= '<span class="text-danger">' . $this->view->transEsc("status_unknown_message") . '</span>';
+          $availabilityString .= '<span class="text-warning">' . $this->view->transEsc("status_unknown_message") . '</span>';
       } else {
         if ($itemRow['availability']) {
           /* Begin AVAILABLE Items (Holds) */

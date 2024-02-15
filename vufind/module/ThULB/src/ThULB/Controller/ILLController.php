@@ -443,6 +443,6 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
     }
 
     protected function writeIllLog() {
-        $this->illLogger->log(Logger::INFO, $export1);
+        $this->illLogger->log(Logger::INFO, var_export($this->logContent, true));
     }
 }

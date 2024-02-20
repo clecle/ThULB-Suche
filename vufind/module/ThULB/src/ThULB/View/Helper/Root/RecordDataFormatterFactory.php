@@ -105,6 +105,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                     'type' => 'corporate',
                     'schemaLabel' => 'creator',
                     'requiredDataFields' => [
+                        ['name' => 'detail'],
                         ['name' => 'role', 'prefix' => 'CreatorRoles::']
                     ]
                 ],

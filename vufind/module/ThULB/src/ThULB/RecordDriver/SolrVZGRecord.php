@@ -702,12 +702,12 @@ class SolrVZGRecord extends SolrMarc
     public function getCorporateAuthors($excludeRoles = []) : array
     {
         $relevantFields = array(
-            '110' => ['a', 'b', 'c', 'd', 'g'],
-            '710' => ['a', 'b', 'c', 'd', 'g']
+            '110' => ['a', 'b'],
+            '710' => ['a', 'b']
         );
         $formattingRules = array(
-            '110' => '110a (/ 110b, (\((110c, 110d)\)))( 110g)',
-            '710' => '710a (/ 710b, (\((710c, 710d)\)))( 710g)'
+            '110' => '110a (/ 110b)',
+            '710' => '710a (/ 710b)'
         );
         $conditions = [];
         if($excludeRoles) {
@@ -735,6 +735,19 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $roles;
+    }
+
+    public function getCorporateAuthorsDetails() {
+        $details = array();
+
+        $reader = $this->getMarcReader();
+        foreach(['110', '710'] as $fieldTag) {
+            foreach($reader->getFields($fieldTag) as $field) {
+                $details[] = $reader->getSubfield($field, 'g');
+            }
+        }
+
+        return $details;
     }
 
     /**

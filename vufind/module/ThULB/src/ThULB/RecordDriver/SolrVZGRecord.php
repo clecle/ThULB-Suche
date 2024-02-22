@@ -315,8 +315,8 @@ class SolrVZGRecord extends SolrMarc
     public function getThumbnail($size = 'small')
     {
         $params = parent::getThumbnail($size);
-        
-        $params['contenttype'] = $this->fields['format'] ? $this->fields['format'][0] : '';
+
+        $params['contenttype'] = !empty($this->fields['format']) ? ((array) $this->fields['format'])[0] : '';
 
         $collection_details = $this->fields['collection_details'];
 

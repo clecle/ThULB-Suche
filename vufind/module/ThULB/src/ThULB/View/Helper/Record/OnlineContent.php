@@ -70,8 +70,7 @@ class OnlineContent extends AbstractHelper
             'Solr' => array (
                 'Holding' => 'driver',
                 'Libkey' => 'doiLinks',
-                'Solr' => 'driver',
-                'DOI' => 'driver'
+                'Solr' => 'driver'
             ),
             'Summon' => array (
                 'Libkey' => 'doiLinks',

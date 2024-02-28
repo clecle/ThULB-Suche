@@ -51,12 +51,14 @@ class GetItemStatuses extends OriginalGetItemStatuses
         $locations = [];
         $useUnknownStatus = false;
         $available = null;
+        $availableAtLocation = [];
+
         foreach ($record as $info) {
             // Find an available copy
             if (!isset($info['use_unknown_message'])) {
                 $availStr = $this->availabilityToString($info['availability'] ?? false);
                 if ('true' !== $available) {
-                    $available = $availStr;
+                    $available = $availableAtLocation[$info['location']] = $availStr;
                 }
                 if ('true' !== ($locations[$info['location']]['available'] ?? null)) {
                     $locations[$info['location']]['available'] = $availStr;
@@ -66,7 +68,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 $locations[$info['location']]['status_unknown'] = false;
             }
             // Check for a use_unknown_message flag
-            if ($available === null && $info['use_unknown_message'] ?? false) {
+            if (!isset($availableAtLocation[$info['location']]) && $info['use_unknown_message'] ?? false) {
                 $useUnknownStatus = true;
                 $locations[$info['location']]['status_unknown'] = true;
             }

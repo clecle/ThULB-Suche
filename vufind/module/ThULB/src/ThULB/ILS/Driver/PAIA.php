@@ -1002,6 +1002,12 @@ class PAIA extends OriginalPAIA
     {
         $details = parent::paiaParseUserDetails($patron, $user_response);
 
+        foreach(['firstname', 'lastname'] as $field) {
+            if(strlen($details[$field] ?? '') > 50) {
+                $details[$field] = trim(substr($details[$field], 0 ,50));
+            }
+        }
+
         $type = $details['type'][0] ?? false;
         if($type) {
             // remove everything before the last number

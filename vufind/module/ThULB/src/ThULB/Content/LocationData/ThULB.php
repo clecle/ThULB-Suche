@@ -28,6 +28,10 @@ class ThULB implements
 
     public function getLocationData(int $locationID = null) : array {
         $apiUrl = $this->thulbConfig->Location->URL;
+        if(!$apiUrl) {
+            return [];
+        }
+
         if($locationID !== null) {
             $apiUrl .= '&location=' . $locationID;
         }

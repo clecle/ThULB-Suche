@@ -333,10 +333,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * @return string|null
      */
     protected function getArchiveEmailForCallnumber(string $callnumber) : ?string {
-        if(APPLICATION_ENV == 'development' || APPLICATION_ENV == 'testing') {
-            return $this->thulbConfig->JournalRequest->test_email;
-        }
-
         $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
         return $this->thulbConfig->JournalRequest->ArchiveEmail[$departmentId] ?: null;
     }

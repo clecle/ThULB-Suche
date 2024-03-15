@@ -362,6 +362,67 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
 
 /* Start of ThULB customizations */
 
+@mixin arrow($direction) {
+  display: inline-block;
+  content: " ";
+  width: 0;
+  height: 0;
+  border-width: 5px;
+  border-color: transparent;
+  border-style: solid;
+  margin-left: 5px;
+
+  @if $direction == 'up' {
+    border-bottom-color: #fff;
+    border-top-width: 0;
+  } @else if $direction == 'down' {
+    border-top-color: #fff;
+    border-bottom-width: 0;
+  } @else if $direction == 'left' {
+    border-right-color: #fff;
+    border-left-width: 0;
+  } @else if $direction == 'right' {
+    border-left-color: #fff;
+    border-right-width: 0;
+  }
+
+  @if $direction == 'up' or $direction == "down" {
+    margin-bottom: 2px;
+  }
+}
+
+.arrow-up:after,
+.open > .arrow-down:after {
+  @include arrow(up);
+}
+
+.arrow-down:after,
+.open > .arrow-up:after {
+  @include arrow(down);
+}
+
+.arrow-right:after,
+.open > .arrow-left:after {
+  @include arrow(right);
+}
+
+.arrow-left:after,
+.open > .arrow-right:after {
+  @include arrow(left);
+}
+
+@media (max-width: $screen-xs-max) {
+  .arrow-up-sm:after,
+  .open > .arrow-down:after {
+    @include arrow(up);
+  }
+
+  .arrow-down-sm:after,
+  .open > .arrow-up:after {
+    @include arrow(down);
+  }
+}
+
 @media (min-width: 768px) {
   .form-control { max-width: 100%; }
 }
@@ -761,8 +822,12 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   .flex-wrap-reverse-xs {
     flex-wrap: wrap-reverse;
   }
-}
-@media (max-width: $screen-xs-max) {
+
+  .flex-center-xs {
+    display: flex;
+    align-items: center;
+  }
+
   .flex-break-sm {
     flex-basis: 100% !important;
     height: 0;
@@ -1039,6 +1104,23 @@ span.service_presentation {
     .edit-list-entry {
       padding-left: 0;
     }
+  }
+}
+
+@media (min-width: 576px) {
+  .favourite-list .cart-controls .dropdown-menu {
+    display: block;
+    position: unset;
+    padding: unset;
+    margin: unset;
+    font-size: unset;
+    text-align: unset;
+    background-color: unset;
+    background-clip: unset;
+    border: unset;
+    border-radius: unset;
+    -webkit-box-shadow: unset;
+    box-shadow: unset;
   }
 }
 
@@ -1406,6 +1488,9 @@ div.modal-body .facet-tree-container {
 .ml-2 {
   margin-left: 10px !important;
 }
+.ml-auto {
+  margin-left: auto !important;
+}
 .mr-0 {
   margin-right: 0 !important;
 }
@@ -1492,6 +1577,8 @@ form#newpassword .form-group.flex-center {
   border: unset !important;
 
   .dropdown-menu {
+    background-clip: unset;
+
     & > .active > span {
       display: block;
       padding: 5px 15px;
@@ -1521,7 +1608,7 @@ form#newpassword .form-group.flex-center {
       &:focus,
       &:hover {
         background-color: $brand-primary;
-        color: white;
+        color: #fff;
       }
     }
   }
@@ -1590,11 +1677,6 @@ form#newpassword .form-group.flex-center {
 .access-reference {
   background-color: $brand-primary;
   border-color: $brand-primary;
-}
-
-.access-browzine {
-  /*background-color: $brand-primary;
-  border-color: $brand-primary;*/
 }
 
 .action-row .fulltext {
@@ -1706,8 +1788,13 @@ body > header {
   }
 }
 
-#cartSummary #cartItems > * + * {
-  margin-left: 5px;
+#cartSummary #cartItems {
+  display: flex;
+  align-items: center;
+
+  & > * + * {
+    margin-left: 5px;
+  }
 }
 
 .user-icon {
@@ -1780,10 +1867,12 @@ a.checkbox-filter > span > i.fa-info-circle,
   font-size: 14px;
 }
 
+.favourite-list .media .broken-link,
 #resultlist .media .broken-link {
   display: none;
 }
 
+.favourite-list .result:hover .media .broken-link,
 #resultlist .result:hover .media .broken-link {
   display: inline;
 }
@@ -1839,6 +1928,11 @@ a.checkbox-filter > span > i.fa-info-circle,
   white-space: nowrap;
 }
 
+.btn-opening-hours {
+  display: block;
+  height: fit-content;
+}
+
 .btn-secondary {
   @extend .btn-primary;
 
@@ -1848,7 +1942,7 @@ a.checkbox-filter > span > i.fa-info-circle,
 
   &:hover,
   &:focus {
-    color: #000;
+    color: #fff;
     background-color: darken($btn-secondary-bg, 5%);
     border-color: darken($btn-secondary-border-color, 5%);
   }
@@ -1879,8 +1973,22 @@ a.checkbox-filter > span > i.fa-info-circle,
   text-decoration: underline;
 }
 
+.visible-xxs {
+  display: none;
+}
+
+@media (max-width: 575px) {
+  .visible-xxs {
+    display: block;
+  }
+}
+
 .label-unknown {
   background-color: $state-warning-text;
+}
+
+.tab-content .noscript {
+  margin: 20px;
 }
 
 .printview .action-row {

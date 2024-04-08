@@ -49,14 +49,16 @@ class GetItemStatuses extends OriginalGetItemStatuses
     protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array {
         // Summarize call number, location and availability info across all items:
         $locations = [];
-        $useUnknownStatus = false;
+        $useUnknownStatus = null;
         $available = null;
+        $availableAtLocation = [];
+
         foreach ($record as $info) {
             // Find an available copy
             if (!isset($info['use_unknown_message'])) {
                 $availStr = $this->availabilityToString($info['availability'] ?? false);
                 if ('true' !== $available) {
-                    $available = $availStr;
+                    $available = $availableAtLocation[$info['location']] = $availStr;
                 }
                 if ('true' !== ($locations[$info['location']]['available'] ?? null)) {
                     $locations[$info['location']]['available'] = $availStr;
@@ -66,8 +68,11 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 $locations[$info['location']]['status_unknown'] = false;
             }
             // Check for a use_unknown_message flag
-            if ($available === null && $info['use_unknown_message'] ?? false) {
-                $useUnknownStatus = true;
+            if (!isset($availableAtLocation[$info['location']]) && ($info['use_unknown_message'] ?? false)) {
+                if($useUnknownStatus === null) {
+                    $useUnknownStatus = true;
+                }
+
                 $locations[$info['location']]['status_unknown'] = true;
             }
             // Store call number/location info:

@@ -25,7 +25,7 @@
     <?= $this->render('Helpers/locationData.phtml', ['locationData' => $locationData, 'holding' => $holding]); ?>
   </div>
 
-  <div class="striped flex-grow" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
+  <div class="striped flex-grow mb-5" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
     <?php if (isset($holding['textfields'])): foreach ($holding['textfields'] as $textFieldName => $textFields): ?>
       <div class="row mr-0 ml-0">
         <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">

@@ -715,6 +715,18 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   flex-direction: column;
 }
 
+@media (max-width: $screen-sm-max) {
+  .flex-dir-col-sm {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: $screen-xs-max) {
+  .flex-dir-col-xs {
+    flex-direction: column;
+  }
+}
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -1449,6 +1461,9 @@ div.modal-body .facet-tree-container {
 .mb-2 {
   margin-bottom: 10px !important;
 }
+.mb-5 {
+   margin-bottom: 25px !important;
+ }
 .ml-0 {
   margin-left: 0 !important;
 }
@@ -1785,10 +1800,10 @@ div.online-access {
   margin: 10px 15px;
 }
 
-div.striped {
-  & > div.row {
+.striped {
+  & > * {
     border-top: 1px solid #ddd;
-    padding: 10px 10px 25px;
+    padding: 0 10px;
 
     &:nth-of-type(odd) {
       background-color: $table-bg-accent;
@@ -1885,6 +1900,18 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .width-fill-parent {
   width: 100% !important;
+}
+
+@media (max-width: $screen-sm-max) {
+  .width-fill-parent-sm {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: $screen-xs-max) {
+  .width-fill-parent-xs {
+    width: 100% !important;
+  }
 }
 
 .mag-button {
@@ -2133,4 +2160,110 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .table-order-reserve {
   max-width: 800px;
+}
+
+.provenance-tab {
+  padding: 10px 0;
+
+  & > i {
+    margin-left: 15px;
+  }
+
+  .provenance {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .provenance-type-list {
+    width: 85%;
+    flex-grow: 1;
+    gap: 10px 0;
+  }
+
+  .provenance-item-list {
+    width: 90%;
+    flex-grow: 1;
+  }
+
+  .provenance-callnumber {
+    min-width: 100px;
+    font-weight: bold;
+    width: 15%;
+    padding: 5px 15px;
+    border-top: 1px solid $table-border-color;
+  }
+
+  .provenance-type {
+    width: 100px;
+    padding: 5px 15px;
+    border-top: 1px solid $table-border-color;
+    text-decoration: underline;
+  }
+
+  .provenance-item {
+    display: block;
+    flex-grow: 1;
+    padding: 5px 15px;
+  }
+
+  .provenance-callnumber-group:first-of-type {
+    .provenance-callnumber {
+      border-top: unset;
+    }
+
+    .provenance-type-group:first-of-type {
+      .provenance-type,
+      .provenance-item:first-of-type {
+        border-top: unset;
+      }
+    }
+  }
+}
+
+@media (max-width: $screen-sm-max) {
+  .provenance-tab {
+    .provenance-callnumber,
+    .provenance-type {
+      border-top: unset;
+    }
+  }
+}
+
+@media (max-width: $screen-xs-max) {
+  .provenance-tab  .provenance-item {
+    padding-left: 25px;
+  }
+}
+
+.link {
+  background: none !important;
+  border: none;
+  padding: 0 !important;
+  text-align: start;
+
+  color: $link-color;
+  cursor:pointer;
+
+  &:hover{
+    color: $link-hover-color;
+    text-decoration: $link-hover-decoration;
+  }
+}
+
+.popover {
+  &.thulb {
+    padding: 0;
+  }
+
+  .popover-content {
+    .popover-title {
+      margin: 10px -14px;
+      border-radius: 0;
+    }
+
+    img {
+      max-width: 20px;
+      max-height: 20px;
+    }
+  }
 }

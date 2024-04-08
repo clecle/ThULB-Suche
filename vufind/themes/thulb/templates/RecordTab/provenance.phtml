@@ -1,0 +1,62 @@
+<?php
+  $provenance = $this->driver->getProvenance();
+  $provenanceSeparator = '<span class="provenance-separator">|</span>';
+?>
+
+<?php if($provenance): ?>
+  <div class="provenance">
+    <?php foreach($provenance as $callnumber => $types): ?>
+      <div class="provenance-callnumber-group flex flex-dir-col-sm">
+        <div class="provenance-callnumber width-fill-parent-sm">
+          <span><?= $this->transEsc('Call Number'); ?>:</span><br>
+          <span><?= $callnumber; ?></span>
+        </div>
+
+        <div class="provenance-type-list flex flex-dir-col width-fill-parent-sm">
+          <?php foreach(array_keys($types) as $type): ?>
+            <div class="provenance-type-group flex flex-dir-col-xs">
+              <div class="provenance-type width-fill-parent-xs">
+                <span><?= $type; ?></span>
+              </div>
+
+              <div class="provenance-item-list flex flex-dir-col striped width-fill-parent-xs">
+                <?php foreach($types[$type] as $provenanceItem): ?>
+                  <div class="provenance-item">
+                    <?php if($provenanceItem['link'] ?? false): ?>
+                      <?= $this->record($this->driver)->renderTemplate('normlink', [
+                        'desc' => $provenanceItem['name'],
+                        'gnd' => $provenanceItem['link'],
+                        'driver' => $this->driver,
+                        'linkType' => 'Provenance'
+                      ]); ?>
+                    <?php else: ?>
+                      <?= $provenanceItem['name'] ?>
+                    <?php endif; ?>
+
+                    <?php if($provenanceItem['evidence'] ?? false): ?>
+                      <?= $provenanceSeparator; ?> <?= implode(' ' . $provenanceSeparator . ' ', $provenanceItem['evidence']); ?>
+                    <?php endif; ?>
+
+                    <?php if($provenanceItem['date']): ?>
+                      <?= $provenanceSeparator; ?> <?= $this->transEsc('Date') . ': ' . $provenanceItem['date'] ?>
+                    <?php endif; ?>
+
+                    <?php if($provenanceItem['note']): ?>
+                      <?= $provenanceSeparator; ?> <?= $this->transEsc('Explanation') . ': ' . $provenanceItem['note'] ?>
+                    <?php endif; ?>
+
+                    <?php if($provenanceItem['attribute']): ?>
+                      <?= $provenanceSeparator; ?> <a href="<?= $provenanceItem['attribute']; ?>" target="_blank"><?= $this->transEsc('Provenance attribute'); ?></a>
+                    <?php endif; ?>
+                  </div>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  </div>
+
+  <script>setupPopovers();</script>
+<?php endif; ?>

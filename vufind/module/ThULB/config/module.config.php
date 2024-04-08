@@ -167,11 +167,13 @@ $config = array(
                     \ThULB\RecordTab\Access::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
                     \ThULB\RecordTab\ArticleCollectionList::class => \VuFind\RecordTab\CollectionListFactory::class,
                     \ThULB\RecordTab\NonArticleCollectionList::class => \VuFind\RecordTab\CollectionListFactory::class,
+                    \ThULB\RecordTab\Provenance::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
                 ),
                 'aliases' => array(
                     'access' => \ThULB\RecordTab\Access::class,
                     'articlecl' => \ThULB\RecordTab\ArticleCollectionList::class,
                     'nonarticlecl' => \ThULB\RecordTab\NonArticleCollectionList::class,
+                    'provenance' => \ThULB\RecordTab\Provenance::class,
                 ),
                 'invokables' => array(
                     'staffviewcombined' => \ThULB\RecordTab\StaffViewCombined::class,

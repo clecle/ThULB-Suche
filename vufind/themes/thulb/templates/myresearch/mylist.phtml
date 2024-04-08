@@ -69,7 +69,7 @@
 
   <?php if ($recordTotal > 0): ?>
     <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
-      <div class="favourite-list striped">
+      <div class="favourite-list striped mb-5">
         <?= $this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account])?>
         <?php foreach ($this->results->getResults() as $i => $current): ?>
           <?= $this->record($current)->getListEntry($list, $user)?>

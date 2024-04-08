@@ -109,6 +109,20 @@ function setupHintTooltips() {
     $('a.hint[data-toggle="tooltip"]').tooltip();
 }
 
+function setupPopovers() {
+    $('[data-toggle="popover')
+        .on('click',function(e){
+            e.preventDefault();
+        })
+        .popover({
+        html : true,
+        content: function() {
+            return $(this).parent().find('.popover-link-list').html();
+        }
+    });
+}
+
+
 function setAsyncResultNum() {
     var lookfor = $('#searchForm_lookfor').val();
     var type = $('#searchForm_type option:checked').val();

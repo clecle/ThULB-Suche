@@ -56,6 +56,7 @@ class SolrVZGRecord extends SolrMarc
 {
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
+    const GND_LINK_ID_PREFIX = 'DE-588';
     const DNB_LINK_ID_PREFIX = 'DE-101';
     const LIBRARY_ILN = '31';
 
@@ -2456,6 +2457,11 @@ class SolrVZGRecord extends SolrMarc
         return ($this->fields['isOA_bool'] ?? 'false') == 'true';
     }
 
+    /**
+     * Get all related holdings available for ordering or placing a hold
+     *
+     * @return array
+     */
     public function getHoldingsToOrderOrReserve() : array {
         $holdingsOrderReserve = [];
         $holdings = $this->getHoldings();
@@ -2489,6 +2495,45 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $holdingsOrderReserve;
+    }
+
+    /**
+     * Get all provenances.
+     *
+     * @return array
+     */
+    public function getProvenance() : array {
+        $marcReader = $this->getMarcReader();
+        $data = [];
+        foreach($marcReader->getFields('361') as $field) {
+            if($marcReader->getSubfield($field, '5') != 'DE-27') {
+                continue;
+            }
+
+            $link = null;
+            foreach ($marcReader->getSubfields($field, '0') as $subfield) {
+                if(str_starts_with($subfield, '(' . static::GND_LINK_ID_PREFIX . ')')) {
+                    $link = substr($subfield, 8);
+                    break;
+                }
+            }
+
+            $callnumber = $marcReader->getSubfield($field, 's');
+            $type = $marcReader->getSubfield($field, 'o');
+
+            $data[$callnumber][$type][] = array (
+                'link' => $link,
+                'name' => $marcReader->getSubfield($field, 'a'),
+                'evidence' => $marcReader->getSubfields($field, 'f'),
+                'type' => $type,
+                'callnumber' => $callnumber,
+                'attribute' => $marcReader->getSubfield($field, 'u'),
+                'note' => $marcReader->getSubfield($field, 'z'),
+                'date' => $marcReader->getSubfield($field, 'k'),
+            );
+        }
+
+        return $data;
     }
 
 //    Commented out for possible future use.

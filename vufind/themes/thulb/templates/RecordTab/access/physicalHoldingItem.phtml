@@ -84,7 +84,12 @@
                               && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])): ?>
       <div class="flex flex-wrap-xs pb-1 pl-1 pr-2">
         <div class="col-description bold"><?= $this->transEsc("Availability Status")?>:</div>
-        <div class="col-text"><?= $this->thulb_holdingHelper()->getAvailability($item);?></div>
+        <div class="col-text">
+          <?= $this->render('record/holding/availability.phtml', [
+            'driver' => $this->driver,
+            'item' => $item
+          ]); ?>
+        </div>
       </div>
     <?php endif; ?>
   </div>

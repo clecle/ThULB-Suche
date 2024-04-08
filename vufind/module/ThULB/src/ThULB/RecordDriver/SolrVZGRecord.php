@@ -2456,6 +2456,41 @@ class SolrVZGRecord extends SolrMarc
         return ($this->fields['isOA_bool'] ?? 'false') == 'true';
     }
 
+    public function getHoldingsToOrderOrReserve() : array {
+        $holdingsOrderReserve = [];
+        $holdings = $this->getHoldings();
+        foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
+            foreach ($holding['items'] as $item) {
+                if($item['use_unknown_message'] ?? false) {
+                    // item is missing, check next item
+                    continue;
+                }
+
+                if ($item['availability'] && !isset($item['link']) && !isset($item['storageRetrievalRequestLink'])) {
+                    // item is available in 'Freihand', placing a hold and reserving not available in list view
+                    continue;
+                }
+
+                if($item['availability']) {
+                    // available in stack, no need to look for other items
+                    $holdingsOrderReserve[$holdingLocation][] = $item;
+                }
+                elseif ($item['link'] ?? false) {
+                    // look for the item with the least placed requests or earliest due date
+                    if (!isset($tmpLinkData['duedate'])
+                        || $tmpLinkData['requests_placed'] > $item['requests_placed']
+                        || ($tmpLinkData['requests_placed'] == $item['requests_placed']
+                            && strtotime($tmpLinkData['duedate']) > strtotime($item['duedate']))
+                    ) {
+                        $holdingsOrderReserve[$holdingLocation][] = $item;
+                    }
+                }
+            }
+        }
+
+        return $holdingsOrderReserve;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

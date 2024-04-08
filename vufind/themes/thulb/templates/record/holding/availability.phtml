@@ -1,0 +1,67 @@
+<?php
+  // AJAX Check record?
+  $check = $item['check'] ?? false;
+  $checkStorageRetrievalRequest = $item['checkStorageRetrievalRequest'] ?? false;
+  $checkILLRequest = $item['checkILLRequest'] ?? false;
+
+  $holdingHelper = $this->thulb_holdingHelper();
+?>
+
+<?php if ($item['reserve'] == "Y"): ?>
+  <link property=\"availability" href="http://schema.org/InStoreOnly" />
+  <?= $this->transEsc("On Reserve - Ask at Circulation Desk"); ?><br />
+<?php endif; ?>
+
+<?php /* Embed item structured data: library, barcode, call number */ ?>
+<?php if ($item['location']): ?>
+  <meta property="seller" content="<?= $this->escapeHtmlAttr($item['location']); ?>" />
+<?php endif; ?>
+<?php if ($item['barcode']): ?>
+  <meta property="serialNumber" content="<?= $this->escapeHtmlAttr($item['barcode']); ?>" />
+<?php endif; ?>
+<?php if ($item['callnumber']): ?>
+  <meta property="sku" content="<?= $this->escapeHtmlAttr($item['callnumber']); ?>" />
+<?php endif; ?>
+
+<?php /* Declare that the item is to be borrowed, not for sale */ ?>
+<link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut" />
+<link property="itemOffered" href="#record" />
+
+<?php if ($item['use_unknown_message'] ?? false): ?>
+  <span class="text-warning"><?= $this->transEsc("status_unknown_message"); ?></span>
+<?php elseif($item['availability'] ?? false): ?>
+  <?php /* Begin AVAILABLE Items (Holds) */ ?>
+  <span class="text-success"><?= $this->transEsc("Available"); ?><link property="availability" href="http://schema.org/InStock" /></span>
+
+  <?php foreach($holdingHelper->getRequestLinks($item, $this->driver->isNewsPaper()) as $linkData): ?>
+    <a class="<?= $linkData['classes']; ?>" data-lightbox href="<?= $linkData['link']; ?>"><?= $linkData['icon'] ?? ''; ?><?= $this->transEsc($linkData['desc']); ?></a>
+  <?php endforeach; ?>
+
+  <?php /* Nicht leihbar? Also Lesesaal! */ ?>
+  <?php if ($readingRoom = $holdingHelper->getReadingRoomOnlyString($item)): ?>
+    <br><?= $readingRoom; ?>
+  <?php endif; ?>
+<?php else: ?>
+  <?php /* Begin UNAVAILABLE Items (Recalls) */ ?>
+  <?php if (($item['returnDate'] ?? false) || ($item['duedate'] ?? false) || (isset($item['holdtype']) && $item['holdtype'] === 'recall')): ?>
+    <?php /* is there a duedate? > "ausgeliehen" */ ?>
+    <span class="text-danger"><?= $this->transEsc('ils_hold_item_' . $item['status']); ?><link property="availability" href="http://schema.org/OutOfStock" /></span>
+  <?php else: ?>
+    <?php /* no duedate? > "nicht verfügbar" */ ?>
+    <span class="text-danger"><?= $this->transEsc('ils_hold_item_notavailable'); ?><link property="availability" href="http://schema.org/OutOfStock" /></span>
+  <?php endif; ?>
+
+  <?php if ($item['returnDate'] ?? false): ?>
+    &ndash; <?= $this->escapeHtml($item['returnDate']); ?>
+  <?php endif; ?>
+
+  <?php if ($item['duedate'] ?? false): ?>
+    &ndash; <?= $this->transEsc("Due"); ?>: <?= $this->escapeHtml($item['duedate']); ?>
+  <?php endif; ?>
+
+  <?php if ($item['link'] ?? false): ?>
+    <?= $holdingHelper->getRecallLink($item); ?>
+  <?php endif; ?>
+
+  <?= $holdingHelper->getRequestsPlacedString($item); ?>
+<?php endif; ?>

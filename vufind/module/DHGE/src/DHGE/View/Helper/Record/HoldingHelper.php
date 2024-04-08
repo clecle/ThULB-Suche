@@ -37,10 +37,10 @@ class HoldingHelper extends OriginalHoldingHelper
      *
      * @param array $itemRow
      *
-     * @return string
+     * @return array
      */
-    protected function getRecallLinkString(array $itemRow) : string {
-        return $this->recallAvailable($itemRow) ? parent::getRecallLinkString($itemRow) : '';
+    public function getRecallLink(array $itemRow) : array {
+        return $this->recallAvailable($itemRow) ? parent::getRecallLink($itemRow) : [];
     }
 
     protected function recallAvailable(array $itemRow): bool {
@@ -49,6 +49,7 @@ class HoldingHelper extends OriginalHoldingHelper
     }
 
     public function getAvailability(&$itemRow) : string {
+        // @TODO: move to DHGE specific template
         $str = parent::getAvailability($itemRow);
 
         if($itemRow['status'] != 'available' && !$this->recallAvailable($itemRow)) {

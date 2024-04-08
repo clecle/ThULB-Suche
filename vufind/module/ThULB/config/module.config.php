@@ -75,14 +75,14 @@ $config = array(
                     \ThULB\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
                     \ThULB\AjaxHandler\GetResultCount::class => \ThULB\AjaxHandler\GetResultCountFactory::class,
                     \ThULB\AjaxHandler\HideMessage::class => \ThULB\AjaxHandler\HideMessageFactory::class,
-                    \ThULB\AjaxHandler\OnlineContentLookup::class => \ThULB\AjaxHandler\OnlineContentLookupFactory::class,
+                    \ThULB\AjaxHandler\AccessLookup::class => \ThULB\AjaxHandler\AccessLookupFactory::class,
                     \ThULB\AjaxHandler\VpnWarning::class => \ThULB\AjaxHandler\VpnWarningFactory::class,
                 ),
                 'aliases' => array(
                     'fulltextLookup' => \ThULB\AjaxHandler\FulltextLookup::class,
                     'getResultCount' => \ThULB\AjaxHandler\GetResultCount::class,
                     'hideMessage' => \ThULB\AjaxHandler\HideMessage::class,
-                    'onlineContentLookup' => \ThULB\AjaxHandler\OnlineContentLookup::class,
+                    'accessLookup' => \ThULB\AjaxHandler\AccessLookup::class,
                     'vpnWarning' => \ThULB\AjaxHandler\VpnWarning::class,
                     \VuFind\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatuses::class,
                 )
@@ -252,6 +252,8 @@ $routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
+$routeGenerator->addNonTabRecordActions($config, ['OrderReserve']);
+
 $routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
 $routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
 

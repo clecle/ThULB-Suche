@@ -1123,7 +1123,7 @@ li[data-tab="details"] {
   border: none;
 }
 
-.doiLinkLoading, .online-content-loading {
+.doiLinkLoading, .access-options-loading {
   height: 15px;
   padding-right: 5px;
 }
@@ -1702,7 +1702,7 @@ form#newpassword .form-group.flex-center {
   align-self: start;
 }
 
-.online-content {
+.access-options {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
@@ -2129,4 +2129,8 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .printview .action-row {
   display: none !important;
+}
+
+.table-order-reserve {
+  max-width: 800px;
 }

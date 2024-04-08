@@ -32,7 +32,7 @@ use VuFind\RecordDriver\DefaultRecord;
 class OnlineContent extends AbstractHelper
 {
     private $pluginManager;
-    private $resolvers;
+    private array $resolvers;
 
     public function __construct($pluginManager, $resolver) {
         $this->pluginManager = $pluginManager;
@@ -42,8 +42,8 @@ class OnlineContent extends AbstractHelper
     public function __invoke(DefaultRecord $driver) : array {
         $cleanDoi = $driver->getCleanDOI();
         $doiData = array();
-        if($driver->getSourceIdentifier() == 'Summon' ||
-            ($driver->getSourceIdentifier() == 'Solr' && $driver->isFormat('electronic Article'))) {
+        if($driver->getSourceIdentifier() == 'Summon'
+            || ($driver->getSourceIdentifier() == 'Solr' && $driver->isFormat('electronic Article'))) {
             $doiData = $this->doiLookup($cleanDoi);
         }
 

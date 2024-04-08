@@ -1,0 +1,7 @@
+<?php $this->headScript()->appendFile('accesslookup.js'); ?>
+
+<div class="ajax-access-lookup flex-center center-text">
+  <img src="/themes/thulb/images/Ajax-loader.gif" class="access-options-loading hidden">
+  <span class="access-options" data-access-lookup="<?= $this->escapeHtml($this->driver->getSourceIdentifier() . ':' . $this->driver->getUniqueID())?>">
+  </span>
+</div>

@@ -1,16 +1,16 @@
 /*global Hunt, VuFind */
-VuFind.register('onlineContent', function onlineContent() {
-    function displayOnlineContent(result, el) {
+VuFind.register('accessLookup', function accessLookup() {
+    function displayAccessOptions(result, el) {
 
-        let onlineContentEl = $(el).find('.online-content');
+        let accessOptionsEl = $(el).find('.access-options');
 
-        let loadingImg = $(onlineContentEl).prev();
-        if(loadingImg.is('img')) {
+        let loadingImg = $(accessOptionsEl).prev();
+        if (loadingImg.is('img')) {
             loadingImg.hide();
         }
 
         if ("undefined" !== typeof result) {
-            let actionRow = onlineContentEl.parent().parent();
+            let actionRow = accessOptionsEl.parent().parent();
             let brokenLink = result.links.pop();
             if($(brokenLink).hasClass('broken-link')) {
                 actionRow.append(result.links, actionRow.find('a'), brokenLink);
@@ -20,11 +20,11 @@ VuFind.register('onlineContent', function onlineContent() {
             }
         }
         else {
-            onlineContentEl.parent().hide();
+            accessOptionsEl.parent().hide();
         }
     }
 
-    function onlineContentAjaxSuccess(items, response) {
+    function accessLookupAjaxSuccess(items, response) {
         let idMap = {};
 
         // make map of ids to element arrays
@@ -37,30 +37,32 @@ VuFind.register('onlineContent', function onlineContent() {
         });
 
         // display data
-        response.data.forEach(function displayOnlineContentResponse(onlineContent) {
-            if (typeof idMap[onlineContent.id] === "undefined") {
+        response.data.forEach(function displayAccessLookupResponse(accessLookup) {
+            if (typeof idMap[accessLookup.id] === "undefined") {
                 return;
             }
 
-            idMap[onlineContent.id].forEach((el) => displayOnlineContent(onlineContent, el));
+            idMap[accessLookup.id].forEach((el) => displayAccessOptions(accessLookup, el));
         });
 
-        VuFind.emit("online-content-done");
+        VuFind.lightbox.bind();
+
+        VuFind.emit("access-lookup-done");
     }
 
-    function onlineContentAjaxFailure(items, response, textStatus) {
+    function accessLookupAjaxFailure(items, response, textStatus) {
         if (
             textStatus === "error" ||
             textStatus === "abort" ||
             typeof response.responseJSON === "undefined"
         ) {
-            VuFind.emit("online-content-done");
+            VuFind.emit("access-lookup-done");
 
             return;
         }
 
         // display the error message on each of the ajax status placeholder
-        items.forEach(function displayOnlineContentFailure(item) {
+        items.forEach(function displayAccessLookupFailure(item) {
             $(item.el)
                 .find(".js-item-pending")
                 .addClass("text-danger")
@@ -73,11 +75,11 @@ VuFind.register('onlineContent', function onlineContent() {
                 );
         });
 
-        VuFind.emit("online-content-done");
+        VuFind.emit("access-lookup-done");
     }
 
-    function makeOnlineContentQueue({
-        url = "/AJAX/JSON?method=onlineContentLookup",
+    function makeAccessLookupQueue({
+        url = "/AJAX/JSON?method=accessLookup",
         dataType = "json",
         method = "POST",
         delay = 200,
@@ -90,7 +92,7 @@ VuFind.register('onlineContent', function onlineContent() {
                     $.ajax({
                         // todo: replace with fetch
                         url: VuFind.path + url,
-                        data: { onlineContent: items.map((item) => item.id), sid },
+                        data: { accessLookup: items.map((item) => item.id), sid },
                         dataType,
                         method,
                     })
@@ -98,19 +100,19 @@ VuFind.register('onlineContent', function onlineContent() {
                     .catch(error);
                 });
             },
-            success: onlineContentAjaxSuccess,
-            failure: onlineContentAjaxFailure,
+            success: accessLookupAjaxSuccess,
+            failure: accessLookupAjaxFailure,
             delay,
         });
     }
 
-    var onlineContentQueue = makeOnlineContentQueue();
+    var accessLookupQueue = makeAccessLookupQueue();
 
-    function checkOnlineContent(el) {
-        var onlineContentEl = el.querySelector(".online-content");
+    function checkAccessOptions(el) {
+        var accessOptionsEl = el.querySelector(".access-options");
 
         if (
-            onlineContentEl === null ||
+            accessOptionsEl === null ||
             el.classList.contains("js-item-pending") ||
             el.classList.contains("js-item-done")
         ) {
@@ -120,32 +122,33 @@ VuFind.register('onlineContent', function onlineContent() {
         // update element to reflect lookup
         el.classList.add("js-item-pending");
 
-        const loadingImg = el.querySelector("img.online-content-loading");
+        const loadingImg = el.querySelector("img.access-options-loading");
         if (loadingImg) {
             loadingImg.classList.remove("hidden");
         }
 
         // queue the element into the queue
-        onlineContentQueue.add({ el, id: onlineContentEl.dataset.onlineContent });
+        accessLookupQueue.add({ el, id: accessOptionsEl.dataset.accessLookup });
     }
 
-    function checkAllOnlineContents(container = document) {
-        container.querySelectorAll(".ajaxItem").forEach(checkOnlineContent);
+    function checkAllAccessOptions(container = document) {
+        container.querySelectorAll(".ajaxItem").forEach(checkAccessOptions);
     }
 
     function init($container = document) {
         const container = unwrapJQuery($container);
 
         if (VuFind.isPrinting()) {
-            checkOnlineContent(container);
+            checkAccessOptions(container);
         } else {
             VuFind.observerManager.createIntersectionObserver(
-                'onlineContents',
-                checkOnlineContent,
-                container.querySelectorAll('.ajax-online-content')
+                'accesslookup',
+                checkAccessOptions,
+                container.querySelectorAll('.ajax-access-lookup'),
+                {}
             );
         }
     }
 
-    return { init: init, check: checkAllOnlineContents, checkRecord: checkOnlineContent };
+    return { init: init, check: checkAllAccessOptions, checkRecord: checkAccessOptions };
 });

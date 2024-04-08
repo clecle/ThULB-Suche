@@ -35,7 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 /**
  * Factory for FulltextLookup AJAX handler.
  */
-class OnlineContentLookupFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
+class AccessLookupFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
      * Create an object

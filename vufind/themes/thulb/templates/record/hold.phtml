@@ -10,10 +10,24 @@
 <div class="hold-form">
   <form class="form-horizontal" method="post" name="placeHold">
     <?= $this->flashmessages()?>
-    <label class="col-sm-3 control-label"><?= $this->transEsc('Title')?></label>
-    <div class="col-sm-9">
-      <p class="form-control-static"><?= $this->driver->getBreadcrumb() ?></p>
+    <div>
+      <label class="col-sm-3 control-label"><?= $this->transEsc('Title')?></label>
+      <div class="col-sm-9">
+        <p class="form-control-static"><?= $this->driver->getBreadcrumb() ?></p>
+      </div>
     </div>
+
+    <?php if($this->duedate ?? false): ?>
+      <div>
+        <label class="col-sm-3 control-label"><?= $this->transEsc('Due')?></label>
+        <div class="col-sm-9">
+          <p class="form-control-static">
+            <?= $this->escapeHtml($this->duedate) . ' ' . $this->thulb_holdingHelper()->getRequestsPlacedString(['requests_placed' => $this->requests_placed]) ?>
+          </p>
+        </div>
+      </div>
+    <?php endif; ?>
+
     <?php if (in_array("comments", $this->extraHoldFields)): ?>
       <div class="form-group hold-comment">
         <label class="col-sm-3 control-label"><?= $this->transEsc("Comments")?>:</label>

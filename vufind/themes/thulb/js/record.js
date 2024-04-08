@@ -245,8 +245,8 @@ ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl, sortType
       }
       fillEmptyHoldingsTab();
 
-      if(typeof VuFind.onlineContent == "object") {
-        VuFind.onlineContent.init();
+      if(typeof VuFind.accessLookup == "object") {
+        VuFind.accessLookup.init();
       }
     });
   return false;

@@ -3,6 +3,7 @@
 namespace ThULB\Controller;
 
 use Laminas\Mvc\MvcEvent;
+use Laminas\View\Model\ViewModel;
 use VuFind\Controller\RecordController as OriginalRecordController;
 use VuFind\Exception\PasswordSecurity;
 
@@ -43,6 +44,22 @@ class RecordController extends OriginalRecordController
             return $this->forceNewPassword();
         }
 
-        return parent::holdAction();
+        $view = parent::holdAction();
+
+        $view->setVariable('duedate', $this->getRequest()->getQuery('duedate', null));
+        $view->setVariable('requests_placed', $this->getRequest()->getQuery('requests_placed', null));
+
+        return $view;
+    }
+
+    public function orderReserveAction() {
+        // Force login if necessary:
+        if (!$this->getUser()) {
+            return $this->forceLogin();
+        }
+
+        return new ViewModel([
+            'driver' => $this->loadRecord()
+        ]);
     }
 }

@@ -116,6 +116,10 @@ function setupPopovers() {
         })
         .popover({
         html : true,
+        delay: {
+            show: 0,
+            hide: 100
+        },
         content: function() {
             return $(this).parent().find('.popover-link-list').html();
         }

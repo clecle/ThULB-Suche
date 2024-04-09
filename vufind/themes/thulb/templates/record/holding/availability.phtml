@@ -60,7 +60,8 @@
   <?php endif; ?>
 
   <?php if ($item['link'] ?? false): ?>
-    <?= $holdingHelper->getRecallLink($item); ?>
+    <?php $recallLink = $holdingHelper->getRecallLink($item); ?>
+    <a class="<?= $recallLink['classes']; ?>" data-lightbox href="<?= $recallLink['link']; ?>"><?= $recallLink['icon'] ?? ''; ?><?= $this->transEsc($recallLink['desc']); ?></a>
   <?php endif; ?>
 
   <?= $holdingHelper->getRequestsPlacedString($item); ?>

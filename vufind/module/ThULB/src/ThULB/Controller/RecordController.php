@@ -46,8 +46,10 @@ class RecordController extends OriginalRecordController
 
         $view = parent::holdAction();
 
-        $view->setVariable('duedate', $this->getRequest()->getQuery('duedate', null));
-        $view->setVariable('requests_placed', $this->getRequest()->getQuery('requests_placed', null));
+        if($view instanceof ViewModel) {
+            $view->setVariable('duedate', $this->getRequest()->getQuery('duedate', null));
+            $view->setVariable('requests_placed', $this->getRequest()->getQuery('requests_placed', null));
+        }
 
         return $view;
     }

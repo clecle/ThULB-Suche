@@ -1,6 +1,8 @@
 |Wann|Was|
 |---|---|
-|11/23| 	Automatisierung Fernleihe via Benutzerkonto|
+|04|24|     Bestellen + Vormerken in der Ergebnisliste für physische Medien, Provenienzangaben in der Detailsansicht, neuer Filter "Publikationstyp"|
+|02|24|     erweiterte Angaben in der Ergebnisliste (Signatur, Standort), OpenAccess-Filter, DOI Direktsuche via Dropdown vor Suchschlitz, Anpassungen Favoritenliste, Erweiterung des Menüs im Header (Sucheinstiege, Linksammlung)|
+|11/23| 	Automatisierung Fernleihe via Benutzerkonto, verbesserte Standortinformationen für physische Medien|
 |10/23| 	VPN-Zwischenseite|
 |10/23| 	Einbindung Standort-API|
 |8-10/23| 	EAH DS|

@@ -62,9 +62,9 @@ class Results extends OriginalResults
     public function getPartialFieldFacets($facetFields, $removeFilter = true,
                                           $limit = -1, $facetSort = null, $page = null, bool $isOrFacet = false
     ) : array {
+        // set parameters will be used in getFacetList's 'performAndProcessSearch' call
         /* @var $params Params */
         $params = $this->getParams();
-        $query  = $params->getQuery();
         // No limit not implemented with Summon: cause page loop
         if ($limit == -1) {
             if ($page === null) {
@@ -73,10 +73,6 @@ class Results extends OriginalResults
             $limit = 50;
         }
         $params->resetFacetConfig();
-        $sortOptions = array_keys($this->getOptions()->getFacetSortOptions());
-        if (null !== $facetSort && !in_array($facetSort, $sortOptions)) {
-            throw new Exception("$facetSort facet sort not supported by Summon.");
-        }
         foreach ($facetFields as $facet) {
             $mode = $params->getFacetOperator($facet) === 'OR' ? 'or' : 'and';
             $params->addFacet("$facet,$mode,$page,$limit");
@@ -86,27 +82,8 @@ class Results extends OriginalResults
                 $params->removeAllFilters($facet);
             }
         }
-        $params = $params->getBackendParameters();
 
-        // FIX: manipulate params to use lightbox limit instead of standard
-        //      facet limit in the current context
-        $facetSetting = $params->get('facets');
-        if ($facetSetting) {
-            $facetSetting[0] = preg_replace('/[\d]+$/', $limit, $facetSetting[0]);
-            $params->set('facets', $facetSetting);
-        }
-
-        $command = new SearchCommand(
-            $this->backendId,
-            $query,
-            0,
-            0,
-            $params
-        );
-        $collection = $this->getSearchService()->invoke($command)
-            ->getResult();
-
-        $facets = $collection->getFacets();
+        $facets = $this->getFacetList();
         if (isset($facets[0]) && $facets[0]['counts']) {
             $this->sortFacetList($facets[0]['counts']);
         }
@@ -169,6 +146,16 @@ class Results extends OriginalResults
         }
 
         $facetList = $this->buildFacetList($this->responseFacets, $filter);
+
+        // add fields to make it compatible with 'getPartialFieldFacets' method
+        foreach($facetList as $key => $data) {
+            $facetList[$key]['displayName'] = $data['label'];
+            $facetList[$key]['list'] = array_map(function ($item) {
+                $item['displayName'] = $item['displayText'];
+                $item['isNegated'] = false;
+                return $item;
+            }, $data['list']);
+        }
         return $this->sortFacets($facetList);
     }
 }

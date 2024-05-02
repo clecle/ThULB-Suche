@@ -1095,25 +1095,6 @@ div.groupLocation {
   }
 }
 
-.striped {
-  .cart-controls {
-    padding: 0 8px;
-  }
-
-  > div.result {
-    border-top: 1px solid #ddd;
-    padding: 8px;
-
-    &:nth-of-type(even) {
-      background-color: @table-bg-accent;
-
-      a.getFull.title:after {
-        background-color: @table-bg-accent;
-      }
-    }
-  }
-}
-
 li[data-tab="details"] {
   float: right;
 
@@ -1800,17 +1781,20 @@ div.online-access {
   margin: 10px 15px;
 }
 
-div.striped {
-  & > div.row {
+.striped {
+  & > * {
     border-top: 1px solid #ddd;
-    padding: 10px 10px 25px;
+    padding: 10px;
 
     &:nth-of-type(odd) {
       background-color: @table-bg-accent;
+
+      a.getFull.title:after {
+        background-color: @table-bg-accent;
+      }
     }
   }
 }
-
 .font-weight-default {
   font-weight: unset;
 }

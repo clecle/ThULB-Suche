@@ -69,11 +69,15 @@
 
   <?php if ($recordTotal > 0): ?>
     <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
-      <div class="favourite-list striped mb-5">
-        <?= $this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account])?>
-        <?php foreach ($this->results->getResults() as $i => $current): ?>
-          <?= $this->record($current)->getListEntry($list, $user)?>
-        <?php endforeach; ?>
+      <div class="favourite-list mb-5">
+        <div class="pl-2 pr-2">
+          <?= $this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account])?>
+        </div>
+        <div class="striped">
+          <?php foreach ($this->results->getResults() as $i => $current): ?>
+            <?= $this->record($current)->getListEntry($list, $user)?>
+          <?php endforeach; ?>
+        </div>
       </div>
     </form>
       <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results])?>

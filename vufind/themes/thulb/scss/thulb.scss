@@ -2279,3 +2279,8 @@ a.checkbox-filter > span > i.fa-info-circle,
     background-color: $recommender-title-bg;
   }
 }
+
+.locationGroupWrapper {
+  display: flex;
+  flex-wrap: wrap;
+}

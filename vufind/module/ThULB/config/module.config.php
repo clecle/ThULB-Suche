@@ -135,10 +135,12 @@ $config = array(
             'pdf' => array(),
             'recommend' => array(
                 'factories' => array(
+                    \ThULB\Recommend\RecommendLinks::class => \VuFind\Recommend\InjectConfigManagerFactory::class,
                     \ThULB\Recommend\SideFacets::class => \VuFind\Recommend\SideFacetsFactory::class,
                     \ThULB\Recommend\SummonCombined::class => \VuFind\Recommend\InjectResultsManagerFactory::class
                 ),
                 'aliases' => array(
+                    \VuFind\Recommend\RecommendLinks::class => \ThULB\Recommend\RecommendLinks::class,
                     'sidefacets' => \ThULB\Recommend\SideFacets::class,
                     'summoncombined' => \ThULB\Recommend\SummonCombined::class,
                 ),

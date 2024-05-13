@@ -17,14 +17,14 @@ function setupTruncations() {
         );
     });
     
-    truncatedLinks.each(function() {
-        var t = $(this).text();
-        var visibleWidth = $(this).parent().innerWidth();
-        if(t.length > (aTruncRatio * visibleWidth)) {
-            var h = $(this).html();
-            $(this).tooltip({title: h, delay: {show: 500, hide: 100}, html: true, placement: 'auto', container: 'body'});
-        }
-    });    
+//    truncatedLinks.each(function() {
+//        var t = $(this).text();
+//        var visibleWidth = $(this).parent().innerWidth();
+//        if(t.length > (aTruncRatio * visibleWidth)) {
+//            var h = $(this).html();
+//            $(this).tooltip({title: h, delay: {show: 500, hide: 100}, html: true, placement: 'auto', container: 'body'});
+//        }
+//    });
     
     // setup additional behaviour to show full content
     $('a.more', truncatedParagraphs).click(function(event){

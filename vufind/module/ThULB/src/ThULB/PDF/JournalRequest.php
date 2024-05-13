@@ -8,42 +8,42 @@ use VuFind\View\Helper\Root\Translate;
 class JournalRequest extends tFPDF
 {
     // All Dimensions in 'mm'
-    protected $dinA4width = 210;
-    protected $dinA4height = 297;
-    protected $printBorder = 5;
-    protected $widthCallNumberCard = 50;
-    protected $heightCallNumberCard = 105;
-    protected $heightUserCard = 150;
-    protected $widthBookCard = 50;
+    protected int $dinA4width = 210;
+    protected int $dinA4height = 297;
+    protected int $printBorder = 5;
+    protected int $widthCallNumberCard = 50;
+    protected int $heightCallNumberCard = 105;
+    protected int $heightUserCard = 150;
+    protected int $widthBookCard = 50;
 
     // Form data
-    protected $callNumber;
-    protected $comment;
-    protected $issue;
-    protected $firstname;
-    protected $lastname;
-    protected $requestPages;
-    protected $title;
-    protected $username;
-    protected $volume;
-    protected $year;
-    protected $orderedAt;
+    protected string $callNumber;
+    protected string $comment;
+    protected string $issue;
+    protected string $firstname;
+    protected string $lastname;
+    protected string $requestPages;
+    protected string $title;
+    protected string $username;
+    protected string $volume;
+    protected string $year;
+    protected string $orderedAt;
 
     // Description keys
-    protected $descCallNumber = 'Call Number';
-    protected $descComment = 'Note';
-    protected $descIssue = 'Issue';
-    protected $descName = 'Name';
-    protected $descPages = 'storage_retrieval_request_page(s)';
-    protected $descTitle = 'Title';
-    protected $descVolume = 'storage_retrieval_request_volume';
-    protected $descYear = 'storage_retrieval_request_year';
-    protected $descUserNumber = "Benutzernr.";
-    protected $descOrderedAt = "bestellt am";
+    protected string $descCallNumber = 'Call Number';
+    protected string $descComment = 'Note';
+    protected string $descIssue = 'Issue';
+    protected string $descName = 'Name';
+    protected string $descPages = 'storage_retrieval_request_page(s)';
+    protected string $descTitle = 'Title';
+    protected string $descVolume = 'storage_retrieval_request_volume';
+    protected string $descYear = 'storage_retrieval_request_year';
+    protected string $descUserNumber = "Benutzernr.";
+    protected string $descOrderedAt = "bestellt am";
 
     protected const DEFAULT_FONT_SIZE = 10;
 
-    protected $translator;
+    protected Translate $translator;
 
     /**
      * Constructor.
@@ -64,7 +64,7 @@ class JournalRequest extends tFPDF
     /**
      * Create the request pdf. Data must be set beforehand.
      */
-    public function create() {
+    public function create() : void {
         $globalLocale = $this->translator->getTranslator()->getLocale();
         $this->translator->getTranslator()->addTranslationFile('ExtendedIni', null, 'default', 'de');
         $this->translator->getTranslator()->setLocale('de');
@@ -75,7 +75,7 @@ class JournalRequest extends tFPDF
         $this->SetFont('DejaVu', '',  self::DEFAULT_FONT_SIZE);
 
         $this->SetMargins($this->printBorder, $this->printBorder);
-        $this->SetAutoPageBreak(true, 0);
+        $this->SetAutoPageBreak(true);
 
         $this->addLines();
         $this->addCardBook();
@@ -89,7 +89,7 @@ class JournalRequest extends tFPDF
     /**
      * Add vertical and horizontal separation lines to the pdf.
      */
-    protected function addLines() {
+    protected function addLines() : void {
         $this->SetDrawColor(180);
         // card for books
         $this->Line(
@@ -103,7 +103,7 @@ class JournalRequest extends tFPDF
             $this->dinA4width, $this->heightUserCard
         );
 
-        // card for callnumbers
+        // card for call numbers
         $this->stripedLine(
             $this->dinA4width - $this->widthCallNumberCard, $this->heightCallNumberCard,
             $this->dinA4width, $this->heightCallNumberCard
@@ -124,7 +124,7 @@ class JournalRequest extends tFPDF
      * @param int $y2     Y coordinate of the end point.
      * @param int $dashes Amount of dashes in this line, affects width of dashes
      */
-    protected function stripedLine(int $x1, int $y1, int $x2, int $y2, int $dashes = 10) {
+    protected function stripedLine(int $x1, int $y1, int $x2, int $y2, int $dashes = 10) : void {
         $segmentWidth = ($x2 - $x1) / ($dashes * 2 - 1);
         for($segment = 0; $segment < ($dashes * 2 - 1); $segment++) {
             if($segment % 2) {
@@ -149,7 +149,7 @@ class JournalRequest extends tFPDF
      * @param int    $width         Width of the headline.
      * @param int    $spaceAtBottom Space between headline and the next text.
      */
-    protected function addHeadLine(string $headline, int $x, int $y, int $width, int $spaceAtBottom = 0) {
+    protected function addHeadLine(string $headline, int $x, int $y, int $width, int $spaceAtBottom = 0) : void {
         $this->SetXY($x, $y);
         $this->SetFont($this->FontFamily, 'UB', $this->FontSizePt + 3);
         $this->MultiCell($width, $this->FontSize, $headline);
@@ -160,7 +160,7 @@ class JournalRequest extends tFPDF
     /**
      * Write information for the user card to the pdf.
      */
-    protected function addCardUser() {
+    protected function addCardUser() : void {
         $availableTextWidth =
             $this->dinA4width - $this->widthCallNumberCard - $this->widthCallNumberCard - $this->printBorder * 2;
 
@@ -188,7 +188,7 @@ class JournalRequest extends tFPDF
     /**
      * Write information for the callnumber card to the pdf.
      */
-    protected function addCardCallNumber() {
+    protected function addCardCallNumber() : void {
         $availableTextWidth = $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
@@ -214,7 +214,7 @@ class JournalRequest extends tFPDF
     /**
      * Write information for the book card to the pdf.
      */
-    protected function addCardBook() {
+    protected function addCardBook() : void {
         $availableTextWidth = $this->widthCallNumberCard - $this->printBorder * 2;
 
         $title = $this->shortenTextForWidth($this->title, $availableTextWidth, 2);
@@ -242,16 +242,20 @@ class JournalRequest extends tFPDF
     /**
      * Adds a text to the pdf. X, Y coordinates have to be set beforehand.
      *
-     * @param string $description   Translation key of the description.
-     * @param string $text          Text to be added.
-     * @param int    $cellWidth     Width of the text cell.
-     * @param bool   $asTable       Format text as a table? If true, there will be a column
-     *                              for descriptions and a column for the text.
-     * @param string $textFontStyle
-     * @param int    $textFontSize
+     * @param string      $description   Translation key of the description.
+     * @param string|null $text          Text to be added.
+     * @param int         $cellWidth     Width of the text cell.
+     * @param bool        $asTable       Format text as a table? If true, there will be a column
+     *                                   for descriptions and a column for the text.
+     * @param string      $textFontStyle
+     * @param int         $textFontSize
      */
     protected function addText(string $description, ?string $text, int $cellWidth, bool $asTable = false,
-                               string $textFontStyle = '', int $textFontSize = self::DEFAULT_FONT_SIZE) {
+                               string $textFontStyle = '', int $textFontSize = 0) : void {
+        if(!$textFontSize) {
+            $textFontSize = static::DEFAULT_FONT_SIZE;
+        }
+
         $description = $this->translator->translate($description);
         $description = $description ? $description . ':' : '';
         $spaceBetweenLines = 1;
@@ -268,7 +272,7 @@ class JournalRequest extends tFPDF
         $this->SetFont($this->FontFamily, 'B');
         $this->MultiCell($cellWidth, $this->FontSize + $spaceBetweenLines, $description);
         $this->SetXY(
-            !$asTable ? $x : $x + $tableOffset,
+            $x + $tableOffset,
             !$asTable ? $this->GetY() : $y
         );
 
@@ -278,15 +282,6 @@ class JournalRequest extends tFPDF
 
         // restore font style and size
         $this->SetFont($this->FontFamily, $tmpFontStyle, $tmpFontSize);
-    }
-
-    /**
-     * Set title data.
-     *
-     * @param string $title
-     */
-    public function setWorkTitle (string $title) {
-        $this->title = $title;
     }
 
     /**
@@ -305,7 +300,7 @@ class JournalRequest extends tFPDF
         $result = "";
 
         // Get string length
-        $string = str_replace("\r", '', (string) $string);
+        $string = str_replace("\r", '', $string);
         $numberBytes = mb_strlen($string, 'utf-8');
         while($numberBytes > 0 && mb_substr($string, $numberBytes - 1, 1, 'utf-8') == "\n") {
             $numberBytes--;
@@ -367,11 +362,20 @@ class JournalRequest extends tFPDF
     }
 
     /**
+     * Set title data.
+     *
+     * @param string $title
+     */
+    public function setWorkTitle (string $title) : void {
+        $this->title = $title;
+    }
+
+    /**
      * Set issue data.
      *
      * @param string $issue
      */
-    public function setIssue(string $issue) {
+    public function setIssue(string $issue) : void {
         $this->issue = $issue;
     }
 
@@ -380,7 +384,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $pages
      */
-    public function setPages(string $pages) {
+    public function setPages(string $pages) : void {
         $this->requestPages = $pages;
     }
 
@@ -389,7 +393,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $firstname
      */
-    public function setFirstName(string $firstname) {
+    public function setFirstName(string $firstname) : void {
         $this->firstname = $firstname;
     }
 
@@ -398,7 +402,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $lastname
      */
-    public function setLastName(string $lastname) {
+    public function setLastName(string $lastname) : void {
         $this->lastname = $lastname;
     }
 
@@ -407,7 +411,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $userId
      */
-    public function setUserName(string $userId) {
+    public function setUserName(string $userId) : void {
         $this->username = $userId;
     }
 
@@ -416,7 +420,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $callNumber
      */
-    public function setCallNumber(string $callNumber) {
+    public function setCallNumber(string $callNumber) : void {
         $this->callNumber = $callNumber;
     }
 
@@ -425,7 +429,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $year
      */
-    public function setYear(string $year) {
+    public function setYear(string $year) : void {
         $this->year = $year;
     }
 
@@ -434,7 +438,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $volume
      */
-    public function setVolume(string $volume) {
+    public function setVolume(string $volume) : void {
         $this->volume = $volume;
     }
 
@@ -443,7 +447,7 @@ class JournalRequest extends tFPDF
      *
      * @param string $comment
      */
-    public function setComment(string $comment) {
+    public function setComment(string $comment) : void {
         $this->comment = $comment;
     }
 }

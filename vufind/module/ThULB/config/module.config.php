@@ -52,6 +52,7 @@ $config = array(
             \ThULB\Content\LocationData\ThULB::class => \ThULB\Content\LocationData\ThULBFactory::class,
             \ThULB\Cover\Loader::class => \VuFind\Cover\LoaderFactory::class,
             \ThULB\Mailer\Mailer::class => \ThULB\Mailer\Factory::class,
+            \ThULB\PDF\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             \ThULB\Record\Loader::class => \VuFind\Record\LoaderFactory::class,
             \ThULB\Search\Facets\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             \ThULB\Search\Solr\HierarchicalFacetHelper::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
@@ -131,6 +132,7 @@ $config = array(
                     'cbsuserdpo' => \ThULB\ILS\Driver\CBSUserdpo::class,
                 )
             ),
+            'pdf' => array(),
             'recommend' => array(
                 'factories' => array(
                     \ThULB\Recommend\SideFacets::class => \VuFind\Recommend\SideFacetsFactory::class,
@@ -256,7 +258,7 @@ $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addNonTabRecordActions($config, ['OrderReserve']);
 
-$routeGenerator->addDynamicRoute($config, 'Request/Journal', 'Request', 'Journal/[:id]');
+$routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');
 $routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
 
 return $config;

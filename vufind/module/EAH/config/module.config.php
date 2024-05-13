@@ -2,6 +2,15 @@
 namespace EAH\Module\Configuration;
 
 $config = array(
+    'controllers' => array(
+        'factories' => array(
+            \EAH\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
+        ),
+        'aliases' => array(
+            'request' => \EAH\Controller\RequestController::class,
+            'Request' => \EAH\Controller\RequestController::class,
+        )
+    ),
     'controller_plugins' => array (
         'factories' => array(
             \EAH\Controller\Plugin\IlsRecords::class => \VuFind\Controller\Plugin\IlsRecordsFactory::class
@@ -13,6 +22,14 @@ $config = array(
     ),
     'vufind' => array(
         'plugin_managers' => array(
+            'pdf' => array(
+                'factories' => array (
+                    \EAH\PDF\JournalRequest::class => \ThULB\PDF\PDFFactory::class,
+                ),
+                'aliases' => array(
+                    \ThULB\PDF\JournalRequest::class => \EAH\PDF\JournalRequest::class,
+                )
+            ),
             'recorddriver' => array(
                 'factories' => array(
                     \EAH\RecordDriver\SolrVZGRecord::class => \ThULB\RecordDriver\SolrVZGRecordFactory::class,

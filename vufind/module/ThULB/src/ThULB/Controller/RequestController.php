@@ -188,7 +188,9 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         try {
             $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 
-            $pdf = new JournalRequest($this->getViewRenderer()->plugin('translate'));
+            $pdf = $this->serviceLocator
+                ->get(\ThULB\PDF\PluginManager::class)
+                ->get(\ThULB\PDF\JournalRequest::class);
 
             $pdf->setCallNumber($this->getInventoryForRequest()[$formData['item']]['callnumber']);
             $pdf->setComment($formData['comment']);

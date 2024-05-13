@@ -1202,7 +1202,7 @@ li[data-tab="details"] {
   margin-right: 5px;
 }
 
-a.external-link:after {
+.external-link:after {
   @extend .fa;
 
   font-size: 13px;
@@ -1993,4 +1993,31 @@ a.checkbox-filter > span > i.fa-info-circle,
 
 .printview .action-row {
   display: none !important;
+}
+
+.border {
+  border: 1px solid $list-group-border;
+}
+
+.link-recommender {
+  @extend .facet-group;
+
+  .panel + .panel {
+    margin-top: 0;
+  }
+
+  .link-recommender-group {
+    @extend .facet__list;
+  }
+
+  .link-recommender-item {
+    @extend .facet;
+
+    justify-content: flex-start;
+    background-color: $recommender-item-bg;
+  }
+
+  .title {
+    background-color: $recommender-title-bg;
+  }
 }

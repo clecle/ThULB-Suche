@@ -1,0 +1,43 @@
+<?php $links = $this->recommend->getLinks(); ?>
+<?php if (count($links) > 0) :?>
+  <div class="link-recommender">
+    <h4><?=$this->transEsc('Further search tools')?></h4>
+
+    <h5><?=$this->transEsc('Databases')?></h5>
+    <p><?= $this->transEsc('recommend_databases_text'); ?></p>
+
+    <div class="panel-group" id="recommenderAccordion" role="tablist" aria-multiselectable="true">
+      <?php $recommendGroup = 0; ?>
+      <?php foreach ($links as $title => $item): ?>
+        <div class="panel">
+          <?php if(is_array($item)) : ?>
+            <?php
+              $contentId = "recommend-content-group_{$recommendGroup}";
+              $headingId = "recommend-heading-group_{$recommendGroup}";
+              $recommendGroup++;
+            ?>
+            <div role="tab" id="<?= $headingId; ?>">
+              <a class="title collapsed" data-toggle="collapse" data-target="#<?= $contentId; ?>" data-parent="#recommenderAccordion" href="#_" role="button" aria-expanded="false" aria-controls="<?= $contentId; ?>"><?= $this->transEsc("Recommend::$title"); ?></a>
+            </div>
+
+            <div id="<?= $contentId; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="<?= $headingId; ?>">
+              <div class="link-recommender-group">
+                <?php foreach($item as $linkTitle => $linkItem): ?>
+                  <a href="<?=$this->escapeHtmlAttr($linkItem)?>" class="link-recommender-item" target="_blank">
+                    <span class="external-link"><?=$this->transEsc("Recommend::$linkTitle")?></span>
+                  </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php else: ?>
+            <div class="link-recommender-group">
+              <a href="<?=$this->escapeHtmlAttr($item)?>" class="link-recommender-item border" target="_blank">
+                <span class="external-link"><?=$this->transEsc("Recommend::$title")?></span>
+              </a>
+            </div>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
+    </div>
+  </div>
+<?php endif;?>

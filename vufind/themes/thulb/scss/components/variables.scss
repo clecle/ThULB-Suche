@@ -35,6 +35,8 @@ $brand-primary-lighter:     lighten($brand-primary, 10%);
 $brand-secondary:           #AE9A63;
 $brand-inverted:            #ffcc00;
 
+$table-bg-accent:           #f9f9f9 !default;
+
 $btn-secondary-color: #000;
 $btn-secondary-bg: lighten($brand-secondary, 10%);
 $btn-secondary-border-color: darken($brand-secondary, 5%);

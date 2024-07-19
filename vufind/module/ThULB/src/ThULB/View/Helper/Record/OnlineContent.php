@@ -26,16 +26,20 @@
 
 namespace ThULB\View\Helper\Record;
 
+use Laminas\Config\Config;
 use Laminas\View\Helper\AbstractHelper;
+use VuFind\DoiLinker\PluginManager as DoiLinkerPluginManager;
 use VuFind\RecordDriver\DefaultRecord;
 
 class OnlineContent extends AbstractHelper
 {
-    private $pluginManager;
-    private array $resolvers;
+    protected DoiLinkerPluginManager $pluginManager;
+    protected array $resolvers;
+    protected Config $thulbConfig;
 
-    public function __construct($pluginManager, $resolver) {
+    public function __construct(DoiLinkerPluginManager $pluginManager, string $resolver, Config $thulbConfig) {
         $this->pluginManager = $pluginManager;
+        $this->thulbConfig = $thulbConfig;
         $this->resolvers = explode(',', $resolver);
     }
 
@@ -153,10 +157,19 @@ class OnlineContent extends AbstractHelper
         $isFormat = $driver->tryMethod('isFormat', ['eBook|eJournal|electronic Article', true]);
 
         if ($isFormat && $doi = $driver->getCleanDOI()) {
+            $collections = $driver->getIndexField('collection');
+            $doiUrl = $this->thulbConfig->DOI->urls['*'] ?? 'https://doi.org/';
+            foreach($collections as $collection) {
+                if($this->thulbConfig->DOI->urls[$collection] ?? false) {
+                    $doiUrl = $this->thulbConfig->DOI->urls[$collection];
+                    break;
+                }
+            }
+
             $solrFt[] = array(
                 'type' => 'fulltext',
                 'label' => 'Full text / PDF',
-                'link' => 'https://doi.org/' . $doi,
+                'link' => $doiUrl . $doi,
                 'source' => $driver->getSourceIdentifier(),
                 'access' => $driver->tryMethod('isOpenAccess') ? 'onlineContent-open' : 'onlineContent-restricted'
             );

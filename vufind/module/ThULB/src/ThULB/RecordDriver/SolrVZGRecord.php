@@ -2536,6 +2536,17 @@ class SolrVZGRecord extends SolrMarc
         return $data;
     }
 
+    /**
+     * Get index field data.
+     *
+     * @param string $field
+     *
+     * @return array|string|null
+     */
+    public function getIndexField(string $field) : array|string|null {
+        return $this->fields[$field] ?? null;
+    }
+
 //    Commented out for possible future use.
 //    /**
 //     * Get an array of all the formats associated with the record.

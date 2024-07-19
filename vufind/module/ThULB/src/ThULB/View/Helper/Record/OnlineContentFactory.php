@@ -69,9 +69,12 @@ class OnlineContentFactory implements FactoryInterface
             throw new Exception('Unexpected options sent to factory.');
         }
 
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
+        $configManager = $container->get(\VuFind\Config\PluginManager::class);
         $pluginManager = $container->get(\VuFind\DoiLinker\PluginManager::class);
-        return new $requestedName($pluginManager, $config->DOI->resolver ?? null);
+        return new $requestedName(
+            $pluginManager,
+            $configManager->get('config')->DOI->resolver ?? null,
+            $configManager->get('thulb')
+        );
     }
 }

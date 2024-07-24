@@ -44,6 +44,8 @@ use Laminas\View\Model\ViewModel;
  */
 class SearchController extends OriginalController
 {
+    use FormatSearchTrait;
+
     /**
      * Returns a list of all items associated with one facet for the lightbox
      *
@@ -92,61 +94,25 @@ class SearchController extends OriginalController
 
         try {
             // Remove emojis from lookfor to avoid solr errors
-            $lookFor = $this->removeEmoji($this->params()->fromQuery('lookfor', ''));
-            if (!empty($lookFor)) {
-                $this->getRequest()->getQuery()->set('lookfor', $lookFor);
+            $originalLookFor = trim($this->params()->fromQuery('lookfor', ''));
+            $formattedLookFor = trim($this->formatLookFor($originalLookFor));
+            if (!empty($formattedLookFor)) {
+                $this->getRequest()->getQuery()->set('lookfor', $formattedLookFor);
             }
 
             $view = parent::resultsAction();
-        } catch (BackendException $e) {
+        }
+        catch (BackendException $e) {
             // An error occurred in the backend, create an empty result list and forward the exception to the template
             $resultsManager = $this->serviceLocator->get(ResultsPluginManager::class);
             $view = $this->createViewModel();
             $view->results = $resultsManager->get('EmptySet');
-            $view->params = $resultsManager->get($this->searchClassId)->getParams();
+            $view->params  = $resultsManager->get($this->searchClassId)->getParams();
             $view->exception = $e;
         }
 
+        $view->lookfor = $originalLookFor;
+
         return $view;
-    }
-
-    /**
-     * Remove emojis from the string
-     *
-     * @param string $string
-     *
-     * @return string
-     */
-    protected function removeEmoji(string $string) : string {
-        // Match Enclosed Alphanumeric Supplement
-        $regex_alphanumeric = '/[\x{1F100}-\x{1F1FF}]/u';
-
-        // Match Miscellaneous Symbols and Pictographs
-        $regex_symbols = '/[\x{1F300}-\x{1F5FF}]/u';
-
-        // Match Emoticons
-        $regex_emoticons = '/[\x{1F600}-\x{1F64F}]/u';
-
-        // Match Transport And Map Symbols
-        $regex_transport = '/[\x{1F680}-\x{1F6FF}]/u';
-
-        // Match Supplemental Symbols and Pictographs
-        $regex_supplemental = '/[\x{1F900}-\x{1F9FF}]/u';
-
-        // Match Miscellaneous Symbols
-        $regex_misc = '/[\x{2600}-\x{26FF}]/u';
-
-        // Match Dingbats
-        $regex_dingbats = '/[\x{2700}-\x{27BF}]/u';
-
-        return preg_replace([
-            $regex_alphanumeric,
-            $regex_symbols,
-            $regex_emoticons,
-            $regex_transport,
-            $regex_supplemental,
-            $regex_misc,
-            $regex_dingbats,
-        ], '', $string);
     }
 }

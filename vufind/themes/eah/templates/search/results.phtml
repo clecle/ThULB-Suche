@@ -1,6 +1,7 @@
 <?php
   // Set up page title:
-  $lookfor = $this->results->getUrlQuery()->isQuerySuppressed() ? '' : $this->params->getDisplayQuery();
+  $lookfor = ($this->results->getUrlQuery()->isQuerySuppressed() ? '' : $this->params->getDisplayQuery())
+                ?: ($this->lookfor ?? '');
   if (isset($this->overrideTitle)) {
       $this->headTitle($this->overrideTitle);
   } else {
@@ -20,8 +21,8 @@
         'filterList' => $this->params->getFilterList(true),
         'hasDefaultsApplied' => $this->params->hasDefaultsApplied(),
         'selectedShards' => $this->params->getSelectedShards(),
-        'ignoreHiddenFiltersInRequest' => isset($this->ignoreHiddenFiltersInRequest) ? $this->ignoreHiddenFiltersInRequest : false,
-        'ignoreHiddenFilterMemory' => isset($this->ignoreHiddenFilterMemory) ? $this->ignoreHiddenFilterMemory : false,
+        'ignoreHiddenFiltersInRequest' => $this->ignoreHiddenFiltersInRequest ?? false,
+        'ignoreHiddenFilterMemory' => $this->ignoreHiddenFilterMemory ?? false,
       ]
   );
 
@@ -57,7 +58,7 @@
 <div id="searchcontent"<?= isset($searchClassId) ? 'class="search-' . $searchClassId . '";' : '';?>>
   <div class="<?= $this->layoutClass('mainbody')?><?= $recordTotal == 0 ? ' width-fill-parent' : ''; ?>">
     <div id="resultlist">
-        <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
+        <?php if ($recordTotal > 0): // only display these at very top if we have results ?>
           <?php foreach ($this->results->getRecommendations('top') as $current): ?>
             <?= $this->recommend($current)?>
           <?php endforeach; ?>

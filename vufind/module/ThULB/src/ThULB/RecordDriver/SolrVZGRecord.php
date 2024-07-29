@@ -2463,8 +2463,9 @@ class SolrVZGRecord extends SolrMarc
      * @return array
      */
     public function getHoldingsToOrderOrReserve() : array {
-        $holdingsOrderReserve = [];
+        $holdingsOrder = $holdingsReserve = [];
         $holdings = $this->getHoldings();
+        $hasOpenStock = false;
         foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
             foreach ($holding['items'] as $item) {
                 if($item['use_unknown_message'] ?? false) {
@@ -2474,12 +2475,13 @@ class SolrVZGRecord extends SolrMarc
 
                 if ($item['availability'] && !isset($item['link']) && !isset($item['storageRetrievalRequestLink'])) {
                     // item is available in 'Freihand', placing a hold and reserving not available in list view
+                    $hasOpenStock = true;
                     continue;
                 }
 
                 if($item['availability']) {
                     // available in stack, no need to look for other items
-                    $holdingsOrderReserve[$holdingLocation][] = $item;
+                    $holdingsOrder[$holdingLocation][] = $item;
                 }
                 elseif ($item['link'] ?? false) {
                     // look for the item with the least placed requests or earliest due date
@@ -2488,13 +2490,13 @@ class SolrVZGRecord extends SolrMarc
                         || ($tmpLinkData['requests_placed'] == $item['requests_placed']
                             && strtotime($tmpLinkData['duedate']) > strtotime($item['duedate']))
                     ) {
-                        $holdingsOrderReserve[$holdingLocation][] = $item;
+                        $holdingsReserve[$holdingLocation][] = $item;
                     }
                 }
             }
         }
 
-        return $holdingsOrderReserve;
+        return $hasOpenStock ? $holdingsOrder : array_merge_recursive($holdingsOrder, $holdingsReserve);
     }
 
     /**

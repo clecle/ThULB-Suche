@@ -66,6 +66,7 @@
         <li><a href="<?= $this->url('ill-chargecredits'); ?>"><?= $this->translate('Recharge credit, Forgot password')?></a></li>
         <li><a href="<?= $this->translate('URL::Login GVK'); ?>" target="_blank"><?= $this->transEsc('Login GVK')?></a></li>
         <li><a href="<?= $this->translate('URL::ILL information'); ?>" target="_blank"><?= $this->transEsc('ILL information')?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('borrow-services'); ?>" target="_blank"><?= $this->transEsc('Header_ill_contact')?></a></li>
       </ul>
     </li>
 
@@ -74,9 +75,10 @@
     <li class="dropdown">
       <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?></a>
       <ul class="dropdown-menu">
-        <li><a href="https://mailform.thulb.uni-jena.de/?mail=YXVzbGVpaGVfdGh1bGJAdW5pLWplbmEuZGU" target="_blank"><?= $this->transEsc("Header_account_lending")?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('borrow-services'); ?>" target="_blank"><?= $this->transEsc("Header_account_lending")?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('information-services'); ?>" target="_blank"><?= $this->transEsc('Header_literature_search'); ?></a> </li>
         <li><a href="<?= $this->thulb_serviceDesk('broken-link'); ?>" target="_blank"><?= $this->transEsc('Header_access_problem'); ?></a> </li>
-        <li><a href="<?= $this->thulb_serviceDesk('support'); ?>" target="_blank"><?= $this->transEsc('Header_ts_support'); ?></a></li>
+        <li><a href="<?= $this->thulb_serviceDesk('information-services'); ?>" target="_blank"><?= $this->transEsc('Header_general_questions'); ?></a> </li>
       </ul>
     </li>
   </ul>

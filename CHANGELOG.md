@@ -1,10 +1,9 @@
 # ThULB-Suche Versionsverlauf
 
-Die ThULB-Suche ist kein abgeschlossenes Projekt.
-Die User Experience der Nutzenden steht im Fokus des Angebots.
+Die ThULB-Suche ist kein abgeschlossenes Projekt. Die Nutzungserfahrung soll im Fokus des Angebots stehen.
 Daher strebt das Entwicklungsteam der ThULB-Suche einen engeren Austausch mit Nutzer:innen und Fachexpert:innen an.
 Sollten Sie Fragen, Hinweise oder Verbesserungswünsche haben, treten Sie jederzeit gern in Kontakt mit uns,
-z.B. über unser [Service-Desk](https://servicedesk.uni-jena.de/plugins/servlet/desk/portal/140/create/866) oder per Mail discovery_thulb[at]uni-jena.de.
+z.B. über unser [Service-Desk](https://servicedesk.uni-jena.de/plugins/servlet/desk/portal/140/create/1001?customfield_12342=20009) oder per Mail discovery_thulb[at]uni-jena.de.
 
 
 ## v4.0 *08/24*

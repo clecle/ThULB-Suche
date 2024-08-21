@@ -55,7 +55,7 @@ class TopicFacet implements IFacet, TranslatorAwareInterface
 
         // Create Facet list with all parents and children
         foreach ($data as $facetValue => $facetCount) {
-            if(!preg_match('/[0-9]{2}\./', $facetValue)) {
+            if(!preg_match('/^[0-9]{2}\./', $facetValue)) {
                 continue;
             }
 

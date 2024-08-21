@@ -11,6 +11,7 @@
     $text = implode(', ', array_unique(array_map($translate, $datafield)));
     return '<span class="author-property-' . $name . '">' . ($name == 'role' ? ' [' . $text . ']' : $text) . '</span>';
   };
+
   if(!isset($types) || !is_array($types) || empty($types)) {
     $types = ($type ?? false) ? [$type] : [];
   }

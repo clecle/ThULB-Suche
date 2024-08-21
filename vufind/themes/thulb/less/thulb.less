@@ -100,18 +100,19 @@ h3 { font-size: 16px; }
 /* ------ Layout ------ */
 footer {
   margin-top: auto;
-
+  background-color: @header-bg;
   ul {
     display: flex;
     justify-content: space-evenly;
     float: none !important;
+    margin-top: 5px;
+    list-style-type: none;
   }
-
-  .navbar {
-    margin-bottom: 0;
+  a {
+    color: @brand-primary;
+    text-decoration: none;
   }
 }
-
 @media (min-width: 768px) {
   .footer-container {
     display: flex;
@@ -484,24 +485,6 @@ span[class*=" services-"] span:first-of-type::before { content: ""; }
   margin: 0;
   padding: 0;
   width: 100%;
-}
-
-.footer {
-  background-color: #548ebe;
-  font-size: 90%;
-  margin: 0 auto;
-}
-.footer h4 {
-  color: #fff;
-  text-transform: uppercase;
-}
-.footer a {
-  color: #fff;
-  text-decoration: none;
-}
-.footer ul {
-  margin: 10px 0 10px 25px;
-  list-style-type: none;
 }
 
 .checkboxFilter {
@@ -1741,6 +1724,10 @@ form#newpassword .form-group.flex-center {
 
 body > header {
   background-color: #dbdbdb;
+}
+
+.main {
+  margin-bottom: 20px;
 }
 
 @media (max-width: 767px) {

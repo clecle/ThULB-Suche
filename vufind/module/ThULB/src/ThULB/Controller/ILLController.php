@@ -185,12 +185,12 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->addLogContent('Request type: direct charge');
             $ilsPM = $this->serviceLocator->get(\VuFind\ILS\Driver\PluginManager::class);
 
-            if($ilsPM->get('Sera')->chargeIllFee($user->username, $view->chargeQuantity, $view->cost)) {
-                // TODO after SERA-API update: log new requisition id
+            if($reqId = $ilsPM->get('Sera')->chargeIllFee($user->username, $view->chargeQuantity, $view->cost)) {
                 $this->addLogContent('SERA API... Success.', [
                     'username' => $user->username,
                     'quantity' => $view->chargeQuantity,
-                    'cost' => $view->cost
+                    'cost' => $view->cost,
+                    'requisition id' => $reqId,
                 ]);
 
                 try {

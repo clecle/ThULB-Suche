@@ -126,54 +126,44 @@ class Sera extends AbstractBase implements
     }
 
     /**
-     * Get address_id_nr for the given user.
+     * Adds the new requisition.
      *
      * @param string $username
-     *
-     * @return int|bool
-     *
-     * @throws UnauthorizedException
-     */
-    protected function getAddressIdNr(string $username) : int|bool {
-        $sql = "SELECT * FROM borrower WHERE borrower_bar='$username'";
-        $response = $this->sendRequest($sql);
-
-        return $response['result'][0]['address_id_nr'] ?? false;
-    }
-
-    /**
-     * Get the id_number of the last requisition.
+     * @param array $data
      *
      * @return int|false
      *
      * @throws UnauthorizedException
      */
-    protected function getLastRequisitionIDNumber() : int|false {
-        $sql = "SELECT TOP 1 id_number FROM requisition ORDER BY id_number DESC";
-        $response = $this->sendRequest($sql);
+    protected function insertRequisition(string $username, array $data) : int|false {
+        $data += [
+            'address_id_nr' => '@local_addr_id_nr',
+            'id_number' => '@local_req_id_nr',
+            'date_of_creation' => "getdate()",
+            'edit_date' => "getdate()",
+        ];
+
+        $insertKeys = implode(', ', array_keys($data));
+        $insertData = implode(', ', $data);
+
+        $sql = <<<SQL
+            DECLARE @local_addr_id_nr INT
+            SELECT @local_addr_id_nr = address_id_nr FROM borrower WHERE borrower_bar = '{$username}'
+            
+            DECLARE @local_req_id_nr INT
+            SELECT TOP 1 @local_req_id_nr = id_number + 1 FROM requisition ORDER BY id_number DESC
+             
+            INSERT INTO requisition
+                ($insertKeys)
+            VALUES
+                ($insertData)
+            
+            SELECT * FROM requisition WHERE id_number = @local_req_id_nr
+        SQL;
+
+        $response = $this->sendRequest(urlencode($sql));
 
         return $response['result'][0]['id_number'] ?? false;
-    }
-
-    /**
-     * Adds the new requisition.
-     *
-     * @param array $data
-     *
-     * @return bool
-     *
-     * @throws UnauthorizedException
-     */
-    protected function insertRequisition(array $data) : bool {
-        $sql =
-            "INSERT INTO requisition " .
-                "(" . implode(', ', array_keys($data)) . ") " .
-            "VALUES " .
-                "(" . implode(', ', $data) . ") ";
-
-        $this->sendRequest($sql);
-
-        return $this->getLastRequisitionIDNumber() == $data['id_number'];
     }
 
     /**
@@ -192,13 +182,6 @@ class Sera extends AbstractBase implements
                 $username = $this->thulbConfig->SERA->testLiveUser;
             }
 
-            // get address_id_nr of the user
-            $addressIdNr = $this->getAddressIdNr($username);
-
-            // get last requisition id
-            $lastRequisitionIDNumber = $this->getLastRequisitionIDNumber();
-
-            $dateTime = (new \DateTimeImmutable())->format('Y-m-d H:i:s');
             $extraInformation = $this->translate(
                 'ill_requisition_extra_information', [
                     '%%date%%' => (new \DateTimeImmutable())->format('d.m.Y'),
@@ -206,16 +189,12 @@ class Sera extends AbstractBase implements
                 ]
             );
 
-            return $this->insertRequisition(array(
+            return $this->insertRequisition($username, array(
                 'iln' => 31,
                 'department_group_nr' => 1,
-                'address_id_nr' => $addressIdNr,
-                'id_number' => ++$lastRequisitionIDNumber,
                 'costs_code' => 15,
                 'costs' => $cost,
                 'extra_information' => "'$extraInformation'",
-                'date_of_creation' => "'$dateTime'",
-                'edit_date' => "'$dateTime'",
             ));
         }
         catch (\Exception $e) {

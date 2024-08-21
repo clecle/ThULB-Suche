@@ -822,10 +822,6 @@ a.search-filter-toggle {
   @extend .btn-primary;
 
   margin: 0;
-  position: sticky;
-  top: 1rem;
-  z-index: 5;
-  padding: 1rem 0;
 }
 
 @media (max-width: $screen-sm-max) {

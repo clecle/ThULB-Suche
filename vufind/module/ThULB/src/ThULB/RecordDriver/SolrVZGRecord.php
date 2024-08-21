@@ -610,6 +610,22 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Get the gnd of the main authors of the record.
+     *
+     * @return array
+     */
+    public function getPrimaryAuthorsGnds() : array
+    {
+        $ids = $this->getFieldArray('100', ['0'], false);
+        foreach($ids as $id) {
+            if(str_starts_with($id, '(' . static::GND_LINK_ID_PREFIX . ')')) {
+                return [substr($id, strlen(static::GND_LINK_ID_PREFIX) + 2)];
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get an array of all secondary authors (complementing getPrimaryAuthors()).
      *
      * @return array
@@ -662,6 +678,29 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $roles;
+    }
+
+    /**
+     * Get the gnd of the secondary authors of the record.
+     *
+     * @return array
+     */
+    public function getSecondaryAuthorsGnds() : array
+    {
+        $gnds = [];
+        $reader = $this->getMarcReader();
+        foreach($reader->getFields('700') as $field) {
+            foreach ($reader->getSubfields($field, '0') as $id) {
+                if (str_starts_with($id, '(' . static::GND_LINK_ID_PREFIX . ')')) {
+                    $gnds[] = substr($id, strlen(static::GND_LINK_ID_PREFIX) + 2);
+                    continue 2;
+                }
+            }
+
+            // no gnd found for this field
+            $gnds[] = null;
+        }
+        return $gnds;
     }
 
     /**
@@ -737,6 +776,31 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $details;
+    }
+
+    /**
+     * Get the gnd of the corporate authors of the record.
+     *
+     * @return array
+     */
+    public function getCorporateAuthorsGnds() : array
+    {
+        $gnds = [];
+        $reader = $this->getMarcReader();
+        foreach(['110', '710'] as $fieldTag) {
+            foreach($reader->getFields($fieldTag) as $field) {
+                foreach ($reader->getSubfields($field, '0') as $id) {
+                    if (str_starts_with($id, '(' . static::GND_LINK_ID_PREFIX . ')')) {
+                        $gnds[] = substr($id, strlen(static::GND_LINK_ID_PREFIX) + 2);
+                        continue 2;
+                    }
+                }
+
+                // no gnd found for this field
+                $gnds[] = null;
+            }
+        }
+        return $gnds;
     }
 
     /**
@@ -984,7 +1048,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getDeduplicatedAuthors($dataFields = ['detail', 'role']) : array {
+    public function getDeduplicatedAuthors($dataFields = ['detail', 'role', 'gnd']) : array {
         return parent::getDeduplicatedAuthors($dataFields);
     }
 

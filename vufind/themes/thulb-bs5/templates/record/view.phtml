@@ -25,11 +25,17 @@
   $canonicalUrl = $this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]);
   $this->headLink(['rel' => 'canonical', 'href' => $canonicalUrl]);
 
+  // enable popovers
+  $this->headScript()->appendScript(<<<JS
+    $(document).ready(function () {
+      setupPopovers();
+    });
+  JS);
+
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink('<span>' . $this->transEsc('Search results') . '</span>', '<li>', '</li>');
 
-
-$this->layout()->title = $this->driver->getShortTitle();
+  $this->layout()->title = $this->driver->getShortTitle();
 ?>
 <div class="fullrecord_view">
   <div class="d-flex flex-column flex-md-row justify-content-end align-items-end align-items-md-center my-4 record-header">

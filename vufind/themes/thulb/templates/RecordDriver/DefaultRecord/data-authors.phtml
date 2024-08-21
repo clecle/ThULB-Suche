@@ -21,9 +21,12 @@ $formattedAuthors = [];
     <?php foreach ($data[$type] as $author => $dataFields): ?>
       <?php ob_start(); ?>
       <span class="author-data" property="<?= $this->escapeHtml($schemaLabel)?>">
-        <a href="<?= $this->record($this->driver)->getLink('author', $author)?>">
-          <?= $this->escapeHtml($author)?>
-        </a>
+        <?= $this->record($this->driver)->renderTemplate('normlink', [
+            'desc' => $author,
+            'gnd' => $dataFields['gnd'][0] ?? false,
+            'driver' => $this->driver,
+            'linkType' => 'normlink'
+        ]); ?>
         <?php
           // Display additional data using the appropriate translation prefix
           // (for example, to render author roles correctly):

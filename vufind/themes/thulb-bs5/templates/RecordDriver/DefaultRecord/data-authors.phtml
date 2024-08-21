@@ -11,6 +11,9 @@
     $text = implode(', ', array_unique(array_map($translate, $datafield)));
     return '<span class="author-property-' . $name . '">' . ($name == 'role' ? ' [' . $text . ']' : $text) . '</span>';
   };
+  if(!isset($types) || !is_array($types) || empty($types)) {
+    $types = ($type ?? false) ? [$type] : [];
+  }
   $formattedAuthors = [];
 ?>
 <?php foreach($types as $type): ?>
@@ -18,9 +21,12 @@
     <?php foreach ($data[$type] as $author => $dataFields): ?>
       <?php ob_start(); ?>
       <span class="author-data"<?=$this->schemaOrg()->getAttributes(['property' => $schemaLabel])?>>
-        <a href="<?=$this->record($this->driver)->getLink('author', $author)?>">
-          <?=$this->escapeHtml(rtrim($author, ','))?>
-        </a>
+        <?= $this->record($this->driver)->renderTemplate('normlink', [
+            'desc' => $author,
+            'gnd' => $dataFields['gnd'][0] ?? false,
+            'driver' => $this->driver,
+            'linkType' => 'normlink'
+        ]); ?>
         <?php
           // Display additional data using the appropriate translation prefix
           // (for example, to render author roles correctly):

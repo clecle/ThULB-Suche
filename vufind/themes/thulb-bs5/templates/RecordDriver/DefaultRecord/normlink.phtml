@@ -1,35 +1,23 @@
 <?php if($this->gnd): ?>
   <span>
-    <a href="#_" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-html="true" title="<?= $this->transEsc('search in'); ?>"><?= $this->desc; ?></a>
+    <a href="#_" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-html="true" title="<?= $this->transEsc('Search Options'); ?>"><?= $this->desc; ?></a>
     <div class="hidden">
       <div class="popover-link-list">
-        <div>
-          <a href="<?= $this->record($this->driver)->getLink($this->linkType, "{$this->gnd} ({$this->desc})") ?>" target="_blank"><?= $this->transEsc('library_search_name'); ?></a>
-        </div>
+        <a href="<?= $this->record($this->driver)->getLink('author', $this->desc) ?>" target="_blank"><?= $this->transEsc('search_text'); ?></a>
+        <a href="<?= $this->record($this->driver)->getLink($this->linkType, "{$this->gnd}") ?>" target="_blank"><?= $this->transEsc('search_authority_data'); ?></a>
 
-        <h3 class="popover-header"><?= $this->transEsc('open in'); ?></h3>
-        <div>
-          <img src="<?= $this->imageLink('logo_gnd_explorer.svg'); ?>" alt="<?= $this->transEsc('GND Explorer'); ?>" />
-          <a href="https://explore.gnd.network/gnd/<?= $this->gnd; ?>" target="_blank"><?= $this->transEsc('GND Explorer'); ?></a>
-        </div>
-
-        <div>
-          <img src="<?= $this->imageLink('logo_lobid.png'); ?>" alt="<?= $this->transEsc('lobid'); ?>" />
-          <a href="https://lobid.org/gnd/<?= $this->gnd; ?>" target="_blank"><?= $this->transEsc('lobid'); ?></a>
-        </div>
-
-        <div>
-          <img src="<?= $this->imageLink('logo_dnb.svg'); ?>" alt="<?= $this->transEsc('Deutsche Nationalbibliothek'); ?>" />
-          <a href="https://d-nb.info/gnd/<?= $this->gnd; ?>" target="_blank"><?= $this->transEsc('Deutsche Nationalbibliothek'); ?></a>
-        </div>
-
-        <div>
-          <img src="<?= $this->imageLink('logo_wikipedia.png'); ?>" alt="<?= $this->transEsc('Wikipedia'); ?>" />
-          <a href="http://tools.wmflabs.org/persondata/redirect/gnd/de/<?= $this->gnd; ?>" target="_blank"><?= $this->transEsc('Wikipedia'); ?></a>
-        </div>
+        <h3 class="popover-header"><?= $this->transEsc('Further content in'); ?></h3>
+        <?php foreach($this->thulb_normlink()->getLinksForGND($this->gnd) as $link): ?>
+          <a href="<?= $link['url']; ?>" target="_blank">
+            <span class="imgWrapper">
+              <img src="<?=$link['icon']?>" alt="<?= $this->transEscAttr($link['name']); ?>" />
+            </span>
+            <?= $this->transEsc($link['name']); ?>
+          </a>
+        <?php endforeach; ?>
       </div>
     </div>
   </span>
 <?php else: ?>
-  <a href="<?= $this->record($this->driver)->getLink('author', $this->desc) ?>" target="_blank"><?= $this->transEsc('library_search_name'); ?></a>
+  <a href="<?= $this->record($this->driver)->getLink('author', $this->desc) ?>" target="_blank"><?= $this->transEsc($this->desc); ?></a>
 <?php endif; ?>

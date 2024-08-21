@@ -18,6 +18,13 @@
     $this->headLink()->appendAlternate($this->recordLinker()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
   }
 
+  // enable popovers
+  $this->headScript()->appendScript(<<<JS
+    $(document).ready(function () {
+      setupPopovers();
+    });
+  JS);
+
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = $this->searchMemory()
               ->getLastSearchLink('<span>' . $this->transEsc('Search results') . '</span>', '<li>', '</li>');

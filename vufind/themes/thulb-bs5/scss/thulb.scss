@@ -392,17 +392,27 @@ footer {
     padding: 0;
 
     .popover-header {
+      border-top: var(--bs-popover-border-width) solid var(--bs-popover-border-color);
       border-radius: 0;
       margin: 0.5rem 0;
     }
 
-    div {
+    .imgWrapper {
+      display: inline-flex;
+      width: 20px;
+    }
+
+    a {
+      display: flex;
+      align-items: center;
       margin: 0.5rem 1rem;
+      gap: 0 0.5rem;
     }
 
     img {
       max-width: 20px;
       max-height: 20px;
+      margin: auto;
     }
   }
 }

@@ -45,7 +45,7 @@ class DynMessagesController extends AbstractBase
     }
 
     public function editAction() : ViewModel {
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 
@@ -65,7 +65,7 @@ class DynMessagesController extends AbstractBase
      * @return Response
      */
     public function saveAction() : Response {
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 

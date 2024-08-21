@@ -59,7 +59,7 @@ class UserdataController extends AbstractBase {
     }
 
     public function reassignAction() : ViewModel{
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 
@@ -121,7 +121,7 @@ class UserdataController extends AbstractBase {
      * @return Response
      */
     public function saveAction() : Response {
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 
@@ -161,7 +161,7 @@ class UserdataController extends AbstractBase {
     }
 
     public function deleteAction () : ViewModel {
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 

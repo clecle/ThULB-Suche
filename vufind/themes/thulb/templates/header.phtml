@@ -16,17 +16,17 @@
             </li>
           <?php endif; ?>
           <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
-            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+            <li class="logoutOptions<?php if(!$account->getUserObject()): ?> hidden<?php endif ?>">
               <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>">
                 <img class="user-icon" src="<?= $this->imageLink('user_account_white.svg'); ?>" alt="<?= $this->transEsc('Your Account'); ?>"/>
               </a>
             </li>
-            <li class="logoutOptions<?php if(!$account->isLoggedIn()): ?> hidden<?php endif ?>">
+            <li class="logoutOptions<?php if(!$account->getUserObject()): ?> hidden<?php endif ?>">
               <a title="<?= $this->transEscAttr("Log Out")?>" href="<?= $this->url('myresearch-logout')?>" class="logout">
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
               </a>
             </li>
-            <li id="loginOptions"<?php if($account->isLoggedIn()): ?> class="hidden"<?php endif ?>>
+            <li id="loginOptions"<?php if($account->getUserObject()): ?> class="hidden"<?php endif ?>>
               <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
                 <a href="<?= $this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>">
                   <img class="user-icon" src="<?= $this->imageLink('user_account_white.svg'); ?>" alt="<?= $this->transEsc('Institutional Login'); ?>"/>

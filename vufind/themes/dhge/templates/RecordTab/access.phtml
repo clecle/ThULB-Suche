@@ -1,7 +1,7 @@
 <?php
   // Set up convenience variables:
   $account = $this->auth()->getManager();
-  $user = $account->isLoggedIn();
+  $user = $account->getUserObject();
   $openUrl = $this->openUrl($this->tab->getRecordDriver(), 'holdings');
   $openUrlActive = $openUrl->isActive();
 
@@ -24,7 +24,7 @@
   $doiHtml = $this->context($this)->renderInContext('Helpers/doi-linker.phtml', ['location' => 'holdings']);
 ?>
 
-<?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
+<?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
 
 <?php if (!empty($holdings['blocks'])):?>
   <div id="account-block-msg" class="alert alert-danger">

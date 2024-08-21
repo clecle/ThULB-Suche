@@ -21,7 +21,7 @@ class RecordController extends OriginalRecordController
 
         $docId = $this->params()->fromQuery('doc_id', false);
         $itemId = $this->params()->fromQuery('item_id', false);
-        if($this->getAuthManager()->isLoggedIn() && $docId && $itemId) {
+        if($this->getAuthManager()->getUserObject() && $docId && $itemId) {
             $ppn = substr($docId, strpos($docId, 'ppn:') + 4);
             $result = $this->getILS()->getHolding($ppn);
 

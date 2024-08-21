@@ -37,6 +37,7 @@ use Laminas\View\Resolver\ResolverInterface;
 use ThULB\RecordTab\NonArticleCollectionList;
 use VuFind\RecordDriver\SolrDefault;
 use VuFind\RecordTab\TabInterface;
+use VuFind\Tags\TagsService;
 use VuFind\View\Helper\Root\Record as OriginalRecord;
 use Laminas\View\Exception\RuntimeException;
 
@@ -48,7 +49,7 @@ use Laminas\View\Exception\RuntimeException;
  */
 class Record extends OriginalRecord
 {
-    protected $nonArticleCollection;
+    protected NonArticleCollectionList $nonArticleCollection;
 
     /**
      * Constructor
@@ -56,9 +57,10 @@ class Record extends OriginalRecord
      * @param Config|null                   $config VuFind configuration
      * @param NonArticleCollectionList|null $nonArticleCollection
      */
-    public function __construct($config = null, NonArticleCollectionList $nonArticleCollection = null)
+    public function __construct(protected TagsService $tagsService, $config = null,
+                                NonArticleCollectionList $nonArticleCollection = null)
     {
-        parent::__construct($config);
+        parent::__construct($tagsService, $config);
         $this->nonArticleCollection = $nonArticleCollection;
     }
 

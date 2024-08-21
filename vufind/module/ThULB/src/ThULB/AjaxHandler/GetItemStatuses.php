@@ -1,10 +1,12 @@
 <?php
+
 /**
  * "Get Item Status" AJAX handler
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2023.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +32,7 @@
 namespace ThULB\AjaxHandler;
 
 use VuFind\AjaxHandler\GetItemStatuses as OriginalGetItemStatuses;
+use VuFind\ILS\Logic\AvailabilityStatusInterface;
 
 class GetItemStatuses extends OriginalGetItemStatuses
 {
@@ -39,47 +42,28 @@ class GetItemStatuses extends OriginalGetItemStatuses
      *
      * @param array  $record            Information on items linked to a single
      *                                  bib record
-     * @param array  $messages          Custom status HTML
-     *                                  (keys = available/unavailable)
      * @param string $callnumberSetting The callnumber mode setting used for
      *                                  pickValue()
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($record, $messages, $callnumberSetting) : array {
+    protected function getItemStatusGroup($record, $callnumberSetting) : array {
         // Summarize call number, location and availability info across all items:
         $locations = [];
-        $useUnknownStatus = null;
-        $available = null;
-        $availableAtLocation = [];
-
         foreach ($record as $info) {
+            $availabilityStatus = $info['availability'];
             // Find an available copy
-            if (!isset($info['use_unknown_message'])) {
-                $availStr = $this->availabilityToString($info['availability'] ?? false);
-                if ('true' !== $available) {
-                    $available = $availableAtLocation[$info['location']] = $availStr;
-                }
+            if ($availabilityStatus->isAvailable()) {
                 if ('true' !== ($locations[$info['location']]['available'] ?? null)) {
-                    $locations[$info['location']]['available'] = $availStr;
+                    $locations[$info['location']]['available'] = $availabilityStatus->getStatusDescription();
                 }
-
-                $useUnknownStatus = false;
-                $locations[$info['location']]['status_unknown'] = false;
-            }
-            // Check for a use_unknown_message flag
-            if (!isset($availableAtLocation[$info['location']]) && ($info['use_unknown_message'] ?? false)) {
-                if($useUnknownStatus === null) {
-                    $useUnknownStatus = true;
-                }
-
-                $locations[$info['location']]['status_unknown'] = true;
             }
             // Store call number/location info:
             $locations[$info['location']]['callnumbers'][] = $this->formatCallNo(
                 $info['callnumber_prefix'] ?? '',
                 $info['callnumber']
             );
+            $locations[$info['location']]['items'][] = $info;
         }
 
         // Build list split out by location:
@@ -96,8 +80,14 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 $callnumberSetting,
                 'Multiple Call Numbers'
             );
+
+            // Get combined availability for location
+            $locationStatus = $this->availabilityStatusManager->combine($details['items']);
+            $locationAvailability = $locationStatus['availability'];
+
             $locationInfo = [
-                'availability' => ($details['available'] ?? false) == 'true',
+                'availability' =>
+                    $locationAvailability->is(AvailabilityStatusInterface::STATUS_AVAILABLE),
                 'location' => htmlentities(
                     $this->translateWithPrefix('location_', $location),
                     ENT_COMPAT,
@@ -105,17 +95,16 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 ),
                 'callnumbers' =>
                     htmlentities($locationCallnumbers, ENT_COMPAT, 'UTF-8'),
-                'status_unknown' => $details['status_unknown'] ?? false,
+                'status_unknown' =>
+                    $locationAvailability->is(AvailabilityStatusInterface::STATUS_UNKNOWN),
                 'callnumber_handler' => $callnumberHandler,
             ];
             $locationList[] = $locationInfo;
         }
 
-        $availabilityMessage = $this->getAvailabilityMessage(
-            $messages,
-            $available,
-            $useUnknownStatus
-        );
+        // Get combined availability
+        $combinedInfo = $this->availabilityStatusManager->combine($record);
+        $combinedAvailability = $combinedInfo['availability'];
 
         $reserve = ($record[0]['reserve'] ?? 'N') === 'Y';
 
@@ -125,8 +114,8 @@ class GetItemStatuses extends OriginalGetItemStatuses
         // Send back the collected details:
         return [
             'id' => $record[0]['id'],
-            'availability' => $available,
-            'availability_message' => $availabilityMessage,
+            'availability' => $combinedAvailability->availabilityAsString(),
+            'availability_message' => $this->getAvailabilityMessage($combinedAvailability),
             'location' => false,
             'locationList' => $locationList,
             'reserve' => $reserve ? 'true' : 'false',

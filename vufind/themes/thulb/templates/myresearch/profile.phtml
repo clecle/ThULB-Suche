@@ -1,89 +1,68 @@
 <?php
     // Set up page title:
-    $this->headTitle($this->translate('Your Profile'));
+    $this->headTitle($this->translate('My Profile'));
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Your Profile') . '</li>';
-
-    // Only display home library form if we have multiple pickup locations:
-    $showHomeLibForm = (isset($this->pickup) && count($this->pickup) > 1);
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Profile') . '</li>';
 
     // Template for use by the renderArray helper:
     $arrTemplate = '<tr><th>%%LABEL%%:</th><td> %%VALUE%%</td></tr>';
     $arrImportantTemplate = '<tr><th>%%LABEL%%:</th><td> <strong class="text-danger">%%VALUE%%</strong></td></tr>';
+
+    $accountinfo = [
+        'group'    => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
+        'status'   => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
+        'totalDue' => $this->safeMoneyFormat($this->totalDue / 100),
+        'note'     => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
+    ];
 ?>
 
-<div>
-  <div class="<?= $this->layoutClass('mainbody')?>">
-    <h2><?= $this->transEsc('Your Profile')?></h2>
-    <?= $this->flashmessages();?>
+<?=$this->component('show-account-menu-button')?>
 
-    <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <h2><?=$this->transEsc('Your Profile')?></h2>
+  <?=$this->flashmessages();?>
 
-    <?php if ($this->profile): ?>
-      <table class="table table-striped">
-        <?php
-          echo $this->renderArray(
-            $arrTemplate, $this->profile,
-            [
-              $this->transEsc('Name') => 'name',
-              $this->transEsc('Username') => 'user_id',
-              $this->transEsc('Address') => 'address1',
-              $this->transEsc('Email') => 'email',
-              $this->transEsc('Profile Expiration') => 'expires',
-            ]
-          );
+  <?php if (is_array($this->profile)): ?>
+    <p>
+      <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->user]); ?>
+    </p>
+    <table class="table table-striped catalog-profile">
+      <?= $this->renderArray(
+        $arrTemplate, array_merge($this->profile, $accountinfo), [
+          $this->transEsc('Name') => 'name',
+          $this->transEsc('Username') => 'user_id',
+          $this->transEsc('Address') => 'address1',
+          $this->transEsc('Email') => 'email',
+          $this->transEsc('Profile Expiration') => 'expires',
+          $this->transEsc('User Group') => 'group'
+      ]); ?>
 
-          $accountinfo = [
-              'group'    => (isset($this->profile['groupcode'])) ? $this->transEsc('UserGroup::' . $this->profile['groupcode']) : null,
-              'status'   => (isset($this->profile['statuscode'])) ? $this->transEsc('UserStatus::' . $this->profile['statuscode']) : null,
-              'totalDue' => $this->safeMoneyFormat($this->totalDue / 100),
-              'note'     => (isset($this->profile['note'])) ? $this->escapeHtml($this->profile['note']) : null
-            ];
-          echo $this->renderArray(
-            $arrTemplate, $accountinfo,
-            [$this->transEsc('User Group') => 'group']
-          );
-          echo $this->renderArray(
-            $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
-            $accountinfo,
-            [$this->transEsc('User Status') => 'status']
-          );
-          if($this->totalDue) {
-            echo $this->renderArray(
-              ($this->profile['statuscode'] != 3 && $this->profile['statuscode'] != 4)
-                ? $arrTemplate : $arrImportantTemplate,
-              $accountinfo,
-              [$this->transEsc('Your Fines') => 'totalDue']
-            );
-          }
-          echo $this->renderArray(
-            $arrImportantTemplate, $accountinfo,
-            [$this->transEsc('User Note') => 'note']
-          );
-          ?>
-        <?php if ($showHomeLibForm): ?>
-          <tr><th><?= $this->transEsc('Preferred Library')?>:</th>
-          <?php
-            $selected = (isset($this->profile['home_library']) && $this->profile['home_library'] != "")
-                ? $this->profile['home_library'] : $this->defaultPickupLocation
-          ?>
-          <td>
-            <form id="profile_form" class="form-inline" method="post">
-              <select id="home_library" name="home_library" class="form-control">
-                <?php foreach ($this->pickup as $lib): ?>
-                  <option value="<?= $this->escapeHtmlAttr($lib['locationID'])?>"<?= ($selected == $lib['locationID'])?' selected="selected"':''?>><?= $this->transEscWithPrefix('location_', $lib['locationDisplay'])?></option>
-                <?php endforeach; ?>
-              </select>
-              <input class="btn btn-default" type="submit" value="<?= $this->transEscAttr('Save')?>" />
-            </form>
-          </td>
-        <?php endif; ?>
-      </table>
-    <?php endif; ?>
-  </div>
+      <?= $this->renderArray(
+        $this->profile['statuscode'] === 0 ? $arrTemplate : $arrImportantTemplate,
+        $accountinfo,
+        [$this->transEsc('User Status') => 'status']
+      ); ?>
 
-  <div class="<?= $this->layoutClass('sidebar')?>">
-    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'profile'])?>
-  </div>
+      <?php if($this->totalDue): ?>
+        <?= $this->renderArray(
+          ($this->profile['statuscode'] != 3 && $this->profile['statuscode'] != 4)
+            ? $arrTemplate : $arrImportantTemplate,
+          $accountinfo,
+          [$this->transEsc('Your Fines') => 'totalDue']
+        ); ?>
+      <?php endif; ?>
+
+      <?= $this->renderArray(
+        $arrImportantTemplate, $accountinfo,
+        [$this->transEsc('User Note') => 'note']
+      ); ?>
+  </table>
+  <?php elseif ('ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
+    <?=$this->partial($this->patronLoginView);?>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('profile')?>
 </div>

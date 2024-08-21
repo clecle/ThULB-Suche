@@ -286,27 +286,48 @@ footer {
 
 /* ------ MyResearch ------ */
 .form-login .btn-link ~ .btn-link { padding-left: 0; } // Login link spacing
-.myresearch-menu a {
-  display: block;
-  padding: 10px 15px;
-  border: 1px solid $list-group-border;
-  border-bottom: 0;
+.myresearch-menu {
+  a {
+    display: block;
+    padding: 10px 15px;
+    border: 1px solid $list-group-border;
+    border-bottom: 0;
 
-  &:hover,
-  &:focus { background-color: $nav-link-hover-bg; }
+    &:hover,
+    &:focus {
+      background-color: $nav-link-hover-bg;
+    }
 
-  .badge { float: right; }
-}
+    .badge {
+      float: right;
+    }
 
-.myresearch-menu a:last-child { border-bottom: 1px solid $list-group-border; }
+    &:last-child {
+      border-bottom: 1px solid $list-group-border;
+    }
 
-.myresearch-menu a.active {
-  background-color: $brand-primary !important;
-  color: #fff !important;
+    &.active {
+      background-color: $brand-primary !important;
+      color: #fff !important;
 
-  .badge {
-    background-color: #fff;
-    color: $gray-darker;
+      .badge {
+        background-color: #fff;
+        color: $gray-darker;
+      }
+    }
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+
+    .icon-link {
+      display: flex;
+    }
+  }
+
+  .user-list-link {
+    justify-content: space-between;
   }
 }
 .list-edit-container { @include clearfix(); }

@@ -12,7 +12,7 @@
   <div class="flash-message alert alert-warning"><?= $this->transEsc('checked_out_information'); ?></div>
   <?= $this->flashmessages()?>
 
-    <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->isLoggedIn()]); ?>
+    <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
 
     <?php if (!empty($this->transactions)): ?>
       <?php if ($this->renewForm): ?>
@@ -187,7 +187,6 @@
     <?php endif; ?>
   </div>
 
-  <div class="<?= $this->layoutClass('sidebar')?>">
-    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'checkedout'])?>
-  </div>
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('checkedout')?>
 </div>

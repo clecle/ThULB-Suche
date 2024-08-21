@@ -28,6 +28,7 @@
 namespace ThULB\Controller;
 
 use IOException;
+use Laminas\Config\Config;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mime\Message;
@@ -37,6 +38,7 @@ use Laminas\Mvc\MvcEvent;
 use Laminas\Paginator\Adapter\ArrayAdapter;
 use Laminas\Paginator\Paginator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
 use Picqer\Barcode\BarcodeGeneratorPNG;
 use ThULB\Log\LoggerAwareTrait;
@@ -61,18 +63,23 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         onDispatch as public trait_onDispatch;
     }
 
-    protected $mainConfig;
-    protected $letterOfAuthorizationSavePath;
+    protected Config $mainConfig;
+    protected Config $letterOfAuthorization;
+    protected string $letterOfAuthorizationSavePath;
 
-    public function __construct(ServiceLocatorInterface $sm)
-    {
-        parent::__construct($sm);
+    public function __construct(
+        ServiceLocatorInterface $sm,
+        Container $container,
+        \VuFind\Config\PluginManager $configLoader,
+        \VuFind\Export $export
+    ) {
+        parent::__construct($sm, $container, $configLoader, $export);
 
-        $this->mainConfig = $sm->get('VuFind\Config')->get('config');
+        $this->mainConfig = $configLoader->get('config');
+        $this->letterOfAuthorization =
+            $configLoader->get('thulb')->LetterOfAuthorization ?? false;
         $this->letterOfAuthorizationSavePath =
-            $this->serviceLocator->get('VuFind\Config')->get('thulb')
-                ->LetterOfAuthorization->pdf_save_path ?? false;
-
+            $this->letterOfAuthorization->pdf_save_path ?? false;
     }
 
     /**
@@ -201,7 +208,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
             return $patron;
         }
         
-        if (!$this->getAuthManager()->isLoggedIn()) {
+        if (!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
         
@@ -234,7 +241,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         $routeName = 'myresearch-userlogin';
         if($this->getILS()->getOfflineMode()
                 && strtolower($event->getRouteMatch()->getMatchedRouteName()) !== $routeName
-                && $this->getAuthManager()->isLoggedIn()) {
+                && $this->getAuthManager()->getUserObject()) {
 
             $event->getRouteMatch()->setParam('action', 'logout');
             parent::onDispatch($event);
@@ -252,7 +259,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      */
     public function mylistAction()
     {
-        if($this->getAuthManager()->isLoggedIn()) {
+        if($this->getAuthManager()->getUserObject()) {
             $this->flashMessenger()->addMessage(
                 array(
                     'html' => true,
@@ -274,9 +281,8 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         /* @var $view ViewModel */
         $view =  parent::changePasswordAction();
 
-        if($this->getAuthManager()->isLoggedIn()) {
-            $pw = $this->getAuthManager()->getIdentity()->getCatPassword();
-            if (!$this->getAuthManager()->validatePasswordAgainstPolicy($pw)) {
+        if($this->getAuthManager()->getUserObject()) {
+            if (!$this->getAuthManager()->validatePasswordAgainstPolicy()) {
                 $this->layout()->setVariable('showBreadcrumbs', false);
                 $this->layout()->setVariable('searchbox', false);
                 $view->setVariable('forced', true);
@@ -323,7 +329,11 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
      * @throws IOException
      */
     public function letterOfAuthorizationAction() : ViewModel {
-        if (!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->letterOfAuthorization->enabled ?? false) {
+            return (new ViewModel(['message' => 'Page not found.']))->setTemplate('error/404');
+        }
+
+        if (!$this->getAuthManager()->getUserObject()) {
             return $this->forceLogin();
         }
 

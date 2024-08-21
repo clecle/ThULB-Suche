@@ -8,7 +8,7 @@ $config = array(
             \ThULB\Controller\CoverController::class => \VuFind\Controller\CoverControllerFactory::class,
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
             \ThULB\Controller\ILLController::class => \VuFind\Controller\AbstractBaseFactory::class,
-            \ThULB\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
+            \ThULB\Controller\MyResearchController::class => \VuFind\Controller\MyResearchControllerFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\SearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
@@ -104,11 +104,6 @@ $config = array(
                 'aliases' => array(
                     'iiif' => \ThULB\Content\Covers\IIIF::class
                 )
-            ),
-            'db_row' => array(
-                'factories' => array(
-                    \VuFind\Db\Row\User::class => \ThULB\Db\Row\Factory::class
-                ),
             ),
             'doilinker' => array(
                 'factories' => array(
@@ -253,11 +248,13 @@ $config = array(
 );
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addStaticRoute($config, 'Holds/HoldsAndSRR');
 $routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
 $routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
+$routeGenerator->addStaticRoute($config, 'MyResearch/Provided');
 $routeGenerator->addNonTabRecordActions($config, ['OrderReserve']);
 
 $routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');

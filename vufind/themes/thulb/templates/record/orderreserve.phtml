@@ -28,7 +28,7 @@
           <?php endif; ?>
         </td>
         <td class="col-sm-2">
-          <?php if($item['availability'] ?? false): ?>
+          <?php if($item['availability']->isAvailable() ?? false): ?>
             <?php foreach($this->thulb_holdingHelper()->getRequestLinks($item, $this->driver->isNewsPaper()) as $linkData): ?>
               <a class="<?= $linkData['classes']; ?>" data-lightbox href="<?= $linkData['link']; ?>"><?= $linkData['icon'] ?? ''; ?><?= $this->transEsc($linkData['desc']); ?></a>
             <?php endforeach; ?>

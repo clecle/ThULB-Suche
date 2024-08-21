@@ -13,6 +13,6 @@ $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') .
   <a href="/ILL/deleteaccountconfirmation" class="btn btn-primary" data-lightbox><?= $this->transEsc('ill_delete_account'); ?></a>
 </div>
 
-<div class="<?= $this->layoutClass('sidebar')?>">
-  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'deleteaccount'])?>
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('deleteaccount')?>
 </div>

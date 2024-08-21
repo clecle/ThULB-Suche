@@ -3,8 +3,8 @@
   $id = $this->driver->getUniqueId();
   $source = $this->driver->getSourceIdentifier();
   if (isset($this->list) && is_object($this->list)) {
-    $list_id = $this->list->id;
-    $user_id = $this->list->user_id;
+    $list_id = $this->list->getId();
+    $user_id = $this->list->getUser()->getId();
   } else {
     $list_id = null;
     $user_id = $this->user ? $this->user->id : null;
@@ -28,9 +28,7 @@
 <div class="result<?php if($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?>">
   <input type="hidden" value="<?= $this->escapeHtmlAttr($id) ?>" class="hiddenId"/>
   <input type="hidden" value="<?= $this->escapeHtmlAttr($source) ?>" class="hiddenSource"/>
-  <div class="checkbox hidden-print">
-    <label><?= $this->record($this->driver)->getCheckbox()?></label>
-  </div>
+  <?=$this->record($this->driver)->getCheckbox()?>
   <div class="media">
     <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
       <?= $thumbnail ?>

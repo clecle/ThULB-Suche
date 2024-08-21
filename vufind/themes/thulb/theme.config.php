@@ -5,6 +5,8 @@ return array(
         'factories' => array(
             \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
             \ThULB\View\Helper\Record\SeraHelper::class => \ThULB\View\Helper\Record\SeraHelperFactory::class,
+            \ThULB\View\Helper\Root\AccountMenu::class => \VuFind\View\Helper\Root\AccountMenuFactory::class,
+            \ThULB\View\Helper\Root\AvailabilityStatus::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \ThULB\View\Helper\Root\Citation::class => \VuFind\View\Helper\Root\CitationFactory::class,
             \ThULB\View\Helper\Root\Flashmessages::class => \VuFind\View\Helper\Root\FlashmessagesFactory::class,
             \ThULB\View\Helper\Root\LocationData::class => \ThULB\View\Helper\Root\LocationDataFactory::class,
@@ -17,6 +19,8 @@ return array(
             \VuFind\View\Helper\Root\RecordDataFormatter::class => \ThULB\View\Helper\Root\RecordDataFormatterFactory::class,
         ),
         'aliases' => array(
+            'accountMenu' => \ThULB\View\Helper\Root\AccountMenu::class,
+            'availabilityStatus' => \ThULB\View\Helper\Root\AvailabilityStatus::class,
             'citation' => \ThULB\View\Helper\Root\Citation::class,
             'flashmessages' => \ThULB\View\Helper\Root\Flashmessages::class,
             'record' => \ThULB\View\Helper\Root\Record::class,
@@ -33,10 +37,16 @@ return array(
     'favicon' => 'thulb_favicon.png',
     'icons' => array(
         'aliases' => array(
+            'cart-add' => 'FontAwesome:star',
+            'cart-remove' => 'FontAwesome:star-o',
+            'export' => 'FontAwesome:share',
+            'facet-checked' => 'FontAwesome:check',
+            'id-card' => 'FontAwesome:id-card-o',
+            'lock' => 'FontAwesome:lock',
             'status-available' => 'FontAwesome:check',
             'status-unavailable' => 'FontAwesome:remove',
             'status-unknown' => 'FontAwesome:circle',
-            'facet-checked' => 'FontAwesome:check'
+            'ui-delete' => 'FontAwesome:trash',
         )
     ),
     'js' => array(

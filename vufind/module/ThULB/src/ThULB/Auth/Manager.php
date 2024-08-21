@@ -4,18 +4,20 @@ namespace ThULB\Auth;
 
 use VuFind\Auth\Manager as OriginalManager;
 use VuFind\Exception\Auth as AuthException;
+use VuFind\Exception\PasswordSecurity;
 
 class Manager extends OriginalManager
 {
     /**
      * Validate the given password against the password policies defined in the config.
      *
-     * @param string $password
-     *
      * @return bool False if password does not match the policies or auth driver does not support validation.
+     *
+     * @throws PasswordSecurity
      */
-    public function validatePasswordAgainstPolicy(string $password) : bool {
+    public function validatePasswordAgainstPolicy() : bool {
         try {
+            $password = $this->getUserObject()->getCatPassword();
             $this->tryOnAuth('validatePasswordAgainstPolicy', $password);
         }
         catch (AuthException $e) {

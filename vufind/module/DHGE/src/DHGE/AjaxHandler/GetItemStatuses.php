@@ -56,7 +56,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
         $libAvailability = [];
         foreach ($records as $info) {
             if(!$info['use_unknown_message']) {
-                $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability'];
+                $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability']->isAvailable();
             }
         }
 

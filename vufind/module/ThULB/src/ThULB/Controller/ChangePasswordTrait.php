@@ -47,7 +47,7 @@ trait ChangePasswordTrait
         $routeName = 'myresearch-changepassword';
 
         // Force change password if the password does not match the policies
-        if($this->getAuthManager()->isLoggedIn()) {
+        if($this->getAuthManager()->getUserObject()) {
             $forcing = $this->getRequest()->getPost('forcingNewPassword');
             $isPwChangeAction = in_array($event->getRouteMatch()->getParam('action'), ['ChangePassword', 'NewPassword']);
 
@@ -74,12 +74,11 @@ trait ChangePasswordTrait
         if(!($this->getConfig()->Authentication->enforce_valid_password ?? false)) {
             return false;
         }
-        if(!$this->getAuthManager()->isLoggedIn()) {
+        if(!$this->getAuthManager()->getUserObject()) {
             return false;
         }
 
-        $pw = $this->getAuthManager()->getIdentity()->getCatPassword();
-        return !$this->getAuthManager()->validatePasswordAgainstPolicy($pw);
+        return !$this->getAuthManager()->validatePasswordAgainstPolicy();
     }
 
     /**

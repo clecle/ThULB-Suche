@@ -1,27 +1,27 @@
 <?php
   // Convenience variable:
   $account = $this->auth()->getManager();
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
 
   // Grab list object from search results (if applicable):
   $list = $this->results->getListObject();
 
   // Set up page title:
-  $this->headTitle($currPage = isset($list) ? $list->title : $this->translate('Favorites'));
+  $this->headTitle(isset($list) ? $list->getTitle() : $this->translate('saved_items'));
 
   // Set up breadcrumbs:
   if($user) {
-//    $currPage = isset($list) ? 'Favorite list' : $this->transEsc('Favorites');
+    $currPage = isset($list) ? 'Favorite list' : $this->transEsc('saved_items');
     $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $currPage . '</li>';
   }
 
   // Load Javascript dependencies into header:
-  $this->headScript()->appendFile("check_item_statuses.js");
+  $this->headScript()->appendFile('check_item_statuses.js');
 
   // Load Javascript only if list view parameter is NOT full:
-  if ($this->params->getOptions()->getListViewOption() != "full") {
-    $this->headScript()->appendFile("record.js");
-    $this->headScript()->appendFile("embedded_record.js");
+  if ($this->params->getOptions()->getListViewOption() != 'full') {
+    $this->headScript()->appendFile('record.js');
+    $this->headScript()->appendFile('embedded_record.js');
   }
 
   $recordTotal = $this->results->getResultTotal();
@@ -36,9 +36,9 @@
 <div class="<?= $this->layoutClass('mainbody')?>">
   <div class="favourite-header">
     <div class="clearfix">
-      <h2 class="pull-left"><?= $list ? $this->escapeHtml($list->title) : $this->transEsc("Your Favorites")?></h2>
+      <h2 class="pull-left"><?= $list ? $this->escapeHtml($list->title) : $this->transEsc("saved_items")?></h2>
       <div class="list-edit">
-        <?php if (isset($list) && $list->editAllowed($account->isLoggedIn())): ?>
+        <?php if (isset($list) && $list->editAllowed($account->getUserObject())): ?>
           <a href="<?= $this->url('editList', ['id' => $list->id]) ?>" class="btn btn-link"><i class="fa fa-edit" aria-hidden="true"></i> <?= ''//$this->transEsc("edit_list")?></a>
           <div class="btn-group">
             <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" href="<?= $this->url('myresearch-deletelist') ?>?listID=<?= urlencode($list->id)?>">
@@ -68,7 +68,7 @@
   </div>
 
   <?php if ($recordTotal > 0): ?>
-    <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+    <form class="form-inline" id="form-favorites<?=($listId = $list?->getId()) ? '-' . $listId : ''?>" method="post" name="bulkActionForm" action="<?= $this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
       <div class="favourite-list mb-5">
         <div class="pl-2 pr-2">
           <?= $this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account])?>
@@ -88,7 +88,9 @@
 
 <?php if($user): ?>
   <div class="<?= $this->layoutClass('sidebar')?>" id="myresearch-sidebar">
-    <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => isset($list) ? 'list' . $list['id'] : 'favorites'])?>
+    <div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+      <?=$this->accountMenu()->render(isset($list) ? 'list' . $list['id'] : 'favorites')?>
+    </div>
     <?php foreach ($this->results->getRecommendations('side') as $current): ?>
       <?= $this->recommend($current)?>
     <?php endforeach; ?>

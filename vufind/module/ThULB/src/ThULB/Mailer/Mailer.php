@@ -35,7 +35,7 @@ class Mailer extends OriginalMailer {
                              $cc = null, $replyTo = null
     ) : void {
         if($this->serviceLocator) {
-            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->isLoggedIn();
+            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->getUserObject();
             $replyTo = $replyTo ?: $user->email;
         }
         $replyTo = $replyTo ?: $this->defaultReplyTo;
@@ -62,7 +62,7 @@ class Mailer extends OriginalMailer {
                                $cc = null, $replyTo = null
     ) : void {
         if($this->serviceLocator) {
-            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->isLoggedIn();
+            $user = $this->serviceLocator->get(\VuFind\Auth\Manager::class)->getUserObject();
             $replyTo = $replyTo ?: $user->email;
         }
         $replyTo = $replyTo ?: $this->defaultReplyTo;

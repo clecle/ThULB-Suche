@@ -448,11 +448,13 @@ class PAIA extends OriginalPAIA
         // @TODO: extract epn from id
         $status['epn'] = substr($item['temporary-hack-do-not-use'], 0, -1);
 
-        if (!$status['availability'] 
+        if (!$status['availability']
             && !isset($status['duedate'])
             && $status['holdtype'] !== 'recall'
         ) {
             $status['use_unknown_message'] = true;
+            unset($status['status']);
+            return $status;
         }
         
         // items that are on recall should be shown as unavailable

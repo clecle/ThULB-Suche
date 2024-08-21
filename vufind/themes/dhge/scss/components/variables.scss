@@ -34,6 +34,10 @@ $brand-primary-lighter:     #007C28;
 $brand-secondary:           #a5c400;
 $brand-inverted:            #738a77;
 
+// Cookie consent dialog should have a z-index low enough to stay below dropdowns and modals
+$zindex-dropdown:          1000 !default;
+$zindex-cookie-consent: ($zindex-dropdown - 10) !default;
+
 // $brand-success: #5cb85c !default;
 // $brand-info:    #5bc0de !default;
 // $brand-warning: #f0ad4e !default;

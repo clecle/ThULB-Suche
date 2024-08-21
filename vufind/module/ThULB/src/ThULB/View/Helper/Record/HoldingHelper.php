@@ -152,7 +152,7 @@ class HoldingHelper extends AbstractHelper
     }
 
     public function getReadingRoomOnlyString(array $item) : string {
-        return ($item['availability'] ?? false) && !in_array("loan", $item['services']) ? $this->view->transEsc('reading_room_only') : '';
+        return ($item['availability']->isAvailable() ?? false) && !in_array("loan", $item['services']) ? $this->view->transEsc('reading_room_only') : '';
     }
 
     public function getRequestsPlacedString(array $item) : string {

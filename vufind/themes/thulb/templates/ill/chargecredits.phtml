@@ -103,6 +103,6 @@
   <?php endif; ?>
 </div>
 
-<div class="<?= $this->layoutClass('sidebar')?>">
-  <?= $this->context($this)->renderInContext("myresearch/menu.phtml", ['active' => 'chargecredits'])?>
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('chargecredits')?>
 </div>

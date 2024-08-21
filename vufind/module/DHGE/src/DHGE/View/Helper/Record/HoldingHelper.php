@@ -44,7 +44,7 @@ class HoldingHelper extends OriginalHoldingHelper
     }
 
     protected function recallAvailable(array $itemRow): bool {
-        return !$this->view->auth()->isLoggedIn() ||
+        return !$this->view->auth()->getUserObject() ||
             $itemRow['library'] == $this->view->dhge_session()->getLibrary();
     }
 

@@ -1,15 +1,22 @@
 <?php
   $options = $this->results->getParams()->getOptions();
   $facetLightbox = $options->getFacetListAction();
+  $facetLightboxParams = http_build_query(
+      [
+          'facet' => $this->facet,
+          'facetop' => $this->operator,
+          'facetexclude' => $this->exclude,
+      ],
+  );
   if (empty($this->sortOptions)) {
     $this->sort = 'default';
     $this->sortOptions = [ 'default' => 'default' ];
   }
-  $urlBase = $this->url($facetLightbox) . $results->getUrlQuery()->getParams() . '&amp;facet=' . urlencode($this->facet) . '&amp;facetexclude=' . urlencode($this->exclude) . '&amp;facetop=' . urlencode($this->operator);
+  $urlBase = $this->url($facetLightbox) . $results->getUrlQuery()->getParams(false) . "&$facetLightboxParams";
   $searchAction = $this->url($options->getSearchAction());
   if (!empty($this->baseUriExtra)) {
     $searchAction .= urlencode($this->baseUriExtra);
-    $urlBase .= '&amp;baseUriExtra=' . urlencode($this->baseUriExtra);
+    $urlBase .= '&baseUriExtra=' . urlencode($this->baseUriExtra);
   }
   $isHierarchicalFacet = is_callable([$options, 'getHierarchicalFacets']) && in_array($facet, $options->getHierarchicalFacets());
   $this->headTitle($this->translate('facet_list_for', ['%%field%%' => $this->facetLabel]));
@@ -70,4 +77,5 @@
   <?php endif; ?>
 </div>
 <button class="btn btn-default lightbox-only" data-dismiss="modal"><?=$this->translate('close') ?></button>
+
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, '(typeof VuFind.lightbox_facets !== "undefined") && VuFind.lightbox_facets.setup();', 'SET'); ?>

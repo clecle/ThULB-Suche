@@ -1,8 +1,9 @@
-@import "components/bootstrap-vars";
-
 @import "components/variables";
 
-@import "../../bootstrap3/scss/vendor/bootstrap";
+@import "components/bootstrap-vars";
+@import "../../bootstrap3/scss/vendor/bootstrap/bootstrap/variables";
+
+@import "../../bootstrap3/scss/vendor/bootstrap/bootstrap";
 $fa-font-path: "../../bootstrap3/css/fonts";
 @import "../../thulb/scss/vendor/font-awesome/font-awesome";
 @import "../../bootstrap3/scss/vendor/bootstrap-accessibility/bootstrap-accessibility";
@@ -12,8 +13,11 @@ $fa-font-path: "../../bootstrap3/css/fonts";
 @import "../../bootstrap3/scss/components/alphabrowse";
 @import "components/autocomplete";
 @import "../../bootstrap3/scss/components/channels";
+@import "../../bootstrap3/scss/components/cookie-consent/index";
+@import "../../bootstrap3/scss/components/explain";
+@import "../../bootstrap3/scss/components/form";
 @import "../../bootstrap3/scss/components/icons";
-@import "../../bootstrap3/scss/components/js-tree";
+@import "../../bootstrap3/scss/components/keyboard";
 @import "../../bootstrap3/scss/components/lightbox";
 @import "../../bootstrap3/scss/components/offcanvas";
 @import "../../bootstrap3/scss/components/record";
@@ -21,7 +25,6 @@ $fa-font-path: "../../bootstrap3/css/fonts";
 @import "components/sidebar";
 @import "../../bootstrap3/scss/components/similar-carousel";
 @import "../../bootstrap3/scss/components/sliders";
-
-@import "components/variables";
+@import "../../bootstrap3/scss/components/trees";
 
 @import "eah";

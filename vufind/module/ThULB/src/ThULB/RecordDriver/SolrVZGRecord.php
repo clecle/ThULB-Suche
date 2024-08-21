@@ -68,7 +68,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @var array
      */
-    protected static $defaultSeparators = [' = ',' =', '= ', ' : ', ' :', ': '];
+    protected static array $defaultSeparators = [' = ',' =', '= ', ' : ', ' :', ': '];
     
     /**
      * Contains all placeholders that are often used to fill missing MARC
@@ -76,51 +76,51 @@ class SolrVZGRecord extends SolrMarc
      * 
      * @var array
      */
-    protected static $defaultPlaceholders = ['[...]'];
+    protected static array $defaultPlaceholders = ['[...]'];
 
     /**
      * Short title of the record.
      *
      * @var string 
      */
-    protected $shortTitle;
+    protected ?string $shortTitle = null;
     
     /**
      * Title of the record.
      *
      * @var string
      */
-    protected $title;
+    protected ?string $title = null;
     
     /**
      * The title of the record with highlighting markers
      * 
      * @var string
      */
-    protected $highlightedTitle;
+    protected ?string $highlightedTitle = null;
 
     /**
      * Marc format configuration
      *
      * @var Config
      */
-    protected $marcFormatConfig;
+    protected Config $marcFormatConfig;
 
     /**
      * DAIA departments configuration
      *
      * @var Config
      */
-    protected $departmentConfig;
+    protected Config $departmentConfig;
 
     /**
      * ThULB configuration
      *
      * @var Config
      */
-    protected $thulbConfig;
+    protected Config $thulbConfig;
 
-    protected $holdingData = null;
+    protected array $holdingData = [];
 
     public function __construct($mainConfig = null, $recordConfig = null, $searchSettings = null,
                                 $marcFormatConfig = null, $departmentConfig = null, $thulbConfig = null)
@@ -163,7 +163,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return mixed
      */
-    public function getRawData()
+    public function getRawData() : mixed
     {
         ksort($this->fields, SORT_NATURAL | SORT_FLAG_CASE);
         foreach ($this->fields as $key => $field) {
@@ -214,7 +214,7 @@ class SolrVZGRecord extends SolrMarc
             
             $this->highlightedTitle = '';
             foreach ($this->highlightDetails as $highlightElement => $highlightDetail) {
-                if (strpos($highlightElement, 'title') !== false) {
+                if (str_contains($highlightElement, 'title')) {
                     $this->highlightedTitle .= implode('', $this->groupHighlighting($highlightDetail));
                 }
             }
@@ -1255,7 +1255,7 @@ class SolrVZGRecord extends SolrMarc
 
         // Run through the link types specified in the config.
         // For each type, check field for reference
-        // If reference found, exit loop and go straight to end
+        // If reference is found, exit loop and go straight to end
         // If no reference found, check the next link type instead
         foreach ($linkTypes as $linkType) {
             switch (trim($linkType)){
@@ -1424,7 +1424,7 @@ class SolrVZGRecord extends SolrMarc
                 ]);
                 if(count($secondaryFields) > 0) {
                     $rawId = $this->getSubfield($secondaryFields[0], 'w');
-                    if (strpos($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')') === 0) {
+                    if (str_starts_with($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')')) {
                         $currentArray['id'] = substr($rawId, 8);
                     }
                 }
@@ -1448,7 +1448,7 @@ class SolrVZGRecord extends SolrMarc
 
             // Do we have IDs to link the field to
             $rawId = $this->getSubfield($currentField, 'w');
-            if (strpos($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')') === 0) {
+            if (str_starts_with($rawId, '(' . static::PPN_LINK_ID_PREFIX . ')')) {
                 $currentArray['id'] = substr($rawId, 8);
             }
 
@@ -1561,7 +1561,7 @@ class SolrVZGRecord extends SolrMarc
             $urls = $this->getFieldsConditional('856', $basicConditions);
         }
 
-        foreach($urls ?? [] as $url) {
+        foreach($urls as $url) {
             $retVal[] = array(
                 'link' => $link = $this->getSubfield($url, 'u'),
                 'desc' => $this->translate('Full text online'),
@@ -1771,88 +1771,92 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getOnlineHoldings() : array
     {
-      $retVal = [];
+        $retVal = [];
 
-      /* extract all LINKS form MARC 981 */
-      $links = $this->getConditionalFieldArray(
-          '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]);
+        /* extract all LINKS form MARC 981 */
+        $links = $this->getConditionalFieldArray(
+            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]
+        );
 
-      if ( !empty($links) ){
-        /* what kind of LINKS do we have?
-         * is there more Information in MARC 980 / 982?
-         */
-        foreach ( $links as $link ) {
-          $more = '';
-          $linkElements = explode(static::SEPARATOR, $link);
-          $id = $linkElements[0] ?? '';
-          $txt = $linkElements[1] ?? '';
-          $url = $linkElements[2] ?? '';
+        if (!empty($links)){
+            /* what kind of LINKS do we have?
+             * is there more Information in MARC 980 / 982?
+             */
+            foreach ($links as $link) {
+                $more = '';
+                $linkElements = explode(static::SEPARATOR, $link);
+                $id = $linkElements[0] ?? '';
+                $txt = $linkElements[1] ?? '';
+                $url = $linkElements[2] ?? '';
 
-          /* do we have a picture? f.e. ELS-gif */
-          if ( substr($txt, -3) == 'gif' ) {
-            $retVal[$id] = $txt;
-            continue;
-          }
+                /* do we have a picture? f.e. ELS-gif */
+                if (substr($txt, -3) == 'gif') {
+                    $retVal[$id] = $txt;
+                    continue;
+                }
 
-          /* seems that the real LINK is in 981y if 981r or w is empty... */
-          if ( empty($txt) ) {
-            $txt = $url;
-          }
-          /* ... and vice versa */
-          if ( empty($url) ) {
-            $url = $txt;
-            $txt = 'fulltext';
-          }
+                /* seems that the real LINK is in 981y if 981r or w is empty... */
+                if (empty($txt)) {
+                    $txt = $url;
+                }
+                /* ... and vice versa */
+                if (empty($url)) {
+                    $url = $txt;
+                    $txt = 'fulltext';
+                }
 
-          /* Now, we are ready to extract extra-information
-           * @details for each link is common catalogisation till RDA-introduction
-           */
-          $details = $this->getConditionalFieldArray(
-              '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]);
+                /* Now, we are ready to extract extra-information
+                * @details for each link is common catalogisation till RDA-introduction
+                */
+                $details = $this->getConditionalFieldArray(
+                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                );
 
-          if ( empty($details) ) {
-            /* new catalogisation rules with RDA: One Link and single Details for each part */
-            $details = $this->getConditionalFieldArray(
-                '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
-          }
-          if ( !empty($details) ) {
-            foreach ($details as $detail) {
-              $more .= $detail . "<br>";
+                if (empty($details)) {
+                    /* new catalogisation rules with RDA: One Link and single Details for each part */
+                    $details = $this->getConditionalFieldArray(
+                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
+                }
+                if (!empty($details)) {
+                    foreach ($details as $detail) {
+                        $more .= $detail . "<br>";
+                    }
+                }
+
+                $corporates = $this->getConditionalFieldArray(
+                    '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                );
+
+                if (!empty($corporates)) {
+                    foreach ($corporates as $corporate) {
+                        $more .= $corporate . "<br>";
+                    }
+                }
+
+                /* extract Info/Links with same ID
+                * thats the case, if we have an ELS-gif,
+                * so we assume, that the gif is set-up before.
+                * f.e.
+                * 981 |2 31  |1 00  |w http://kataloge.thulb.uni-jena.de/img_psi/2.0/logos/eLS.gif
+                * 981 |2 31  |1 00  |y Volltext  |w http://mybib.thulb.uni-jena.de/els/browser/open/557127483
+                */
+
+                // we just need to show host as link-text
+                $url_data = parse_url($url);
+                $txt_sanitized = $url_data['host'];
+
+                $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
+                $retVal[$id] = $txt_sanitized . static::SEPARATOR .
+                $txt . static::SEPARATOR .
+                $url . static::SEPARATOR .
+                $more . static::SEPARATOR .
+                $tmp;
             }
-          }
-
-          $corporates = $this->getConditionalFieldArray(
-              '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]);
-          if ( !empty($corporates) ) {
-            foreach ($corporates as $corporate) {
-              $more .= $corporate . "<br>";
-            }
-          }
-
-          /* extract Info/Links with same ID
-           * thats the case, if we have an ELS-gif,
-           * so we assume, that the gif is set-up before.
-           * f.e.
-           * 981 |2 31  |1 00  |w http://kataloge.thulb.uni-jena.de/img_psi/2.0/logos/eLS.gif
-           * 981 |2 31  |1 00  |y Volltext  |w http://mybib.thulb.uni-jena.de/els/browser/open/557127483
-           */
-
-          // we just need to show host as link-text
-          $url_data = parse_url($url);
-          $txt_sanitized = $url_data['host'];
-
-          $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
-          $retVal[$id] = $txt_sanitized . static::SEPARATOR .
-              $txt . static::SEPARATOR .
-              $url . static::SEPARATOR .
-              $more . static::SEPARATOR .
-              $tmp;
         }
-      }
-      else {
-        $retVal = "";
-      }
-      return $retVal;
+        else {
+            $retVal = "";
+        }
+        return $retVal;
     }
 
     /**
@@ -1863,15 +1867,15 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getHoldingComments(string $epn_str) : array
-    {
-      $retVal = [];
-      list($txt, $epn) = explode(":epn:", $epn_str);
-      /* extract all Comments form MARC 980 */
-      $comments_g = $this->getConditionalFieldArray(
-          '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn] );
-      $comments_k = $this->getConditionalFieldArray(
-          '980', ['k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn] );
+    public function getHoldingComments(string $epn_str) : array {
+        list($txt, $epn) = explode(":epn:", $epn_str);
+        /* extract all Comments form MARC 980 */
+        $comments_g = $this->getConditionalFieldArray(
+            '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn]
+        );
+        $comments_k = $this->getConditionalFieldArray(
+            '980', ['k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn]
+        );
 
         return array($comments_g[0], $comments_k[0]);
     }
@@ -1883,8 +1887,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getHierarchyType()
     {
-        $hierarchyType = isset($this->fields['hierarchytype'])
-            ? $this->fields['hierarchytype'] : false;
+        $hierarchyType = $this->fields['hierarchytype'] ?? false;
         if (!$hierarchyType) {
             $hierarchyType = isset($this->mainConfig->Hierarchy->driver)
                 ? $this->mainConfig->Hierarchy->driver : false;
@@ -2211,8 +2214,7 @@ class SolrVZGRecord extends SolrMarc
         return false;
     }
 
-    public function getHoldings() : array
-    {
+    public function getHoldings() : array {
         if(!$this->holdingData) {
             $this->holdingData = $this->getRealTimeHoldings();
         }
@@ -2224,8 +2226,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return string|false
      */
-    public function getCleanISMN()
-    {
+    public function getCleanISMN() {
         $conditions = array(
             $this->createFieldCondition('indicator', '1', '==', '2'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
@@ -2242,8 +2243,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getLegalInformation() : array
-    {
+    public function getLegalInformation() : array {
         // Fix for cases where 024 $a is not set
         $fields540 = $this->getMarcReader()->getFields('540');
         $data = array();
@@ -2274,8 +2274,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array
      */
-    public function getAccessRestrictions() : array
-    {
+    public function getAccessRestrictions() : array {
         $retValue = [];
         $fields = $this->getFieldsConditional('506', [$this->createFieldCondition('subfield', 'a', '!=', false)]);
         foreach ($fields as $field) {
@@ -2319,8 +2318,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return string|false
      */
-    public function getCleanDOI()
-    {
+    public function getCleanDOI() {
         $conditions = array(
             $this->createFieldCondition('indicator', '1', '==', '7'),
             $this->createFieldCondition('subfield', '2', '==', 'doi'),
@@ -2468,18 +2466,22 @@ class SolrVZGRecord extends SolrMarc
         $hasOpenStock = false;
         foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
             foreach ($holding['items'] as $item) {
-                if($item['use_unknown_message'] ?? false) {
+                if($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
+                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)
+                ) {
                     // item is missing, check next item
                     continue;
                 }
 
-                if ($item['availability'] && !isset($item['link']) && !isset($item['storageRetrievalRequestLink'])) {
+                if ($item['availability']->isAvailable() && !isset($item['link'])
+                    && !isset($item['storageRetrievalRequestLink'])
+                ) {
                     // item is available in 'Freihand', placing a hold and reserving not available in list view
                     $hasOpenStock = true;
                     continue;
                 }
 
-                if($item['availability']) {
+                if($item['availability']->isAvailable()) {
                     // available in stack, no need to look for other items
                     $holdingsOrder[$holdingLocation][] = $item;
                 }

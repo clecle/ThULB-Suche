@@ -97,7 +97,7 @@ class AccessLookup extends AbstractBase
             $location = $holdings[array_key_first($holdings)];
             if(count($location) == 1) {
                 $holdingHelper = $this->phpRenderer->thulb_holdingHelper();
-                if($location[0]['availability']){
+                if($location[0]['availability']->isAvailable()){
                     $link = $holdingHelper->getRequestLinks($location[0], $driver->isNewsPaper())[0];
                 }
                 else {
@@ -112,8 +112,8 @@ class AccessLookup extends AbstractBase
         $itemCanBeOrdered = $itemCanBeReserved = false;
         foreach ($holdings ?? [] as $location) {
             foreach ($location as $item) {
-                $itemCanBeOrdered = $itemCanBeOrdered || $item['availability'];
-                $itemCanBeReserved = $itemCanBeReserved || !$item['availability'];
+                $itemCanBeOrdered = $itemCanBeOrdered || $item['availability']->isAvailable();
+                $itemCanBeReserved = $itemCanBeReserved || !$item['availability']->isAvailable();
             }
         }
 

@@ -27,11 +27,11 @@
 <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut" />
 <link property="itemOffered" href="#record" />
 
-<?php if ($item['use_unknown_message'] ?? false): ?>
-  <span class="text-warning"><?= $this->transEsc("status_unknown_message"); ?></span>
-<?php elseif($item['availability'] ?? false): ?>
+<?php if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN) ?? false): ?>
+  <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
+<?php elseif($item['availability']->isAvailable()): ?>
   <?php /* Begin AVAILABLE Items (Holds) */ ?>
-  <span class="text-success"><?= $this->transEsc("Available"); ?><link property="availability" href="http://schema.org/InStock" /></span>
+  <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
 
   <?php foreach($holdingHelper->getRequestLinks($item, $this->driver->isNewsPaper()) as $linkData): ?>
     <a class="<?= $linkData['classes']; ?>" data-lightbox href="<?= $linkData['link']; ?>"><?= $linkData['icon'] ?? ''; ?><?= $this->transEsc($linkData['desc']); ?></a>
@@ -45,10 +45,10 @@
   <?php /* Begin UNAVAILABLE Items (Recalls) */ ?>
   <?php if (($item['returnDate'] ?? false) || ($item['duedate'] ?? false) || (isset($item['holdtype']) && $item['holdtype'] === 'recall')): ?>
     <?php /* is there a duedate? > "ausgeliehen" */ ?>
-    <span class="text-danger"><?= $this->transEsc('ils_hold_item_' . $item['status']); ?><link property="availability" href="http://schema.org/OutOfStock" /></span>
+    <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
   <?php else: ?>
     <?php /* no duedate? > "nicht verfügbar" */ ?>
-    <span class="text-danger"><?= $this->transEsc('ils_hold_item_notavailable'); ?><link property="availability" href="http://schema.org/OutOfStock" /></span>
+    <span class="text-danger"><?= $this->transEsc('Unavailable'); ?><link property="availability" href="http://schema.org/OutOfStock" /></span>
   <?php endif; ?>
 
   <?php if ($item['returnDate'] ?? false): ?>

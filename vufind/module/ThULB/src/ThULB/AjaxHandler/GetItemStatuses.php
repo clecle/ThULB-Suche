@@ -87,7 +87,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
 
             $locationInfo = [
                 'availability' =>
-                    $locationAvailability->is(AvailabilityStatusInterface::STATUS_AVAILABLE),
+                    $locationAvailability->availabilityAsString(),
                 'location' => htmlentities(
                     $this->translateWithPrefix('location_', $location),
                     ENT_COMPAT,

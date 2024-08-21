@@ -1,0 +1,15 @@
+<?php if(is_array($this->data)): ?>
+  <?php foreach ($this->data as $key => $legal) : ?>
+    <?php if ($key > 0): ?>
+      <br>
+    <?php endif; ?>
+
+    <?php if($legal['link']): ?>
+      <a href="<?= $legal['link']; ?>" target="_blank">
+        <span><?= $legal['desc']; ?></span>
+      </a>
+    <?php else: ?>
+      <span><?= $legal['desc']; ?></span>
+    <?php endif; ?>
+  <?php endforeach; ?>
+<?php endif; ?>

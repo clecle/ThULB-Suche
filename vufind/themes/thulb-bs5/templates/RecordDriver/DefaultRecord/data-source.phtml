@@ -1,0 +1,11 @@
+<?php foreach($data ?? [] as $key => $source): ?>
+  <?php if($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <?php if($source['url'] ?? false): ?>
+    <a href="<?= $this->escapeHtml($source['url']); ?>" target="_blank"><?= $this->escapeHtml($source['name']) ?></a>
+  <?php elseif($source['name'] ?? false): ?>
+    <?= $this->escapeHtml($source['name']) ?>
+  <?php endif; ?>
+<?php endforeach; ?>

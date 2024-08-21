@@ -35,13 +35,28 @@ class SideFacets extends OriginalSideFacets
                 }
 
                 // use ThBIB helper
-                $facetArray = $this->hierarchicalFacetHelper->buildFacetArray(
+                $facetSet[$hierarchicalFacet]['list'] = $this->hierarchicalFacetHelper->buildFacetArray(
                     $hierarchicalFacet, $facetSet[$hierarchicalFacet]['list'],
                     $this->results->getUrlQuery(), true, $this->results
                 );
-                $facetSet[$hierarchicalFacet]['list'] = $this
-                    ->hierarchicalFacetHelper
-                    ->flattenFacetHierarchy($facetArray);
+
+                $facetSet[$hierarchicalFacet]['list'] = $this->hierarchicalFacetHelper->filterFacets(
+                    $hierarchicalFacet,
+                    $facetSet[$hierarchicalFacet]['list'],
+                    $this->results->getOptions()
+                );
+            }
+        }
+
+        $configFile = $this->results->getBackendId() == 'Solr' ? 'facets' : $this->results->getBackendId();
+        $facetsSortedByIndex = $this->configLoader->get($configFile)
+                                    ->Results_Settings->sorted_by_index?->toArray() ?? [];
+
+        foreach ($facetsSortedByIndex as $facet) {
+            if(!empty($facetSet[$facet]['list'])) {
+                usort($facetSet[$facet]['list'], function ($facet1, $facet2) {
+                    return strcmp($facet1['displayText'], $facet2['displayText']);
+                });
             }
         }
 

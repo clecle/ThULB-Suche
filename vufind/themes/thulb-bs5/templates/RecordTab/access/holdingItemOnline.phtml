@@ -1,0 +1,30 @@
+<div class="p-3">
+  <?php $linkData = $contentLink['data'] ?? []; ?>
+
+  <div class="d-flex flex-column align-items-start gap-3 flex-sm-wrap align-items-sm-center flex-sm-row">
+    <?= $this->record($this->driver)->renderTemplate('onlineContent.phtml', ['linkData' => $contentLink]); ?>
+    <?= $this->render('record/broken-link.phtml'); ?>
+
+    <div class="col-12">
+      <?php if($linkData['remotetitle'] ?? false):?>
+        [<?php echo $linkData['remotetitle']; ?>]
+      <?php endif; ?>
+
+      <?php /* BESTANDSANGABEN */ ?>
+      <?= $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $linkData]); ?>
+
+      <?php /* ANMERKGUNGEN */ ?>
+      <?= $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $linkData]); ?>
+
+      <?php if(isset($linkData['remotedesc']) && $linkData['remotedesc'] === $this->transEsc('get_citation')): ?>
+        <div class="item-notes">
+          <?= $this->transEsc('explain_reference') ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if (in_array($contentLink['type'] ?? '', ['fulltext', 'reference'])) : ?>
+        <?= $this->render('RecordTab/access/citations.phtml'); ?>
+      <?php endif; ?>
+    </div>
+  </div>
+</div>

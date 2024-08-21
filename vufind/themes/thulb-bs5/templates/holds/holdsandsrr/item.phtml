@@ -1,0 +1,76 @@
+<?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
+
+<?php
+  $coverDetails = $this->record($resource)->getCoverDetails('checkedout', 'small', $this->recordLinker()->getUrl($resource));
+  $cover = $coverDetails['html'];
+  $thumbnail = false;
+  $thumbnailAlignment = $this->record($resource)->getThumbnailAlignment('account');
+  if ($cover):
+    ob_start(); ?>
+    <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
+      <?=$cover ?>
+    </div>
+    <?php $thumbnail = ob_get_contents(); ?>
+    <?php ob_end_clean(); ?>
+<?php endif; ?>
+
+<div class="media">
+  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+    <?=$thumbnail ?>
+  <?php endif ?>
+
+  <div class="media-body">
+    <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
+
+    <?php if (!empty($ilsDetails['requestGroup'])): ?>
+      <div>
+        <strong><?= $this->transEsc('hold_requested_group') ?>:</strong> <?= $this->transEsc('request_group_' . $ilsDetails['requestGroup'], null, $ilsDetails['requestGroup'])?>
+      </div>>
+    <?php endif; ?>
+
+    <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
+      <div>
+        <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
+      </div>
+    <?php endif; ?>
+
+    <?php if (!empty($ilsDetails['create'])): ?>
+      <div>
+        <strong><?= $this->transEsc('Created') ?>:</strong> <?= $this->escapeHtml($ilsDetails['create']) ?>
+      </div>
+    <?php endif; ?>
+
+    <?php if (isset($this->cancelResults['items'])): ?>
+      <?php foreach ($this->cancelResults['items'] as $itemId => $cancelResult): ?>
+        <?php if ($itemId == $ilsDetails['item_id'] && $cancelResult['success'] == false): ?>
+          <div class="alert alert-danger">
+            <?= $this->transEsc($cancelResult['status']) ?><?php if ($cancelResult['sysMessage']) echo ' : ' . $this->transEsc($cancelResult['sysMessage']); ?>
+          </div>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+
+    <?php if ($ilsDetails['available'] ?? false): ?>
+      <div>
+        <p><span class="label label-success"><?= $this->transEsc("hold_available") ?></span></p>
+      </div>
+    <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>
+      <div>
+        <p><span class="label label-success"><?= $this->transEsc('request_in_transit') . (is_string($ilsDetails['in_transit']) ? ': ' . $this->transEsc('institution_' . $ilsDetails['in_transit'], [], $ilsDetails['in_transit']) : '') ?></span></p>
+      </div>
+    <?php endif; ?>
+
+    <?php if (isset($ilsDetails['type']) && $ilsDetails['type'] === 'rejected') : ?>
+      <div>
+        <?php $transParams = ['%%location%%' => isset($ilsDetails['location']) ? $ilsDetails['location'] : ' Zentrale Ausleihe'];?>
+        <span class="text-danger"><?= $this->transEsc('Consultation necessary', $transParams)?></span>
+      </div>
+    <?php endif; ?>
+
+    <?php if (isset($ilsDetails['cancel_link'])): ?>
+      <div>
+        <p><a href="<?= $this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?= $this->transEsc("hold_cancel") ?></a></p>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>

@@ -1,0 +1,108 @@
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('ill_credits_charge'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('ill_credits_charge') . '</li>';
+
+  $this->headScript()->appendFile('thulb-ill.js');
+  $this->headScript()->appendScript(<<<JS
+    var creditPrice = $this->creditPrice
+  JS);
+?>
+
+<?=$this->component('show-account-menu-button')?>
+
+<div class="<?= $this->layoutClass('mainbody'); ?>">
+  <?php if(!isset($this->exception)): ?>
+    <h2><?= $this->transEsc('ill_credits_charge')?></h2>
+    <?= $this->flashmessages(); ?>
+
+    <form action="/ILL/chargeconfirmation" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
+      <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+      <div class="d-flex flex-wrap-reverse flex-lg-nowrap gap-lg-3">
+        <div class="mt-0 mt-md-3 col-12 col-lg-6 flex-fill">
+          <div class="border-bottom">
+            <div class="align-items-center d-flex flex-wrap fw-bold justify-content-between my-3">
+              <div class="text-nowrap"><?= $this->transEsc('ill_credits_current'); ?>:</div>
+              <div class="px-1 align-top ms-auto"><?= $this->oldQuantity; ?></div>
+            </div>
+          </div>
+
+          <div class="border-bottom">
+            <div class="align-items-center d-flex flex-wrap justify-content-between my-3">
+              <div class="text-nowrap fw-bold"><label for="chargeQuantity"><?= $this->transEsc('ill_credits_add_credits'); ?></label></div>
+              <div class="px-1 align-top ms-auto">
+                <div class="flex credit-input">
+                  <button type="button" name="decreaseQuantity" class="btn btn-primary btn-sm" onclick="decreaseCredits()">-</button>
+                  <input type="number" id="chargeQuantity" name="chargeQuantity" class="form-control input-sm" oninput="calculatePrice()" onfocus="this.select()" value="1" min="1" max="<?= $this->chargeQuantityLimit; ?>"/>
+                  <label for="chargeQuantity"> / <?= $this->chargeQuantityLimit; ?></label>
+                  <button type="button" name="increaseQuantity" class="btn btn-primary btn-sm" onclick="increaseCredits()">+</button>
+                </div>
+              </div>
+            </div>
+
+            <?php if(in_array($this->thulb_userType(), [3, 4, 5, 6, 8])): ?>
+              <div class="align-items-center d-flex flex-wrap justify-content-between my-3 ill-work-related">
+                <div class="d-flex align-items-baseline fw-bold col-12">
+                  <input type="checkbox" id="workrelated" class="me-2" name="workrelated" value="true" onchange="toggleWorkRelated()">
+                  <label for="workrelated" class="control-label"><?= $this->transEsc('ill_work_related'); ?></label>
+                </div>
+                <div class="col-12">
+                  <input type="text" class="form-control w-100 hidden my-2" id="facility" name="facility" placeholder="<?= $this->transEsc('ill_work_related_facility'); ?>" />
+                  <input type="text" class="form-control w-100 hidden" id="department" name="department" placeholder="<?= $this->transEsc('ill_work_related_department'); ?>" />
+                </div>
+              </div>
+            <?php endif; ?>
+          </div>
+
+          <div id="ill-cost" class="border-bottom">
+            <div class="align-items-center d-flex flex-wrap justify-content-between my-3 fw-bold">
+              <div class="text-nowrap"><?= $this->transEsc('ill_cost_total'); ?>:</div>
+              <div class="px-1 align-top ms-auto" id="chargeCost"><?= $this->safeMoneyFormat(1 * $this->creditPrice); ?></div>
+            </div>
+
+            <div class="align-items-center d-flex flex-wrap justify-content-between my-3">
+              <div><?= $this->transEsc('ill_pay_with_thoska'); ?></div>
+              <div class="mt-2"><?= $this->transEsc('ill_no_refund'); ?></div>
+            </div>
+          </div>
+
+          <?php if(!$this->hasIllAccount): ?>
+            <div class="border-bottom">
+              <div class="align-items-center d-flex flex-wrap justify-content-between my-3 fw-bold">
+                <?= $this->transEsc('ill_new_account_header'); ?>
+              </div>
+              <div class="align-items-baseline d-flex justify-content-between my-3 col-12">
+                <input type="checkbox" id="consent" class="me-2" name="consent" value="true" required >
+                <label for="consent" class="font-weight-default"><?= $this->transEsc('ill_new_account_consent'); ?></label>
+              </div>
+            </div>
+          <?php endif; ?>
+
+          <div class="align-items-center d-flex flex-wrap justify-content-between my-3">
+            <button class="btn btn-primary mt-2"><?= $this->transEsc('ill_credits_charge_submit'); ?></button>
+          </div>
+        </div>
+
+        <div class="flex-fill col-12 col-lg-6">
+          <?php if(!$this->hasIllAccount): ?>
+            <div class="alert alert-warning"><?= $this->translate('ill_new_account_request'); ?></div>
+          <?php else: ?>
+            <div class="alert alert-info">
+              <p clasS="fw-bold"><?= $this->transEsc('ill_credits_info_header'); ?></p>
+              <p><?= $this->translate('ill_credits_info_1'); ?></p>
+              <p><?= $this->translate('ill_credits_info_2'); ?></p>
+            </div>
+          <?php endif; ?>
+        </div>
+      </div>
+    </form>
+  <?php else: ?>
+    <?= $this->render('error/index.phtml'); ?>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('chargecredits')?>
+</div>

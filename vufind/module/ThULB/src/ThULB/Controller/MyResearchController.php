@@ -94,7 +94,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     {
         $return = parent::userloginAction();
         $this->clearFollowupUrl();
-        
+
         return $return;
     }
     
@@ -107,7 +107,7 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     {
         $viewModel = parent::checkedoutAction();
         $viewModel->setVariable('renewForm', true);
-        
+
         return $viewModel;
     }
     
@@ -140,51 +140,43 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         // Display account blocks, if any:
         $this->addAccountBlocksToFlashMessenger($catalog, $patron);
 
-        // Get the current renewal status and process renewal form, if necessary:
-        $renewStatus = $catalog->checkFunction('Renewals', compact('patron'));
-        $renewResult = $renewStatus
-            ? $this->renewals()->processRenewals(
-                $this->getRequest()->getPost(), $catalog, $patron
-            )
-            : [];
-
-        // We always want to display a renewal form:
+        // renewal not possible here
+        $renewResult = [];
         $renewForm = false;
+
+        // Get paging setup:
+        $config = $this->getConfig();
+        $pageSize = $config->Catalog->checked_out_page_size ?? 50;
+        $pageOptions = $this->getPaginationHelper()->getOptions(
+            (int)$this->params()->fromQuery('page', 1),
+            $this->params()->fromQuery('sort'),
+            $pageSize,
+            $catalog->checkFunction('getMyTransactions', $patron)
+        );
 
         // Get checked out item details:
         $result = $catalog->getMyProvidedItems($patron);
 
-        // Get page size:
-        $config = $this->getConfig();
-        $limit = isset($config->Catalog->checked_out_page_size)
-            ? $config->Catalog->checked_out_page_size : 50;
-
         // Build paginator if needed:
-        if ($limit > 0 && $limit < count($result)) {
-            $adapter = new ArrayAdapter($result);
-            $paginator = new Paginator($adapter);
-            $paginator->setItemCountPerPage($limit);
-            $paginator->setCurrentPageNumber($this->params()->fromQuery('page', 1));
+        $resultCount = count($result);
+        $paginator = $this->getPaginationHelper()->getPaginator(
+            $pageOptions,
+            $resultCount,
+            $result
+        );
+        if ($paginator) {
             $pageStart = $paginator->getAbsoluteItemNumber(1) - 1;
-            $pageEnd = $paginator->getAbsoluteItemNumber($limit) - 1;
+            $pageEnd = $paginator->getAbsoluteItemNumber($pageOptions['limit']) - 1;
         } else {
-            $paginator = false;
             $pageStart = 0;
-            $pageEnd = count($result);
+            $pageEnd = $resultCount;
         }
 
         $transactions = $hiddenTransactions = [];
         foreach ($result as $i => $current) {
-            // Add renewal details if appropriate:
-            $current = $this->renewals()->addRenewDetails(
-                $catalog, $current, $renewStatus
-            );
-
             // Build record driver (only for the current visible page):
             if ($i >= $pageStart && $i <= $pageEnd) {
                 $transactions[] = $this->ilsRecords()->getDrivers([$current])[0];
-            } else {
-                $hiddenTransactions[] = $current;
             }
         }
 

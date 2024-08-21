@@ -1,0 +1,74 @@
+<?php
+  // Set up convenience variables:
+  $account = $this->auth()->getManager();
+  $user = $account->getUserObject();
+  $openUrl = $this->openUrl($this->tab->getRecordDriver(), 'holdings');
+  $openUrlActive = $openUrl->isActive();
+
+  // Account for replace_other_urls setting
+  $offlineMode = $this->ils()->getOfflineMode();
+
+  try {
+    $holdings = $this->driver->getHoldings();
+  }
+  catch (\VuFind\Exception\ILS $e) {
+    $holdings = ['holdings' => []];
+    $offlineMode = 'ils-offline';
+  }
+
+  $onlineContentLinks = $this->thulb_onlineContent($this->driver);
+?>
+
+<?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
+
+<?php if (!empty($holdings['blocks'])):?>
+  <div id="account-block-msg" class="alert alert-danger">
+    <?= $this->transEsc('account_block_options_missing', ['%%details%%' => implode('; ', $holdings['blocks'])]) ?>
+  </div>
+<?php endif; ?>
+
+<?php // ILS offline ?>
+<?= ($offlineMode == "ils-offline" && empty($holdings)) ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
+
+<?php // online holdings ?>
+<?php if(!empty($onlineContentLinks)): ?>
+  <div class="online-access striped-reverse">
+    <span class="sr-only"><?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr('Remote')?></span>
+
+    <?php foreach($onlineContentLinks as $contentLink): ?>
+      <?php if(empty($contentLink)) continue; ?>
+      <?= $this->render('RecordTab/access/holdingItemOnline.phtml', ['driver' => $this->driver, 'contentLink' => $contentLink]); ?>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
+
+<?php // physical holdings ?>
+<?php if (!empty($holdings)): ?>
+  <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
+    <?php if($holdingKey == 'Remote') continue; ?>
+    <div>
+      <?= $this->render('RecordTab/access/holdingTitle.phtml', ['holding' => $holding, 'driver' => $this->driver]); ?>
+
+      <div class="holding-details" aria-details="<?= $this->transEscAttr('Holdings details from')?> <?= $this->transEscAttr($holding['location'])?>">
+        <div class="holding-items striped">
+          <?php foreach ($holding['items'] as $item): ?>
+            <?= $this->render('RecordTab/access/holdingItemPhysical.phtml', ['holding' => $holding, 'driver' => $driver, 'item' => $item]); ?>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </div>
+  <?php endforeach; ?>
+<?php endif; ?>
+
+<?php if(empty($onlineContentLinks) && !$holdings['total']): ?>
+  <p class="m-3">
+    <?= $this->render('RecordTab/access/recommendSeries.phtml', ['driver' => $this->driver]); ?>
+  </p>
+<?php endif; ?>
+
+<?php if(is_callable([$this->driver, 'isFormat']) && $this->driver->isFormat('Journal')
+    && $this->record($this->driver)->hasNonArticleTab($this)): ?>
+  <div class="m-3">
+    <?= $this->transEsc('see volumes tab for listing and ordering of volumes'); ?>
+  </div>
+<?php endif; ?>

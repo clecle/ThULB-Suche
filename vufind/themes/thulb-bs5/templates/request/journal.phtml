@@ -1,0 +1,106 @@
+<?php $allowed = $allowed ?? false; ?>
+<?php if($allowed): ?>
+  <h2><?= $this->transEsc('storage_retrieval_request_journal'); ?></h2>
+<?php endif; ?>
+
+<?= $this->flashmessages() ?>
+
+<?php if($allowed): ?>
+<div class="journal-request">
+  <form action="<?= $this->url('request-journal') . $recordId; ?>" method="post">
+    <h4 class="fw-bold mt-5"><?= $this->transEsc('User data'); ?></h4>
+    <div class="user-data">
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('First Name'); ?>:</span>
+        <span class="form-information col-sm-9"><?= $formData['firstname']; ?></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('Last Name'); ?>:</span>
+        <span class="form-information col-sm-9"><?= $formData['lastname']; ?></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('Username'); ?>:</span>
+        <span class="form-information col-sm-9"><?= $formData['username']; ?></span>
+      </div>
+    </div>
+
+    <h4 class="fw-bold mt-5"><?= $this->transEsc('Request Data'); ?></h4>
+    <div class="request-data">
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3"><?= $this->transEsc('Title'); ?>:</span>
+        <span class="form-information col-sm-9"><?= $formData['title']; ?></span>
+      </div>
+
+      <div class="d-flex flex-wrap">
+        <span class="form-description col-sm-3"><?= $this->transEsc('storage_retrieval_request_select_location'); ?>:</span>
+        <div class="form-data col-sm-9">
+          <table class="table table-striped">
+            <thead class="hidden-xs">
+              <tr>
+                <th>&nbsp;</th>
+                <th class="visible-xs">&nbsp;</th>
+                <th class="table-location hidden-xs"><?= $this->transEsc('Location'); ?></th>
+                <th class="table-callnumber hidden-xs"><?= $this->transEsc('Call Number'); ?></th>
+                <th class="table-item-chronology hidden-xs"><?= $this->transEsc('Item Chronology'); ?></th>
+              </tr>
+            </thead>
+
+            <tbody>
+            <?php foreach ($inventory as $itemIndex => $item): ?>
+              <?php $checked = $itemIndex == $formData['item'] ?>
+              <tr>
+                <td>
+                  <input type="radio" name="item" value="<?= $itemIndex; ?>"<?= $checked ? ' checked="checked"' : ''; ?> />
+                </td>
+                <td class="visible-xs">
+                  <strong><?= $this->transEsc('Location'); ?></strong>
+                  <p><?= $item['location']; ?></p>
+                  <strong><?= $this->transEsc('Call Number'); ?></strong>
+                  <p><?= $item['callnumber']; ?></p>
+                  <strong><?= $this->transEsc('Item Chronology'); ?></strong>
+                  <p><?= $item['chronology']; ?></p>
+                </td>
+                <td class="table-location hidden-xs"><?= $item['location']; ?></td>
+                <td class="table-callnumber hidden-xs"><?= $item['callnumber']; ?></td>
+                <td class="table-item-chronology hidden-xs"><?= $item['chronology']; ?></td>
+              </tr>
+            <?php endforeach; ?>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('storage_retrieval_request_year'); ?>:</span>
+        <span class="form-data col-sm-9"><input id="edition" class="form-control" name="year" type="text" value="<?= $formData['year']; ?>" autocomplete="off" /></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('storage_retrieval_request_volume'); ?>:</span>
+        <span class="form-data col-sm-9"><input id="year" class="form-control" name="volume" type="text" value="<?= $formData['volume']; ?>" autocomplete="off" /></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('Issue'); ?>:</span>
+        <span class="form-data col-sm-9"><input id="year" class="form-control" name="issue" type="text" value="<?= $formData['issue']; ?>" autocomplete="off" /></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('storage_retrieval_request_pages'); ?>:</span>
+        <span class="form-data col-sm-9"><input id="edition" class="form-control" name="pages" type="text" value="<?= $formData['pages'] ?? ''; ?>" autocomplete="off" /></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?= $this->transEsc('Note'); ?>:</span>
+        <span class="form-data col-sm-9"><textarea id="comment" class="form-control h-auto" name="comment" rows="7" autocomplete="off" placeholder="<?= $this->transEscAttr('storage_retrieval_request_comment_placeholder');?>"><?= $formData['comment']; ?></textarea></span>
+      </div>
+    </div>
+
+    <div class="form-submit mt-4">
+      <input type="submit" class="btn btn-primary d-block col-sm-9 mx-auto" value="<?= $this->transEscAttr('Submit'); ?>">
+    </div>
+  </form>
+</div>
+<?php endif; ?>

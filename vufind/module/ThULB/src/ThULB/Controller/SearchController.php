@@ -46,6 +46,16 @@ class SearchController extends OriginalController
 {
     use FormatSearchTrait;
 
+
+    public function historyAction()
+    {
+        if (!$this->getAuthManager()->getUserObject()) {
+            return $this->forceLogin();
+        }
+
+        return parent::historyAction();
+    }
+
     /**
      * Returns a list of all items associated with one facet for the lightbox
      *
@@ -78,6 +88,10 @@ class SearchController extends OriginalController
         }
 
         $view->setVariable('data', $list);
+
+        $vars = $view->getVariables();
+        unset($vars['delegateParams']);
+        $view->setVariable('delegateParams', $vars);
 
         return $view;
     }

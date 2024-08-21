@@ -12,7 +12,7 @@ class Provenance extends AbstractTab
      * @return string
      */
     public function getDescription() : string {
-        return 'Provenances';
+        return 'Provenance';
     }
 
     public function isVisible()

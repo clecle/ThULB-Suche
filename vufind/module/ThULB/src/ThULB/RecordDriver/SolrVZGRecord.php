@@ -398,16 +398,16 @@ class SolrVZGRecord extends SolrMarc
      * @return array
      */
     public function getZDBID() : array {
-        $id_nums = $this->getFieldArray('035', ['a']);
-        $zdb_nums[] = "";
+        $ids = $this->getFieldArray('035', ['a']);
+        $zdbIds = [];
 
-        foreach ($id_nums as $id_num) {
-            if (strpos($id_num, '(DE-599)ZDB') !== false) {
-                array_push($zdb_nums, substr($id_num, 11));
+        foreach ($ids as $id) {
+            if (str_starts_with($id, '(DE-599)ZDB')) {
+                $zdbIds[] = substr($id, 11);
             }
         }
 
-        return $zdb_nums;
+        return $zdbIds;
     }
 
     /**
@@ -529,18 +529,6 @@ class SolrVZGRecord extends SolrMarc
     public function getCartographicEquinox() : ?string
     {
         return $this->getFirstFieldValue('255', ['e']);
-    }
-
-    /**
-     * Generates a single line with basic publication information including the
-     * first location of the publication, the publisher, the year and the
-     * edition.
-     *
-     * @return String|null
-     */
-    public function getReducedPublicationInfo() : ?string
-    {
-        return $this->getFormattedMarcData('250a - (((264a : 264b), 264c)');
     }
 
     /**
@@ -1970,20 +1958,28 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getPublicationDetails() : array
     {
-        $places = $this->getPlacesOfPublication();
-        $names = $this->getPublicationInfo('b');
-        $dates = $this->getHumanReadablePublicationDates();
-
-        $i = 0;
-        $retVal = [];
-        while (isset($places[$i]) || isset($names[$i]) || isset($dates[$i])) {
-            // Build objects to represent each set of data; these will
-            // transform seamlessly into strings in the view layer.
-            $retVal[] = new PublicationDetails($places[$i] ?? '', $names[$i] ?? '', $dates[$i] ?? '');
-            $i++;
+        $retVal = array();
+        foreach($this->getMarcReader()->getFields('264') as $field) {
+            $retVal[] = new PublicationDetails(
+                implode(' ; ', $this->getSubfields($field, 'a')),
+                $this->getSubfield($field, 'b'),
+                $this->getSubfield($field, 'c')
+            );
         }
 
         return $retVal;
+    }
+
+    /**
+     * Generates a single line with basic publication information including the
+     * first location of the publication, the publisher, the year and the
+     * edition.
+     *
+     * @return String|null
+     */
+    public function getReducedPublicationInfo() : ?string
+    {
+        return $this->getFormattedMarcData('250a - (((264a : 264b), 264c)');
     }
 
     /**
@@ -2437,10 +2433,10 @@ class SolrVZGRecord extends SolrMarc
                     }
                 }
 
-                return [
+                return [[
                     'name' => $source['name'],
                     'url' => $source['url'] ?? null,
-                ];
+                ]];
             }
         }
 
@@ -2473,9 +2469,12 @@ class SolrVZGRecord extends SolrMarc
                     continue;
                 }
 
-                if ($item['availability']->isAvailable() && !isset($item['link'])
-                    && !isset($item['storageRetrievalRequestLink'])
-                ) {
+                $isOpenStack =  $item['availability']->isAvailable()
+                    && !isset($item['link'])
+                    && !isset($item['storageRetrievalRequestLink']);
+                $isNewspaperRetrieval = isset($item['storageRetrievalRequestLink'])
+                    && $this->isNewsPaper();
+                if ($isOpenStack || $isNewspaperRetrieval) {
                     // item is available in 'Freihand', placing a hold and reserving not available in list view
                     $hasOpenStock = true;
                     continue;

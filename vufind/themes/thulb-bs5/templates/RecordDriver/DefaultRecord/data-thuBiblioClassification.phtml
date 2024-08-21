@@ -1,0 +1,10 @@
+<?php if ($data): ?>
+  <?php foreach ($data as $classificationNumber): ?>
+    <?php $titles = $this->driver->tryMethod('getConditionalFieldArray', ['983', ['b'], true, ' ', ['a' => $classificationNumber]]); ?>
+    <?php if ($titles): ?>
+      <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($titles[0])?>%22&amp;type=class_local_iln"><?= $classificationNumber?> <?= htmlspecialchars(implode(' ', $titles))?></a><br />
+    <?php endif; ?>
+  <?php endforeach; ?>
+
+  <a href="https://www.thulb.uni-jena.de/services/landesbibliothek/thueringen-bibliographie" target="_blank" alt="<?= $this->translate('Th_Biblio')?>" title="<?= $this->translate('Th_Biblio')?>"><img alt="<?= $this->translate('Th_Biblio')?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" /></a>
+<?php endif; ?>

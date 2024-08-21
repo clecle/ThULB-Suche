@@ -1,0 +1,39 @@
+<?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
+
+<li id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="result">
+  <?php
+    $coverDetails = $this->record($resource)->getCoverDetails('checkedout', 'small', $this->recordLinker()->getUrl($resource));
+    $cover = $coverDetails['html'];
+    $thumbnail = false;
+    $thumbnailAlignment = $this->record($resource)->getThumbnailAlignment('account');
+    if ($cover):
+      ob_start(); ?>
+      <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
+        <?=$cover ?>
+      </div>
+    <?php $thumbnail = ob_get_contents(); ?>
+    <?php ob_end_clean(); ?>
+  <?php endif; ?>
+
+  <div class="media">
+    <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+      <?=$thumbnail ?>
+    <?php endif ?>
+
+    <div class="media-body">
+      <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
+
+      <?php if (!empty($ilsDetails['borrowingLocation'])): ?>
+        <div>
+          <strong><?=$this->transEsc('Borrowing Location')?>:</strong> <?=$this->transEscWithPrefix('location_', $ilsDetails['borrowingLocation'])?>
+        </div>
+      <?php endif; ?>
+    </div>
+
+    <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+      <?=$thumbnail ?>
+    <?php endif ?>
+  </div>
+
+  <?=$resource->tryMethod('supportsCoinsOpenUrl') ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($resource->getCoinsOpenUrl()) . '"></span>' : ''?>
+</li>

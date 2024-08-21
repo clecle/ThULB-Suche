@@ -1,0 +1,80 @@
+$input-border-focus:        #568ebe;
+$tooltip-max-width:         400px !important;
+$tooltip-bg:                #002F5D !important;
+
+// Make sure Font Awesome icons are loaded properly
+$fa-font-path: "../../bootstrap5/css/vendor/font-awesome/webfonts";
+
+/**
+ * The following are useful Bootstrap variables that are used throughout the code,
+ * with comments and their defaults. See /themes/bootstrap3/less/vendor/bootstrap/variables.less for more.
+ */
+
+// $padding-base-vertical:   6px !default;  // Buttons, tabs, and other padding
+// $padding-base-horizontal: 12px !default;
+
+// $navbar-height:                    50px !default;
+
+$border-radius-base:        4px;
+$border-radius-large:       6px;
+$border-radius-small:       3px;
+
+/* ------ COLORS ------ */
+$brand-primary:             #1E60BE;
+$brand-primary-darker:      darken($brand-primary, 20%);
+$brand-primary-darker-10:   darken($brand-primary, 10%);
+$brand-primary-lighter:     lighten($brand-primary, 10%);
+$brand-secondary:           #AE9A63;
+$brand-inverted:            #ffcc00;
+
+$table-bg-accent:           #f9f9f9 !default;
+
+$primary: $brand-primary;
+$secondary: $brand-secondary;
+
+$input-border: #ccc;
+$input-placeholder-color: #999;
+
+$btn-padding-x-sm: .25rem;
+
+$recommender-title-bg: $table-bg-accent;
+$recommender-item-bg:  #fff;
+
+// Cookie consent dialog should have a z-index low enough to stay below dropdowns and modals
+$zindex-dropdown:       1000 !default;
+$zindex-cookie-consent: ($zindex-dropdown - 10) !default;
+
+$form-select-bg: none;
+$form-select-indicator: none;
+
+$badge-bg: #777;
+$badge-padding-y: 0.25em;
+$badge-border-radius: 0.25rem;
+$badge-font-size: 12px;
+$badge-line-height: normal;
+
+// color success text and badge
+$error: #d2322d;
+$error-text-emphasis: #d2322d;
+$error-bg-subtle: #f2dede;
+$error-border-subtle: darken($error-bg-subtle, 20%);
+
+$info: #214c62;
+$info-text-emphasis: #214c62;
+$info-bg-subtle: #d9edf7;
+$info-border-subtle: darken($info-bg-subtle, 20%);
+
+$success: #3c763d;
+$success-text-emphasis: #3c763d;
+$success-bg-subtle: #dff0d8;
+$success-border-subtle: darken($success-bg-subtle, 20%);
+
+$warning: #8a6d3b;
+$warning-text-emphasis: #6c4a00;
+$warning-bg-subtle: #f9f1c6;
+$warning-border-subtle: darken($warning-bg-subtle, 20%);
+
+$pagination-border-radius: .25rem;
+
+//$enable-validation-icons: false;
+$enable-smooth-scroll: true;

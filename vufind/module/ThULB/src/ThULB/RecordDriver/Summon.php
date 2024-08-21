@@ -134,6 +134,25 @@ class Summon extends OriginalSummon
     }
 
     /**
+     * Get the end page of the item that contains this record.
+     *
+     * @return string
+     */
+    public function getContainerEndPage()
+    {
+        if (isset($this->fields['EndPage'])) {
+            return $this->fields['EndPage'][0];
+        } elseif (
+            isset($this->fields['PageCount'])
+            && $this->fields['PageCount'] > 1
+            && intval($this->fields['StartPage'][0]) > 0
+        ) {
+            return $this->fields['StartPage'][0] + intval($this->fields['PageCount'][0]) - 1;
+        }
+        return $this->getContainerStartPage();
+    }
+
+    /**
      * Get an array of all corporate authors.
      *
      * @return array
@@ -196,12 +215,12 @@ class Summon extends OriginalSummon
      *         ['url']          string URL to the homepage of the library
      *         ['sourceTypes']  array
      *
-     * @return boolean|array
+     * @return array
      */
     public function getDatabaseXML() {
         return (array_key_exists('Database_xml', $this->fields) && $this->fields['Database_xml'] && is_array($this->fields['Database_xml']))
             ? $this->fields['Database_xml']
-            : false;
+            : [];
     }
 
     /**
@@ -223,7 +242,7 @@ class Summon extends OriginalSummon
         // is found... (We don't use them in cases where we have an identifier, since
         // we want to allow these to be passed to configured external services).
         if (!isset($params['oclc']) && !isset($params['issn'])
-            && !isset($params['isbn']) && !isset($params['upc'])
+            && !isset($params['isbn']) && !isset($params['isbns']) && !isset($params['upc'])
             && ($size === 'medium' || $size === 'large')
         ) {
             if (isset($this->fields['thumbnail_m'][0])) {
@@ -327,5 +346,18 @@ class Summon extends OriginalSummon
         }
 
         return $retValue;
+    }
+
+    public function getSource() : array {
+        return $this->getDatabaseXML();
+    }
+
+    public function getSeries()
+    {
+        return [[
+            'name' => $this->getContainerTitle(),
+            'number' => $this->getContainerReference(),
+            'id' => $this->getContainerRecordID()
+        ]];
     }
 }

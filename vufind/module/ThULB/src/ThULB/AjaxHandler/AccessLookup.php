@@ -71,7 +71,7 @@ class AccessLookup extends AbstractBase
 
             $html[] = trim(
                 $this->phpRenderer->record($driver)
-                    ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData, 'additionalBtnClass' => 'btn-xs'])
+                    ->renderTemplate('onlineContent.phtml', ['linkData' => $linkData, 'additionalBtnClass' => 'btn-sm'])
             );
         }
 
@@ -98,7 +98,7 @@ class AccessLookup extends AbstractBase
             if(count($location) == 1) {
                 $holdingHelper = $this->phpRenderer->thulb_holdingHelper();
                 if($location[0]['availability']->isAvailable()){
-                    $link = $holdingHelper->getRequestLinks($location[0], $driver->isNewsPaper())[0];
+                    $link = $holdingHelper->getRequestLinks($location[0], $driver->isNewsPaper())[0] ?? [];
                 }
                 else {
                     $link = $holdingHelper->getRecallLink($location[0]);
@@ -125,7 +125,7 @@ class AccessLookup extends AbstractBase
         }
 
         return [$this->createOrderReserveButton([
-            'classes' => 'btn btn-primary btn-xs',
+            'classes' => 'btn btn-primary btn-sm',
             'link' => $this->phpRenderer->url('record-orderreserve', ['id' => $driver->getUniqueID()]),
             'desc' => $msg
         ])];

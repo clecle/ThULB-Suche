@@ -1,0 +1,30 @@
+<?php
+  $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding);
+  $locationApiId = $holding['items'][0]['locationapiid'] ?? false;
+  $locationData = null;
+  if(in_array($locationApiId, [2, 3, 4, 8])) {
+    $locationData = $this->thulb_locationData($locationApiId);
+  }
+?>
+
+<h3 class="holding-title d-flex flex-column align-items-sm-center flex-sm-row gap-2 mx-3">
+  <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
+  <span class="col-text">
+    <?= $this->thulb_holdingHelper()->getLocation($holding, false);?>
+    <?php if($locationInfoInfoMessage): ?>
+      <button class="btn-location-info" onclick="VuFind.lightbox.alert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');">
+        <i class="fa fa-info-circle"></i>
+      </button>
+    <?php endif; ?>
+  </span>
+
+  <?php if(!$locationInfoInfoMessage && $locationData): ?>
+    <button class="btn btn-sm btn-secondary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
+  <?php elseif(!$locationInfoInfoMessage && $holding['locationhref'] ?? false): ?>
+    <a href="<?= $holding['locationhref']; ?>" class="btn btn-sm btn-secondary btn-opening-hours" target="_blank"><?= $this->transEsc('Location / Opening hours'); ?></a>
+  <?php endif; ?>
+
+  <div class="hidden">
+    <?= $this->render('Helpers/locationData.phtml', ['locationData' => $locationData, 'holding' => $holding]); ?>
+  </div>
+</h3>

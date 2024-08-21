@@ -1,0 +1,16 @@
+{
+    "__comment__": [
+        "Rename this file from composer.local.json.dist to composer.local.json to",
+        "manage your local dependencies without changing the core composer.json.",
+        "See https://github.com/wikimedia/composer-merge-plugin for more details."
+    ],
+    "require": {
+        "picqer/php-barcode-generator": "^2.2",
+        "setasign/tfpdf": "^1.3",
+        "twbs/bootstrap": "^5.2"
+    },
+    "scripts": {
+        "post-install-cmd": "mkdir -p themes/thulb-bs5/scss/bootstrap && cp -r vendor/twbs/bootstrap/scss themes/thulb-bs5/scss/bootstrap",
+        "post-update-cmd": "mkdir -p themes/thulb-bs5/scss/bootstrap && cp -r vendor/twbs/bootstrap/scss themes/thulb-bs5/scss/bootstrap"
+    }
+}

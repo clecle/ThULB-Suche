@@ -1,0 +1,58 @@
+<div>
+  <?php
+    $ilsDetails = $driver->getExtraDetail('ils_details');
+    // If this is a non-missing Solr record, we should display a link:
+    if (is_a($driver, \VuFind\RecordDriver\SolrDefault::class) && !is_a($driver, \VuFind\RecordDriver\Missing::class)) {
+      $title = $driver->getTitle();
+      $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
+      echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($driver))
+        . '" class="title">' . $title . '</a>';
+    } elseif(!empty($ilsDetails['title']) && $ilsDetails['departmentId'] == 'ZAUSL') {
+      $title = $ilsDetails['title'];
+      $title = str_starts_with($title, 'FL:') ? substr($title, 3) : $title;
+      echo '<strong>' . $this->transEsc('Interlibrary loan') . ': </strong>' . $this->escapeHtml($title);
+    } elseif (!empty($ilsDetails['title'])) {
+      // If the record is not available in Solr, perhaps the ILS driver sent us a title we can show...
+      echo '<span class="title">' . $this->escapeHtml($ilsDetails['title']) . '</span>';
+    } else {
+      // Last resort -- indicate that no title could be found.
+      echo $this->transEsc('Title not available');
+    }
+    $listAuthors = array_slice(array_merge(
+        array_slice($this->driver->getPrimaryAuthorsWithHighlighting(), 0, 1),
+        array_slice($this->driver->getSecondaryAuthors(['dgs', 'dgg', 'rev']), 0, 1),
+        array_slice($this->driver->getCorporateAuthors(['dgs', 'dgg', 'rev']), 0, 1)
+    ), 0, 2);
+  ?>
+</div>
+
+<?php if (!empty($listAuthors)): ?>
+  <div>
+    <span class="authors">
+      <?=$this->transEsc('by')?>:
+      <?php $authorCount = count($listAuthors); ?>
+      <?php foreach ($listAuthors as $i => $listAuthor): ?>
+        <?php $info = $this->record($this->driver)->getAuthorDetails($listAuthor); ?>
+        <?=$this->highlight(rtrim($listAuthor, ','))?><?= (!empty($info) ? ' ' . $info : '') . ($i + 1 < $authorCount ? ';' : '')?>
+      <?php endforeach; ?>
+    </span>
+  </div>
+<?php endif; ?>
+
+<?php if (isset($ilsDetails['callnumber'])) : ?>
+  <div>
+    <strong><?= $this->transEsc('sort_callnumber')?>:</strong> <?= $this->escapeHtml($ilsDetails['callnumber'])?>
+  </div>
+<?php endif; ?>
+
+<?php if (!empty($ilsDetails['volume'])): ?>
+  <div>
+    <strong><?=$this->transEsc('Volume')?>:</strong> <?=$this->escapeHtml($ilsDetails['volume'])?>
+  </div>
+<?php endif; ?>
+
+<?php if (!empty($ilsDetails['publication_year'])): ?>
+  <div>
+    <strong><?=$this->transEsc('Year of Publication')?>:</strong> <?=$this->escapeHtml($ilsDetails['publication_year'])?>
+  </div>
+<?php endif; ?>

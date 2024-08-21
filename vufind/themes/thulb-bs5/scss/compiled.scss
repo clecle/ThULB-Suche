@@ -1,0 +1,95 @@
+$fa-font-path: "../../bootstrap5/css/vendor/font-awesome/webfonts";
+
+// Include Font Awesome
+@import "../../bootstrap5/scss/vendor/font-awesome/fontawesome";
+@import "../../bootstrap5/scss/vendor/font-awesome/regular";
+@import "../../bootstrap5/scss/vendor/font-awesome/solid";
+@import "../../bootstrap5/scss/vendor/font-awesome/v4-shims";
+
+// Include Bootstrap functions first (so you can manipulate colors, SVGs, calc, etc)
+@import "bootstrap/scss/functions";
+
+//$background: #999;
+//$btn-hover-bg-shade-amount: 15%;
+//$btn-hover-bg-tint-amount: 15%;
+//
+//$shade: shade-color($background, $btn-hover-bg-shade-amount);
+//$tint: tint-color($background, $btn-hover-bg-tint-amount);
+//
+//@debug $shade;
+//@debug $tint;
+
+@import "components/variables";
+
+// Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
+@import "bootstrap/scss/variables";
+//@import "bootstrap/scss/variables-dark";
+
+// Include any map overrides here
+//@import "../../bootstrap5/scss/bootstrap-map-overrides";
+@import "bootstrap-map-overrides";
+
+// Include remainder of required parts
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+
+// Optionally include any other parts as needed
+@import "bootstrap/scss/accordion";
+@import "bootstrap/scss/alert";
+@import "bootstrap/scss/badge";
+@import "bootstrap/scss/breadcrumb";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/card";
+@import "bootstrap/scss/carousel";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/dropdown";
+@import "bootstrap/scss/forms";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/helpers";
+@import "bootstrap/scss/images";
+@import "bootstrap/scss/list-group";
+@import "bootstrap/scss/modal";
+@import "bootstrap/scss/nav";
+@import "bootstrap/scss/navbar";
+@import "bootstrap/scss/offcanvas";
+@import "bootstrap/scss/pagination";
+@import "bootstrap/scss/popover";
+@import "bootstrap/scss/tables";
+@import "bootstrap/scss/tooltip";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/utilities";
+
+// Optionally include utilities API last to generate classes based on the Sass map in `_utilities.scss`
+@import "bootstrap/scss/utilities/api";
+
+// Include custom (non-vendor) mixins
+@import "../../bootstrap5/scss/mixins/mixins";
+
+// Include bootstrap3 compatibility layer
+@import "bs3-compat";
+
+@import "../../bootstrap5/scss/components/accessibility";
+
+@import "../../bootstrap5/scss/components/advanced-search";
+@import "../../bootstrap5/scss/components/alphabrowse";
+@import "../../bootstrap5/scss/components/autocomplete";
+@import "../../bootstrap5/scss/components/channels";
+@import "../../bootstrap5/scss/components/cookie-consent/index";
+@import "../../bootstrap5/scss/components/devtools";
+@import "../../bootstrap5/scss/components/explain";
+@import "../../bootstrap5/scss/components/form";
+@import "../../bootstrap5/scss/components/icons";
+@import "../../bootstrap5/scss/components/keyboard";
+@import "../../bootstrap5/scss/components/lightbox";
+@import "../../bootstrap5/scss/components/offcanvas";
+@import "../../bootstrap5/scss/components/record";
+@import "../../bootstrap5/scss/components/search";
+@import "../../bootstrap5/scss/components/sidebar";
+@import "../../bootstrap5/scss/components/similar-carousel";
+@import "../../bootstrap5/scss/components/sliders";
+@import "../../bootstrap5/scss/components/trees";
+
+@import "thulb";

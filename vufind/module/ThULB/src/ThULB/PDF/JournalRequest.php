@@ -34,7 +34,7 @@ class JournalRequest extends tFPDF
     protected string $descComment = 'Note';
     protected string $descIssue = 'Issue';
     protected string $descName = 'Name';
-    protected string $descPages = 'storage_retrieval_request_page(s)';
+    protected string $descPages = 'storage_retrieval_request_pages';
     protected string $descTitle = 'Title';
     protected string $descVolume = 'storage_retrieval_request_volume';
     protected string $descYear = 'storage_retrieval_request_year';

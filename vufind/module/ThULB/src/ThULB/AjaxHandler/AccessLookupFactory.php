@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 
 /**
- * Factory for FulltextLookup AJAX handler.
+ * Factory for AccessLookup AJAX handler.
  */
 class AccessLookupFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {

@@ -1,0 +1,9 @@
+<?php foreach ($data as $key => $subject): ?>
+  <?php if($key > 0): ?>;<?php endif; ?>
+
+  <span class="subject-line" property="keywords">
+    <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($subject)?>%22&amp;type=Subject">
+      <?= $subject; ?>
+    </a>
+  </span>
+<?php endforeach; ?>

@@ -1,0 +1,55 @@
+<?php
+  $tabConfig = $this->searchTabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $this->hiddenFilters);
+  $searchTabs = $tabConfig['tabs'];
+  $this->showCounts = $tabConfig['showCounts'];
+?>
+<?php if (count($searchTabs) > 1): ?>
+  <?php
+    $hasSelectedTab = false;
+    $resultTotal = $this->results?->getResultTotal() ?? -1;
+  ?>
+  <ul class="list-unstyled">
+    <?php foreach ($searchTabs as $tab): ?>
+      <?php if ($this->permission()->allowDisplay($tab['permission'])): ?>
+        <?php
+          $linkAttributes = [
+            'data-source' => $this->escapeHtmlAttr($tab['class']),
+            'title' => $this->transEsc($tab['label'] . '_hover')
+          ];
+          if ($tab['selected']) {
+            $hasSelectedTab = true;
+            if ($this->showCounts && $resultTotal >= 0) {
+              $linkAttributes['data-result-total'] = $resultTotal;
+            }
+            elseif ($this->showCounts) {
+              $linkAttributes['data-search-url'] = $tab['url'];
+            }
+          }
+          else {
+            $linkAttributes['href'] = $tab['url'];
+          }
+        ?>
+        <li<?=$tab['selected'] ? ' class="active"' : ''?><?=$this->showCounts ? ' data-show-counts' : ''?>>
+          <a <?=$this->htmlAttributes($linkAttributes)?>>
+            <span class="ms-1"><?=$this->transEsc($tab['label']); ?></span>
+            <span class="pull-right badge<?= $tab['selected'] ? '' : ' resultNum' . $tab['id']?>">
+              <?= $tab['selected'] ? $this->localizedNumber(max($resultTotal, 0)) : '...' ?>
+            </span>
+          </a>
+        </li>
+      <?php elseif ($block = $this->permission()->getAlternateContent($tab['permission'])): ?>
+        <?=$block?>
+      <?php endif; ?>
+    <?php endforeach; ?>
+
+    <?php if (!$hasSelectedTab && !$this->translationEmpty('temporary_search_tab_title')): ?>
+      <li class="active">
+        <a><?=$this->transEsc('temporary_search_tab_title')?></a>
+      </li>
+    <?php endif; ?>
+  </ul>
+
+  <?php if ($this->showCounts): ?>
+    <?php $this->headScript()->appendFile('resultcount.js'); ?>
+  <?php endif; ?>
+<?php endif; ?>

@@ -1,0 +1,60 @@
+<?php
+  $addThis = $this->addThis();
+  if (!empty($addThis)) {
+    $this->headScript()->appendFile('https://s7.addthis.com/js/250/addthis_widget.js?pub=' . urlencode($addThis));
+  }
+?>
+
+<ul class="action-toolbar">
+  <?php if (count($this->driver->getCitationFormats()) > 0): ?>
+    <li>
+      <a class="cite-record icon-link" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite'))?>" rel="nofollow" title="<?=$this->transEscAttr('Cite this')?>">
+        <?=$this->icon('cite') ?>
+      </a>
+    </li>
+  <?php endif; ?>
+
+  <?php if ($this->accountCapabilities()->getSmsSetting() !== 'disabled'): ?>
+    <li role="none">
+      <a class="sms-record icon-link" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'SMS'))?>" rel="nofollow" title="<?=$this->transEsc('Text this')?>">
+        <?=$this->icon('send-sms') ?>
+      </a>
+    </li>
+  <?php endif; ?>
+
+  <li role="none">
+    <a class="mail-record icon-link" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email'))?>" rel="nofollow" title="<?=$this->transEsc('Email this')?>">
+      <?=$this->icon('send-email') ?>
+    </a>
+  </li>
+
+  <li>
+    <a class="print-record icon-link" href="<?=$this->url()->addQueryParameters(['print' => true])?>" rel="nofollow" title="<?=$this->transEsc('Print')?>">
+      <?=$this->icon('print') ?>
+    </a>
+  </li>
+
+  <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
+  <?php if (count($exportFormats) > 0): ?>
+    <li role="none" class="dropdown">
+      <a class="export-toggle icon-link dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options" title="<?=$this->transEsc('Export Record') ?>">
+        <?=$this->icon('export') ?>
+      </a>
+      <ul class="dropdown-menu" id="export-options" role="menu">
+        <?php foreach ($exportFormats as $exportFormat): ?>
+          <li role="none">
+            <a class="dropdown-item" <?php if ($this->export()->needsRedirect($exportFormat)): ?>target="<?=$this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>" rel="nofollow" role="menuitem">
+              <?=$this->transEsc('export_to', ['%%target%%' => $this->translate($this->export()->getLabelForFormat($exportFormat))])?>
+            </a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    </li>
+  <?php endif; ?>
+
+  <?php if ($this->cart()->isActive()): ?>
+    <li>
+      <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?>
+    </li>
+  <?php endif; ?>
+</ul>

@@ -39,7 +39,7 @@ class GetResultCount extends AbstractBase
         $result = $this->runner->run(['limit' => '0', 'type' => $type, 'lookfor' => $lookFor], $index);
 
         return $this->formatResponse(['count' => $this->viewRenderer->localizedNumber(
-            $result->getResultTotal() > 0 ? $result->getResultTotal() : 0
+            max($result->getResultTotal(), 0)
         )]);
     }
 }

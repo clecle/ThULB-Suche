@@ -1,0 +1,17 @@
+<?php foreach ($data as $key => $field): ?>
+  <?php if ($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <?php if (!empty($field['name'])): ?>
+    <?php $url = $field['id']
+        ? $this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver->getSourceIdentifier() . '|' . $field['id']))
+        : $this->record($this->driver)->getLink('journaltitle', $field['name']);
+    ?>
+    <a href="<?=$url?>" target="_blank"><?= $this->escapeHtml($field['name'])?></a>
+
+    <?php if (!empty($field['number'])): ?>
+      <?=$this->escapeHtml($field['number'])?>
+    <?php endif; ?>
+  <?php endif; ?>
+<?php endforeach; ?>

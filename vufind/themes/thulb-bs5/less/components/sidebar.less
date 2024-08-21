@@ -1,0 +1,154 @@
+.facet-group {
+  display: block;
+  margin-bottom: 1rem;
+
+  .facet,
+  .title {
+    display: block;
+    padding: 8px 15px;
+    line-height: 1.5rem;
+
+    .badge,
+    .status {
+      float: right;
+
+      body.rtl & { float: left; }
+    }
+    .badge {
+      max-height: 19px;
+      line-height: 1.1rem;
+    }
+  }
+  .facet { border-bottom: 1px solid @list-group-border; }
+  .title {
+    padding-right: 8px;
+    border: 1px solid @list-group-border;
+    font-weight: bold;
+  }
+
+  [data-toggle="collapse"] {
+    cursor: pointer;
+
+    &::after {
+      content: '\25B2';
+      float: right;
+
+      body.rtl & { float: left; }
+    }
+  }
+  .collapsed::after {content: '\25BC';}
+
+  .collapse,
+  .collapsing,
+  & > .facet {
+    border-left: 1px solid @list-group-border;
+    border-right: 1px solid @list-group-border;
+  }
+  & > .facet:first-child { border-top: 1px solid @list-group-border; }
+
+  .facetOR .text {
+    display: inline-block;
+    padding-left: 0.5rem;
+    text-indent: -0.5rem;
+  }
+
+  .excludable {
+    display: flex;
+    flex-direction: row-reverse;
+    padding-right: 0;
+
+    .badge { flex-shrink: 0; }
+    .text { flex-grow: 1; }
+    .exclude {
+      flex-basis: 2rem;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    body.rtl & {
+      padding-left: 0;
+      padding-right: 15px;
+    }
+  }
+}
+
+.facet__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  .icon-link__icon + .icon-link__label {
+    &:extend(.ml-1);
+  }
+}
+
+.icon-link__label {
+  text-decoration: unset;
+}
+
+.checkbox-filter {
+  display: block;
+  padding-bottom: 1rem;
+  font-weight: bold;
+  color: @text-color;
+}
+.facet-group > .checkbox,
+.sidebar .facet.checkbox {
+  margin: 0;
+  padding-left: 2rem;
+}
+
+.active-filters .facet,
+.facet-group .active {
+  padding-right: .65rem;
+  background-color: @brand-primary !important;
+  color: #fff !important;
+
+  a { color: #fff; }
+}
+.facet.active .badge,
+.jstree-node.active > a .badge,
+.jstree-node.active > a .badge .fa {
+  background-color: #fff;
+  color: @brand-primary;
+}
+
+.facet-range-form {
+  width: 100%;
+}
+.date-fields {
+  display: flex;
+
+  .date-from, .date-to { flex: 0 1 100%; }
+  .date-from { padding-right: .25rem; }
+  .date-to   { padding-left:  .25rem; }
+}
+@media (min-width: 768px) {
+  .author-facets { display: flex; }
+  .author-list { flex: 0 1 100%; }
+}
+
+.narrow-toggle { text-align: center; }
+
+.sidebar .format {
+  &:extend(.label);
+  &:extend(.label-info);
+}
+.top-row .applied {
+  font-weight: bold;
+  &:hover {
+    color: @state-danger-text;
+    .fa.fa-check:before {
+      content: "\f00d";
+    }
+  }
+}
+
+.full-facet-list { margin-top: 1rem; }
+.full-facet-list .active .fa {
+  float: right;
+  margin-top: .25rem;
+  margin-right: 0.5rem;
+  margin-left: 0.5rem;
+}
+body.rtl .full-facet-list .active .fa { float: left; }

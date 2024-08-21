@@ -1,0 +1,27 @@
+<?php
+  $truncateSettings = [
+    'rows' => $this->config()->getRecordSubjectLimit(),
+    'top-toggle' => 30,
+  ];
+
+  $oneLine = $this->driver->getSourceIdentifier() == 'Summon';
+?>
+<div class="truncate-subjects<?= $oneLine ? ' d-inline-block' : ''?>" data-truncate="<?=$this->htmlSafeJsonEncode($truncateSettings)?>">
+  <?php foreach ($data as $key => $field): ?>
+    <div class="subject-line"<?=$this->schemaOrg()->getAttributes(['property' => 'keywords'])?>>
+      <?php
+        $subject = '';
+        if (count($field) == 1) {
+          $field = explode('--', $field[0]);
+        }
+        $i = 0;
+        $total = count($field);
+      ?>
+      <?php foreach ($field as $subfield): ?>
+        <?=($i++ == 0) ? '' : ' &gt; '?>
+        <?php $subject = trim($subject . ' ' . $subfield); ?>
+        <a title="<?=$this->escapeHtmlAttr($subject)?>" href="<?=$this->record($this->driver)->getLink('subject', $subject)?>" rel="nofollow"><?=trim($this->escapeHtml($subfield))?></a><?php if ($oneLine && $total == $i): ?>;<?php endif; ?>
+      <?php endforeach; ?>
+    </div>
+  <?php endforeach; ?>
+</div>

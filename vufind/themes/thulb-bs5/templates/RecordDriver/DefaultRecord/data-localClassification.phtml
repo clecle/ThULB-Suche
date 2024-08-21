@@ -1,0 +1,9 @@
+<?php foreach ($data as $key => $notation): ?>
+  <?php if($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($notation)?>%22&amp;type=ClassLocalILN">
+    <?= $notation; ?>
+  </a>
+<?php endforeach; ?>

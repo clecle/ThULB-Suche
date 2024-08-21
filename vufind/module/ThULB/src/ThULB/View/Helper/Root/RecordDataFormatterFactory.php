@@ -102,7 +102,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                         ? 'Corporate Authors' : 'Corporate Author';
                 },
                 'context' => [
-                    'type' => 'corporate',
+                    'types' => ['corporate'],
                     'schemaLabel' => 'creator',
                     'requiredDataFields' => [
                         ['name' => 'detail'],
@@ -122,11 +122,8 @@ class RecordDataFormatterFactory extends OriginalFactory
             'Format', 'getFormats', 'RecordHelper',
             ['helperMethod' => 'getFormatList']
         );
-        $spec->setTemplateLine('Languages', 'getLanguages', 'data-languages.phtml');
-        $spec->setTemplateLine('LanguageNotes', true, 'data-language_notes.phtml');
-        $spec->setTemplateLine(
-            'Published in', 'getContainerTitle', 'data-containerTitle.phtml'
-        );
+        $spec->setLine('Languages', 'getLanguages', null, $this->getLanguageLineSettings());
+        $spec->setLine('LanguageNotes', 'getLanguageNotes');
         $spec->setTemplateLine(
             'Publication Metadata', 'getPublicationDetails', 'data-publicationDetails.phtml'
         );
@@ -142,8 +139,8 @@ class RecordDataFormatterFactory extends OriginalFactory
             ['prefix' => '<span property="bookEdition">', 'suffix' => '</span>']
         );
         $spec->setTemplateLine('Series', 'getSeries', 'data-series.phtml');
-        $spec->setTemplateLine('Numbering', true, 'data-numbering.phtml');
-        $spec->setTemplateLine('NumPecs', true, 'data-numbering_peculiarities.phtml');
+        $spec->setLine('Numbering', 'getNumbering');
+        $spec->setLine('NumPecs', 'getNumberingPeculiarities');
         $spec->setTemplateLine(
             'Subjects', 'getAllSubjectHeadings', 'data-allSubjectHeadings.phtml'
         );
@@ -176,7 +173,7 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setLine('ISSN', 'getISSNs');
         $spec->setLine('ISMN', 'getISMNs');
         /* ZDB Id */
-        $spec->setTemplateLine('ZDB', true, 'data-zdb.phtml');
+        $spec->setLine('ZDB', 'getZDBID');
         $spec->setLine('DOI', 'getCleanDOI');
         $spec->setLine('URN', 'getURN');
         $spec->setTemplateLine('Access Status', 'getAccessRestrictions', 'data-accessStatus.phtml');
@@ -188,9 +185,9 @@ class RecordDataFormatterFactory extends OriginalFactory
         $spec->setTemplateLine('DDC Notation DNB', 'getDdcNotationDNB', 'data-ddcNotation.phtml');
         $spec->setTemplateLine('Local classification', 'getLocalClassification', 'data-localClassification.phtml');
         $spec->setTemplateLine('Local subject terms', 'getLocalSubjects', 'data-localSubjects.phtml');
-        $spec->setTemplateLine('Basic Classification', true, 'data-basicClassification.phtml');
-        $spec->setTemplateLine('Th_Biblio', true, 'data-thuBiblioClassification.phtml');
-        $spec->setTemplateLine('Source', true, 'data-source.phtml',
+        $spec->setTemplateLine('Basic Classification', 'getBasicClassification', 'data-basicClassification.phtml');
+        $spec->setTemplateLine('Th_Biblio', 'getThuBiblioClassification', 'data-thuBiblioClassification.phtml');
+        $spec->setTemplateLine('Source', 'getSource', 'data-source.phtml',
             [
                 'useCache' => true,
                 'labelFunction' => function ($data) {
@@ -198,7 +195,7 @@ class RecordDataFormatterFactory extends OriginalFactory
                 }
             ]
         );
-        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
+//        $spec->setTemplateLine('Online Access', true, 'data-onlineAccess.phtml');
         return $spec->getArray();
     }
 
@@ -212,5 +209,15 @@ class RecordDataFormatterFactory extends OriginalFactory
         }
 
         return $specs;
+    }
+
+    protected function getLanguageLineSettings(): array
+    {
+        $settings = parent::getLanguageLineSettings();
+
+        $settings['translationTextDomain'] = 'Languages::';
+        $settings['separator'] = ', ';
+
+        return $settings;
     }
 }

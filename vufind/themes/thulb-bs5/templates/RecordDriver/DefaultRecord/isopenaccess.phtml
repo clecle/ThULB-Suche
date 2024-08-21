@@ -1,0 +1,4 @@
+<?php $openAccess = $this->driver->tryMethod('isOpenAccess', [], false); ?>
+<?php if ($openAccess) :?>
+  <span class="openaccess" title="<?= $this->translate('Open Access')?>"><?= $this->translate('Open Access')?></span>
+<?php endif;?>

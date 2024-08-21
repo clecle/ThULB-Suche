@@ -1,0 +1,17 @@
+<footer class="hidden-print">
+  <nav class="mt-5">
+    <div class="container">
+      <ul class="nav navbar-nav">
+        <li><a class="p-3" href="https://www.thulb.uni-jena.de/impressum.html" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
+
+        <?php if($this->thulb_serverType() == 'development'): ?>
+          <li><a class="p-3" href="<?= $this->config()->get('config.staging')->Site->url . $_SERVER['REQUEST_URI']; ?>" target="_blank">Im Testsystem öffnen</a></li>
+        <?php endif; ?>
+
+        <?php if($this->thulb_serverType() != 'production'): ?>
+          <li><a class="p-3" href="<?= $this->config()->get('config.production')->Site->url . $_SERVER['REQUEST_URI']; ?>" target="_blank">Im Livesystem öffnen</a></li>
+        <?php endif; ?>
+      </ul>
+    </div>
+  </nav>
+</footer>

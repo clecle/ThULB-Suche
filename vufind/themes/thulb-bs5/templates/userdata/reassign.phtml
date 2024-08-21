@@ -1,0 +1,193 @@
+<?php $this->layout()->searchbox = false; ?>
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <h2><?= $this->transEsc('Reassign Userdata'); ?></h2>
+
+  <?php echo $this->flashmessages(); ?>
+
+  <form action="<?= $this->url('Userdata-reassign'); ?>" method="post">
+    <table class="table">
+      <tbody>
+        <tr>
+          <th class="tag-col pt-2"><?= $this->transEsc('Old Username'); ?></th>
+          <td class="text-col pt-2">
+            <input type="text" name="oldUserNumber" value="<?= $oldUserNumber; ?>" />
+          </td>
+        </tr>
+
+        <tr>
+          <th class="tag-co pt-2l"><?= $this->transEsc('New Username'); ?></th>
+          <td class="text-col pt-2">
+            <input type="text" name="newUserNumber" value="<?= $newUserNumber; ?>" />
+          </td>
+        </tr>
+
+        <tr class="border-bottom-0">
+          <th class="tag-col pt-2">&nbsp;</th>
+          <td class="text-col pt-2">
+            <input type="submit" value="Prüfen" class="btn btn-primary"/>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+  <?php if(!empty($checkData)): ?>
+  <div class="dataCheck">
+    <?php $userDataToDisplay = ['username' => 'Username', 'firstname' => 'First Name', 'lastname' => 'Last Name', 'email' => 'Email']; ?>
+    <h2><?= $this->transEsc('Data to change'); ?>:</h2>
+
+    <h4><?= $this->transEsc('User data'); ?></h4>
+    <table class="table table-striped">
+      <thead>
+        <tr class="fw-bold">
+          <th>&nbsp;</th>
+          <th><?= $this->transEsc('Old User'); ?></th>
+          <th><?= $this->transEsc('New User'); ?></th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <?php foreach($userDataToDisplay as $field => $desc): ?>
+          <tr>
+            <th class="fw-bold"><?= $this->transEsc($desc);?>:</th>
+            <td><?= $checkData['oldUser'][$field]; ?></td>
+            <?php if($checkData['newUser']['id'] ?? false): ?>
+              <td><?= $checkData['newUser'][$field]; ?></td>
+            <?php elseif($field == 'username'): ?>
+              <td><span class="alert"><?= $this->transEsc('User not in database'); ?></span></td>
+            <?php else: ?>
+              <td>&nbsp;</td>
+            <?php endif;; ?>
+          </tr>
+        <?php endforeach; ?>
+      </tbody>
+    </table>
+
+    <?php if(!empty($comments = $checkData['comments'])): ?>
+      <h4><?= $this->transEsc('Comments');?> (<?= count($comments); ?>):</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><?= $this->transEsc('title');?></th>
+            <th><?= $this->transEsc('comment');?></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php foreach($comments as $comment): ?>
+            <tr>
+              <td><?= $comment['record_id']; ?></td>
+              <td><?= $comment['comment']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <!-- Unvollständig -->
+    <?php if(!empty($resourceTags = $checkData['resourcetags'])): ?>
+      <h4><?= $this->transEsc('Tags');?> (<?= count($resourceTags); ?>):</h4>
+    <?php endif; ?>
+
+    <?php if(!empty($searches = $checkData['search'])): ?>
+      <h4><?= $this->transEsc('history_saved_searches');?> (<?= count($searches); ?>):</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><?= $this->transEsc('Index');?></th>
+            <th><?= $this->transEsc('Search string');?></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php foreach($searches as $search): ?>
+            <tr>
+              <td><?= $search['searchClass']; ?></td>
+              <td><?= $search['queryString']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userCards = $checkData['usercard'])): ?>
+      <h4><?= $this->transEsc('User cards');?> (<?= count($userCards); ?>):</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><?= $this->transEsc('Card name');?></th>
+            <th><?= $this->transEsc('library');?></th>
+            <th><?= $this->transEsc('Username');?></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php foreach($userCards as $userCard): ?>
+            <tr>
+              <td><?= $userCard['card_name']; ?></td>
+              <td><?= $userCard['home_library']; ?></td>
+              <td><?= $userCard['cat_username']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+          </tbody>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userLists = $checkData['userlist'])): ?>
+      <h4><?= $this->transEsc('Favorite lists');?> (<?= count($userLists); ?>):</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><?= $this->transEsc('Name');?></th>
+            <th><?= $this->transEsc('Description');?></th>
+            <th><?= $this->transEsc('Entries');?></th>
+            <th><?= $this->transEsc('Public');?></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php foreach($userLists as $list): ?>
+            <tr>
+              <td><?= $list['title']; ?></td>
+              <td><?= $list['description'] ?? ''; ?></td>
+              <td><?= $list['entries'] ?? 0; ?></td>
+              <td><?= $list['public'] ? 'Ja' : 'Nein'; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <?php if(!empty($userResources = $checkData['userresource'])): ?>
+      <h4><?= $this->transEsc('Favorites');?> (<?= count($userResources); ?>):</h4>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th><?= $this->transEsc('List');?></th>
+            <th><?= $this->transEsc('Resource');?></th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <?php foreach($userResources as $resource): ?>
+            <tr>
+              <td><?= $resource['list_title']; ?></td>
+              <td><?= $resource['record_id']; ?></td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+    <?php endif; ?>
+
+    <form action="<?= $this->url('Userdata-save'); ?>" method="post" class="pt-2">
+      <input type="hidden" name="oldUserNumber" value="<?= $oldUserNumber; ?>">
+      <input type="hidden" name="newUserNumber" value="<?= $newUserNumber; ?>">
+      <input type="submit" value="<?= $this->transEsc('Save'); ?>" class="btn btn-primary" />
+    </form>
+  </div>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>">
+  <?=$this->render("admin/menu.phtml")?>
+</div>

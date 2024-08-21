@@ -3,7 +3,7 @@
     <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
     <br />
   <?php elseif($ilsDetails['departmentId'] == 'ZAUSL' && ($ilsDetails['status'] ?? false) == 3): ?>
-    <span class="text-danger"><?= $this->translate('Renewal not possible (ILL)')?></span>
+    <span class="text-danger"><?= $this->translate('Renewal not possible_ILL')?></span>
     <br />
   <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
     <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>

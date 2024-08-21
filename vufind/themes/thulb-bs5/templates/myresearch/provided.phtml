@@ -1,0 +1,92 @@
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('Provided Items'));
+
+  // Set up breadcrumbs:
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Provided Items') . '</li>';
+?>
+
+<?=$this->component('show-account-menu-button')?>
+
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <h2><?=$this->transEsc('Provided Items')?></h2>
+  <?=$this->flashmessages()?>
+
+  <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
+
+  <?php if (!empty($this->transactions)): ?>
+    <nav class="search-header hidden-print">
+      <?php if ($paginator): ?>
+        <div class="search-stats">
+          <?php
+            $abs = $paginator->getAbsoluteItemNumber($paginator->getItemCountPerPage());
+            $end = min($abs, $paginator->getTotalItemCount());
+            $transParams = [
+              '%%start%%' => $this->localizedNumber($paginator->getAbsoluteItemNumber(1)),
+              '%%end%%' => $this->localizedNumber($end),
+              '%%total%%' => $this->localizedNumber($paginator->getTotalItemCount()),
+              '%%subject%%' => $this->transEsc('Provided Items'),
+            ];
+          ?>
+          <?=$this->translate('showing_items_of_for_html', $transParams); ?>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($this->sortList): ?>
+        <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $this->sortList]); ?>
+      <?php endif; ?>
+    </nav>
+
+    <ul class="record-list striped">
+      <?php foreach ($this->transactions as $resource): ?>
+        <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
+
+        <li id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="result">
+          <?php
+            $coverDetails = $this->record($resource)->getCoverDetails('checkedout', 'small', $this->recordLinker()->getUrl($resource));
+            $cover = $coverDetails['html'];
+            $thumbnail = false;
+            $thumbnailAlignment = $this->record($resource)->getThumbnailAlignment('account');
+            if ($cover):
+                ob_start(); ?>
+            <div class="media-<?=$thumbnailAlignment ?> <?=$this->escapeHtmlAttr($coverDetails['size'])?>">
+                <?=$cover ?>
+            </div>
+            <?php $thumbnail = ob_get_contents(); ?>
+            <?php ob_end_clean(); ?>
+          <?php endif; ?>
+
+          <div class="media">
+            <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+              <?=$thumbnail ?>
+            <?php endif ?>
+
+            <div class="media-body">
+              <?=$this->record($resource)->renderTemplate('account-entry.phtml')?>
+
+              <?php if (!empty($ilsDetails['location'])): ?>
+                <div>
+                  <strong><?=$this->transEsc('pick_up_location')?>:</strong> <?=$this->escapeHtml($ilsDetails['location'])?>
+                </div>
+              <?php endif; ?>
+            </div>
+
+            <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+              <?=$thumbnail ?>
+            <?php endif ?>
+          </div>
+
+          <?=$resource->tryMethod('supportsCoinsOpenUrl') ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($resource->getCoinsOpenUrl()) . '"></span>' : ''?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+
+    <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', compact('params')) : ''?>
+  <?php else: ?>
+    <?= $this->transEsc('There are no items provided for pickup')?>.
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('provided')?>
+</div>

@@ -46,7 +46,7 @@ class HoldingHelper extends AbstractHelper
                 . '&duedate=' . $item['duedate'] . '&requests_placed=' . $item['requests_placed'];
 
             return [
-                'classes' => ($check ? 'checkRequest' : '') . 'placehold btn btn-primary btn-xs',
+                'classes' => ($check ? 'checkRequest' : '') . 'placehold btn btn-primary btn-sm',
                 'link' => $url,
                 'desc' => $check ? 'Check Recall' : 'Recall This'
             ];
@@ -63,7 +63,7 @@ class HoldingHelper extends AbstractHelper
         $links = array ();
         if ($item['link'] ?? false) {
             $links[] = array (
-                'classes' => ($check ? 'checkRequest ' : '') . 'placehold btn btn-primary btn-xs',
+                'classes' => ($check ? 'checkRequest ' : '') . 'placehold btn btn-primary btn-sm',
                 'link' => $this->view->recordLinker()->getRequestUrl($item['link']),
                 'desc' => $check ? 'Check Hold' : 'Place a Hold'
             );
@@ -71,7 +71,7 @@ class HoldingHelper extends AbstractHelper
 
         if (($item['storageRetrievalRequestLink'] ?? false) && !$isNewsPaper) {
             $links[] = array (
-                'classes' => ($checkStorageRetrievalRequest ? 'checkStorageRetrievalRequest ' : '') . 'placeStorageRetrievalRequest btn btn-primary btn-xs',
+                'classes' => ($checkStorageRetrievalRequest ? 'checkStorageRetrievalRequest ' : '') . 'placeStorageRetrievalRequest btn btn-primary btn-sm',
                 'link' => $this->view->recordLinker()->getRequestUrl($item['storageRetrievalRequestLink']),
                 'desc' => $checkStorageRetrievalRequest ? 'storage_retrieval_request_check_text' : 'storage_retrieval_request_place_text'
             );

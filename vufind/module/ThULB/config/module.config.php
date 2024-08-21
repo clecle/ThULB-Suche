@@ -181,11 +181,13 @@ $config = array(
             'search_facets' => array(
                 'factories' => array(
                     \ThULB\Search\Facets\ThBIBFacet::class => \ThULB\Search\Facets\FacetFactory::class,
-                    \ThULB\Search\Facets\LocationFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+                    \ThULB\Search\Facets\TopicFacet::class => \ThULB\Search\Facets\FacetFactory::class,
+//                    \ThULB\Search\Facets\LocationFacet::class => \ThULB\Search\Facets\FacetFactory::class,
                 ),
                 'aliases' => array(
+                    'bklnumber' => \ThULB\Search\Facets\TopicFacet::class,
                     'class_local_iln' => \ThULB\Search\Facets\ThBIBFacet::class,
-                    'standort_iln_str_mv' => \ThULB\Search\Facets\LocationFacet::class
+//                    'standort_iln_str_mv' => \ThULB\Search\Facets\LocationFacet::class
                 )
             ),
             'search_params' => array(

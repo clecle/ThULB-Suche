@@ -1,0 +1,12 @@
+<?php if(!is_array($this->data)) $this->data = []; ?>
+<?php foreach ($this->data as $key => $status): ?>
+  <?php if ($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <?php if($status['link']): ?>
+    <a href="<?= $status['link']; ?>" target="_blank"><?= $status['desc']; ?></a>
+  <?php else: ?>
+    <?= $status['desc']; ?>
+  <?php endif; ?>
+<?php endforeach; ?>

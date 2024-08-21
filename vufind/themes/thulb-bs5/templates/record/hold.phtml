@@ -1,0 +1,209 @@
+<?php
+    // Set page title.
+    $this->headTitle($this->translate('request_place_text') . ': ' . $this->driver->getBreadcrumb());
+
+    // Set up breadcrumbs:
+    $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '<li>', '</li> ')
+        . '<li>' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li> '
+        . '<li class="active">' . $this->transEsc('request_place_text') . '</li>';
+?>
+<h2><?=$this->transEsc('request_place_text')?></h2>
+<?php if ($this->helpTextHtml): ?>
+  <p class="helptext"><?=$this->helpTextHtml?></p>
+<?php endif; ?>
+
+<form class="form-record-hold" method="post" name="placeHold" data-clear-account-cache="holds">
+  <?=$this->flashmessages()?>
+
+  <div class="d-flex flex-column flex-sm-row gap-sm-4 mb-3">
+    <label class="col-sm-3 text-sm-end mb-0 fw-bold control-label"><?= $this->transEsc('Title')?></label>
+    <div class="flex-grow-1 form-control-static">
+      <?= $this->driver->getBreadcrumb() ?>
+    </div>
+  </div>
+
+  <?php /* ANMERKGUNGEN */ ?>
+  <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $item]);; ?>
+  <?php if(trim($commentsHtml)): ?>
+    <div class="d-flex flex-column flex-sm-row gap-sm-4 mb-3">
+      <label class="col-sm-3 text-sm-end mb-0 fw-bold control-label"><?= $this->transEsc("Item Notes")?>:</label>
+      <div class="flex-grow-1 form-control-static">
+        <?= $commentsHtml; ?>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php $readingRoomOnly = $this->thulb_holdingHelper()->getReadingRoomOnlyString($item); ?>
+  <?php if($readingRoomOnly): ?>
+    <div class="form-group">
+      <div class="col-sm-9 offset-sm-3">
+        <span class="ms-sm-4"><?=$readingRoomOnly?></span>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if($this->duedate ?? false): ?>
+    <div class="d-flex flex-column flex-sm-row gap-sm-4 mb-3">
+      <label class="col-sm-3 text-sm-end mb-0 fw-bold control-label"><?= $this->transEsc("Due")?>:</label>
+      <div class="flex-grow-1 form-control-static">
+        <?= $this->escapeHtml($this->duedate) . ' ' . $this->thulb_holdingHelper()->getRequestsPlacedString(['requests_placed' => $this->requests_placed]) ?>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (in_array('comments', $this->extraHoldFields)): ?>
+    <div class="form-group hold-comment">
+      <label class="col-sm-3 control-label"><?=$this->transEsc('Comments')?>:</label>
+      <div class="col-sm-9">
+        <textarea rows="3" cols="20" name="gatheredDetails[comment]" class="form-control"><?= isset($this->gatheredDetails['comment']) ? $this->escapeHtml($this->gatheredDetails['comment']) : ''?></textarea>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (in_array('startDate', $this->extraHoldFields)): ?>
+    <div class="form-group hold-start-date">
+      <label class="col-sm-3 control-label"><?=$this->transEsc('hold_start_date')?>:</label>
+      <div class="col-sm-9">
+        <input id="startDate" type="text" name="gatheredDetails[startDate]" value="<?=!empty($this->gatheredDetails['startDate']) ? $this->escapeHtmlAttr($this->gatheredDetails['startDate']) : $this->escapeHtmlAttr($this->defaultStartDate)?>" size="10" class="form-control">
+        (<?=$this->dateTime()->getDisplayDateFormat()?>)
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (in_array("requiredByDate", $this->extraHoldFields)): ?>
+    <div class="form-group hold-required-by">
+      <label class="col-sm-3 control-label"><?=$this->transEsc('hold_required_by')?>:</label>
+      <div class="col-sm-9">
+        <input id="requiredByDate" type="text" name="gatheredDetails[requiredBy]" value="<?=!empty($this->gatheredDetails['requiredBy']) ? $this->escapeHtmlAttr($this->gatheredDetails['requiredBy']) : $this->escapeHtmlAttr($this->defaultRequiredDate)?>" size="10" class="form-control">
+        (<?= $this->dateTime()->getDisplayDateFormat()?>)
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if ($this->requestGroupNeeded): ?>
+    <div class="form-group hold-request-group">
+      <?php
+        if (isset($this->gatheredDetails['requestGroupId']) && $this->gatheredDetails['requestGroupId'] !== '') {
+            $selected = $this->gatheredDetails['requestGroupId'];
+        } else {
+            $selected = $this->defaultRequestGroup;
+        }
+     ?>
+      <label class="col-sm-3 control-label"><?= $this->transEsc('hold_request_group')?>:</label>
+      <div class="col-sm-9">
+        <select id="requestGroupId" name="gatheredDetails[requestGroupId]" class="form-control">
+          <?php if ($selected === false): ?>
+            <option value="" selected="selected">
+              <?=$this->transEsc('select_request_group')?>
+            </option>
+          <?php endif; ?>
+
+          <?php foreach ($this->requestGroups as $group): ?>
+            <option value="<?=$this->escapeHtmlAttr($group['id'])?>"<?=($selected == $group['id']) ? ' selected="selected"' : ''?>>
+              <?=$this->transEsc('request_group_' . $group['name'], null, $group['name'])?>
+            </option>
+          <?php endforeach; ?>
+        </select>
+      </div>
+    </div>
+  <?php endif; ?>
+
+  <?php if (in_array('pickUpLocation', $this->extraHoldFields)): ?>
+    <?php
+      // Empty string as home library means that default pick up location should be
+      // used. null means that there should be no default
+      if (($this->gatheredDetails['pickUpLocation'] ?? '') !== '') {
+        $selected = $this->gatheredDetails['pickUpLocation'];
+      } elseif ($this->homeLibrary === '') {
+        // Empty string indicates that the default pick up location should be used:
+        $selected = $this->defaultPickup;
+      } else {
+        // Either a string for a location or null for no default. Change null to
+        // false for compatibility with defaultPickup where false indicated no
+        // default:
+        $selected = $this->homeLibrary ?? false;
+      }
+    ?>
+    <?php if ($this->requestGroupNeeded): ?>
+      <div class="form-group hold-pickup-location">
+        <label id="pickUpLocationLabel" class="col-sm-3 control-label"><?=$this->icon('spinner', 'loading-icon hidden')?> <?=$this->transEsc('pick_up_location')?>:
+          <?php if (in_array('requestGroup', $this->extraHoldFields)): ?>
+            <noscript> (<?=$this->transEsc('Please enable JavaScript.')?>)</noscript>
+          <?php endif; ?>
+        </label>
+        <div class="col-sm-9">
+          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" data-default="<?=$this->escapeHtmlAttr($selected)?>" class="form-control">
+            <?php if ($selected === false): ?>
+              <option value="" selected="selected">
+                <?=$this->transEsc('select_pickup_location')?>
+              </option>
+            <?php endif; ?>
+          </select>
+        </div>
+      </div>
+    <?php elseif ($this->pickup): ?>
+      <div class="form-group hold-pickup-location">
+        <label class="col-sm-3 control-label"><?= $this->transEsc('pick_up_location')?>:</label>
+        <div class="col-sm-9">
+          <select id="pickUpLocation" name="gatheredDetails[pickUpLocation]" class="form-control">
+            <?php if ($selected === false && count($this->pickup) > 1): ?>
+              <option value="" selected="selected">
+                <?=$this->transEsc('select_pickup_location')?>
+              </option>
+            <?php endif; ?>
+
+            <?php foreach ($this->pickup as $lib): ?>
+              <option value="<?=$this->escapeHtmlAttr($lib['locationID'])?>"<?=($selected == $lib['locationID']) ? ' selected="selected"' : ''?>>
+                <?=$this->transEscWithPrefix('location_', $lib['locationDisplay'])?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      </div>
+    <?php else: ?>
+      <input type="hidden" name="gatheredDetails[pickUpLocation]" value="<?= $this->escapeHtmlAttr($this->defaultPickup)?>">
+    <?php endif; ?>
+
+    <?php if (!empty($this->proxiedUsers)): ?>
+      <div class="form-group hold-proxied-users">
+        <label class="col-sm-3 control-label"><?=$this->transEsc('proxied_user')?>:</label>
+        <div class="col-sm-9">
+          <?php $selectedProxy = $this->gatheredDetails['proxiedUser'] ?? ''; ?>
+          <select id="proxiedUser" name="gatheredDetails[proxiedUser]" class="form-control">
+            <option value=""<?php if (empty($selectedProxy)): ?> selected="selected"<?php endif; ?>>
+              <?=$this->transEsc('no_proxied_user')?>
+            </option>
+            <?php foreach ($this->proxiedUsers as $userId => $userName): ?>
+              <option value="<?=$this->escapeHtmlAttr($userId)?>"<?=($selectedProxy == $userId) ? ' selected="selected"' : ''?>>
+                <?=$this->escapeHtml($userName)?>
+              </option>
+            <?php endforeach; ?>
+          </select>
+        </div>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <div class="form-group">
+    <div class="col-sm-9 offset-sm-3">
+      <input class="btn btn-primary ms-sm-4" type="submit" name="placeHold" value="<?=$this->transEscAttr('request_submit_text')?>">
+    </div>
+  </div>
+</form>
+
+<?php
+    // Set up hold script; we do this inline instead of in the header for lightbox compatibility:
+    $this->inlineScript()->appendFile('hold.js');
+
+    $js = <<<JS
+        if ($.isReady) {
+            setUpHoldRequestForm("{$this->escapeHtml($this->driver->getUniqueId())}");
+        } else {
+            $(document).ready(function() {
+                setUpHoldRequestForm("{$this->escapeHtml($this->driver->getUniqueId())}");
+            });
+        }
+        JS;
+
+    echo $this->inlineScript()->appendScript($js);
+?>

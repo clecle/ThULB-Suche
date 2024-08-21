@@ -1,0 +1,105 @@
+<?php
+  $this->layout()->searchbox = false;
+
+  $german = $this->german;
+  $english = $this->english;
+  $tags = $this->tags;
+?>
+
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <div class="alert alert-info">
+    <b><u><?= $this->transEsc('Information'); ?>:</u></b><br>
+    <?= $this->transEsc('DynMessages_information'); ?><br><br>
+    <?= $this->transEsc('Examples'); ?>:<br>
+    <a href="https://www.gbv.de"><?= $this->transEsc('open in current tab'); ?></a>: &lt;a href="https://www.gbv.de"&gt;<?= $this->transEsc('open in current tab'); ?>&lt;/a&gt;<br>
+    <a href="https://www.gbv.de" target="_blank"><?= $this->transEsc('open in new tab'); ?></a>: &lt;a https://www.gbv.de" target="_blank"&gt;<?= $this->transEsc('open in new tab'); ?>&lt;/a&gt;<br>
+    <i><?= $this->transEsc('italic text'); ?></i>: &lt;i&gt;<?= $this->transEsc('italic text'); ?>&lt;/i&gt;<br>
+    <strong><?= $this->transEsc('bold text'); ?></strong>: &lt;strong&gt;<?= $this->transEsc('bold text'); ?>&lt;/strong&gt;
+  </div>
+
+  <?= $this->flashmessages(); ?>
+
+  <form action="<?=$this->url('DynMessages-save')?>" method="post">
+    <table>
+      <thead>
+        <tr>
+          <th class="tag-col"><?= $this->transEsc('Information'); ?></th>
+          <th class="text-col"><?= $this->transEsc('Languages::German'); ?></th>
+          <th class="text-col"><?= $this->transEsc('Languages::English'); ?></th>
+        </tr>
+      </thead>
+      <tbody>
+      <?php foreach($tags as $tag => $content): ?>
+        <?php if(!array_key_exists($tag, $german) || !array_key_exists($tag, $english)) continue; ?>
+        <tr>
+          <td class="tag-col">
+            <?= $content; ?>
+          </td>
+          <td class="text-col de col-5">
+            <textarea class="text-input col-12" rows=5 name="german[<?= $tag; ?>]"><?= $german[$tag]; ?></textarea>
+          </td>
+          <td class="text-col en col-5">
+            <textarea class="text-input col-12" rows=5 name="english[<?= $tag; ?>]"><?= $english[$tag]; ?></textarea>
+          </td>
+        </tr>
+      <?php endforeach; ?>
+        <tr>
+          <td>&nbsp;</td>
+          <td>
+            <input type="submit" value="<?= $this->transEsc('Save'); ?>" class="btn btn-primary" />
+            <a id="preview" class="ml-2"><?= $this->transEsc('Preview'); ?></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </form>
+
+  <div id="dynmessage-preview-container">
+    <h3>Vorschau DE:</h3>
+    <?= $this->render('Helpers/dynamic_message.phtml', ['tag' => 'dynmessage-preview-de', 'message' => '&nbsp;']); ?>
+    <h3>Vorschau EN:</h3>
+    <?= $this->render('Helpers/dynamic_message.phtml', ['tag' => 'dynmessage-preview-en', 'message' => '&nbsp;']); ?>
+  </div>
+
+  <script>
+    $('#preview').click(function(event){
+      event.preventDefault();
+
+      var de = $('td.text-col.de textarea').val();
+      var en = $('td.text-col.en textarea').val();
+
+      if(de !== "" || en !== "") {
+        $('#dynmessage-preview-de div').html(formatPreview(de));
+        $('#dynmessage-preview-en div').html(formatPreview(en));
+
+        $('#dynmessage-preview-container div').show();
+        $('#dynmessage-preview-container').show();
+      }
+    });
+
+    function formatPreview(str) {
+      str = (str + '').trim();
+
+      // Replace normal linebreaks with BR-tags
+      // from https://stackoverflow.com/a/2919363
+      str = str.replace(/([^>\r\n]?)(\r\n|\n\r|\r|\n)/g, '$1<br>$2');
+
+      // Remove all HTML-tags except whitelisted ones
+      // original from https://stackoverflow.com/a/5601929
+      var whitelist = "a, i, strong, em, br";
+      var el = $('<div />');
+      el.html(str);
+
+      $(el).children().not(whitelist).each(function() {
+        var content = $(this).contents();
+        $(this).replaceWith(content);
+      });
+
+      return el.html();
+    }
+  </script>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>">
+    <?=$this->render("admin/menu.phtml")?>
+</div>

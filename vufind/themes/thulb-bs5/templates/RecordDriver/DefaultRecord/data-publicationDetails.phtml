@@ -1,0 +1,30 @@
+<?php foreach ($data as $key => $field): ?>
+  <?php $pubPlace = $field->getPlace(); ?>
+  <?php $pubName = $field->getName(); ?>
+  <?php $pubDate = $field->getDate(); ?>
+
+  <?php if ($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <span<?=$this->schemaOrg()->getAttributes(['property' => 'publisher', 'typeof' => 'Organization'])?>>
+    <?php if (!empty($pubPlace)): ?>
+      <span<?=$this->schemaOrg()->getAttributes(['property' => 'location'])?>>
+        <?=$this->escapeHtml($pubPlace) . (!empty($pubName) ? ' : ' : (!empty($pubDate) ? ', ' : ''))?>
+      </span>
+    <?php endif; ?>
+
+    <?php if (!empty($pubName)): ?>
+      <span<?=$this->schemaOrg()->getAttributes(['property' => 'name'])?>>
+        <?=$this->escapeHtml($pubName) . (!empty($pubDate) ? ', ' : '')?>
+      </span>
+    <?php endif; ?>
+  </span>
+
+  <?php if (!empty($pubDate)): ?>
+    <span<?=$this->schemaOrg()->getAttributes(['property' => 'datePublished'])?>>
+      <?=$this->escapeHtml($pubDate)?>
+    </span>
+  <?php endif; ?>
+<?php endforeach; ?>
+

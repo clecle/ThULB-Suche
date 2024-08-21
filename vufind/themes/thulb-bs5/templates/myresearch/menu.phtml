@@ -1,0 +1,88 @@
+<?php
+  $user = $this->auth()->getUserObject();
+?>
+<?=$this->component('hide-offcanvas-button')?>
+<h4 id="acc-menu-acc-header"><?= $this->transEsc('Your Account')?></h4>
+<nav class="myresearch-menu" aria-labelledby="acc-menu-acc-header">
+  <ul class="account-menu">
+    <?php foreach ($this->items as $item): ?>
+      <?=$this->render('myresearch/menu-item.phtml', ['active' => $this->active, ...$item])?>
+    <?php endforeach; ?>
+  </ul>
+</nav>
+
+<?php if($user && $this->config()->get('thulb')->ILL->enabled): ?>
+  <h4 id="acc-menu-ill-header"><?= $this->transEsc('My Interlibrary loan')?></h4>
+  <nav class="myresearch-menu" aria-labelledby="acc-menu-ill-header">
+    <ul class="ill-menu">
+      <li>
+        <a href="<?= $this->url('ill-chargecredits')?>" class="icon-link<?= $this->active == 'chargecredits' ? ' active' : ''?>">
+          <?=$this->icon('ill', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('ill_credits_charge') ?></span>
+        </a>
+      </li>
+      <li>
+        <a href="<?= $this->url('ill-forgotpassword')?>" class="icon-link<?= $this->active == 'forgotillpassword' ? ' active' : ''?>">
+          <?=$this->icon('ill', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('ill_forgot_password') ?></span>
+        </a>
+      </li>
+      <li>
+        <a href="<?= $this->url('ill-deleteaccount')?>" class="icon-link<?= $this->active == 'deleteaccount' ? ' active' : ''?>">
+          <?=$this->icon('ill', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('ill_delete_account') ?></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+<?php endif; ?>
+
+<?php if ($user && $this->userlist()->getMode() !== 'disabled'): ?>
+  <h4 id="acc-menu-lists-header"><?= $this->transEsc('Your Lists')?></h4>
+  <nav class="myresearch-menu" aria-labelledby="acc-menu-lists-header">
+    <ul class="favorite-menu">
+      <?php
+        // Use a variable so that we can output this nicely without whitespace that would get underlined:
+        $publicInd = $this->icon(
+            'user-public-list-indicator',
+            [
+              'class' => 'user-list__public-icon',
+              'title' => $this->translate('public_list_indicator'),
+            ]
+        );
+        $publicInd .= '<span class="sr-only">(' . $this->transEsc('public_list_indicator') . ')</span>';
+      ?>
+
+      <?php if ($this->accountCapabilities()->getSavedSearchSetting() === 'enabled'): ?>
+        <li>
+          <a href="<?= $this->url('search-history')?>?require_login" class="icon-link<?= $this->active == 'history' ? ' active' : ''?>">
+            <?=$this->icon('search', 'icon-link__icon') ?> <?= $this->transEsc('history_saved_searches_tab')?>
+          </a>
+        </li>
+      <?php endif; ?>
+
+      <li>
+        <a href="<?= $this->url('myresearch-favorites')?>" class="icon-link<?= $this->active == 'favorites' ? ' active' : ''?>">
+          <?=$this->icon('cart-remove', 'icon-link__icon') ?> <?= $this->transEsc('saved_items')?>
+        </a>
+      </li>
+
+      <?php $lists = $user->getLists() ?>
+      <?php foreach ($lists as $list): ?>
+        <li>
+          <a class="user-list-link icon-link<?=$this->active == 'list' . $list->getId() ? ' active' : ''?> justify-content-end align-items-center" href="<?=$this->url('userList', ['id' => $list->getId()])?>">
+            <span class="icon-link__label me-auto"><?=$this->escapeHtml($list->getTitle())?></span>
+            <?=$list->isPublic() ? $publicInd : ''?>
+            <span class="badge"><?=$list->cnt ?></span>
+          </a>
+        </li>
+      <?php endforeach; ?>
+      <li>
+        <a href="<?=$this->url('editList', ['id' => 'NEW'])?>" class="icon-link <?=$this->active == 'editlist/NEW' ? ' active' : ''?>">
+          <?=$this->icon('cart-remove', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('Create a List') ?></span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+<?php endif ?>

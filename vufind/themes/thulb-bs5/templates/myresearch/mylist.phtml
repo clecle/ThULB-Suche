@@ -1,0 +1,96 @@
+<?php
+  // Convenience variable:
+  $account = $this->auth()->getManager();
+  $user = $this->auth()->getUserObject();
+
+  // Grab list object from search results (if applicable):
+  $list = $this->results->getListObject();
+
+  // Set up page title:
+  $this->headTitle(isset($list) ? $list->getTitle() : $this->translate('saved_items'));
+
+  // Set up breadcrumbs:
+  $currPage = isset($list) ? 'List' : 'saved_items';
+  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+
+  // Load Javascript dependencies into header:
+  $this->headScript()->appendFile('check_item_statuses.js');
+
+  // Load Javascript only if list view parameter is NOT full:
+  if ($this->params->getOptions()->getListViewOption() != 'full') {
+    $this->headScript()->appendFile('record.js');
+    $this->headScript()->appendFile('embedded_record.js');
+  }
+
+  $recordTotal = $this->results->getResultTotal();
+
+  // Convenience variable:
+  $account = $this->auth()->getManager();
+  $user = $this->auth()->getUserObject();
+?>
+
+<?=$this->component('show-account-menu-button')?>
+
+<div class="<?= $this->layoutClass('mainbody')?>">
+  <div class="favorite-header d-flex align-items-center mb-4">
+    <h2 class="m-0"><?= $list ? $this->escapeHtml($list->getTitle()) : $this->transEsc("saved_items")?></h2>
+    <div class="list-edit">
+      <?php if (isset($list) && $list->editAllowed($account->getUserObject())): ?>
+        <a href="<?=$this->url('editList', ['id' => $list->getId()]) ?>" class="btn btn-link icon-link">
+          <?=$this->icon('user-list-edit', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('edit_list')?></span>
+        </a>
+        <?= $this->component(
+            'confirm-button',
+            [
+              'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+              'buttonIcon' => 'user-list-delete',
+              'buttonLabel' => 'delete_list',
+              'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+            ]
+          )
+        ?>
+      <?php endif; ?>
+    </div>
+  </div>
+
+  <?php if ($list && !empty($list->description)): ?>
+    <p class="mb-4"><?= $this->escapeHtml($list->description)?></p>
+  <?php endif; ?>
+
+  <?=$this->flashmessages()?>
+
+  <nav class="search-header hidden-print">
+    <div class="search-controls">
+      <?php if ($recordTotal > 0): ?>
+        <?=$this->render('search/controls/limit.phtml')?>
+        <?=$this->render('search/controls/sort.phtml')?>
+      <?php endif; ?>
+    </div>
+  </nav>
+
+  <?php if ($recordTotal > 0): ?>
+    <form class="form-inline" id="form-favorites<?=($listId = $list?->getId()) ? '-' . $listId : ''?>" method="post" name="bulkActionForm" action="<?= $this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+      <div class="favourite-list mb-5">
+        <div class="pl-2 pr-2">
+          <?= $this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account])?>
+        </div>
+        <div class="striped">
+          <?php foreach ($this->results->getResults() as $i => $current): ?>
+            <?= $this->record($current)->getListEntry($list, $user)?>
+          <?php endforeach; ?>
+        </div>
+      </div>
+    </form>
+      <?= $this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $this->results])?>
+  <?php else: ?>
+    <p><?= $this->transEsc('You do not have any saved resources')?></p>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render(isset($list) ? 'list' . $list->getId() : 'favorites')?>
+  <?php foreach ($this->results->getRecommendations('side') as $current): ?>
+    <?=$this->recommend($current)?>
+  <?php endforeach; ?>
+</div>

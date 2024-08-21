@@ -1,0 +1,12 @@
+<?php if ($data): ?>
+  <?php foreach ($data as $key => $class): ?>
+    <?php if($key > 0): ?>
+      <br>
+    <?php endif; ?>
+
+    <a href="<?= $this->url('search-results')?>?lookfor=%22<?= urlencode($class['bklnumber'])?>%22&amp;type=bklnumber">
+      <?= $class['bklnumber'] . ' ' . (is_array($class['bklname']) ? implode(', ', $class['bklname']) : ''); ?>
+    </a>
+  <?php endforeach; ?>
+<?php endif; ?>
+

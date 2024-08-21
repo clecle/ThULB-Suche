@@ -100,7 +100,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         $request = $this->getRequest();
         if(!$request->isPost()
             || !$this->doCsrfValidation()
-            || !$request->getPost('submit', false)
+            || !$request->getPost('submitButton', false)
             || ($view->chargeQuantity = $request->getPost('chargeQuantity', 0)) < 1)
         {
             if($request->getQuery('layout', false) == 'lightbox') {

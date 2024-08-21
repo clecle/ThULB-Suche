@@ -1,0 +1,30 @@
+<?php
+    // Set up page title:
+    $this->headTitle($this->translate('Change Password'));
+
+    // Set up breadcrumbs:
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
+        . '<li class="active">' . $this->transEsc('Change Password') . '</li>';
+?>
+<?php if ($this->auth()->getUserObject()): ?>
+  <div class="row">
+    <div class="<?= $this->layoutClass('mainbody')?>">
+<?php endif; ?>
+
+<h2><?= $this->transEsc('Change Password') ?></h2>
+<?= $this->flashmessages() ?>
+
+<p>
+    <?= $this->transEsc('ils_pwd_change_intro')?>
+</p>
+<p>
+    <?= $this->translate('ils_pwd_change_reference');?>
+</p>
+
+<?php if ($this->auth()->getUserObject()): ?>
+    </div>
+    <div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+      <?=$this->accountMenu()->render('changepasswordlink')?>
+    </div>
+  </div>
+<?php endif; ?>

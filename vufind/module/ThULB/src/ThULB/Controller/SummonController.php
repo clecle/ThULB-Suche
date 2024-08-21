@@ -70,7 +70,12 @@ class SummonController extends OriginalSummonController
             usort($list, function ($facet1, $facet2) {
                 return strcasecmp($facet1['displayText'], $facet2['displayText']);
             });
+
             $view->setVariable('data', $list);
+
+            $vars = $view->getVariables();
+            unset($vars['delegateParams']);
+            $view->setVariable('delegateParams', $vars);
         }
 
         return $view;

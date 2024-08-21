@@ -187,6 +187,15 @@ trait StorageRetrievalRequestsTrait
                 'helpTextHtml'
             )
         );
+
+        $holdings = $catalog->getHolding($gatheredDetails['id'], $patron);
+        foreach($holdings['holdings'] ?? [] as $item) {
+            if($item['doc_id'] == $gatheredDetails['doc_id'] && $item['item_id'] == $gatheredDetails['item_id']) {
+                $view->setVariable('item', $item);
+                break;
+            }
+        }
+
         $view->setTemplate('record/storageretrievalrequest');
         return $view;
     }

@@ -20,7 +20,7 @@
   </form>
   <hr />
   <form class="form-admin-maintenance clear-cache" method="get" action="<?=$this->url('admin/maintenance', ['action' => 'ClearCache'])?>">
-    <?= $this->transEsc('Clear cache(s)'); ?>:
+    <?= $this->transEsc('Clear caches'); ?>:
     <?php foreach ($caches as $cache): ?>
       <label>
         <input type="checkbox" checked="checked" name="cache[]" value="<?=$this->escapeHtmlAttr($cache)?>" />

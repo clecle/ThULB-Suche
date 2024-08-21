@@ -1,0 +1,13 @@
+<?php /* BESTANDSANGABEN */ ?>
+<?php $chronology = $this->thulb_holdingHelper()->getHoldingChronology($holding); ?>
+<?php if (!empty($chronology)) : ?>
+  <div class="item-notes">
+    <?php if (is_array($chronology) && count($chronology) > 0): ?>
+      <?php foreach ($chronology as $chron): ?>
+        <?php if (!empty($chron)): ?>
+          <?= $chron ?><br>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>

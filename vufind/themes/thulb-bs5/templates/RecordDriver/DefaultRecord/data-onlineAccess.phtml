@@ -1,0 +1,21 @@
+<?php
+  // Account for replace_other_urls setting
+  $urls = $this->record($this->driver)->getLinkDetails();
+  $citesLink = $this->driver->tryMethod('getCitatedReferencesLink');
+  $citesCount = $this->driver->tryMethod('getCitatedReferencesCount');
+?>
+<?php foreach ($urls as $key => $current): ?>
+  <?php if($key > 0): ?>
+    <br>
+  <?php endif; ?>
+
+  <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a>
+<?php endforeach; ?>
+
+<?php if ($citesLink && $citesCount > 0) : ?>
+  <?php if($urls ?? false): ?>
+    <br>
+  <?php endif; ?>
+
+  <?= $citesCount?> <a href="<?= $citesLink?>" target="_blank"><?= $this->transEsc('Web of Science Scites Link')?></a> <?= $this->translate('Web of Science Scites Ref')?>
+<?php endif; ?>

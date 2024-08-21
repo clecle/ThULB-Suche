@@ -1,0 +1,28 @@
+<?php foreach ($data as $key => $recordLink): ?>
+  <?php if ($key > 0): ?>
+    <br>
+  <?php endif; ?>
+  <?=$this->transEsc($recordLink['title'])?>:
+
+  <?php if($recordLink['link'] ?? false): ?>
+    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($recordLink['link'], $this->driver->getSourceIdentifier()))?>"><?=$this->escapeHtml($recordLink['value'])?></a>
+  <?php else: ?>
+    <?= $this->escapeHtml($recordLink['value'])?>
+  <?php endif; ?>
+
+  <?php if($recordLink['pages'] ?? false): ?>
+    <?= $recordLink['pages']?>
+  <?php endif; ?>
+<?php endforeach; ?>
+
+<?php /* if we have record links, display relevant explanatory notes */
+  $related = $this->driver->getRelationshipNotes();
+  if (!empty($related)): ?>
+    <?php foreach ($related as $key => $field): ?>
+      <?php if ($key > 0): ?>
+        <br>
+      <?php endif; ?>
+
+      <?=$this->escapeHtml($field)?>
+    <?php endforeach; ?>
+<?php endif; ?>

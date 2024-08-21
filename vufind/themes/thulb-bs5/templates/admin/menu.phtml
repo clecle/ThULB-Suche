@@ -1,0 +1,13 @@
+<nav class="list-group">
+  <a href="<?=$this->url('admin')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == 'home' ? ' active' : ''?>"><?=$this->transEsc('Home')?></a>
+  <a href="<?=$this->url('admin/social')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == 'socialstats' ? ' active' : ''?>"><?=$this->transEsc('Social Statistics')?></a>
+  <a href="<?=$this->url('admin/maintenance')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "maintenance" ? ' active' : ''?>"><?=$this->transEsc('System Maintenance')?></a>
+
+  <a href="<?=$this->url('DynMessages')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "edit" ? ' active' : ''?>"><?=$this->transEsc('Dynamic Messages')?></a>
+  <a href="<?=$this->url('Userdata-reassign')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "reassign" ? ' active' : ''?>"><?=$this->transEsc('Reassign Userdata')?></a>
+  <a href="<?=$this->url('Userdata-delete')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "delete" ? ' active' : ''?>"><?=$this->transEsc('Delete Userdata')?></a>
+
+  <?php if ($this->overdrive()->showOverdriveAdminLink()):?>
+    <a href="<?=$this->url('admin/overdrive')?>" class="list-group-item<?=strtolower($this->layout()->templateName) == "overdrive" ? ' active' : ''?>"><?=$this->transEsc('Overdrive API')?></a>
+  <?php endif;?>
+</nav>

@@ -1,0 +1,120 @@
+<?php
+    // Set up page title:
+    $this->headTitle($this->translate('Your Fines'));
+
+    // Set up breadcrumbs:
+    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Your Fines') . '</li>';
+?>
+
+<?=$this->component('show-account-menu-button')?>
+
+<div class="<?=$this->layoutClass('mainbody')?>">
+  <h2><?=$this->transEsc('Your Fines')?></h2>
+  <?=$this->flashmessages()?>
+
+  <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
+
+  <?php if (empty($this->fines)): ?>
+    <?=$this->transEsc('You do not have any fines')?>
+  <?php else: ?>
+    <?php
+      // Collect the data to build the table; we process this in advance so we
+      // can omit empty columns and simplify customization by separating data
+      // processing from rendering.
+      $tableData = [];
+      $totalDue = 0;
+      foreach ($this->fines as $record) {
+          if (isset($record['about']) && !empty($record['about'])) {
+              $title = $this->escapeHtml(trim($record['about'], '/:'));
+          } elseif (empty($record['title'])) {
+              $title = $this->transEsc('not_applicable');
+          } elseif (!is_object($record['driver'] ?? null)) {
+              $title = $this->escapeHtml(trim($record['title'], '/:'));
+          } else {
+              $title = '<a href="'
+                  . $this->escapeHtmlAttr($this->recordLinker()->getUrl($record['driver']))
+                  . '">' . $this->escapeHtml(trim($record['title'], '/:')) . '</a>';
+          }
+          $tableData['Title'][] = $title;
+          $tableData['Fine'][] = isset($record['fine'])
+              ? $this->transEsc('FeeTypes::' . $this->escapeHtml($record['fine'])) : '';
+          $tableData['Date of creation'][] = isset($record['createdate'])
+              ? $this->escapeHtml(trim($record['createdate'])) : '';
+          $tableData['Fee'][] = isset($record['balance'])
+              ? $this->safeMoneyFormat($record['balance'] / 100.00) : '';
+          $totalDue += $record['balance'] ?? 0;
+      }
+
+      // Now empty out any unused columns:
+      foreach ($tableData as $column => $values) {
+          $empty = true;
+          foreach ($values as $value) {
+              if ('' !== (string)$value) {
+                  $empty = false;
+                  break;
+              }
+          }
+          if ($empty) {
+              unset($tableData[$column]);
+          }
+      }
+
+      // Create the final list of columns and count of rows:
+      $columns = array_keys($tableData);
+      $rowCount = count($this->fines);
+    ?>
+    <table class="table table-striped fines-table hidden-xs">
+      <caption class="sr-only"><?=$this->transEsc('Your Fines')?></caption>
+      <thead>
+        <tr>
+          <?php foreach ($columns as $header): ?>
+            <th scope="col"><?=$this->transEsc($header)?></th>
+          <?php endforeach; ?>
+        </tr>
+      </thead>
+
+      <tbody>
+        <?php for ($row = 0; $row < $rowCount; $row++): ?>
+          <tr>
+            <?php foreach ($columns as $column): ?>
+              <td data-label="<?=$this->transEscAttr($column)?>"><?=$tableData[$column][$row]?></td>
+            <?php endforeach; ?>
+          </tr>
+        <?php endfor; ?>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <th colspan="<?=count($columns) - 1?>" scope="row"><?=$this->transEsc('Total Balance Due')?></th>
+          <td class="fw-bold" data-label="<?=$this->transEscAttr('Total Balance Due')?>"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></td>
+        </tr>
+      </tfoot>
+    </table>
+  <?php endif; ?>
+
+  <div class="striped fines-list visible-xs">
+    <?php for ($row = 0; $row < $rowCount; $row++): ?>
+      <div>
+        <?php foreach ($columns as $column): ?>
+          <div class="d-flex">
+            <label class="col-4 fw-bold"><?=$this->transEscAttr($column)?>:</label>
+            <div class="col-8" data-label="<?=$this->transEscAttr($column)?>"><?=$tableData[$column][$row]?></div>
+          </div>
+        <?php endforeach; ?>
+      </div>
+    <?php endfor; ?>
+
+    <div>
+      <div class="d-flex">
+        <label class="col-4 fw-bold"><?=$this->transEsc('Total Balance Due')?></label>
+        <div class="col-8 fw-bold"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('fines')?>
+</div>
+
+<?=$this->render('myresearch/notify-account-status.phtml', ['method' => 'fines', 'accountStatus' => $this->accountStatus]); ?>

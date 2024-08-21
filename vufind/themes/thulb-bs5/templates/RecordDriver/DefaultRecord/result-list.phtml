@@ -1,0 +1,214 @@
+<?php
+  $recordLinker = $this->recordLinker($this->results);
+  $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $recordLinker->getUrl($this->driver));
+  $cover = $coverDetails['html'];
+  $thumbnail = false;
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+
+  if ($cover):
+    ob_start(); ?>
+    <div class="hidden-xs hidden-print media-<?= $thumbnailAlignment ?> <?= $this->escapeHtmlAttr($coverDetails['size'])?>">
+      <?=$cover ?>
+    </div>
+    <?php $thumbnail = ob_get_contents(); ?>
+  <?php ob_end_clean(); ?>
+<?php endif; ?>
+
+<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueID())?>" class="hiddenId">
+<input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" class="hiddenSource">
+
+<div class="media">
+  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+    <?=$thumbnail ?>
+  <?php endif ?>
+
+  <div class="media-body d-flex flex-nowrap gap-4">
+    <div class="result-body flex-grow-1">
+      <h2>
+        <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title getFull truncate" data-view="<?=isset($this->params) ? $this->params->getOptions()->getListViewOption() : 'list' ?>">
+          <?=$this->record($this->driver)->getTitleHtml()?>
+        </a>
+        <?php foreach ($this->driver->tryMethod('getTitlesAltScript', [], []) as $altTitle): ?>
+          <div class="title-alt">
+            <?=$this->escapeHtml($altTitle)?>
+          </div>
+        <?php endforeach; ?>
+      </h2>
+
+      <div>
+        <?php $summAuthors = array_slice(array_merge(
+            array_slice($this->driver->getPrimaryAuthorsWithHighlighting(), 0, 1),
+            array_slice($this->driver->getSecondaryAuthors(['dgs', 'dgg', 'rev']), 0, 1),
+            array_slice($this->driver->getCorporateAuthors(['dgs', 'dgg', 'rev']), 0, 1)
+          ), 0, 2);
+        ?>
+        <?php if (!empty($summAuthors)): ?>
+          <span class="authors">
+            <?=$this->transEsc('by')?>:
+            <?php $authorCount = count($summAuthors); ?>
+            <?php foreach ($summAuthors as $i => $summAuthor): ?>
+              <?php $info = $this->record($this->driver)->getAuthorDetails($summAuthor); ?>
+              <?=$this->highlight(rtrim($summAuthor, ','))?><?= (!empty($info) ? ' ' . $info : '') . ($i + 1 < $authorCount ? ';' : '')?>
+            <?php endforeach; ?>
+          </span>
+        <?php endif; ?>
+      </div>
+
+      <div>
+        <?php
+          $journalTitle = $this->driver->getContainerTitle();
+          $summDate = $this->driver->getPublicationDates();
+          $isArticle = $this->driver->tryMethod('isFormat', ['(electronic )?Article', true], true);
+          $journalRef = $this->driver->getContainerReference();
+        ?>
+        <?php if (!empty($journalTitle)): ?>
+          <?= $this->transEsc('Published in') ?>:
+          <?= $this->highlight($journalTitle) ?><?= ($journalRef) ? ', ' . $journalRef : ''?>
+        <?php endif; ?>
+
+        <?= !$isArticle ? $this->driver->getReducedPublicationInfo() : '' ?>
+      </div>
+
+      <?php
+      /* Display information on duplicate records if available */
+      if ($dedupData = $this->driver->getDedupData()): ?>
+        <div class="dedupInformation">
+        <?php
+          $i = 0;
+          foreach ($dedupData as $source => $current) {
+            if (++$i == 1) {
+              ?><span class="currentSource"><a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>"><?=$this->transEsc("source_$source", [], $source)?></a></span><?php
+            }
+            else {
+              if ($i == 2) {
+                ?> <span class="otherSources">(<?=$this->transEsc('Other Sources')?>: <?php
+              }
+              else {
+                ?>, <?php
+              }
+              ?><a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($current['id']))?>"><?=$this->transEsc("source_$source", [], $source)?></a><?php
+            }
+          }
+          if ($i > 1) {
+            ?>)</span><?php
+          }?>
+        </div>
+      <?php endif; ?>
+
+      <?php if ($this->driver->tryMethod('getWorkKeys') && $this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
+        <div class="record-versions ajax"></div>
+      <?php endif; ?>
+
+      <div class="callnumAndLocation ajax-availability hidden">
+        <?php if ($this->driver->supportsAjaxStatus()): ?>
+          <span class="location ajax-availability hidden">
+            <?=$this->icon('spinner')?>
+            <?=$this->transEsc('loading_ellipsis')?>
+          </span>
+          <div class="locationDetails"></div>
+        <?php else: ?>
+          <?php $summCallNo = $this->driver->getCallNumber(); ?>
+          <?php if (!empty($summCallNo)): ?>
+            <strong><?=$this->transEsc('Call Number')?>:</strong> <?=$this->escapeHtml($summCallNo)?>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
+
+      <?php
+        // Display an OpenURL link if configured to do so:
+        $openUrl = $this->openUrl($this->driver, 'results');
+        $openUrlActive = $openUrl->isActive();
+        $doi = $this->doi($this->driver, 'results');
+        $doiActive = $doi->isActive();
+        // Account for replace_other_urls setting
+        $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
+      ?>
+
+      <div class="badges-row">
+        <?=$this->record($this->driver)->getFormatList() ?>
+        <?=$this->record($this->driver)->getOpenAccess() ?>
+        <?=$this->record($this->driver)->getLabelList() ?>
+
+        <?php if (!$openUrlActive && $this->driver->supportsAjaxStatus()): ?>
+          <span class="status ajax-availability hidden">
+            <span class="label label-default"><?=$this->transEsc('loading_ellipsis')?></span>
+          </span>
+        <?php endif; ?>
+
+        <?= $this->record($this->driver)->getThuringiaBibliography() ?>
+      </div>
+
+      <div class="d-flex flex-wrap gap-2 align-items-center action-row hidden-print">
+        <?=$this->record($this->driver)->renderTemplate('access-lookup.phtml'); ?>
+
+        <?php if ($openUrlActive): ?>
+          <?=$openUrl->renderTemplate()?>
+        <?php endif; ?>
+
+        <?php $urls = is_array($urls) ? $urls : []; ?>
+        <?php if (!$this->driver->isCollection()): ?>
+          <?php foreach ($urls as $current): ?>
+            <?php if($current['desc'] != 'Inhaltsverzeichnis') continue; ?>
+            <a class="fulltext icon-link btn btn-primary btn-sm d-inline-flex" href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="new">
+              <span><?=($current['url'] == $current['desc']) ? $this->transEsc('Full text online') : $this->transEsc($current['desc'])?></span>
+              <?=$this->icon('external-link', 'icon-link__icon') ?>
+            </a>
+          <?php endforeach; ?>
+        <?php endif; ?>
+
+        <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->displayCitationLinksInResults()): ?>
+          <?php if($citationReferencesHtml = $this->record($this->driver)->getCitationReferences()): ?>
+            <?= $citationReferencesHtml; ?>
+          <?php elseif($links = $this->driver->tryMethod('getCitations')): ?>
+            <div class="result-citation-links">
+              <?=$this->record($this->driver)->renderTemplate('data-citations.phtml', ['data' => $links])?>
+            </div>
+          <?php endif; ?>
+        <?php endif; ?>
+      </div>
+
+      <div class="result-previews">
+        <?=$this->record($this->driver)->getPreviews()?>
+      </div>
+    </div>
+
+    <div class="result-links hidden-print d-flex flex-column align-items-end">
+      <?=$this->record($this->driver)->renderTemplate('controls/qrcode.phtml', ['driver' => $this->driver, 'context' => 'results'])?>
+
+      <?php if ($this->cart()->isActiveInSearch() && isset($this->params) && $this->params->getOptions()->supportsCart() && $this->cart()->isActive()): ?>
+        <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?><br>
+      <?php endif; ?>
+
+      <?php /* Hierarchy tree link */ ?>
+      <?php $trees = $this->driver->tryMethod('getHierarchyTrees'); ?>
+      <?php if (!empty($trees)): ?>
+        <?php foreach ($trees as $hierarchyID => $hierarchyTitle): ?>
+          <div class="hierarchyTreeLink">
+            <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
+            <a class="hierarchyTreeLinkText result-link-label icon-link" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEscAttr('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
+              <?=$this->icon('tree-context', 'icon-link__icon') ?>
+              <span class="icon-link__label"><?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?></span>
+            </a>
+          </div>
+        <?php endforeach; ?>
+      <?php endif; ?>
+
+      <?php if ($this->driver->tryMethod('explainEnabled')): ?>
+        <div class="hidden-xs">
+          <?=
+            $this->record($this->driver)->renderTemplate('result-list-explain.phtml', [
+              'driver' => $this->driver,
+              'request' => $this->request,
+              'result' => $this->result,
+            ]);
+          ?>
+        </div>
+      <?php endif; ?>
+
+      <?=$this->driver->supportsCoinsOpenUrl() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>' : ''?>
+    </div>
+  </div>
+  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+    <?=$thumbnail ?>
+  <?php endif ?>
+</div>

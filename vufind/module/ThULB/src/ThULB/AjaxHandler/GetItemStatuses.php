@@ -31,11 +31,33 @@
  */
 namespace ThULB\AjaxHandler;
 
+use Laminas\Config\Config;
+use Laminas\View\Renderer\RendererInterface;
 use VuFind\AjaxHandler\GetItemStatuses as OriginalGetItemStatuses;
+use VuFind\ILS\Connection;
 use VuFind\ILS\Logic\AvailabilityStatusInterface;
+use VuFind\ILS\Logic\AvailabilityStatusManager;
+use VuFind\ILS\Logic\Holds;
+use VuFind\Session\Settings as SessionSettings;
 
 class GetItemStatuses extends OriginalGetItemStatuses
 {
+    protected ?Config $thulbConfig;
+
+    public function __construct(
+        SessionSettings $ss,
+        Config $config,
+        Connection $ils,
+        RendererInterface $renderer,
+        Holds $holdLogic,
+        AvailabilityStatusManager $availabilityStatusManager,
+        Config $thulbConfig = null,
+    ) {
+        parent::__construct($ss, $config, $ils, $renderer, $holdLogic, $availabilityStatusManager);
+
+        $this->thulbConfig = $thulbConfig;
+    }
+
     /**
      * Support method for getItemStatuses() -- process a single bibliographic record
      * for "group" location setting.
@@ -50,7 +72,14 @@ class GetItemStatuses extends OriginalGetItemStatuses
     protected function getItemStatusGroup($record, $callnumberSetting) : array {
         // Summarize call number, location and availability info across all items:
         $locations = [];
-        foreach ($record as $info) {
+
+        $itemList = $record;
+        foreach ($record as $key => $info) {
+            if(in_array($info['departmentId'], $this->thulbConfig?->ItemStatus?->exclude?->toArray() ?? [])) {
+                unset($itemList[$key]);
+                continue;
+            }
+
             $availabilityStatus = $info['availability'];
             // Find an available copy
             if ($availabilityStatus->isAvailable()) {
@@ -115,7 +144,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
         return [
             'id' => $record[0]['id'],
             'availability' => $combinedAvailability->availabilityAsString(),
-            'availability_message' => $this->getAvailabilityMessage($combinedAvailability),
+            'availability_message' => $itemList ? $this->getAvailabilityMessage($combinedAvailability) : '',
             'location' => false,
             'locationList' => $locationList,
             'reserve' => $reserve ? 'true' : 'false',

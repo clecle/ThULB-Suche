@@ -2533,6 +2533,10 @@ class SolrVZGRecord extends SolrMarc
                     continue;
                 }
 
+                if(in_array($item['departmentId'], $this->thulbConfig->OrderReserve?->exclude?->toArray() ?? [])) {
+                    continue;
+                }
+
                 $isOpenStack =  $item['availability']->isAvailable()
                     && !isset($item['link'])
                     && !isset($item['storageRetrievalRequestLink']);

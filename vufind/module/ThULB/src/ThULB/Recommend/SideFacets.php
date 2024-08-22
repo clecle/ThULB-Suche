@@ -48,9 +48,10 @@ class SideFacets extends OriginalSideFacets
             }
         }
 
-        $configFile = $this->results->getBackendId() == 'Solr' ? 'facets' : $this->results->getBackendId();
-        $facetsSortedByIndex = $this->configLoader->get($configFile)
-                                    ->Results_Settings->sorted_by_index?->toArray() ?? [];
+        $configFile = $this->results->getBackendId() == 'Solr' || $this->results->getBackendId() == null
+            ? 'facets' : $this->results->getBackendId();
+        $facetsSortedByIndex =
+            $this->configLoader->get($configFile)->Results_Settings->sorted_by_index?->toArray() ?? [];
 
         foreach ($facetsSortedByIndex as $facet) {
             if(!empty($facetSet[$facet]['list'])) {

@@ -163,6 +163,10 @@
       </div>
     </div>
 
+    <div class="vpn-warning-wrapper container d-flex justify-content-center sticky-bottom z-3">
+      <?= $this->render('Helpers/vpn-hint.phtml'); ?>
+    </div>
+
     <?=$this->render('footer.phtml')?>
 
     <!-- MODAL IN CASE WE NEED ONE -->
@@ -184,10 +188,6 @@
     <?php foreach ($this->captcha()->js() as $jsInclude):?>
       <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, $jsInclude, 'SET')?>
     <?php endforeach; ?>
-
-    <div class="vpn-warning-wrapper container d-flex justify-content-center sticky-bottom z-3">
-      <?= $this->render('Helpers/vpn-hint.phtml'); ?>
-    </div>
 
     <!-- Start of Rocket.Chat Livechat Script -->
     <script type="text/javascript">

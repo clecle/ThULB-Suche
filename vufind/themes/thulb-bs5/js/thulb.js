@@ -142,7 +142,7 @@ function hideMessage(message) {
         data: {'message': message}
     });
 
-    jQuery('#' + message).effect('blind').dequeue().hide('fade');
+    jQuery('#' + message).effect('blind').dequeue().hide('fade').addClass('hidden');
 }
 
 function setupFormValidation() {

@@ -85,5 +85,6 @@ return array(
     ),
     'js' => array(
         'thulb.js',
+        'jquery-ui.min.js',
     ),
 );

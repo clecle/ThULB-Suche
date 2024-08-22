@@ -10,18 +10,18 @@
 
 @font-face {
   font-family: 'Roboto-Regular';
-  src: url('/themes/thulb/fonts/unifont/Roboto-Regular.ttf');
-  src: url('/themes/thulb/fonts/unifont/Roboto-Regular.ttf') format('truetype')
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Regular.ttf');
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Regular.ttf') format('truetype')
 }
 @font-face {
   font-family: 'Roboto-Italic';
-  src: url('/themes/thulb/fonts/unifont/Roboto-Italic.ttf');
-  src: url('/themes/thulb/fonts/unifont/Roboto-Italic.ttf') format('truetype')
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Italic.ttf');
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Italic.ttf') format('truetype')
 }
 @font-face {
   font-family: 'Roboto-Bold';
-  src: url('/themes/thulb/fonts/unifont/Roboto-Bold.ttf');
-  src: url('/themes/thulb/fonts/unifont/Roboto-Bold.ttf') format('truetype')
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Bold.ttf');
+  src: url('/themes/thulb-bs5/fonts/unifont/Roboto-Bold.ttf') format('truetype')
 }
 
 html {
@@ -511,12 +511,12 @@ footer {
 
 /* --- Layout > Backgrounds --- */
 .testingbg {
-  background-image: url("/themes/thulb/images/TestTile.png");
+  background-image: url("/themes/thulb-bs5/images/TestTile.png");
   background-repeat: repeat;
 }
 
 .developmentbg {
-  background-image: url("/themes/thulb/images/DevTile.png");
+  background-image: url("/themes/thulb-bs5/images/DevTile.png");
   background-repeat: repeat;
 }
 

@@ -1,6 +1,6 @@
 <?php if($this->gnd): ?>
   <span>
-    <a href="#_" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-html="true" title="<?= $this->transEsc('Search Options'); ?>"><?= $this->desc; ?></a>
+    <a href="#_" tabindex="0" data-bs-toggle="popover" data-bs-placement="top" data-bs-trigger="focus" data-bs-html="true" title="<?= $this->transEsc('Search Options'); ?>"><?= $this->desc; ?></a>
     <div class="hidden">
       <div class="popover-link-list">
         <a href="<?= $this->record($this->driver)->getLink('author', $this->desc) ?>" target="_blank"><?= $this->transEsc('search_text'); ?></a>

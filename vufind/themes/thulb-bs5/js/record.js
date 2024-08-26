@@ -169,7 +169,7 @@ function handleAjaxTabLinks(_context) {
         var tabid = $('.record-tabs .nav-tabs li.active').data('tab');
         var $tab = $('.' + tabid + '-tab');
         $tab.html('<div class="tab-pane ' + tabid + '-tab">' + VuFind.loading() + '</div>');
-        ajaxLoadTab($tab, '', false, href);
+        ajaxLoadTab($tab, tabid, false, href);
         return false;
       });
     }
@@ -214,13 +214,15 @@ ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl) {
   // Request the tab via AJAX:
   var url = '';
   var postData = {};
+
+  postData.tab = tabid;
+  postData.sid = VuFind.getCurrentSearchId();
+
   // If tabUrl is defined, it overrides base URL and tabid
   if (typeof tabUrl !== 'undefined') {
     url = tabUrl;
   } else {
     url = VuFind.path + getUrlRoot(document.URL) + '/AjaxTab';
-    postData.tab = tabid;
-    postData.sid = VuFind.getCurrentSearchId();
   }
   $.ajax({
     url: url,

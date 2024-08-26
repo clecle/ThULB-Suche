@@ -15,6 +15,8 @@
   $this->headMeta()->setAutoEscape(false);
   $this->headLink()->setAutoEscape(false);
   $this->headScript()->setAutoEscape(false);
+
+  $displayBreadcrumbs = ($this->layout()->showBreadcrumbs ?? true) && !empty($this->layout()->breadcrumbs);
 ?>
 <html lang="<?=$this->layout()->userLang?>"<?php if ($this->layout()->rtl): ?> dir="rtl"<?php endif; ?>>
   <head>
@@ -136,6 +138,7 @@
     ?>
     <?=$this->headScript() ?>
   </head>
+
   <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?><?php if ($this->thulb_serverType() !== 'production'): ?> <?= $this->thulb_serverType()?>bg<?php endif; ?>">
     <header class="hidden-print mb-4">
       <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
@@ -145,9 +148,9 @@
       <?=$this->render('header.phtml')?>
     </header>
 
-    <nav class="breadcrumbs hidden" aria-label="<?=$this->transEscAttr('Breadcrumbs') ?>">
+    <nav class="breadcrumbs mb-3 <?= !$displayBreadcrumbs ? ' hidden' : ''?>" aria-label="<?=$this->transEscAttr('Breadcrumbs') ?>">
       <div class="container">
-        <ul class="breadcrumb hidden-print">
+        <ul class="breadcrumb m-0 hidden-print">
           <?= $this->layout()->breadcrumbs ?>
         </ul>
       </div>

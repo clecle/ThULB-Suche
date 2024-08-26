@@ -40,7 +40,9 @@
     <p><?=$this->transEsc($this->message)?></p>
     <p>
       <?=$this->translate('Please contact the Library Reference Department for assistance', [
-          '%%sdlink%%' => $this->thulb_serviceDesk('information-services'),
+          '%%sdlink%%' => $this->thulb_serviceDesk('information-services', [
+            'topic' => '20009'
+          ]),
           '%%email%%' => $this->escapeHtmlAttr($this->systemEmail())
       ])?>
     </p>

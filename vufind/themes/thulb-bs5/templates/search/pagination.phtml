@@ -32,6 +32,7 @@
                 'liClasses' => ['page-first'],
                 'label' => $this->translate('page_first'),
                 'contentHtml' => '[1]',
+                'ajaxTab' => $this->ajaxTab ?? false,
               ]
             )
           ?>
@@ -47,6 +48,7 @@
               'liClasses' => ['page-prev'],
               'label' => $this->translate('page_prev'),
               'contentHtml' => $this->icon('page-prev', 'align-baseline'),
+              'ajaxTab' => $this->ajaxTab ?? false,
             ]
           )
         ?>
@@ -63,6 +65,7 @@
                 'page' => $page,
                 'label' => $this->translate('page_num', ['%%page%%' => $page]),
                 'contentHtml' => $this->escapeHtml($page),
+                'ajaxTab' => $this->ajaxTab ?? false,
               ]
             )
           ?>
@@ -80,6 +83,7 @@
               'liClasses' => ['page-next'],
               'label' => $this->translate('page_next'),
               'contentHtml' => $this->icon('page-next', 'align-baseline'),
+              'ajaxTab' => $this->ajaxTab ?? false,
             ]
           )
         ?>
@@ -94,6 +98,7 @@
                 'liClasses' => ['page-last'],
                 'label' => $this->translate('page_last'),
                 'contentHtml' => '[' . $this->escapeHtml($this->pageCount) . ']',
+                'ajaxTab' => $this->ajaxTab ?? false,
               ]
             )
           ?>

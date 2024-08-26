@@ -46,7 +46,7 @@
     <form class="form-inline" method="post" name="bulkActionForm" action="<?= $this->url('cart-searchresultsbulk')?>">
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', $searchDetails + ['idPrefix' => ''])?>
       <?=$this->render('search/list-' . $results->getParams()->getView() . '.phtml', $searchDetails)?>
-      <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results])?>
+      <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination.phtml', ['results' => $results, 'ajaxTab' => true])?>
     </form>
   </div>
 <?php endif; ?>

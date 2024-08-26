@@ -186,7 +186,7 @@ function registerTabEvents() {
 
   handleAjaxTabLinks();
 
-  VuFind.lightbox.bind('.tab-pane.active');
+  VuFind.lightbox.bind('.tab-pane');
 
   if (typeof VuFind.openurl !== 'undefined') {
     VuFind.openurl.init($('.tab-pane.active'));

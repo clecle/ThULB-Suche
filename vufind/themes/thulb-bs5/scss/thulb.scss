@@ -705,6 +705,22 @@ form {
   @extend .hidden-print;
 }
 
+/* --- Layout > Offcanvas --- */
+.sidebar .close-offcanvas {
+  display: none !important;
+}
+
+.vufind-offcanvas-overlay i {
+  position: absolute;
+  top: calc(50vh - 35px);
+  padding: 25px 8px;
+  background-color: #fff;
+  color: #999;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  font-size: 20px;
+}
+
 /* --- Layout > Misc --- */
 .external-link:after,
 .authorbox a:after {

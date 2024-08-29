@@ -2,7 +2,8 @@
   $account = $this->auth()->getManager();
 
   $currentPage = strtolower($this->currentPath());
-  $isLandingPage = $currentPage == '/' || str_starts_with($currentPage, '/search/home');
+  $displayLogo = ($currentPage == '/' && !$this->auth()->getUserObject())
+      || str_starts_with($currentPage, '/search/home');
 ?>
 <div class="thulb-topline"></div>
 
@@ -127,7 +128,7 @@
   </div>
 </div>
 
-<?php if($isLandingPage && !$this->auth()->getUserObject()): ?>
+<?php if($displayLogo): ?>
   <?php $logo = sprintf('ThULB_Logo_text_horizontal_%s.svg', strtolower($this->layout()->userLang) != 'en' ? 'de' : 'en'); ?>
   <img class="brand-landing-page-logo hidden-xs" alt="Logo" src="<?= $this->imageLink($logo); ?>" />
 <?php endif; ?>

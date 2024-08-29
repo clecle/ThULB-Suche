@@ -38,7 +38,7 @@ return array(
             'thulb_userType' => \ThULB\View\Helper\Root\UserType::class,
         ),
     ),
-    'favicon' => 'thulb_favicon.png',
+    'favicon' => 'thulb_favicon.svg',
     'icons' => array(
         'sets' => [
             /**

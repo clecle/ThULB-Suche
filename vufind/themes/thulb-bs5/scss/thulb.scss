@@ -480,33 +480,12 @@ footer {
   background-color: #f9b200;
 }
 
-/* --- Layout > Start page --- */
-.tutorial {
-  color: white;
-  text-align: center;
-  background-color: $brand-primary;
-  padding: 20px;
-  margin-top: 20px;
-  display: flex;
-
-  .tutorial_sub {
-    padding: 10px;
-  }
-
-  h1 {
-    font-weight: bold;
-    margin-top: 0;
-  }
-  h5 {
-    text-transform: uppercase;
-  }
-  img {
-    padding-top: 20px;
-    max-width: 100%;
-  }
-  .tutorial_txt {
-    min-height: 40px;
-  }
+/* --- Layout > Landing page --- */
+.brand-landing-page-logo {
+  display: block;
+  max-height: 80px;
+  margin: 100px auto 40px;
+  max-width: calc(100% - 30px);
 }
 
 /* --- Layout > Backgrounds --- */

@@ -11,7 +11,9 @@
   $this->layout()->breadcrumbs = false;
 ?>
 
-<div class="searchHomeContent">
+<?=$this->flashmessages()?>
+
+<div class="searchHomeContent hidden-xs">
   <?php $this->slot('search-home-hero')->start() ?>
 
   <?php
@@ -31,29 +33,6 @@
     JS;
   ?>
   <?= $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $ilsStatusScript, 'SET'); ?>
-
-  <div class="tutorial hidden-xs">
-    <div class="col-sm-4 col-xs-12 tutorial_sub">
-        <h1>1.</h1>
-        <h5><?= $this->transEsc('startpage_tutorial_title1')?></h5>
-        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step1')?></div>
-        <img alt="tutorial step1" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic1'))?>">
-    </div>
-
-    <div class="col-sm-4 col-xs-12 tutorial_sub">
-        <h1>2.</h1>
-        <h5><?= $this->transEsc('startpage_tutorial_title2')?></h5>
-        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step2')?></div>
-        <img alt="tutorial step2" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic2'))?>">
-    </div>
-
-    <div class="col-sm-4 col-xs-12 tutorial_sub">
-        <h1>3.</h1>
-        <h5><?= $this->transEsc('startpage_tutorial_title3')?></h5>
-        <div class="tutorial_txt"><?= $this->transEsc('startpage_tutorial_step3')?></div>
-        <img alt="tutorial step3" src="<?= $this->imageLink($this->transEsc('startpage_tutorial_pic3'))?>">
-    </div>
-  </div>
 
   <?=$this->slot('search-home-hero')->end() ?>
 </div>

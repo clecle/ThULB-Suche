@@ -6,6 +6,14 @@ Sollten Sie Fragen, Hinweise oder Verbesserungswünsche haben, treten Sie jederz
 z.B. über unser [Service-Desk](https://servicedesk.uni-jena.de/plugins/servlet/desk/portal/140/create/1001?customfield_12342=20009) oder per Mail discovery_thulb[at]uni-jena.de.
 
 
+## v4.0.2 *08/24*
+- Tutorial auf der Startseite mit ThULB-Logo ersetzt 
+- Vollmacht Formular & Email angepasst
+- Suchoptionen verbessert & aufgeräumt
+- neuer Schliessen-Button für die Facetten-Seitenleiste in der mobilen Ansicht
+- neue Links zur Hilfe & FAQ im Menü
+- und viele kleinere Fehlerbehebungen
+
 ## v4.0 *08/24*
 - Einführung Erweiterte Suche
 - neue Facette "Thema"

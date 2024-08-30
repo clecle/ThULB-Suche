@@ -1319,7 +1319,7 @@ body:has(.main form#advSearchForm) {
 }
 
 @media (min-width: $screen-md) {
-  .broken-link {
+  .result .broken-link {
     display: none;
   }
 }

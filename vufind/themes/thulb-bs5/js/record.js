@@ -176,6 +176,36 @@ function handleAjaxTabLinks(_context) {
   });
 }
 
+function handleAjaxTabSelectChanges(_context) {
+  var context = typeof _context === "undefined" ? document : _context;
+  // Form submission
+  $(context).find('select').each(function handleSelectChange() {
+    var $form = $(this).parent();
+    var action = $form.attr('action');
+    if (typeof action !== 'undefined' && action.match(/\/AjaxTab/) && this.classList.contains('jumpMenu')) {
+      $(this).off("change").on("change", function selectChange() {
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        event.preventDefault();
+
+        var tabid = $('.record-tabs .nav-tabs li.active').data('tab');
+        var $tab = $('.' + tabid + '-tab');
+        $tab.html('<div class="tab-pane ' + tabid + '-tab">' + VuFind.loading() + '</div>');
+
+        ajaxLoadTab(
+          $tab,
+          tabid,
+          false,
+          action,
+          Object.fromEntries(new FormData(this.parentNode))
+        );
+
+        return false;
+      });
+    }
+  });
+}
+
 function registerTabEvents() {
   // Logged in AJAX
   registerAjaxCommentRecord();
@@ -185,6 +215,8 @@ function registerTabEvents() {
   setUpCheckRequest();
 
   handleAjaxTabLinks();
+
+  handleAjaxTabSelectChanges();
 
   VuFind.lightbox.bind('.tab-pane');
 
@@ -210,10 +242,10 @@ function fillEmptyHoldingsTab() {
   }
 }
 
-ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl) {
+ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl, postData) {
   // Request the tab via AJAX:
   var url = '';
-  var postData = {};
+  postData = postData || {};
 
   postData.tab = tabid;
   postData.sid = VuFind.getCurrentSearchId();
@@ -248,7 +280,6 @@ ajaxLoadTab = function ajaxLoadTabReal($newTab, tabid, setHash, tabUrl) {
       } else {
         removeHashFromLocation();
       }
-      setupJumpMenus($newTab);
       fillEmptyHoldingsTab();
 
       if(typeof VuFind.accessLookup == "object") {

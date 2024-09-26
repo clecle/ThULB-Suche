@@ -38,7 +38,7 @@ body {
 a,
 label { cursor: pointer; }
 
-.alert a {
+.alert a:not(.btn) {
   color: $primary !important;
 }
 

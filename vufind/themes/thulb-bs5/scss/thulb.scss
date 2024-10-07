@@ -1149,6 +1149,10 @@ body:has(.main form#advSearchForm) {
   display: flex;
 }
 
+.facet-tree li .facet-tree__item-container a {
+  gap: .5rem;
+}
+
 #facet-info-result {
   margin-bottom: 1.5rem;
 }

@@ -5,7 +5,6 @@ namespace ThULB\Search\Facets;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 use VuFind\Search\Base\Params;
-use VuFindSearch\Backend\Solr\Response\Json\NamedList;
 use Laminas\Config\Config;
 
 class ThBIBFacet implements IFacet, TranslatorAwareInterface
@@ -69,17 +68,12 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
                 'internalValue' => $this->filterValueList[$groupKey],
                 'value' => $groupKey,
                 'displayText' => $this->translate("ThULBFacets::$groupKey"),
-                'count' => 0,
+                'count' => null,
                 'operator' => $operator,
                 'isApplied' => $params->hasFilter("$fieldWithOperator:$groupKey"),
                 'children' => array(),
                 'hasChildren' => false
             );
-
-            // Always show facet groups with defined values
-            if(isset($this->thulbFacets->TB_Group_Values->$groupKey)) {
-                $parentFacet['count'] = 1;
-            }
 
             // Create children facets
             $childFacetList = array();
@@ -99,12 +93,13 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
                     'parent' => $groupKey
                 );
 
-                $parentFacet['count'] += $data[$internalValue];
+                $parentFacet['count'] = $parentFacet['count'] + $data[$internalValue];
                 $parentFacet['hasChildren'] = true;
             }
             usort($childFacetList, [$this, 'compareTBChildFacets']);
 
-            if ($parentFacet['count'] < 1) {
+            // Always show facet groups with defined values
+            if ($parentFacet['count'] < 1 && !isset($this->thulbFacets->TB_Group_Values->$groupKey)) {
                 continue;
             }
 
@@ -123,7 +118,7 @@ class ThBIBFacet implements IFacet, TranslatorAwareInterface
      */
     public function getFilterValue(string $value) : string {
         $returnValue = $value;
-        if (isset($this->filterValueList[$value]) && $this->thulbFacets) {
+        if (isset($this->filterValueList[$value])) {
             $returnValue = $this->filterValueList[$value];
             if(!isset($this->thulbFacets->TB_Classification_Groups[$value])) {
                 return "\"$returnValue\"";

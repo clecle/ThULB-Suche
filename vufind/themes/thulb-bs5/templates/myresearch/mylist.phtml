@@ -9,9 +9,8 @@
   // Set up page title:
   $this->headTitle(isset($list) ? $list->getTitle() : $this->translate('saved_items'));
 
-  // Set up breadcrumbs:
-  $currPage = isset($list) ? 'List' : 'saved_items';
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile('check_item_statuses.js');

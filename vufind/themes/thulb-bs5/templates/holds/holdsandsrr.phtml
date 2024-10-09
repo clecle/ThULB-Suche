@@ -4,8 +4,8 @@
 
   $this->headScript()->appendFile('requests.js');
 
-  // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Holds and Recalls') . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 ?>
 
 <?=$this->component('show-account-menu-button')?>

@@ -4,9 +4,8 @@
   $pageTitle = "Letter of Authorization";
   $this->headTitle($this->translate($pageTitle));
 
-  // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-      . '<li>' . $this->transEsc($pageTitle) . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 ?>
 
 <?=$this->component('show-account-menu-button')?>

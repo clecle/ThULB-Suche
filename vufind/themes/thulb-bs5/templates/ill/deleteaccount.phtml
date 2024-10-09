@@ -1,9 +1,9 @@
 <?php
-// Set up page title:
-$this->headTitle($this->translate('ill_delete_account'));
+  // Set up page title:
+  $this->headTitle($this->translate('ill_delete_account'));
 
-// Set up breadcrumbs:
-$this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Delete account') . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 ?>
 
 <?=$this->component('show-account-menu-button')?>

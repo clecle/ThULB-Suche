@@ -1,9 +1,9 @@
 <?php
-    // Set up page title:
-    $this->headTitle($this->translate('Your Fines'));
+  // Set up page title:
+  $this->headTitle($this->translate('Your Fines'));
 
-    // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Your Fines') . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 ?>
 
 <?=$this->component('show-account-menu-button')?>

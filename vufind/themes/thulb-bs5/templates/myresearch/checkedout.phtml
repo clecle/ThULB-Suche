@@ -2,8 +2,8 @@
   // Set up page title:
   $this->headTitle($this->translate('Checked Out Items'));
 
-  // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Checked Out Items') . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 
   $this->headScript()->appendFile('checkouts.js');
 

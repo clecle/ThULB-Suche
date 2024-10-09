@@ -422,6 +422,16 @@ footer {
   }
 }
 
+/* --- Layout > Dropdown --- */
+.dropdown-menu {
+  --bs-border-color-translucent: #777;
+}
+
+.dropdown-header {
+  --bs-dropdown-header-color: var(--bs-body-color);
+  @include font-size($font-size-base);
+}
+
 /* --- Layout > Content --- */
 .mainbody {
   &.solo {
@@ -517,6 +527,14 @@ footer {
 .btn-sm {
   padding-top: 0;
   padding-bottom: 0;
+}
+
+/* --- Layout > Checkboxes & Radio-Buttons --- */
+form input[type=checkbox], form input[type=radio] {
+  width: 1.2rem;
+  height: 1.2rem;
+  vertical-align: text-bottom;
+  flex-shrink: 0;
 }
 
 /* --- Layout > Icons --- */
@@ -886,7 +904,7 @@ a.search-filter-toggle {
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: $screen-sm-max) {
   // hide module-tab arrow on mobile
   #moduletab li {
     &.active::after {
@@ -1252,7 +1270,7 @@ body:has(.main form#advSearchForm) {
   padding-top: 1.5rem;
 
   .format {
-    background-color: #b2b2b2;
+    background-color: $gray-light;
   }
 
   .result-author {

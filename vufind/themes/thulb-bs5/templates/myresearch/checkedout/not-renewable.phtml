@@ -2,7 +2,7 @@
   <div class="mt-3">
     <?php if (str_contains($ilsDetails['callnumber'] ?? '', 'EDV:Laptop')): ?>
       <span class="text-danger"><?= $this->transEsc('Renewal at central information')?></span>
-    <?php elseif($ilsDetails['departmentId'] == 'ZAUSL' && ($ilsDetails['status'] ?? false) == 3): ?>
+    <?php elseif(in_array($ilsDetails['departmentId'], ['ZAUSL', 'SLS2']) && ($ilsDetails['status'] ?? false) == 3): ?>
       <span class="text-danger"><?= $this->translate('Renewal not possible_ILL')?></span>
     <?php elseif (isset($ilsDetails['reminder']) && $ilsDetails['reminder'] > 2): ?>
       <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>

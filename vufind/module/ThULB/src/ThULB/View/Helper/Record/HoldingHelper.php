@@ -35,7 +35,7 @@ class HoldingHelper extends AbstractHelper
     /**
      * Creates a string including the link to place a recall.
      *
-     * @param array $itemRow
+     * @param array $item
      *
      * @return array
      */
@@ -48,7 +48,8 @@ class HoldingHelper extends AbstractHelper
             return [
                 'classes' => ($check ? 'checkRequest' : '') . 'placehold btn btn-primary btn-sm',
                 'link' => $url,
-                'desc' => $check ? 'Check Recall' : 'Recall This'
+                'desc' => $check ? 'Check Recall' : 'Recall This',
+                'lightbox' => true,
             ];
         }
 
@@ -65,7 +66,8 @@ class HoldingHelper extends AbstractHelper
             $links[] = array (
                 'classes' => ($check ? 'checkRequest ' : '') . 'placehold btn btn-primary btn-sm',
                 'link' => $this->view->recordLinker()->getRequestUrl($item['link']),
-                'desc' => $check ? 'Check Hold' : 'Place a Hold'
+                'desc' => $check ? 'Check Hold' : 'Place a Hold',
+                'lightbox' => true,
             );
         }
 
@@ -73,7 +75,8 @@ class HoldingHelper extends AbstractHelper
             $links[] = array (
                 'classes' => ($checkStorageRetrievalRequest ? 'checkStorageRetrievalRequest ' : '') . 'placeStorageRetrievalRequest btn btn-primary btn-sm',
                 'link' => $this->view->recordLinker()->getRequestUrl($item['storageRetrievalRequestLink']),
-                'desc' => $checkStorageRetrievalRequest ? 'storage_retrieval_request_check_text' : 'storage_retrieval_request_place_text'
+                'desc' => $checkStorageRetrievalRequest ? 'storage_retrieval_request_check_text' : 'storage_retrieval_request_place_text',
+                'lightbox' => true,
             );
         }
 
@@ -82,7 +85,8 @@ class HoldingHelper extends AbstractHelper
                 'classes' => ($checkILLRequest ? 'checkILLRequest ' : '') . 'placeILLRequest',
                 'link' => $this->view->recordLinker()->getRequestUrl($item['ILLRequestLink']),
                 'desc' => $checkILLRequest ? 'ill_request_check_text' : 'ill_request_place_text',
-                'icon' => '<i class="fa fa-flag" aria-hidden="true"></i>'
+                'icon' => '<i class="fa fa-flag" aria-hidden="true"></i>',
+                'lightbox' => true,
             );
         }
 

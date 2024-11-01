@@ -79,17 +79,16 @@
       </div>
     <?php endif; ?>
   
-    <?php if ($holding['location'] != "Remote" && $callno != "bestellt"
-              && ($item['departmentId'] ?? '') != 'DMag'
-              && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])
+    <?php if ($holding['location'] != "Remote"
+            && $callno != "bestellt"
+            && ($item['departmentId'] ?? '') != 'DMag'
+            && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])
+            && $availabilityHtml = trim($this->render('record/holding/availability.phtml'))
     ): ?>
       <div class="d-flex flex-column flex-sm-row gap-sm-2">
         <div class="col-description fw-bold"><?= $this->transEsc("Availability Status")?>:</div>
         <div class="col-text">
-          <?= $this->render('record/holding/availability.phtml', [
-            'driver' => $this->driver,
-            'item' => $item
-          ]); ?>
+          <?= $availabilityHtml; ?>
         </div>
       </div>
     <?php endif; ?>

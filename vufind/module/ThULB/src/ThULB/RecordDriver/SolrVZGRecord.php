@@ -1908,6 +1908,7 @@ class SolrVZGRecord extends SolrMarc
         else {
             $retVal = "";
         }
+
         return $retVal;
     }
 
@@ -2277,7 +2278,17 @@ class SolrVZGRecord extends SolrMarc
     public function getHoldings() : array {
         if(!$this->holdingData) {
             $this->holdingData = $this->getRealTimeHoldings();
+
+            foreach ($this->holdingData['holdings'] as $key => $holding) {
+                $this->holdingData['holdings'][$key]['isHandsetLocation'] =
+                    $holding['items'][0]['isHandset'] ?? false;
+            }
+
+            uasort($this->holdingData['holdings'], function($holding1, $holding2) {
+                return $holding1['isHandsetLocation'] <=> $holding2['isHandsetLocation'];
+            });
         }
+
         return $this->holdingData;
     }
 
@@ -2526,10 +2537,11 @@ class SolrVZGRecord extends SolrMarc
         $hasOpenStock = false;
         foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
             foreach ($holding['items'] as $item) {
-                if($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
+                if(($item['isHandset'] ?? false)
+                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
                     || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)
                 ) {
-                    // item is missing, check next item
+                    // item is a handset or missing, check next item
                     continue;
                 }
 

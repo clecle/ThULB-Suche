@@ -548,6 +548,10 @@ class PAIA extends OriginalPAIA
                 $result_item['callnumber'] = $this->getItemCallnumber($item);
                 // get department id
                 $result_item['departmentId'] = $this->getDepIdFromItem($item, $result_item['callnumber']);
+                // check if the item is a handset
+                if (($isHandset = $this->isHandset($result_item['departmentId'])) !== null) {
+                    $result_item['isHandset'] = $isHandset;
+                }
                 // get location
                 $result_item['location'] = $this->getItemDepartment($item);
                 if(preg_match('/#\d$/', $result_item['location'])) {
@@ -1021,5 +1025,39 @@ class PAIA extends OriginalPAIA
         }
 
         return $details;
+    }
+
+    /**
+     * Check if a department ID belongs to a handset. Rules are defined in DepartmentsDAIA.ini
+     *
+     * @param ?string $departmentId
+     *
+     * @return bool|null NULL if there are no handset rules
+     */
+    protected function isHandset(?string $departmentId) : bool|null {
+        $handsetRules = $this->config['Handsets'] ?? null;
+        if(!$handsetRules || !$departmentId) {
+            return null;
+        }
+
+        $handsetRegex = $handsetRules['regex'] ?? [];
+        $handsetWhitelist = $handsetRules['whitelist'] ?? [];
+        $handsetBlacklist = $handsetRules['blacklist'] ?? [];
+
+        if (in_array($departmentId, $handsetWhitelist)) {
+            return true;
+        }
+        elseif (in_array($departmentId, $handsetBlacklist)) {
+            return false;
+        }
+        else {
+            foreach($handsetRegex as $regex) {
+                if(preg_match($regex, $departmentId)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 }

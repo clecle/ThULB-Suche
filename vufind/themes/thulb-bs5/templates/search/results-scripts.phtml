@@ -18,13 +18,14 @@ if ($this->jsResults ?? false) {
 $statuses = [
     \VuFind\ILS\Logic\AvailabilityStatus::STATUS_AVAILABLE,
     \VuFind\ILS\Logic\AvailabilityStatus::STATUS_UNAVAILABLE,
+    \ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED,
     \VuFind\ILS\Logic\AvailabilityStatus::STATUS_UNKNOWN,
     \VuFind\ILS\Logic\AvailabilityStatus::STATUS_UNCERTAIN,
 ];
 
 $availabilityStatuses = [];
 foreach ($statuses as $status) {
-    $status = new \VuFind\ILS\Logic\AvailabilityStatus($status);
+    $status = new \ThULB\ILS\Logic\AvailabilityStatus($status);
     $availabilityClasses[$status->availabilityAsString()] =
         $this->availabilityStatus()->getClass($status);
 }

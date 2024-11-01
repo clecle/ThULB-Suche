@@ -17,7 +17,9 @@
   <?php elseif($locationData): ?>
     <button class="btn btn-xs btn-secondary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
   <?php elseif($holding['locationhref'] ?? false): ?>
-    <a href="<?= $holding['locationhref']; ?>" class="btn btn-xs btn-secondary btn-opening-hours" target="_blank"><?= $this->transEsc('Location / Opening hours'); ?></a>
+    <a href="<?= $holding['locationhref']; ?>" class="btn btn-xs btn-secondary btn-opening-hours" target="_blank">
+      <?= $this->transEsc(!$isHandsetLocation ? 'Location / Opening hours' : 'Information'); ?>
+    </a>
   <?php endif; ?>
 </h3>
 <div class="flex flex-wrap-reverse-xs">
@@ -40,8 +42,8 @@
       </div>
     <?php endforeach; endif; ?>
 
-    <?php foreach ($holding['items'] as $item): ?>
-      <?= $this->render('RecordTab/access/physicalHoldingItem.phtml', ['holding' => $holding, 'driver' => $driver, 'item' => $item]); ?>
+    <?php foreach ($holding['items'] as $this->item): ?>
+      <?= $this->render('RecordTab/access/physicalHoldingItem.phtml'); ?>
     <?php endforeach; ?>
 
     <?php if (!empty($holding['purchase_history'])): ?>

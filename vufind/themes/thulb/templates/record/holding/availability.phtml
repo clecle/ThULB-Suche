@@ -5,33 +5,61 @@
   $checkILLRequest = $item['checkILLRequest'] ?? false;
 
   $holdingHelper = $this->thulb_holdingHelper();
+
+  $isHandset = $item['isHandset'] ?? false;
+  $itemAvailability = $item['availability'] ?? false;
+
+  // get data for displayed order, reserve or request links
+  $links = match(true){
+    !$isHandset && $itemAvailability => $holdingHelper->getRequestLinks($item, $this->driver->isNewsPaper()),
+    !$isHandset && !$itemAvailability => [$holdingHelper->getRecallLink($item)],
+    $isHandset && $displayRequestHandsetLink => [[
+      'target' => '_blank',
+      'classes' => 'external-link',
+      'desc' => $this->transEsc('Request handset'),
+      'link' => $this->thulb_serviceDesk('request-handset', [
+        'url' => $this->serverUrl($this->recordLinker()->getUrl($this->driver)),
+        'information' => $this->driver->getTitle(),
+        'location' => $item['departmentId'] . ':' . $item['callnumber'],
+        'username' => $this->auth()->getILSPatron()['cat_username'] ?? '',
+      ])
+    ]],
+    default => []
+  };
+
+  $readingRoom = $holdingHelper->getReadingRoomOnlyString($item)
 ?>
 
-<?php if ($item['reserve'] == "Y"): ?>
-  <link property=\"availability" href="http://schema.org/InStoreOnly" />
-  <?= $this->transEsc("On Reserve - Ask at Circulation Desk"); ?><br />
-<?php endif; ?>
+<?php // only add <link> and <meta> tags if there is data to display ?>
+<?php if(!$isHandset || $displayRequestHandsetLink || ($item['use_unknown_message'] ?? false) || $readingRoom): ?>
+  <?php if ($item['reserve'] == "Y"): ?>
+    <link property=\"availability" href="http://schema.org/InStoreOnly" />
+    <?= $this->transEsc("On Reserve - Ask at Circulation Desk"); ?><br />
+  <?php endif; ?>
 
-<?php /* Embed item structured data: library, barcode, call number */ ?>
-<?php if ($item['location']): ?>
-  <meta property="seller" content="<?= $this->escapeHtmlAttr($item['location']); ?>" />
-<?php endif; ?>
-<?php if ($item['barcode']): ?>
-  <meta property="serialNumber" content="<?= $this->escapeHtmlAttr($item['barcode']); ?>" />
-<?php endif; ?>
-<?php if ($item['callnumber']): ?>
-  <meta property="sku" content="<?= $this->escapeHtmlAttr($item['callnumber']); ?>" />
-<?php endif; ?>
+  <?php /* Embed item structured data: library, barcode, call number */ ?>
+  <?php if ($item['location']): ?>
+    <meta property="seller" content="<?= $this->escapeHtmlAttr($item['location']); ?>" />
+  <?php endif; ?>
+  <?php if ($item['barcode']): ?>
+    <meta property="serialNumber" content="<?= $this->escapeHtmlAttr($item['barcode']); ?>" />
+  <?php endif; ?>
+  <?php if ($item['callnumber']): ?>
+    <meta property="sku" content="<?= $this->escapeHtmlAttr($item['callnumber']); ?>" />
+  <?php endif; ?>
 
-<?php /* Declare that the item is to be borrowed, not for sale */ ?>
-<link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut" />
-<link property="itemOffered" href="#record" />
+  <?php /* Declare that the item is to be borrowed, not for sale */ ?>
+  <link property="businessFunction" href="http://purl.org/goodrelations/v1#LeaseOut" />
+  <link property="itemOffered" href="#record" />
+<?php endif; ?>
 
 <?php if ($item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN) ?? false): ?>
   <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
 <?php elseif($item['availability']->isAvailable()): ?>
   <?php /* Begin AVAILABLE Items (Holds) */ ?>
-  <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
+  <?php if (!$isHandset): ?>
+    <span class="<?= $this->availabilityStatus()->getClass($item['availability']); ?>"><?= $this->transEsc($item['availability']->getStatusDescription()); ?><link property="availability" href="<?= $item['availability']->getSchemaAvailabilityUri(); ?>" /></span>
+  <?php endif; ?>
 
   <?php foreach($holdingHelper->getRequestLinks($item, $this->driver->isNewsPaper()) as $linkData): ?>
     <a class="<?= $linkData['classes']; ?>" data-lightbox href="<?= $linkData['link']; ?>"><?= $linkData['icon'] ?? ''; ?><?= $this->transEsc($linkData['desc']); ?></a>
@@ -59,10 +87,14 @@
     &ndash; <?= $this->transEsc("Due"); ?>: <?= $this->escapeHtml($item['duedate']); ?>
   <?php endif; ?>
 
-  <?php if ($item['link'] ?? false): ?>
-    <?php $recallLink = $holdingHelper->getRecallLink($item); ?>
-    <a class="<?= $recallLink['classes']; ?>" data-lightbox href="<?= $recallLink['link']; ?>"><?= $recallLink['icon'] ?? ''; ?><?= $this->transEsc($recallLink['desc']); ?></a>
-  <?php endif; ?>
+  <?php foreach($links as $linkData): ?>
+    <a class="<?= $linkData['classes']; ?>"<?php if($linkData['lightbox'] ?? false): ?> data-lightbox<?php endif; ?> target="<?= $linkData['target'] ?? ''; ?>" href="<?= $linkData['link']; ?>"><?= $linkData['icon'] ?? ''; ?><?= $this->transEsc($linkData['desc']); ?></a>
+  <?php endforeach; ?>
 
   <?= $holdingHelper->getRequestsPlacedString($item); ?>
+
+  <?php /* Nicht leihbar? Also Lesesaal! */ ?>
+  <?php if ($readingRoom): ?>
+    <div><?= $readingRoom; ?></div>
+  <?php endif; ?>
 <?php endif; ?>

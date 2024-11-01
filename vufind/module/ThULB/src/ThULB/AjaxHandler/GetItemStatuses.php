@@ -72,6 +72,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
     protected function getItemStatusGroup($record, $callnumberSetting) : array {
         // Summarize call number, location and availability info across all items:
         $locations = [];
+        $onlyHandsets = true;
 
         $itemList = $record;
         foreach ($record as $key => $info) {
@@ -79,6 +80,12 @@ class GetItemStatuses extends OriginalGetItemStatuses
                 unset($itemList[$key]);
                 continue;
             }
+
+            // do not display location information for handsets
+            if($info['isHandset'] ?? false) {
+                continue;
+            }
+            $onlyHandsets = false;
 
             $availabilityStatus = $info['availability'];
             // Find an available copy
@@ -151,6 +158,7 @@ class GetItemStatuses extends OriginalGetItemStatuses
             'reserve_message'
                 => $this->translate($reserve ? 'on_reserve' : 'Not On Reserve'),
             'callnumber' => false,
+            'missing_data' => $onlyHandsets
         ];
     }
 

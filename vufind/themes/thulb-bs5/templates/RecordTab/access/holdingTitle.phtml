@@ -21,7 +21,9 @@
   <?php if(!$locationInfoInfoMessage && $locationData): ?>
     <button class="btn btn-sm btn-secondary btn-opening-hours" onclick="VuFind.lightbox.render($('#location-data-<?= $locationApiId; ?>').html());"><?= $this->transEsc('Location / Opening hours'); ?></button>
   <?php elseif(!$locationInfoInfoMessage && $holding['locationhref'] ?? false): ?>
-    <a href="<?= $holding['locationhref']; ?>" class="btn btn-sm btn-secondary btn-opening-hours" target="_blank"><?= $this->transEsc('Location / Opening hours'); ?></a>
+    <a href="<?= $holding['locationhref']; ?>" class="btn btn-sm btn-secondary btn-opening-hours" target="_blank">
+      <?= $this->transEsc(!$holding['isHandsetLocation'] ? 'Location / Opening hours' : 'Information'); ?>
+    </a>
   <?php endif; ?>
 
   <div class="hidden">

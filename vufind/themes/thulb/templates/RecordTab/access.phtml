@@ -17,13 +17,25 @@
   }
 
   $onlineContentLinks = $this->thulb_onlineContent($this->driver);
+
+  // if there are non-handset holdings, do not display links for requesting handsets
+  // used in availability.phtml
+  $displayRequestHandsetLink = true;
+  foreach($holdings['holdings'] as $holding) {
+    foreach($holding['items'] as $item) {
+      if(!($item['isHandset'] ?? false) && !($item['use_unknown_message'] ?? false)) {
+        $displayRequestHandsetLink = false;
+        break 2;
+      }
+    }
+  }
 ?>
 
 <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
 
 <?php if (!empty($holdings['blocks'])):?>
   <div id="account-block-msg" class="alert alert-danger">
-      <?= $this->transEsc('account_block_options_missing', ['%%details%%' => implode('; ', $holdings['blocks'])]) ?>
+    <?= $this->transEsc('account_block_options_missing', ['%%details%%' => implode('; ', $holdings['blocks'])]) ?>
   </div>
 <?php endif; ?>
 
@@ -95,7 +107,11 @@
 <?php if (!empty($holdings)): ?>
   <?php foreach ($holdings['holdings'] as $holdingKey => $holding): ?>
     <?php if($holdingKey == 'Remote') continue; ?>
-    <?= $this->render('RecordTab/access/physicalHoldingLocation.phtml', ['holding' => $holding, 'driver' => $this->driver]); ?>
+    <?= $this->context()->renderInContext('RecordTab/access/physicalHoldingLocation.phtml', [
+        'holding' => $holding,
+        'displayRequestHandsetLink' => $displayRequestHandsetLink,
+        'isHandsetLocation' => $holding['items'][0]['isHandset'] ?? false
+    ]); ?>
   <?php endforeach; ?>
 <?php endif; ?>
 

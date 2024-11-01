@@ -77,6 +77,7 @@ return array(
             'status-available' => 'FontAwesome:check',
             'status-unavailable' => 'FontAwesome:remove',
             'status-uncertain' => 'FontAwesome:circle',
+            'status-ordered' => 'FontAwesome:cart-shopping',
             'status-unknown' => 'FontAwesome:circle',
             'ui-delete' => 'FontAwesome:trash',
             'ui-reset-search' => 'FontAwesome:times-circle',

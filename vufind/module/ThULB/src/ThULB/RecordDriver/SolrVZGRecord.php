@@ -150,11 +150,7 @@ class SolrVZGRecord extends SolrMarc
         }
 
         $leader = $this->getMarcReader()->getLeader();
-        $ordered = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => static::LIBRARY_ILN, 'e' => 'a']);
-        $allCopies = $this->getConditionalFieldArray('980', ['e'], true, '', ['2' => static::LIBRARY_ILN]);
-
-        return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a'
-            && !$noStatus && count($allCopies) !== count($ordered));
+        return ($leader[7] !== 's' && $leader[7] !== 'a' && $leader[19] !== 'a' && !$noStatus);
     }
 
     /**
@@ -2532,20 +2528,23 @@ class SolrVZGRecord extends SolrMarc
      * @return array
      */
     public function getHoldingsToOrderOrReserve() : array {
+        $excludedIds = $this->thulbConfig->OrderReserve?->exclude?->toArray() ?? [];
+
         $holdingsOrder = $holdingsReserve = [];
         $holdings = $this->getHoldings();
         $hasOpenStock = false;
         foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
             foreach ($holding['items'] as $item) {
-                if(($item['isHandset'] ?? false)
-                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
+                if (($item['isHandset'] ?? false)
                     || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)
+                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
+                    || $item['availability']->is(\ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED)
                 ) {
-                    // item is a handset or missing, check next item
+                    // ignore handsets or items without status 'available' or 'unavailable'
                     continue;
                 }
 
-                if(in_array($item['departmentId'], $this->thulbConfig->OrderReserve?->exclude?->toArray() ?? [])) {
+                if (in_array($item['departmentId'], $excludedIds)) {
                     continue;
                 }
 
@@ -2555,12 +2554,12 @@ class SolrVZGRecord extends SolrMarc
                 $isNewspaperRetrieval = isset($item['storageRetrievalRequestLink'])
                     && $this->isNewsPaper();
                 if ($isOpenStack || $isNewspaperRetrieval) {
-                    // item is available in 'Freihand', placing a hold and reserving not available in list view
+                    // item is available in open stack
                     $hasOpenStock = true;
                     continue;
                 }
 
-                if($item['availability']->isAvailable()) {
+                if ($item['availability']->isAvailable()) {
                     // available in stack, no need to look for other items
                     $holdingsOrder[$holdingLocation][] = $item;
                 }

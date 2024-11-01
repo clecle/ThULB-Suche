@@ -29,6 +29,7 @@
 
 namespace ThULB\View\Helper\Root;
 
+use VuFind\ILS\Logic\AvailabilityStatusInterface;
 use VuFind\View\Helper\Root\AvailabilityStatus as OriginalAvailabilityStatus;
 
 /**
@@ -48,4 +49,30 @@ class AvailabilityStatus extends OriginalAvailabilityStatus
      * @var string
      */
     protected string $classUnknown = 'text-warning';
+
+    protected string $classOrdered = 'text-status-ordered';
+
+    /**
+     * Get html class for availability status.
+     *
+     * @param AvailabilityStatusInterface $availabilityStatus Availability Status
+     *
+     * @return string
+     */
+    public function getClass(AvailabilityStatusInterface $availabilityStatus): string
+    {
+        if ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNAVAILABLE)) {
+            return $this->classUnavailable;
+        }
+        if ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
+            return $this->classAvailable;
+        }
+        if ($availabilityStatus->is(\ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED)) {
+            return $this->classOrdered;
+        }
+        if ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)) {
+            return $this->classUnknown;
+        }
+        return $this->classUncertain;
+    }
 }

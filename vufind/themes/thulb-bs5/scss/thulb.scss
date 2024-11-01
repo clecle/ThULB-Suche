@@ -1419,6 +1419,14 @@ body:has(.main form#advSearchForm) {
   background-color: #5cb85c;
 }
 
+.text-status-ordered {
+  color: $ordered-items-color;
+}
+
+.label-ordered {
+  background-color: $ordered-items-color;
+}
+
 /* ------ Detail view ------ */
 .fullrecord_view {
   border: 1px solid #ccc;

@@ -257,11 +257,13 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
 
     public function deleteaccountAction() : ViewModel {
         // Force login if necessary:
-        if (!$this->getUser()) {
+        if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
 
-        return new ViewModel();
+        return new ViewModel([
+            'userEmail' => $user->getEmail()
+        ]);
     }
 
     public function deleteaccountconfirmationAction () : ViewModel {
@@ -271,12 +273,13 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
         }
 
         $request = $this->getRequest();
+        $confirmationEmail = $request->getPost('confirmation_email', $user->email);
         if($request->isPost() && $this->doCsrfValidation() && $request->getPost('confirmation', false)) {
             $this->addLogContent('Request type: delete account');
             $this->sendEmail(
                 'Fernleihkonto löschen',
                 'Email/ill/delete-account', [
-                    'email' => $user->email,
+                    'email' => $confirmationEmail,
                     'firstname' => $user->firstname,
                     'lastname' => $user->lastname,
                     'username' => $user->username,
@@ -286,7 +289,9 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $this->writeIllLog();
         }
 
-        return new ViewModel();
+        return new ViewModel([
+            'confirmationEmail' => $confirmationEmail
+        ]);
     }
 
     public function getIllInformation(string $username) : array {

@@ -1,11 +1,13 @@
 <div>
   <?= $this->flashmessages(); ?>
   <p class="m-auto fs-18px"><?= $this->translate('ill_delete_account_confirmation'); ?></p>
+  <p><?=$this->transEsc('ill_delete_account_confirmation_email')?> <strong><?=$this->confirmationEmail?></strong></p>
 
-  <form href="/ILL/deleteaccountconfirmation" method="post">
+  <form action="<?=$this->url('ill-deleteaccountconfirmation')?>" method="post">
     <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
     <input type="hidden" name="confirmation" value="true" />
+    <input type="hidden" name="confirmation_email" value="<?= $this->confirmationEmail?>">
 
-    <button class="btn btn-primary d-block m-auto mt-2" type="submit"><?= $this->transEsc('ill_delete_account'); ?></button>
+    <button class="btn btn-primary d-block m-auto mt-2" type="submit"><?=$this->transEsc('ill_delete_account')?></button>
   </form>
 </div>

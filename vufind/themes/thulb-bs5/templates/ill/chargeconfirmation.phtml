@@ -44,7 +44,7 @@
 
       <tr>
         <td colspan="2">
-          <form action="/ILL/chargeconfirmation" method="post" class="d-flex justify-content-around">
+          <form action="<?=$this->url('ill-chargeconfirmation')?>" method="post" class="d-flex justify-content-around">
             <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
             <input type="hidden" name="chargeQuantity" value="<?= $this->chargeQuantity ?? 0; ?>" />
             <input type="hidden" name="confirmation" value="true">

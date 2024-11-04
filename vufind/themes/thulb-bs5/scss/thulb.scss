@@ -1152,10 +1152,15 @@ body:has(.main form#advSearchForm) {
 .facet-group a,
 .myresearch-menu a {
   color: $text-color;
+
   &:hover {
     color: $text-color;
     background-color: $nav-link-hover-bg;
     text-decoration: none;
+  }
+
+  &.icon-link.active:hover span {
+    color:$text-color;
   }
 }
 

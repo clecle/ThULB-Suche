@@ -12,8 +12,16 @@
   <h2><?= $this->transEsc('ill_delete_account')?></h2>
   <?= $this->flashmessages()?>
 
-  <p class="mt-2"><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
-  <a href="/ILL/deleteaccountconfirmation" class="btn btn-primary" data-lightbox><?= $this->transEsc('ill_delete_account'); ?></a>
+  <form action="<?=$this->url('ill-deleteaccountconfirmation')?>" method="post" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
+    <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+
+    <p class="mt-2"><?= $this->transEsc('ill_delete_account_dsgvo'); ?></p>
+
+    <label for="confirmation_email"><?= $this->transEsc('ill_delete_account_confirmation_email'); ?></label>
+    <input type="email" id="confirmation_email" name="confirmation_email" class="form-control mt-2" value="<?=$this->userEmail?>">
+
+    <input class="btn btn-primary mt-3" type="submit" name="delete" value="<?= $this->transEsc('ill_delete_account'); ?>" />
+  </form>
 </div>
 
 <div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">

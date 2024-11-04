@@ -253,9 +253,11 @@ $config = array(
 
 $routeGenerator = new \VuFind\Route\RouteGenerator();
 $routeGenerator->addStaticRoute($config, 'Holds/HoldsAndSRR');
+$routeGenerator->addStaticRoute($config, 'ILL/chargeconfirmation');
 $routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
 $routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
+$routeGenerator->addStaticRoute($config, 'ILL/deleteaccountconfirmation');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addStaticRoute($config, 'MyResearch/Provided');

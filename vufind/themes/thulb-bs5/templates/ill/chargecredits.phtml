@@ -18,7 +18,7 @@
     <h2><?= $this->transEsc('ill_credits_charge')?></h2>
     <?= $this->flashmessages(); ?>
 
-    <form action="/ILL/chargeconfirmation" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
+    <form action="<?=$this->url('ill-chargeconfirmation')?>" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">
       <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
       <div class="d-flex flex-wrap-reverse flex-lg-nowrap gap-lg-3">
         <div class="mt-0 mt-md-3 col-12 col-lg-6 flex-fill">

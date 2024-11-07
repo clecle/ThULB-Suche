@@ -146,9 +146,10 @@ class Sera extends AbstractBase implements
         $insertKeys = implode(', ', array_keys($data));
         $insertData = implode(', ', $data);
 
+        $iln = $data['iln'];
         $sql = <<<SQL
             DECLARE @local_addr_id_nr INT
-            SELECT @local_addr_id_nr = address_id_nr FROM borrower WHERE borrower_bar = '{$username}'
+            SELECT @local_addr_id_nr = address_id_nr FROM borrower WHERE borrower_bar = '{$username}' AND iln = {$iln}
             
             DECLARE @local_req_id_nr INT
             SELECT TOP 1 @local_req_id_nr = id_number + 1 FROM requisition ORDER BY id_number DESC
@@ -173,9 +174,9 @@ class Sera extends AbstractBase implements
      * @param string $quantity
      * @param string $cost
      *
-     * @return bool
+     * @return int|false
      */
-    public function chargeIllFee(string $username, string $quantity, string $cost) : bool {
+    public function chargeIllFee(string $username, string $quantity, string $cost) : int|false {
         try {
             if(getenv('VUFIND_ENV') != 'production') {
                 // there is no SERA test API, use a live user

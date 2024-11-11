@@ -10,14 +10,17 @@
 <h3><?= $this->transEsc('Solr Index fields')?></h3>
 <table class="citation table table-striped">
   <?php foreach ($this->driver->getRawData() as $field => $values): ?>
+    <?php $truncate = preg_match('/(allfields|fullrecord|spelling)/', $field);?>
     <tr>
       <th><?= $this->escapeHtml($field)?></th>
-      <td>
+      <td<?= $truncate ? ' class="truncate"' : ''?>>
         <?php if (!is_array($values)) { $values = [$values]; } ?>
         <?php foreach ($values as $value): ?>
-          <?= $this->escapeHtml(is_array($value) ? print_r($value, true) : $value)?><br />
+          <?= $t = $this->escapeHtml(is_array($value) ? print_r($value, true) : $value)?><br />
         <?php endforeach; ?>
       </td>
     </tr>
   <?php endforeach; ?>
 </table>
+
+<script>setupTruncations();</script>

@@ -1,10 +1,10 @@
 function setupTruncations() {
-    var truncatedParagraphs = $('p.truncate');
+    var truncatedParagraphs = $('p.truncate, td.truncate');
     var pTruncLength = 300;
 
     // apply truncations
     truncatedParagraphs.each(function() {
-        var t = $(this).text();
+        var t = $(this).html();
         if(t.length < pTruncLength) {
             return;
         }

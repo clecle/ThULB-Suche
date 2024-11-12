@@ -137,7 +137,7 @@ class UserdataController extends AbstractBase {
                     $oldUser = $userTable->getByUsername($oldUserNumber, false);
                     $newUser = $userTable->getByUsername($newUserNumber, false);
 
-                    if (!$newUser->offsetExists('id')) {
+                    if (!$newUser) {
                         $newUser = $userTable->createRowForUsername($newUserNumber);
                         $newUser->save();
                     }

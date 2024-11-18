@@ -2,7 +2,7 @@
   <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <?=$this->component('menu-button', [
       'toggleLabel' => strtoupper($this->layout()->userLang) . ' ',
-      'wrapperClass' => 'language visible-xs',
+      'wrapperClass' => 'language visible-xs visible-sm',
       'wrapperTag' => 'li',
       'href' => '#_',
       'menuItems' => array_map(

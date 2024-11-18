@@ -95,8 +95,9 @@
             <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
               <?=$this->component('menu-button', [
                 'toggleLabel' => strtoupper($this->layout()->userLang),
-                'wrapperClass' => 'language hidden-xs',
+                'wrapperClass' => 'language hidden-xs hidden-sm',
                 'wrapperTag' => 'li',
+                'dropdownClass' => 'dropdown-menu-end',
                 'menuItems' => array_map(
                   function ($langCode, $langName) {
                     return [

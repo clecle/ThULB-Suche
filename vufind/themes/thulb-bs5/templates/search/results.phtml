@@ -163,7 +163,12 @@
     </div>
 
     <?php if ($recordTotal > 0): ?>
-      <?= $this->render('search/controls/sort.phtml')?>
+      <?php $list = $this->params->getSortList(); ?>
+      <?php if (!empty($list)): ?>
+        <h4><?=$this->transEsc('Sort')?></h4>
+        <?= $this->render('search/controls/sort.phtml')?>
+      <?php endif; ?>
+
       <?= $this->render('search/controls/limit.phtml')?>
       <?= $this->render('search/controls/view.phtml')?>
     <?php endif; ?>

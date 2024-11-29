@@ -49,7 +49,7 @@
             'href' => $this->url('search-opensearch') . '?method=describe',
             'type' => 'application/opensearchdescription+xml',
             'title' => $this->transEsc('Library Catalog Search'),
-            'rel' => 'search'
+            'rel' => 'search',
           ]
       );
       // We need to generate the icons early, because they may add some stylesheets;
@@ -66,6 +66,10 @@
     <?php
       // Collect small scripts together and append as one block:
       $appendScripts = [];
+
+      if (!empty($this->themeConfig()['stickyElements'])) {
+        $this->headScript()->appendFile('sticky_elements.js');
+      }
 
       if (!isset($this->renderingError)) {
         // Deal with cart stuff:

@@ -36,3 +36,5 @@
 
   <?=$this->slot('search-home-hero')->end() ?>
 </div>
+
+<?=implode('', array_map([$this, 'contentBlock'], $blocks ?? []))?>

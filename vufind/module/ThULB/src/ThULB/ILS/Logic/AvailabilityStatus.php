@@ -83,7 +83,7 @@ class AvailabilityStatus extends OriginalAvailabilityStatus {
      *
      * @return int
      */
-    protected function getPriority(): int
+    public function getPriority(): int
     {
         switch ($this->availability) {
             case self::STATUS_UNKNOWN:

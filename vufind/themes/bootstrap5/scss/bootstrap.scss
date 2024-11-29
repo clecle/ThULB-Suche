@@ -214,6 +214,11 @@ h3 { font-size: 16px; }
 }
 
 /* ------ Layout ------ */
+.sticky {
+  position: fixed;
+  left: 0;
+}
+
 footer {
   @extend .container;
   padding: 1rem;
@@ -498,6 +503,9 @@ ul.list-group {
   tbody > tr > td {
     vertical-align: middle;
   }
+}
+.fines-total {
+  font-weight: bold;
 }
 
 /* --- PubDateVis --- */

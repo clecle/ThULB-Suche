@@ -1,0 +1,15 @@
+User-agent: *
+Disallow: /ajax
+Disallow: /AJAX
+Disallow: /author
+Disallow: /Author
+Disallow: /cover
+Disallow: /Cover
+Disallow: /record
+Disallow: /Record
+Disallow: /search
+Disallow: /Search
+Disallow: /search/facetlist
+Disallow: /Search/FacetList
+Disallow: /summon
+Disallow: /Summon

@@ -69,7 +69,7 @@ $config = array(
             \VuFind\Mailer\Mailer::class => \ThULB\Mailer\Mailer::class,
             \VuFind\Record\Loader::class => \ThULB\Record\Loader::class,
             \VuFind\Search\Solr\HierarchicalFacetHelper::class => \ThULB\Search\Solr\HierarchicalFacetHelper::class,
-        )
+        ),
     ),
     'vufind' => array(
         'plugin_managers' => array(

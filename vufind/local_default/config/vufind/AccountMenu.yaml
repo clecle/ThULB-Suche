@@ -1,0 +1,73 @@
+# If this file is empty or missing, default settings will be used, matching
+# the examples provided below. The format of this configuration is as follows:
+# array keys for every menu item could be:
+#   - name: name of an item
+#   - label: the text shown as link, will be translated - required
+#   - route: route name used to generate link target - required
+#   - icon: icon used for the item, has to be defined in theme config
+#   - iconMethod: method to dynamically create the icon name; ignored when
+#     icon is explicitly set.
+#   - checkMethod: the name of an AccountMenu view helper method to perform
+#     a check whether to show the item. If omitted, item will always display.
+#   - status: whether to show status label, defaults to false
+
+MenuItems:
+  - name: checkedout
+    label: Checked Out Items
+    route: myresearch-checkedout
+    icon: user-checked-out
+    checkMethod: checkCheckedout
+
+  - name: provided
+    label: Provided Items
+    route: myresearch-provided
+    icon: user-checked-out
+    checkMethod: checkProvidedItems
+
+  - name: holdsandssr
+    label: Holds and Recalls
+    route: holds-holdsandsrr
+    icon: user-holds
+    checkMethod: checkHoldsAndSSR
+
+  - name: ILLRequests
+    label: Interlibrary Loan Requests
+    route: myresearch-illrequests
+    icon: user-ill-requests
+    checkMethod: checkILLRequests
+
+  - name: fines
+    label: Your Fines
+    route: myresearch-fines
+    checkMethod: checkFines
+    iconMethod: finesIcon
+
+  - name: profile
+    label: Profile
+    route: myresearch-profile
+    icon: profile
+    checkMethod: checkProfile
+
+  - name: librarycards
+    label: Library Cards
+    route: librarycards-home
+    icon: barcode
+    checkMethod: checkLibraryCards
+
+  - name: changepassword
+    label: Change Password
+    route: myresearch-changepassword
+    icon: lock
+    checkMethod: checkChangePassword
+
+  - name: changepasswordlink
+    label: Change Password
+    route: myresearch-changepasswordlink
+    icon: lock
+    checkMethod: checkChangePasswordLink
+
+  - name: letterofauthorization
+    label: Create Letter of Authorization
+    route: myresearch-letterofauthorization
+    icon: id-card
+    checkMethod: checkLetterOfAuthorization

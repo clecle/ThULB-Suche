@@ -3,6 +3,8 @@
 namespace ThULBAdmin\Controller;
 
 use Exception;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use VuFind\Controller\AbstractBase;
 use VuFind\Log\LoggerAwareTrait;
 use Laminas\Http\Response;
@@ -13,16 +15,19 @@ class DynMessagesController extends AbstractBase
 {
     use LoggerAwareTrait;
 
-    private $_basePath;
-    private $_iniGerman;
-    private $_iniEnglish;
-    private $_languageCache;
-    private $_tags;
+    protected string $_basePath;
+    protected string $_iniGerman;
+    protected string $_iniEnglish;
+    protected string $_languageCache;
+    protected array $_tags;
 
     /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm Service manager
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(ServiceLocatorInterface $sm)
     {
@@ -133,13 +138,12 @@ class DynMessagesController extends AbstractBase
      * Writes the given values into the specified file.
      * Values in the file are separated by a '='.
      *
-     * @param String $fileName  Name of the file to be written.
-     * @param array  $values    Values to be written.
+     * @param string $fileName Name of the file to be written.
+     * @param array  $values   Values to be written.
      *
      * @return boolean  Returns TRUE if files could be written, FALSE otherwise.
      */
     function writeLanguageFile(string $fileName, array $values) : bool {
-
         $success = true;
         if(is_file($fileName) && is_writable($fileName)) {
             ksort($values);
@@ -156,7 +160,7 @@ class DynMessagesController extends AbstractBase
                     fwrite($file, $line);
                 }
             }
-            catch (Exception $e) {
+            catch (Exception $ignore) {
                 $success = false;
             }
             finally {
@@ -167,6 +171,7 @@ class DynMessagesController extends AbstractBase
         }
         else {
             $this->flashMessenger()->addErrorMessage("Die Datei '$fileName' konnte nicht geschrieben werden.<br>");
+            $success = false;
         }
 
         return $success;

@@ -90,10 +90,11 @@
   <form id="searchForm" class="searchForm navbar-form navbar-left flip" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
     <div class="searchForm-inputs d-flex flex-column flex-sm-row">
       <?php
+        // Note: we need type="text" for autocomplete role="combobox"
         $searchboxAttributes = [
           'id' => 'searchForm_lookfor',
           'class' => 'searchForm_lookfor form-control form-control-lg search-query',
-          'type' => 'search',
+          'type' => 'text',
           'name' => 'lookfor',
           'value' => $this->lookfor,
           'aria-label' => $this->translate('search_terms'),

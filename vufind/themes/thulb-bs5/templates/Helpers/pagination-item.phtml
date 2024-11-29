@@ -1,7 +1,10 @@
 <?php
   $currentPath = '';
-  if($this->results == null || ($this->ajaxTab ?? false)) {
-      $currentPath = $this->currentPath() . '?';
+  if($this->ajaxTab ?? false) {
+      $currentPath = $this->currentPath();
+  }
+  elseif ($this->results == null) {
+    $currentPath = $this->currentPath() . '?';
   }
 
   $liAttrs = $this->htmlAttributes([

@@ -49,6 +49,8 @@
     ]
   );
   $recommendations = $this->results->getRecommendations('side');
+  $multiFacetsSelection = $this->multiFacetsSelection ? 'true' : 'false';
+  $this->headScript()->appendScript('var multiFacetsSelectionEnabled = ' . $multiFacetsSelection . ';');
 
   $recordTotal = $this->results->getResultTotal();
 

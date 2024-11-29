@@ -26,9 +26,6 @@
   if ($name = $this->buttonName) {
       $buttonAttrs['name'] = $name;
   }
-  if ($title = $this->buttonTitle) {
-      $buttonAttrs['title'] = $title;
-  }
   // Allow label with or without icon, or a raw html one:
   if ($this->buttonIcon && $this->buttonLabel) {
     $buttonLabelHtml = $this->icon($this->buttonIcon, 'icon-link__icon') . ' '
@@ -53,7 +50,7 @@
     $confirmAttrs['id'] = $id;
   }
   if ($title = $this->confirmTitle) {
-    $confirmAttrs['title'] = $title;
+    $confirmAttrs['title'] = $this->translate($title);
   }
   if ($class = $this->confirmClass) {
     $confirmAttrs['class'] .= " $class";
@@ -73,7 +70,7 @@
     $cancelAttrs['id'] = $id;
   }
   if ($title = $this->cancelTitle) {
-    $cancelAttrs['title'] = $title;
+    $cancelAttrs['title'] = $this->translate($title);
   }
   if ($class = $this->cancelClass) {
     $cancelAttrs['class'] .= " $class";

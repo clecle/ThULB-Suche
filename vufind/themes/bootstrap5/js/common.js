@@ -254,15 +254,19 @@ var VuFind = (function VuFind() {
   /**
    * Reload the page without causing trouble with POST parameters while keeping hash
    */
-  var refreshPage = function refreshPage() {
+  var refreshPage = function refreshPage(forceGet) {
     var parts = window.location.href.split('#');
-    if (typeof parts[1] === 'undefined') {
+    const hasHash = typeof parts[1] !== 'undefined';
+    if (!hasHash && !forceGet) {
       window.location.reload();
     } else {
       var href = parts[0];
       // Force reload with a timestamp
       href += href.indexOf('?') === -1 ? '?_=' : '&_=';
-      href += new Date().getTime() + '#' + parts[1];
+      href += new Date().getTime();
+      if (hasHash) {
+        href += '#' + parts[1];
+      }
       window.location.href = href;
     }
   };
@@ -788,6 +792,7 @@ function setupMultiILSLoginFields(loginMethods, idPrefix) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  VuFind.emit("ready");
   // Start up all of our submodules
   VuFind.init();
   // Off canvas

@@ -7,29 +7,38 @@ use VuFind\View\Helper\Root\Translate;
 
 class LetterOfAuthorization extends tFPDF
 {
-    // All Dimensions in 'mm'
-    protected $dinA4width = 210;
-    protected $dinA4height = 297;
-    protected $widthThULBSection = 40;
-    protected $widthContentSection = 120;
-    protected $printBorderBottom = 15;
-    protected $printBorderLeft = 25;
-    protected $printBorderRight = 10;
-    protected $printBorderTop = 15;
+    public const ALIGN_BLOCK = 'B';
+    public const ALIGN_CENTER = 'C';
+    public const ALIGN_LEFT = 'L';
+    public const ALIGN_RIGHT = 'R';
+    public const FONT_BOLD = 'B';
+    public const FONT_DEFAULT = '';
+    public const FONT_ITALIC = 'I';
+    public const STYLE_FILL = 'F';
 
-    protected $authorizedName;
+    // All Dimensions in 'mm'
+    protected int $dinA4width = 210;
+    protected int $dinA4height = 297;
+    protected int $widthThULBSection = 40;
+    protected int $widthContentSection = 120;
+    protected int $printBorderBottom = 15;
+    protected int $printBorderLeft = 25;
+    protected int $printBorderRight = 10;
+    protected int $printBorderTop = 15;
+
+    protected string $authorizedName;
 
     protected $barcode;
-    protected $grantedUntil;
-    protected $issuerEMail;
-    protected $issuerName;
-    protected $issuerUserNumber;
-    protected $issuerAddress;
+    protected string $grantedUntil;
+    protected string $issuerEMail;
+    protected string $issuerName;
+    protected string $issuerUserNumber;
+    protected array $issuerAddress;
 
     protected const DEFAULT_FONT_SIZE = 10;
     protected const TRANSLATION_PREFIX = 'Email::';
 
-    protected $translator;
+    protected Translate $translator;
 
     /**
      * Constructor.
@@ -52,7 +61,7 @@ class LetterOfAuthorization extends tFPDF
      * Create the request pdf. Data must be set beforehand.
      */
     public function create() : void {
-        $this->fontpath = APPLICATION_PATH . '/themes/thulb/fonts/';
+        $this->fontpath = APPLICATION_PATH . '/themes/thulb-bs5/fonts/';
         $this->AddPage();
         $this->AddFont('Roboto', '',  'Roboto-Regular.ttf', true);
         $this->AddFont('Roboto', 'B', 'Roboto-Bold.ttf', true);
@@ -75,14 +84,14 @@ class LetterOfAuthorization extends tFPDF
         $this->SetTextColor(0, 47, 93);
         $x = $this->dinA4width - $this->widthThULBSection - $this->printBorderRight;
         $this->SetXY($x - 6, $this->printBorderTop);
-        $this->Image(APPLICATION_PATH . "/themes/thulb/images/thulblogo_blue.png", null, null, 35);
+        $this->Image(APPLICATION_PATH . "/themes/thulb-bs5/images/thulblogo_blue.png", null, null, 35);
 
         $this->SetXY($x, $this->GetY() + 3);
-        $this->addText('thulb_full', 'de', $this->widthThULBSection, [], 0, 'B');
+        $this->addText('thulb_full', 'de', $this->widthThULBSection, self::FONT_BOLD);
         $this->addSpace(3, false);
-        $this->addText('Benutzung', 'de', $this->widthThULBSection, [], 0, 'B');
+        $this->addText('Benutzung', 'de', $this->widthThULBSection, self::FONT_BOLD);
         $this->addSpace(3, false);
-        $this->addText('Zentrale Ausleihe', 'de', $this->widthThULBSection, [], 0, 'B');
+        $this->addText('Zentrale Ausleihe', 'de', $this->widthThULBSection, self::FONT_BOLD);
         $this->addSpace(3, false);
         $this->addText('Bibliotheksplatz 2', 'de', $this->widthThULBSection);
         $this->addText('07743 Jena', 'de', $this->widthThULBSection);
@@ -90,19 +99,19 @@ class LetterOfAuthorization extends tFPDF
         $this->addText('Tel.: +49 (0)3641 9-404 110', 'de', $this->widthThULBSection);
         $this->addSpace(3, false);
         $this->addText('ausleihe_thulb@uni-jena.de', 'de', $this->widthThULBSection);
-        $this->addText('www.thulb.uni-jena.de', 'de', $this->widthThULBSection, [], 0, 'B');
+        $this->addText('www.thulb.uni-jena.de', 'de', $this->widthThULBSection, self::FONT_BOLD);
         $this->addSpace(3, false);
-        $this->addText('Eine Einrichtung der:', 'de', $this->widthThULBSection, [], 6);
-        $this->addText('FRIEDRICH-SCHILLER-', 'de', $this->widthThULBSection, [], 9, 'B');
-        $this->addText('UNIVERSITÄT', 'de', $this->widthThULBSection, [], 14, 'B');
+        $this->addText('Eine Einrichtung der:', 'de', $this->widthThULBSection, self::FONT_DEFAULT, 6);
+        $this->addText('FRIEDRICH-SCHILLER-', 'de', $this->widthThULBSection, self::FONT_BOLD, 9);
+        $this->addText('UNIVERSITÄT', 'de', $this->widthThULBSection, self::FONT_BOLD, 14);
         $this->SetX($this->GetX() - 1);
-        $this->addText('JENA', 'de', $this->widthThULBSection, [], 14, 'B');
+        $this->addText('JENA', 'de', $this->widthThULBSection, self::FONT_BOLD, 14);
 
         $this->SetFontSize(self::DEFAULT_FONT_SIZE);
 
         $this->SetDrawColor(255,255,255);
         $this->SetFillColor(0, 47, 93);
-        $this->Rect($this->printBorderLeft + 1, $this->dinA4height - $this->printBorderBottom - 15, 15, 2, 'F');
+        $this->Rect($this->printBorderLeft + 1, $this->dinA4height - $this->printBorderBottom - 15, 15, 2, self::STYLE_FILL);
         $this->SetXY($this->printBorderLeft, $this->dinA4height - $this->printBorderBottom - 10);
         $this->addText('Letter of Authorization', 'de', $this->widthContentSection);
 
@@ -121,13 +130,13 @@ class LetterOfAuthorization extends tFPDF
 
         $this->SetY(31, true);
         $this->SetTextColor(33, 84, 163);
-        $this->addText('Letter of Authorization', 'de', $this->widthContentSection, [], 15, 'B');
+        $this->addText('Letter of Authorization', 'de', $this->widthContentSection, self::FONT_BOLD, 15);
         $this->SetTextColor(0, 0, 0);
         $this->addSpace(10);
 
         $y = $this->GetY();
         $this->addText('Registered_user_and_issuer', 'de', $widthHalfContentSection - 5);
-        $this->addText('Registered_user_and_issuer', 'en', $widthHalfContentSection - 5, [], 0, 'I');
+        $this->addText('Registered_user_and_issuer', 'en', $widthHalfContentSection - 5, self::FONT_ITALIC);
         $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
         $this->addText($this->issuerName ?? '', 'de', $widthHalfContentSection - 5);
         for($i = 0; $i < 3; $i++) {
@@ -138,7 +147,7 @@ class LetterOfAuthorization extends tFPDF
 
         $y = $this->GetY();
         $this->addText('username', 'de', $widthHalfContentSection - 5);
-        $this->addText('username', 'en', $widthHalfContentSection - 5, [], 0, 'I');
+        $this->addText('username', 'en', $widthHalfContentSection - 5, self::FONT_ITALIC);
         $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
         $this->addText($this->issuerUserNumber, 'de', $widthHalfContentSection - 5);
         $this->SetXY($this->printBorderLeft + $this->widthContentSection - $barcodeWidthMm, $this->GetY() + 3);
@@ -146,41 +155,53 @@ class LetterOfAuthorization extends tFPDF
         $this->SetX($this->printBorderLeft);
         $this->addSpace(10);
 
-        $this->addText('letter_of_authorization_pdf_paragraph_1', 'de', $this->widthContentSection, [], 0, '', 'B');
+        $this->addText('letter_of_authorization_pdf_paragraph_1', 'de', $this->widthContentSection, self::FONT_DEFAULT, 0, self::ALIGN_BLOCK);
         $this->addSpace(5);
-        $this->addText('letter_of_authorization_pdf_paragraph_2', 'de', $this->widthContentSection, [], 0, '', 'B');
+        $this->addText('letter_of_authorization_pdf_paragraph_2', 'de', $this->widthContentSection, self::FONT_DEFAULT, 0, self::ALIGN_BLOCK);
         $this->addSpace(8);
-        $this->addText('letter_of_authorization_pdf_paragraph_1', 'en', $this->widthContentSection, [], 0, 'I', 'B');
+        $this->addText('letter_of_authorization_pdf_paragraph_1', 'en', $this->widthContentSection, self::FONT_ITALIC, 0, self::ALIGN_BLOCK);
         $this->addSpace(5);
-        $this->addText('letter_of_authorization_pdf_paragraph_2', 'en', $this->widthContentSection, [], 0, 'I', 'B');
+        $this->addText('letter_of_authorization_pdf_paragraph_2', 'en', $this->widthContentSection, self::FONT_ITALIC, 0, self::ALIGN_BLOCK);
         $this->addSpace(8);
 
         $y = $this->GetY();
         $this->addText('Authorized person', 'de', $this->widthContentSection);
-        $this->addText('Authorized person', 'en', $this->widthContentSection, [], 0, 'I');
+        $this->addText('Authorized person', 'en', $this->widthContentSection, self::FONT_ITALIC);
         $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
         $this->addText($this->authorizedName, 'de', $widthHalfContentSection);
         $this->SetX($this->printBorderLeft);
         $this->addSpace(10);
 
         $y = $this->GetY();
-        $this->addText('Granted until', 'de', $this->widthContentSection, [], 0, 'B');
-        $this->addText('Granted until', 'en', $this->widthContentSection, [], 0, 'I');
+        $this->addText('Granted until', 'de', $this->widthContentSection, self::FONT_BOLD);
+        $this->addText('Granted until', 'en', $this->widthContentSection, self::FONT_ITALIC);
         $this->SetXY($this->printBorderLeft + $widthHalfContentSection, $y);
-        $this->addText($this->grantedUntil, 'de', $widthHalfContentSection, [], 0, 'B');
+        $this->addText($this->grantedUntil, 'de', $widthHalfContentSection, self::FONT_BOLD);
         $this->SetX($this->printBorderLeft);
         $this->addSpace(20);
 
         $this->addText('Date', 'de', $this->widthContentSection);
         $y = $this->GetY();
-        $this->addText('Date', 'en', $this->widthContentSection, [], 0, 'I');
+        $this->addText('Date', 'en', $this->widthContentSection, self::FONT_ITALIC);
         $this->Line($this->printBorderLeft + 25, $y, $this->printBorderLeft + $this->widthContentSection, $y);
         $this->addSpace(10);
 
         $this->addText('Signature', 'de', $this->widthContentSection);
         $y = $this->GetY();
-        $this->addText('Signature', 'en', $this->widthContentSection, [], 0, 'I');
+        $this->addText('Signature', 'en', $this->widthContentSection, self::FONT_ITALIC);
         $this->Line($this->printBorderLeft + 25, $y, $this->printBorderLeft + $this->widthContentSection, $y);
+    }
+
+    protected function addText(
+        string $text,
+        string $language = 'de',
+        int $contentWidth = 0,
+        string $textFontStyle = self::FONT_DEFAULT,
+        int $textFontSize = 0,
+        string $align = self::ALIGN_LEFT,
+        int $lineMargin = 0
+    ) : void {
+        $this->addTextWithToken($text, $language, $contentWidth, [], $textFontStyle, $textFontSize, $align, $lineMargin);
     }
 
     /**
@@ -192,7 +213,20 @@ class LetterOfAuthorization extends tFPDF
      * @param int $textFontSize     Font size of the added text
      * @param string $textFontStyle Font style of the added text
      */
-    protected function addText(string $text, string $language, int $contentWidth, array $token = [], int $textFontSize = 0, string $textFontStyle = '', string $align = 'L') : void {
+    protected function addTextWithToken(
+        string $text,
+        string $language = 'de',
+        int $contentWidth = 0,
+        array $token = [],
+        string $textFontStyle = self::FONT_DEFAULT,
+        int $textFontSize = 0,
+        string $align = self::ALIGN_LEFT,
+        int $lineMargin = 0
+    ) : void {
+        if($contentWidth <= 0) {
+            $contentWidth = $this->contentMaxWidth;
+        }
+
         if($textFontSize <= 0) {
             $textFontSize = $this->FontSizePt;
         }
@@ -217,10 +251,10 @@ class LetterOfAuthorization extends tFPDF
 
         $this->SetFont($this->FontFamily, $textFontStyle, $textFontSize);
         if($align != 'B') {
-            $this->MultiCell($contentWidth, $this->FontSize, trim($text), 0, 'L');
+            $this->MultiCell($contentWidth, $this->FontSize + $lineMargin, trim($text), 0, $align);
         }
         else {
-            $this->BlockCell(trim($text), $contentWidth);
+            $this->BlockCell(trim($text), $contentWidth,  $this->FontSize + $lineMargin);
         }
         $this->SetXY($x, $this->GetY());
 
@@ -228,7 +262,7 @@ class LetterOfAuthorization extends tFPDF
         $this->SetFont($this->FontFamily, $tmpFontStyle, $tmpFontSize);
     }
 
-    private function BlockCell($text, $width) {
+    private function BlockCell($text, $width, $height) {
         $minSpace = 0.05 * $this->FontSizePt;
         $words = explode(' ', $text);
 
@@ -243,20 +277,20 @@ class LetterOfAuthorization extends tFPDF
 
                 foreach($lineWords as $lineWord) {
                     $lineWordWidth = $this->GetStringWidth($lineWord);
-                    $this->Cell($lineWordWidth + $minSpace + $deltaSpace, 0, $lineWord);
+                    $this->Cell($lineWordWidth + $minSpace + $deltaSpace, $height, $lineWord);
                 }
 
                 $lineWords = array();
                 $lineWidth = 0;
 
-                $this->ln(5);
+                $this->ln($height);
             }
 
             $lineWords[] = $word;
             $lineWidth += $minSpace + $wordWidth;
         }
 
-        $this->Cell(0, 0, implode(' ', $lineWords));
+        $this->Cell(0, $height, implode(' ', $lineWords));
     }
 
     /**
@@ -330,5 +364,14 @@ class LetterOfAuthorization extends tFPDF
     public function setBarcode($barcode): LetterOfAuthorization {
         $this->barcode = $barcode;
         return $this;
+    }
+
+    protected function getTranslatedStringWidth(string $string, string $language = 'de') : float {
+        $originalLanguage = $this->translator->getTranslator()->getLocale();
+        $this->translator->getTranslator()->setLocale($language);
+        $translatedString = $this->translator->translateWithPrefix(self::TRANSLATION_PREFIX, $string);
+        $this->translator->getTranslator()->setLocale($originalLanguage);
+
+        return $this->GetStringWidth($translatedString);
     }
 }

@@ -22258,6 +22258,10 @@ form select.error:invalid,
 form textarea.error:invalid {
   box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9); }
 
+form .required:after {
+  content: "*";
+  color: red; }
+
 .help-block {
   display: block;
   margin-bottom: 10px;

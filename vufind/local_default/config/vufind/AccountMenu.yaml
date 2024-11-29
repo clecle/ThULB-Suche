@@ -68,6 +68,6 @@ MenuItems:
 
   - name: letterofauthorization
     label: Create Letter of Authorization
-    route: myresearch-letterofauthorization
+    route: letterofauthorization-create
     icon: id-card
     checkMethod: checkLetterOfAuthorization

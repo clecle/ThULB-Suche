@@ -27,28 +27,15 @@
 
 namespace ThULB\Controller;
 
-use IOException;
 use Laminas\Config\Config;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Log\LoggerAwareInterface;
-use Laminas\Mime\Message;
-use Laminas\Mime\Mime;
-use Laminas\Mime\Part;
 use Laminas\Mvc\MvcEvent;
-use Laminas\Paginator\Adapter\ArrayAdapter;
-use Laminas\Paginator\Paginator;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container;
 use Laminas\View\Model\ViewModel;
-use Picqer\Barcode\BarcodeGeneratorPNG;
 use ThULB\Log\LoggerAwareTrait;
-use ThULB\PDF\LetterOfAuthorization;
 use VuFind\Controller\MyResearchController as OriginalController;
-use VuFind\Exception\Mail as MailException;
-use VuFind\Http\PhpEnvironment\Request;
-use VuFind\Mailer\Mailer;
-use Whoops\Exception\ErrorException;
-
 
 /**
  * Controller for the user account area.
@@ -311,157 +298,6 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         }
 
         return $view;
-    }
-
-    /**
-     * Process the creation of a letter of authority for the user.
-     *
-     * @return ViewModel
-     *
-     * @throws IOException
-     */
-    public function letterOfAuthorizationAction() : ViewModel {
-        if(!$this->letterOfAuthorization->enabled ?? false) {
-            return (new ViewModel(['message' => 'Page not found.']))->setTemplate('error/404');
-        }
-
-        if (!$this->getAuthManager()->getUserObject()) {
-            return $this->forceLogin();
-        }
-
-        $savePath = $this->letterOfAuthorizationSavePath;
-        if ((!file_exists($savePath) && !mkdir($savePath)) || !is_readable($savePath) || !is_writable($savePath)) {
-            throw new IOException('File not writable: "' . $savePath . '"');
-        }
-
-        $errors = [];
-        $request = $this->getRequest();
-        $user = $this->getUser();
-        $ilsUser = $this->getILS()->getMyProfile($this->catalogLogin());
-        if ($ilsUser['statuscode'] == 6) {
-            $this->flashMessenger()->addErrorMessage('you are not allowed to issue a letter of authorization');
-        }
-        elseif ($request->isPost() && !$request->getPost('mylang')) {
-            // validate form
-            $requiredFields = ['firstname', 'lastname', 'grantUntil', 'check1', 'check2'];
-            foreach ($requiredFields as $field) {
-                if (!$request->getPost($field)) {
-                    $errors[] = $field;
-                }
-            }
-            if($errors) {
-                $this->flashMessenger()->addErrorMessage('fields with asterisk are required');
-            }
-            if(($grantUntil = $request->getPost('grantUntil')) && $grantUntil < date('Y-m-d')) {
-                $this->flashMessenger()->addErrorMessage('date must be in the future');
-                $errors[] = 'grantUntil';
-            }
-
-            $fileName = sprintf('%s_%s.pdf', $user['username'], time());
-            if(!$errors && $this->createLetterOfAuthorizationPDF($request, $fileName, $ilsUser) &&
-                    $this->sendLetterOfAuthorizationEmail($user['firstname'] . ' ' . $user['lastname'], $user['email'], $fileName)) {
-                $this->flashMessenger()->addSuccessMessage('Letter of Authorization was sent to your email address');
-            }
-            else {
-                $this->flashMessenger()->addErrorMessage('Letter of Authorization could not be sent to your email address');
-            }
-        }
-
-        return $this->createViewModel(['request' => $this->request, 'errors' => $errors]);
-    }
-
-    /**
-     * Create the pdf of a letter of authorization.
-     *
-     * @param Request $request  Request with the form data
-     * @param string $fileName  Name to save the pdf with.
-     * @param string[] $ilsUser Userdata from ILS
-     *
-     * @return bool
-     */
-    protected function createLetterOfAuthorizationPDF(Request $request, string $fileName, array $ilsUser) : bool {
-        try {
-            $user = $this->getUser();
-
-            if(!file_exists(LOCAL_CACHE_DIR . '/barcode')) {
-                mkdir(LOCAL_CACHE_DIR . '/barcode');
-            }
-
-            $barcodeFile = LOCAL_CACHE_DIR . '/barcode/' . $user['username'] . '.png';
-            if(!file_exists($barcodeFile)) {
-                $generator = new BarcodeGeneratorPNG();
-                file_put_contents($barcodeFile, $generator->getBarcode($user['username'], $generator::TYPE_CODE_39, 1));
-            }
-
-            $pdf = new LetterOfAuthorization($this->getViewRenderer()->plugin('translate'));
-            $pdf->setBarcode($barcodeFile);
-            $pdf->setAuthorizedName($request->getPost('firstname') . ' ' . $request->getPost('lastname'));
-            $pdf->setGrantedUntil(date('d.m.Y', strtotime($request->getPost('grantUntil'))));
-            $pdf->setIssuerEMail($user['email']);
-            $pdf->setIssuerName($user['firstname'] . ' ' . $user['lastname']);
-            $pdf->setIssuerUserNumber($user['username']);
-            $pdf->setIssuerAddress(explode(',', $ilsUser['address1'] ?? ''));
-
-            $pdf->create();
-            $pdf->Output('F', $this->letterOfAuthorizationSavePath . $fileName);
-        }
-        catch (ErrorException $e) {
-            $this->logException($e);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Send an email with the attached letter of authorization pdf to the user.
-     *
-     * @param string $name        Name of the user, shown in email
-     * @param string $email       Email address of the user
-     * @param string $pdfFilename Name of the pdf file
-     *
-     * @return bool
-     */
-    protected function sendLetterOfAuthorizationEmail(string $name, string $email, string $pdfFilename) : bool {
-        try {
-            // @todo translate email
-            $text = new Part();
-            $text->type = Mime::TYPE_TEXT;
-            $text->charset = 'utf-8';
-            $text->setContent(htmlspecialchars_decode(
-                $this->getViewRenderer()->render('Email/letter-of-authorization', [
-                    'name' => $name,
-                ])
-            ));
-
-
-            $fileContent = file_get_contents($this->letterOfAuthorizationSavePath . $pdfFilename, 'r');
-            $attachment = new Part($fileContent);
-            $attachment->type = 'application/pdf';
-            $attachment->encoding = Mime::ENCODING_BASE64;
-            $attachment->filename = $pdfFilename;
-            $attachment->disposition = Mime::DISPOSITION_ATTACHMENT;
-
-            // then add them to a MIME message
-            $mimeMessage = new Message();
-            $mimeMessage->setParts(array($text, $attachment));
-
-            $mailer = $this->serviceLocator->get(Mailer::class);
-            $mailer->send(
-                $email,
-                $this->mainConfig->Mail->default_from,
-                $this->translate('Email::letter_of_authorization_email_subject'),
-                $mimeMessage
-            );
-        }
-        catch (MailException $e) {
-            $this->logException($e);
-
-            return false;
-        }
-
-        return true;
     }
 
     public function profileAction() {

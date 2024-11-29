@@ -5,10 +5,12 @@ $config = array(
     'controllers' => array(
         'factories' => array(
             \EAH\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
+            \EAH\Controller\LetterOfAuthorizationController::class => \VuFind\Controller\AbstractBaseFactory::class,
         ),
         'aliases' => array(
             'request' => \EAH\Controller\RequestController::class,
             'Request' => \EAH\Controller\RequestController::class,
+            \ThULB\Controller\LetterOfAuthorizationController::class => \EAH\Controller\LetterOfAuthorizationController::class,
         )
     ),
     'controller_plugins' => array (
@@ -25,9 +27,11 @@ $config = array(
             'pdf' => array(
                 'factories' => array (
                     \EAH\PDF\JournalRequest::class => \ThULB\PDF\PDFFactory::class,
+                    \EAH\PDF\LetterOfAuthorization::class => \ThULB\PDF\PDFFactory::class,
                 ),
                 'aliases' => array(
                     \ThULB\PDF\JournalRequest::class => \EAH\PDF\JournalRequest::class,
+                    \ThULB\PDF\LetterOfAuthorization::class => \EAH\PDF\LetterOfAuthorization::class,
                 )
             ),
             'recorddriver' => array(

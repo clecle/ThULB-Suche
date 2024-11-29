@@ -97,7 +97,9 @@ class HoldingHelper extends AbstractHelper
         $locationText = $this->view->transEscWithPrefix('location_', $holding['location']);
 
         if ($includeHTML && isset($holding['locationhref']) && $holding['locationhref']) {
-            $locationText = '<a href="' . $holding['locationhref'] . '" class="external-link" target="_blank">' . $locationText . '</a>';
+            $locationText = '<a href="' . $holding['locationhref'] . '" class="d-inline-flex align-items-center gap-1" target="_blank">'
+                . $locationText . $this->view->icon('external-link', 'fs-6')
+                . '</a>';
         }
 
         return $locationText;

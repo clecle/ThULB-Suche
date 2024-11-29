@@ -4,7 +4,7 @@
 
   $this->layout()->breadcrumbs = '<li class="active">Error</li>';
 ?>
-<?php if ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && str_starts_with($_SERVER['REQUEST_URI'], '/Search/Results')): ?>
+<?php if ($this->exception instanceof VuFindSearch\Backend\Exception\BackendException && str_starts_with($_SERVER['REQUEST_URI'], $this->url('search-results'))): ?>
   <div class="alert alert-danger">
     <h2><?= $this->transEsc('Index not reachable')?></h2>
     <p>
@@ -63,8 +63,7 @@
   </p>
 
   <h2><?=$this->transEsc('Backtrace')?>:</h2>
-  <pre><?=$this->exception->getTraceAsString()?>
-  </pre>
+  <pre><?=$this->exception->getTraceAsString()?></pre>
 
   <?php if ($e = $this->exception->getPrevious()): ?>
     <h3>Previous exceptions:</h3>

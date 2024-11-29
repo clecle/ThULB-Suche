@@ -65,7 +65,7 @@
         ?>
         <?php if (!empty($journalTitle)): ?>
           <?= $this->transEsc('Published in') ?>:
-          <?= $this->highlight($journalTitle) ?><?= ($journalRef) ? ', ' . $journalRef : ''?>
+          <?= $this->highlight($journalTitle) ?><?= $journalRef ? ', ' . $journalRef : ''?>
         <?php endif; ?>
 
         <?= !$isArticle ? $this->driver->getReducedPublicationInfo() : '' ?>

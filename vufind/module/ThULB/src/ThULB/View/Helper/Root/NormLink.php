@@ -2,16 +2,15 @@
 
 namespace ThULB\View\Helper\Root;
 
+use Laminas\Config\Config;
 use Laminas\View\Helper\AbstractHelper;
 use ThULB\Content\GND\lobid;
 
 class NormLink extends AbstractHelper {
-    protected array $wikipediaGndList = array();
+    protected array $sources = [];
 
-    protected lobid $lobid;
-
-    public function __construct(lobid $lobid) {
-        $this->lobid = $lobid;
+    public function __construct(protected Config $thulbConfig, protected lobid $lobid) {
+        $this->sources = $this->thulbConfig->Normlink?->sources?->toArray() ?? ['DNB', 'dewiki', 'enwiki', 'DDB'];
     }
 
     public function getLinksForGND(string $gnd) : array {
@@ -29,9 +28,13 @@ class NormLink extends AbstractHelper {
                 'url' => 'https://lobid.org/gnd/' . $gnd
             ];
 
-            $links = array_merge($links, $this->lobid->getSameAs($gnd));
+            $links = array_merge($links, $this->lobid->getSameAs($gnd, $this->sources));
         }
 
         return $links;
+    }
+
+    public function isEnabled() : bool {
+        return $this->thulbConfig->Normlink?->enabled ?? false;
     }
 }

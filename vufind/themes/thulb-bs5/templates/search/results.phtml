@@ -63,7 +63,7 @@
 
 <?=$this->component('show-search-sidebar-button')?>
 
-<div class="<?= $this->layoutClass('mainbody', $hasSidebar)?><?=$recordTotal == 0 || $hideSidebar ? ' w-100' : ''?>">
+<div class="<?= $this->layoutClass('mainbody', $hasSidebar)?><?=$hideSidebar ? ' w-100' : ''?>">
   <?php if (($recordTotal = $this->results->getResultTotal()) > 0): // only display these at very top if we have results ?>
     <?php foreach ($this->results->getRecommendations('top') as $index => $current): ?>
       <?=$this->recommend($current, 'top', $index)?>
@@ -72,13 +72,21 @@
   <?=$this->flashmessages()?>
 
   <div class="search-header hidden-print">
+    <?php if ($this->results->getOptions()->getTopPaginatorStyle() === 'full'): ?>
+      <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination-top.phtml', ['results' => $this->results, 'options' => $this->paginationOptions ?? []])?>
+    <?php endif; ?>
+
     <?php // Data-record-total attribute is for analytics use.  Do not remove. ?>
-    <div class="search-stats" data-record-total="<?=$this->escapeHtmlAttr($recordTotal)?>">
+    <div class="search-stats flex-md-nowrap" data-record-total="<?=$this->escapeHtmlAttr($recordTotal)?>">
       <?php if ($recordTotal > 0): ?>
         <?php if ($this->results->getOptions()->getTopPaginatorStyle() === 'simple'): ?>
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
         <?php else: ?>
-          <?=$this->context()->renderInContext('search/controls/showing.phtml', ['lookfor' => $lookfor, 'recordTotal' => $recordTotal]) ?>
+          <div class="search-result-count">
+            <?=$this->context()->renderInContext('search/controls/showing.phtml', ['lookfor' => $lookfor, 'recordTotal' => $recordTotal]) ?>
+          </div>
+
+          <?=$this->context($this)->renderInContext('search/controls/results-tools.phtml', ['results' => $this->results])?>
         <?php endif; ?>
       <?php else: ?>
         <h2><?=$this->transEsc('nohit_heading')?></h2>
@@ -115,15 +123,9 @@
       <?php endforeach; ?>
     <?php endif; ?>
   <?php else: ?>
-    <?php if ($this->results->getOptions()->getTopPaginatorStyle() === 'full'): ?>
-      <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination-top.phtml', ['results' => $this->results, 'options' => $this->paginationOptions ?? []])?>
-    <?php endif; ?>
-
     <form id="search-cart-form" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'top_'])?>
     </form>
-
-    <?=$this->context($this)->renderInContext('search/controls/results-tools.phtml', ['results' => $this->results])?>
 
     <?=$this->render('search/results-list.phtml')?>
 

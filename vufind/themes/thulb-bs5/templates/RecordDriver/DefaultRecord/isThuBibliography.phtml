@@ -1,4 +1,4 @@
-<?php $isThBib = is_callable([$this->driver, 'isThuBibliography']) && $this->driver->isThuBibliography(); ?>
+<?php $isThBib = $this->driver->tryMethod('isThuBibliography'); ?>
 <?php if ($isThBib) :?>
   <img alt="<?= $this->translate('Th_Biblio')?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" />
 <?php endif;?>

@@ -1,0 +1,37 @@
+<ul class="navbar-tips nav navbar-nav">
+  <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+    <?=$this->component('menu-button', [
+      'toggleLabel' => strtoupper($this->layout()->userLang) . ' ',
+      'wrapperClass' => 'language visible-xs visible-sm dropdown-colored-sm',
+      'wrapperTag' => 'li',
+      'href' => '#_',
+      'menuItems' => array_map(
+        function ($langCode, $langName) {
+          return [
+            'label' => $this->displayLanguageOption($langName),
+            'url' => $this->url()->addQueryParameters(['lng' => $langCode]),
+            'selected' => $this->layout()->userLang == $langCode,
+          ];
+        },
+        array_keys($this->layout()->allLangs),
+        array_values($this->layout()->allLangs),
+      ),
+    ]) ?>
+  <?php endif; ?>
+    <li><a href="<?= $this->translate('URL::OPAC'); ?>" target="_blank"><?= $this->transEsc('Header_catalog')?></a></li>
+    <li><a href="<?= $this->translate('URL::contact'); ?>" target="_blank"><?= $this->transEsc("Header_contact")?></a></li>
+    <li><a href="<?= $this->translate('URL::search tips'); ?>" target="_blank"><?= $this->transEsc('Header_searchtipps')?></a></li>
+    <li><a href="<?= $this->translate('URL::ILL'); ?>" target="_blank"><?= $this->transEsc('Header_interlibrary_loan')?></a></li>
+
+  <li class="dropdown dropdown-colored-sm">
+    <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('more')?> <b class="caret"></b></a>
+    <ul class="dropdown-menu">
+      <li><a href="<?= $this->translate('URL::Databases'); ?>" target="_blank"><?= $this->transEsc('Databases')?></a></li>
+      <li><a href="<?= $this->translate('URL::Journals'); ?>" target="_blank"><?= $this->transEsc('Journals')?></a></li>
+      <li><a href="<?= $this->translate('URL::Norms'); ?>" target="_blank"><?= $this->transEsc('Header_norms')?></a></li>
+      <li><a href="<?= $this->translate('URL::ThULB'); ?>" target="_blank"><?= $this->transEsc('Header_thulb')?></a></li>
+      <li><a href="https://www.stadtbibliothek-jena.de/de/startseite/700073" target="_blank"><?= $this->transEsc('Header_eab_jena')?></a></li>
+      <li><a href="<?= $this->translate('URL::Acquisition suggestion'); ?>" target="_blank"><?= $this->transEsc('Header_acquisition_suggestion')?></a></li>
+    </ul>
+  </li>
+</ul>

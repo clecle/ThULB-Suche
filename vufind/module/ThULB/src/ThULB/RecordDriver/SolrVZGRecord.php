@@ -385,6 +385,15 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Checks if the record is part of the "Thüringen-Bibliographie"
+     *
+     * @return bool
+     */
+    public function isThuBibliography() : bool {
+        return !empty($this->getThuBiblioClassification());
+    }
+
+    /**
      * extract ZDB Number from 035 $a
      *
      * searches for a string like "(DE-599)ZDBNNNNNN"
@@ -2255,22 +2264,6 @@ class SolrVZGRecord extends SolrMarc
         return $this->checkListForAvailability($recordLinks);
     }
 
-    /**
-     * Checks if the record is part of the "Thüringen-Bibliographie"
-     *
-     * @return bool
-     */
-    public function isThuBibliography() : bool {
-        if(isset($this->fields['class_local_iln']) && is_array($this->fields['class_local_iln'])) {
-            foreach ($this->fields['class_local_iln'] as $classLocal) {
-                if (preg_match('/^31:.*<Thüringen>$/', $classLocal)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public function getHoldings() : array {
         if(!$this->holdingData) {
             $this->holdingData = $this->getRealTimeHoldings();
@@ -2529,54 +2522,68 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getHoldingsToOrderOrReserve() : array {
         $excludedIds = $this->thulbConfig->OrderReserve?->exclude?->toArray() ?? [];
+        $osOrderEnabled = $this->thulbConfig->OrderReserve?->enable_order_with_open_stack ?? false;
+        $osReserveEnabled = $this->thulbConfig->OrderReserve?->enable_reserve_with_open_stack ?? false;
 
         $holdingsOrder = $holdingsReserve = [];
         $holdings = $this->getHoldings();
         $hasOpenStock = false;
         foreach ($holdings['holdings'] ?? [] as $holdingLocation => $holding) {
             foreach ($holding['items'] as $item) {
-                if (($item['isHandset'] ?? false)
-                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNCERTAIN)
-                    || $item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)
-                    || $item['availability']->is(\ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED)
+                if(!$item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)
+                    && !$item['availability']->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNAVAILABLE)
                 ) {
-                    // ignore handsets or items without status 'available' or 'unavailable'
+                    // ignore items without status 'available' or 'unavailable'
                     continue;
                 }
 
-                if (in_array($item['departmentId'], $excludedIds)) {
+                if(in_array($item['departmentId'], $excludedIds)) {
                     continue;
                 }
 
-                $isOpenStack =  $item['availability']->isAvailable()
+                $isAvailable = $item['availability']->isAvailable();
+
+                $isOpenStack = $isAvailable
                     && !isset($item['link'])
                     && !isset($item['storageRetrievalRequestLink']);
                 $isNewspaperRetrieval = isset($item['storageRetrievalRequestLink'])
                     && $this->isNewsPaper();
                 if ($isOpenStack || $isNewspaperRetrieval) {
                     // item is available in open stack
+                    if(!$osOrderEnabled && !$osReserveEnabled) {
+                        // placing a hold and reserving disable for items available in open stack
+                        return [];
+                    }
+
+                    if(!$osOrderEnabled) {
+                        // ordering disabled while items are in open stack.
+                        // remove items available for ordering
+                        $holdingsOrder = [];
+                    }
+
+                    if(!$osReserveEnabled) {
+                        // placing a hold disabled while items are in open stack.
+                        // remove items available for placing a hold
+                        $holdingsReserve = [];
+                    }
+
                     $hasOpenStock = true;
                     continue;
                 }
 
-                if ($item['availability']->isAvailable()) {
-                    // available in stack, no need to look for other items
+                // add item to lists with available items for ordering or placing a hold
+                $orderAvailable = (!$hasOpenStock || $osOrderEnabled);
+                $reserveAvailable = (!$hasOpenStock || $osReserveEnabled);
+                if($isAvailable && $orderAvailable) {
                     $holdingsOrder[$holdingLocation][] = $item;
                 }
-                elseif ($item['link'] ?? false) {
-                    // look for the item with the least placed requests or earliest due date
-                    if (!isset($tmpLinkData['duedate'])
-                        || $tmpLinkData['requests_placed'] > $item['requests_placed']
-                        || ($tmpLinkData['requests_placed'] == $item['requests_placed']
-                            && strtotime($tmpLinkData['duedate']) > strtotime($item['duedate']))
-                    ) {
-                        $holdingsReserve[$holdingLocation][] = $item;
-                    }
+                elseif (!$isAvailable && $reserveAvailable && ($item['link'] ?? false)) {
+                    $holdingsReserve[$holdingLocation][] = $item;
                 }
             }
         }
 
-        return $hasOpenStock ? $holdingsOrder : array_merge_recursive($holdingsOrder, $holdingsReserve);
+        return array_merge_recursive($holdingsOrder, $holdingsReserve);
     }
 
     /**

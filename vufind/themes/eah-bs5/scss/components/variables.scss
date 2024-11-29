@@ -1,0 +1,45 @@
+// Make sure Font Awesome icons are loaded properly
+$fa-font-path: "../../bootstrap5/css/vendor/font-awesome/webfonts";
+
+/**
+ * The following are useful Bootstrap variables that are used throughout the code, with comments and their defaults.
+  After installing via composer see /themes/thulb-bs5/scss/bootstrap/scss/_variables.scss for more.
+ */
+
+/* ------ Layout ------ */
+$border-radius-base:        8px;
+$border-radius-large:      12px;
+$border-radius-small:       6px;
+
+/* ------ COLORS ------ */
+$brand-green:       #009999;
+$brand-dark-blue:   #34495B;
+$brand-light-blue:  #EDF1F5;
+$brand-red:         #83334A;
+$brand-pink:        #E5D5DB;
+
+$brand-primary:     $brand-green;
+$brand-secondary:   $brand-dark-blue;
+$brand-inverted:    $brand-pink;
+
+$table-bg-accent:   #f9f9f990;
+
+$header-bg: #EDF1F5;
+$banner-bg: $brand-dark-blue;
+
+$vpn-hint-bg: #E5D5DB;
+
+$autocomplete-active-bg: $brand-primary;
+$autocomplete-hover-bg:  $brand-light-blue;
+
+$dropdown-link-hover-bg: $brand-light-blue;
+
+/* ------ Inputs ------ */
+$input-border-focus:      $brand-green;
+
+$btn-secondary-color: #fff;
+$btn-secondary-bg: lighten($brand-secondary, 10%);
+$btn-secondary-border-color: darken($brand-secondary, 5%);
+
+/* ------ Recommender ------ */
+$recommender-title-bg: $brand-light-blue;

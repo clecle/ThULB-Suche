@@ -1,7 +1,7 @@
 <?php $message = $this->thulb_removeZWNJ($this->translate($this->tag)); ?>
 
 <?php if(!empty($message)): ?>
-  <div id="<?= $this->tag; ?>" class="alert alert-info d-flex justify-content-between col-12 mt-4 mb-0">
+  <div id="<?= $this->tag; ?>" class="alert alert-info d-flex justify-content-between col-12">
     <div class="m-auto text-center"><?= $message; ?></div>
     <i onclick="hideMessage('<?= $this->tag; ?>')" class="fa fa-close align-self-center ps-4"></i>
   </div>

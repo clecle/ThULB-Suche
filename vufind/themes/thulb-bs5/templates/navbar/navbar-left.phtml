@@ -2,7 +2,7 @@
   <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
     <?=$this->component('menu-button', [
       'toggleLabel' => strtoupper($this->layout()->userLang) . ' ',
-      'wrapperClass' => 'language visible-xs visible-sm',
+      'wrapperClass' => 'language visible-xs visible-sm dropdown-colored',
       'wrapperTag' => 'li',
       'href' => '#_',
       'menuItems' => array_map(
@@ -19,7 +19,7 @@
     ]) ?>
   <?php endif; ?>
 
-  <li class="dropdown">
+  <li class="dropdown dropdown-colored">
     <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Header_searchtipps')?></a>
     <ul class="dropdown-menu">
       <li><a href="<?= $this->translate('URL::Search tips'); ?>" target="_blank"><?= $this->transEsc('ThULB-FAQ')?></a></li>
@@ -30,7 +30,7 @@
     </ul>
   </li>
 
-  <li class="dropdown">
+  <li class="dropdown dropdown-colored">
     <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Found nothing')?></b></a>
     <ul class="dropdown-menu">
       <li><a href="<?= $this->translate('URL::DBIS'); ?>" target="_blank"><?= $this->transEsc('Databases DBIS')?></a></li>
@@ -65,7 +65,7 @@
     </ul>
   </li>
 
-  <li class="dropdown">
+  <li class="dropdown dropdown-colored">
     <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc('Interlibrary loan')?> </a>
     <ul class="dropdown-menu">
       <li><a href="<?= $this->translate('URL::Order in GVK'); ?>" target="_blank"><?= $this->transEsc('Order in GVK')?></a></li>
@@ -75,7 +75,7 @@
     </ul>
   </li>
 
-  <li class="dropdown">
+  <li class="dropdown dropdown-colored">
     <a href="#_" class="dropdown-toggle arrow-down" data-toggle="dropdown"><?= $this->transEsc("Header_contact")?></a>
     <ul class="dropdown-menu">
       <li><a href="<?= $this->thulb_serviceDesk('information-services', ['topic' => '20009']); ?>" target="_blank"><?= $this->transEsc('Header_general_questions'); ?></a> </li>

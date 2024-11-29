@@ -31,7 +31,8 @@ class NormlinkFactory implements FactoryInterface
         }
 
         return new $requestedName(
-            $container->get(\ThULB\Content\GND\lobid::class)
+            $container->get(\VuFind\Config\PluginManager::class)->get('thulb'),
+            $container->get(\ThULB\Content\GND\lobid::class),
         );
     }
 }

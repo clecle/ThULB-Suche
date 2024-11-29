@@ -63,6 +63,7 @@ mark {
   background: lighten(#FF0, 20%);
   padding: 0;
 }
+img { max-width: 100%; }
 
 //// Normalize
 h2 { font-size: 20px; }
@@ -89,10 +90,10 @@ h3 { font-size: 16px; }
 
 /* --- Layout > Header --- */
 header {
-  background-color: #dbdbdb;
+  background-color: $header-bg;
 
   .banner {
-    background-color: $brand-primary-darker;
+    background-color: $banner-bg;
     color: #fff;
 
     & > .container {
@@ -171,8 +172,6 @@ header {
 
   .nav > li > a,
   .nav > li > button,
-  .dropdown-menu > li > a,
-  .dropdown-menu > li > button,
   .nav.navbar-nav button.dropdown-toggle {
     color: #fff;
 
@@ -189,25 +188,15 @@ header {
     & > .active > span {
       display: block;
       padding: 5px 15px;
-      background-color: $brand-primary;
-      color: white;
     }
 
     li > a {
       padding: 5px 15px;
       white-space: nowrap;
-
-      &:hover {
-        background-color: $brand-primary-lighter;
-      }
     }
   }
 
   .dropdown {
-    .dropdown-menu > li + li {
-      border-top: 1px solid #000;
-    }
-
     & > .dropdown-toggle.show {
       background-color: $brand-primary;
       color: white;
@@ -219,60 +208,10 @@ header {
       }
     }
 
-    &:has(.dropdown-toggle.show):not(.dropdown-submenu) {
-      border-radius: 5px;
-      box-shadow: 0 0 10px 0 darken($brand-primary, 30%);
-    }
-
-    .dropdown-menu {
-      box-shadow: 0 0 10px 0 $brand-primary-darker;
-      background-color: $brand-primary;
-
-      & > li {
-        background-color: $brand-primary;
-
-        &.active {
-          & > a,
-          & > span {
-            background-color: $brand-primary-lighter;
-            display: block;
-          }
-        }
-      }
-    }
-
-    li {
-      &:first-child {
-        border-radius: 5px 5px 0 0;
-      }
-
-      &:last-child {
-        border-radius: 0 0 5px 5px;
-      }
-    }
-  }
-
-  .dropdown-submenu {
-    position: relative;
-
-    & > .dropdown-menu {
-      top: 0;
-      left: 100%;
-      -webkit-border-radius: 6px;
-      -moz-border-radius: 6px;
-      border-radius: 6px;
-      background-color: $brand-primary-lighter;
-
-      li {
-        background-color: $brand-primary-lighter;
-      }
-    }
-
-    &.show .dropdown-toggle {
-      &.show,
-      &:active,
-      &:focus {
-        background-color: $brand-primary-lighter;
+    .dropdown-menu > li.active {
+      & > a,
+      & > span {
+        display: block;
       }
     }
   }
@@ -350,7 +289,7 @@ footer {
   margin-top: auto;
 
   nav {
-    background-color: #dbdbdb;
+    background-color: $header-bg;
   }
 
   .nav {
@@ -427,13 +366,118 @@ footer {
 }
 
 /* --- Layout > Dropdown --- */
+@mixin dropdown-colored {
+  &:has(.dropdown-toggle.show):not(.dropdown-submenu) {
+    box-shadow: 0 0 10px 0 darken($brand-primary, 30%);
+  }
+
+  .dropdown-menu {
+    background-clip: unset;
+    box-shadow: 0 0 10px 0 $brand-primary-darker;
+    background-color: $brand-primary;
+
+    & > .active > span {
+      background-color: $brand-primary;
+      color: white;
+    }
+
+    & > li {
+      background-color: $brand-primary;
+
+      &.active,
+      &.open {
+        & > a,
+        & > span {
+          background-color: $brand-primary-lighter;
+          display: block;
+        }
+      }
+
+      & + li {
+        border-top: 1px solid $dropdown-border-color;
+      }
+
+      & > a,
+      & > button {
+        color: #fff;
+
+        &:hover,
+        &:focus {
+          background-color: $brand-primary-lighter;
+          color: #fff;
+        }
+      }
+    }
+  }
+
+  .dropdown-submenu {
+    & > .dropdown-menu {
+      background-color: $brand-primary-lighter;
+
+      li {
+        background-color: $brand-primary-lighter;
+
+        & > a,
+        & > button {
+          color: #fff;
+
+          &:hover,
+          &:focus {
+            background-color: $brand-primary;
+            color: #fff;
+          }
+        }
+      }
+    }
+
+    &.show .dropdown-toggle {
+      &.show,
+      &:active,
+      &:focus {
+        background-color: $brand-primary-lighter;
+      }
+    }
+  }
+}
+
 .dropdown-menu {
   --bs-border-color-translucent: #777;
+
+  & > li {
+    & + li {
+      border-top: 1px solid #ccc;
+    }
+    & > a {
+      @extend .dropdown-item
+    }
+  }
 }
 
 .dropdown-header {
   --bs-dropdown-header-color: var(--bs-body-color);
   @include font-size($font-size-base);
+}
+
+.dropdown.dropdown-colored {
+  @include dropdown-colored();
+}
+
+.dropdown-submenu {
+  position: relative;
+
+  & > .dropdown-menu {
+    top: 0;
+    left: 100%;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
+  }
+}
+
+@media (min-width: $screen-md) {
+  .dropdown-submenu > .dropdown-menu {
+    top: -9px
+  }
 }
 
 /* --- Layout > Content --- */
@@ -485,13 +529,21 @@ footer {
   margin-right: 0;
 }
 
-#message_under_search_box i {
-  cursor: pointer;
-  font-size: 20px;
+#message_under_search_box {
+  margin: 2rem auto;
+
+  i {
+    cursor: pointer;
+    font-size: 20px;
+  }
+}
+
+header .search + div:has(> #message_under_search_box) #message_under_search_box {
+  margin-top: 0;
 }
 
 #vpnhint {
-  background-color: #f9b200;
+  background-color: $vpn-hint-bg;
 }
 
 @media (min-width: $screen-sm) {
@@ -929,7 +981,7 @@ a.search-filter-toggle {
 
 /* --- Search > Advanced Search --- */
 body:has(.main form#advSearchForm) {
-  background-color: #dbdbdb;
+  background-color: $header-bg;
 }
 
 .adv-group-close {
@@ -1060,100 +1112,117 @@ body:has(.main form#advSearchForm) {
 }
 
 /* --- Search > Misc --- */
-.search-header .search-stats {
-  display: none !important;
+.search-header {
+  flex-direction: column;
+
+  .search-stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-result-count {
+    display: none;
+  }
+
+  .searchtools {
+    flex-grow: 1;
+    flex-shrink: 0;
+  }
 }
 
 .search-sort label {
   display: none;
 }
 
-/* ------ Search > Searchbox ------ */
+/* ------ Search > Searchform ------ */
 .searchbox {
   width: 100%;
+}
 
-  #searchForm {
-    #searchForm_type {
-      border-radius: 0;
-      background-color: $brand-primary-darker;
-      color: #ffffff;
-      font-size: 14px;
-      text-align: center;
-      min-width: 175px;
-      padding-top: .75rem;
-      padding-bottom: .75rem;
-    }
+#searchForm {
+  #searchForm_type {
+    border-radius: 0;
+    background-color: $brand-primary-darker;
+    color: #ffffff;
+    font-size: 14px;
+    text-align: center;
+    min-width: 175px;
+    padding: 0 .75rem;
+  }
 
-    #searchForm_lookfor {
-      border-radius: .25rem .25rem 0 0;
-      border-color: #ccc;
-      width: 100%;
-    }
+  #searchForm_lookfor {
+    border-radius: .25rem .25rem 0 0;
+    border-color: #ccc;
+    width: 100%;
+  }
 
-    .searchForm-inputs {
-      display: flex;
+  .searchForm-inputs {
+    display: flex;
 
-      .searchForm-query {
-        flex-grow: 1;
+    .searchForm-query {
+      flex-grow: 1;
+
+      #searchForm-reset {
+        background-color: unset;
       }
     }
+  }
 
-    button[type="submit"] {
-      border-radius: 0 0 .25rem .25rem;
-      line-height: normal;
+  button[type="submit"] {
+    border-radius: 0 0 .25rem .25rem;
+    line-height: normal;
 
-      .icon-link__icon {
-        vertical-align: baseline;
-      }
-    }
-
-    button[type="reset"] {
-      line-height: normal;
-      background-color: transparent;
-      color: #888888;
-      font-size: 16px;
+    .icon-link__icon {
+      vertical-align: baseline;
     }
   }
 
-  .reset-filters-btn {
-    background-color: #fff;
-    border: 1px solid #ccc;
-
-    &:hover,
-    &:focus {
-      background-color: #ccc;
-      border: 1px solid #aaa;
-    }
+  button[type="reset"] {
+    line-height: normal;
+    background-color: transparent;
+    color: #888888;
+    font-size: 16px;
   }
+}
 
-  .filters-title {
-    font-weight: bold;
+.reset-filters-btn {
+  background-color: #fff;
+  border: 1px solid #ccc;
+
+  &:hover,
+  &:focus {
+    background-color: #ccc;
+    border: 1px solid #aaa;
   }
+}
 
-  .filter-value {
-    border-radius: .25rem;
+.filters-title {
+  font-weight: bold;
+}
 
-    .icon {
-      vertical-align: unset;
-    }
+.filter-value {
+  border-radius: .25rem;
+
+  .icon {
+    vertical-align: unset;
   }
 }
 
 @media (min-width: $screen-sm) {
-  .searchbox {
-    #searchForm {
-      #searchForm_type {
-        border-radius: .25rem 0 0 .25rem;
-      }
+  #searchForm {
+    #searchForm_type {
+      border-radius: .25rem 0 0 .25rem;
+    }
 
-      #searchForm_lookfor {
-        border-radius: 0;
-        width: 100%;
-      }
+    #searchForm_lookfor {
+      border-radius: 0;
+      width: 100%;
+    }
 
-      button[type="submit"] {
-        border-radius: 0 .25rem .25rem 0;
-      }
+    button[type="submit"] {
+      border-radius: 0 .25rem .25rem 0;
     }
   }
 }
@@ -1167,10 +1236,6 @@ body:has(.main form#advSearchForm) {
     color: $text-color;
     background-color: $nav-link-hover-bg;
     text-decoration: none;
-  }
-
-  &.icon-link.active:hover span {
-    color:$text-color;
   }
 }
 
@@ -1226,26 +1291,37 @@ body:has(.main form#advSearchForm) {
 .link-recommender {
   @extend .facet-group;
 
-  a {
+  .accordion {
+    --bs-accordion-btn-focus-box-shadow: none;
+    --bs-accordion-btn-bg: #{$recommender-title-bg};
+    --bs-accordion-active-bg: #{$recommender-title-bg};
+  }
+
+  .accordion-item {
+    border-radius: 0 !important;
+
+    & + .accordion-item {
+      margin-top: 2px;
+    }
+  }
+
+  .accordion-header {
+    margin: 0;
+  }
+
+  .accordion-button {
+    padding: .5rem;
+    padding-right: 8px;
+    font-weight: bold;
+    border-radius: 0 !important;
     justify-content: space-between;
-  }
 
-  .panel {
-    border: none;
-  }
-
-  .panel + .panel {
-    margin-top: 2px;
-  }
-
-  .title {
-    background-color: $recommender-title-bg;
     &:after {
-      @include arrow(up, $text-color);
+      display: none;
     }
 
-    &.collapsed:after {
-      @include arrow(down, $text-color);
+    &:hover {
+      background-color: #eee;
     }
   }
 
@@ -1258,6 +1334,11 @@ body:has(.main form#advSearchForm) {
 
     justify-content: flex-start;
     background-color: $recommender-item-bg;
+    gap: .25rem;
+
+    .icon {
+      font-size: 10px;
+    }
   }
 }
 
@@ -1326,10 +1407,9 @@ body:has(.main form#advSearchForm) {
 }
 
 .broken-link-icon {
-  @extend .fa, .fa-unlink;
-
   font-size: 14px;
   padding-left: 5px;
+  vertical-align: baseline;
 }
 
 .record-list {
@@ -1528,17 +1608,12 @@ body:has(.main form#advSearchForm) {
 }
 
 .btn-location-info {
-  background: none!important;
+  background: none !important;
   border: none;
   padding: 0 !important;
 
   color: $brand-primary;
   cursor: pointer;
-
-  &:focus,
-  &:focus-visible {
-    outline: dotted 1px #000;
-  }
 }
 
 .btn-opening-hours {

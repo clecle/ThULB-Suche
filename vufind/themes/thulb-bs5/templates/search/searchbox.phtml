@@ -55,17 +55,17 @@
         </p>
 
         <div class="d-flex flex-column align-items-end col-12 col-sm-auto">
-          <a href="#_" id="results-adv-search-edit" class="btn btn-primary text-nowrap col-12 col-sm-auto collapsed" data-bs-toggle="collapse" data-bs-target="#results-adv-search"><?=$this->transEsc('edit')?> <?=$this->icon('dropdown-caret')?></a>
+          <a href="#_" id="results-adv-search-edit" class="btn btn-primary text-nowrap col-12 col-sm-auto collapsed" data-bs-toggle="collapse" data-bs-target="#results-adv-search"><span class="results-adv-search-edit-text"><?=$this->transEsc('Edit search')?></span> <?=$this->icon('collapse')?></a>
           <a href="<?=$this->url($searchHome, [], ['query' => $hiddenFilters])?>" class="basic-search-link mt-2">&raquo; <?=$this->transEsc('Basic Search')?></a>
         </div>
       </div>
 
       <div id="results-adv-search" class="collapse">
-          <?= $this->context()->renderInContext('search/advanced/layout.phtml', [
-              'options' => $options,
-              'saved' => $results,
-              'overrideHeadTitle' => false
-          ]); ?>
+        <?= $this->context()->renderInContext('search/advanced/layout.phtml', [
+          'options' => $options,
+          'saved' => $results,
+          'overrideHeadTitle' => false
+        ]); ?>
       </div>
 
       <?=
@@ -243,8 +243,4 @@
       ]
     );?>
   </form>
-<?php endif; ?>
-
-<?php if($this->thulb_session()->isMessageDisplayed('message_under_search_box')): ?>
-    <?= $this->partial('Helpers/dynamic_message.phtml', array('tag' => 'message_under_search_box')); ?>
 <?php endif; ?>

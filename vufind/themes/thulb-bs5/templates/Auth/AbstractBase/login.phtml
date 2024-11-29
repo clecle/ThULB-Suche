@@ -19,7 +19,7 @@
       <?php if ($account->supportsCreation()): ?>
         <a class="btn btn-link createAccountLink" href="<?=$this->url('myresearch-account') ?>?auth_method=<?=$account->getAuthMethod()?>"><?=$this->transEsc('Create New Account')?></a>
       <?php endif; ?>
-      <a class="external-link ml-2" href="https://kataloge.thulb.uni-jena.de/LBS_WEB/borrower/forgottenpassword/request.htm?USR=1000&BES=1&LAN=DU" target="_blank"><?=$this->transEsc('Forgot Password')?></a>
+      <a class="external-link ml-2" href="<?=$this->translate('URL::Forgot Password')?>" target="_blank"><?=$this->transEsc('Forgot Password')?></a>
     </div>
   </form>
 <?php else: ?>

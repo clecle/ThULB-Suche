@@ -1,4 +1,5 @@
 <?php
+
 namespace ThULB\Module\Configuration;
 
 $config = array(
@@ -8,6 +9,7 @@ $config = array(
             \ThULB\Controller\CoverController::class => \VuFind\Controller\CoverControllerFactory::class,
             \ThULB\Controller\HoldsController::class => \VuFind\Controller\HoldsControllerFactory::class,
             \ThULB\Controller\ILLController::class => \VuFind\Controller\AbstractBaseFactory::class,
+            \ThULB\Controller\LetterOfAuthorizationController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \ThULB\Controller\MyResearchController::class => \VuFind\Controller\MyResearchControllerFactory::class,
             \ThULB\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \ThULB\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
@@ -17,14 +19,16 @@ $config = array(
             \ThULB\Controller\VpnController::class => \VuFind\Controller\AbstractBaseFactory::class,
         ),
         'aliases' => array(
-            'Holds' => \ThULB\Controller\HoldsController::class,
             'holds' => \ThULB\Controller\HoldsController::class,
+            'Holds' => \ThULB\Controller\HoldsController::class,
             'ill' => \ThULB\Controller\ILLController::class,
             'ILL' => \ThULB\Controller\ILLController::class,
+            'letterofauthorization' => \ThULB\Controller\LetterOfAuthorizationController::class,
+            'LetterOfAuthorization' => \ThULB\Controller\LetterOfAuthorizationController::class,
             'request' => \ThULB\Controller\RequestController::class,
             'Request' => \ThULB\Controller\RequestController::class,
-            'Vpn' => \ThULB\Controller\VpnController::class,
             'vpn' => \ThULB\Controller\VpnController::class,
+            'Vpn' => \ThULB\Controller\VpnController::class,
             'VPN' => \ThULB\Controller\VpnController::class,
             \VuFind\Controller\CartController::class =>  \ThULB\Controller\CartController::class,
             \VuFind\Controller\HoldsController::class => \ThULB\Controller\HoldsController::class,
@@ -258,8 +262,8 @@ $routeGenerator->addStaticRoute($config, 'ILL/chargecredits');
 $routeGenerator->addStaticRoute($config, 'ILL/forgotpassword');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccount');
 $routeGenerator->addStaticRoute($config, 'ILL/deleteaccountconfirmation');
+$routeGenerator->addStaticRoute($config, 'LetterOfAuthorization/create');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
-$routeGenerator->addStaticRoute($config, 'MyResearch/letterOfAuthorization');
 $routeGenerator->addStaticRoute($config, 'MyResearch/Provided');
 $routeGenerator->addNonTabRecordActions($config, ['OrderReserve']);
 

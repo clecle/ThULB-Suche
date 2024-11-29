@@ -95,7 +95,7 @@
             <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
               <?=$this->component('menu-button', [
                 'toggleLabel' => strtoupper($this->layout()->userLang),
-                'wrapperClass' => 'language hidden-xs hidden-sm',
+                'wrapperClass' => 'language hidden-xs hidden-sm dropdown-colored',
                 'wrapperTag' => 'li',
                 'dropdownClass' => 'dropdown-menu-end',
                 'menuItems' => array_map(
@@ -136,10 +136,16 @@
 
 <?php if ($this->layout()->searchbox !== false): ?>
   <div class="search container navbar">
-    <div class="nav searchbox hidden-print mt-4 mb-4" role="search">
+    <div class="nav searchbox hidden-print my-4" role="search">
       <nav>
         <?=$this->layout()->searchbox ?>
       </nav>
     </div>
+  </div>
+<?php endif; ?>
+
+<?php if($this->thulb_session()->isMessageDisplayed('message_under_search_box')): ?>
+  <div class="container">
+    <?= $this->partial('Helpers/dynamic_message.phtml', array('tag' => 'message_under_search_box')); ?>
   </div>
 <?php endif; ?>

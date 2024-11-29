@@ -6,31 +6,35 @@
     <h5><?=$this->transEsc('Databases')?></h5>
     <p><?= $this->transEsc('recommend_databases_text'); ?></p>
 
-    <div class="panel-group" id="recommenderAccordion" role="tablist" aria-multiselectable="true">
+    <div class="accordion" id="recommenderAccordion">
       <?php $recommendGroup = 0; ?>
       <?php foreach ($links as $title => $item): ?>
-        <div class="panel">
+        <div class="accordion-item">
           <?php if(is_array($item)) : ?>
             <?php
               $contentId = "recommend-content-group_{$recommendGroup}";
               $headingId = "recommend-heading-group_{$recommendGroup}";
               $recommendGroup++;
             ?>
-            <div role="tab" id="<?= $headingId; ?>">
-              <a class="title collapsed" data-toggle="collapse" data-target="#<?= $contentId; ?>" data-parent="#recommenderAccordion" href="#_" role="button" aria-expanded="false" aria-controls="<?= $contentId; ?>"><?= $this->transEsc("Recommend::$title"); ?></a>
-            </div>
-
-            <div id="<?= $contentId; ?>" class="panel-collapse collapse" role="tabpanel" aria-labelledby="<?= $headingId; ?>">
-              <div class="link-recommender-group">
+            <h2 class="accordion-header">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#<?= $contentId; ?>" aria-expanded="false" aria-controls="<?= $contentId; ?>">
+                <span><?= $this->transEsc("Recommend::$title"); ?></span>
+                <?=$this->icon('collapse')?>
+              </button>
+            </h2>
+            <div id="<?= $contentId; ?>" class="accordion-collapse collapse" data-bs-parent="#recommenderAccordion">
+              <div class="accordion-body link-recommender-group">
                 <?php foreach($item as $linkTitle => $linkItem): ?>
                   <a href="<?=$this->escapeHtmlAttr($linkItem)?>" class="link-recommender-item" target="_blank">
-                    <span class="external-link"><?=$this->transEsc("Recommend::$linkTitle")?></span>
+                    <?=$this->transEsc("Recommend::$linkTitle")?>
+                    <?=$this->icon('external-link')?>
                   </a>
                 <?php endforeach; ?>
               </div>
             </div>
+
           <?php else: ?>
-            <div class="link-recommender-group">
+            <div class="accordion-body link-recommender-group">
               <a href="<?=$this->escapeHtmlAttr($item)?>" class="link-recommender-item border" target="_blank">
                 <span class="external-link"><?=$this->transEsc("Recommend::$title")?></span>
               </a>

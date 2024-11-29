@@ -1,0 +1,331 @@
+/**
+ * Notes
+ * = As of 4.0, code styles aren't enforced, but
+ *   preferred styles are outlined here: http://codeguide.co/#css
+ * = The preferred method for writing code is to put generic and mobile styles first
+ *   and surround desktop styling with media min-width queries.
+ * = Bootstrap 5 breakpoints: <576px, ≥576px, ≥768px, ≥992px, ≥1200px, ≥1400px
+ *                                xs,     sm,     md,     lg,      xl,     xxl
+ */
+
+/* ------ Layout ------ */
+.brand-bg-green {
+  background-color: $brand-green;
+}
+
+.brand-bg-dark-blue {
+  background-color: $brand-dark-blue;
+}
+
+.brand-bg-light-blue {
+  background-color: $brand-light-blue;
+}
+
+.brand-bg-pink {
+  background-color: $brand-pink;
+}
+
+.brand-bg-red {
+  background-color: $brand-red;
+}
+
+.brand-text-green {
+  color: $brand-green;
+}
+
+.brand-text-dark-blue {
+  color: $brand-dark-blue;
+}
+
+.brand-text-light-blue {
+  color: $brand-light-blue;
+}
+
+.brand-text-pink {
+  color: $brand-pink;
+}
+
+.brand-text-red {
+  color: $brand-red;
+}
+
+/* --- Layout > Header --- */
+.eah-top {
+  .container {
+    padding: 0 .75rem;
+  }
+
+  .eah-logos-position {
+    height: 100px;
+    padding-top: 15px;
+
+    background: linear-gradient(
+      to bottom,
+      $brand-green 0%,
+      $brand-green 50%,
+      $brand-dark-blue 50%,
+      $brand-dark-blue 100%
+    );
+  }
+
+  .eah-logos {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row-reverse;
+    align-items: end;
+
+    .brand-top-eah-logo {
+      height: 65px;
+    }
+
+    .brand-top-logo {
+      height: 50px;
+    }
+  }
+
+  .brand-bg-green {
+    height: 45px;
+  }
+
+  .brand-bg-dark-blue {
+    height: 55px;
+  }
+}
+
+@media (min-width: $screen-md) {
+  .banner {
+    .navbar nav {
+      width: unset;
+    }
+  }
+}
+
+@media (min-width: $screen-md) {
+  header {
+    .dropdown .dropdown-toggle.show {
+      &:focus,
+      &:hover {
+        background-color: $brand-primary;
+      }
+    }
+  }
+}
+
+/* --- Layout > Footer --- */
+
+/* --- Layout > Modal --- */
+
+/* --- Layout > Popover --- */
+
+/* --- Layout > Dropdown --- */
+@media (max-width: $screen-sm-max) {
+  .dropdown.dropdown-colored-sm {
+    @include dropdown-colored();
+  }
+}
+
+/* --- Layout > Content --- */
+#content {
+  background-color: #ffffffcf;
+  background-clip: content-box;
+}
+
+#message_under_search_box {
+  margin-top: 10px;
+}
+
+#vpnhint {
+  border: 1px solid darken($brand-pink, 5%);
+  color: $brand-red;
+
+  button {
+    margin-left: 10px;
+    background-color: $brand-red;
+    border-color: darken($brand-red, 5%);
+
+    &:hover,
+    &:focus {
+      background-color: darken($brand-red, 5%);
+    }
+
+    &:active, &:focus:active {
+      background-color: darken($brand-red, 10%);
+    }
+  }
+}
+
+@media (min-width: $screen-sm) {
+  #vpnhint {
+    --bs-border-radius-xxl: .75rem
+  }
+}
+
+.alert-grey {
+  @extend .alert-info;
+  background-color: $brand-light-blue;
+  border-color: darken($brand-light-blue, 5%);
+}
+
+/* --- Layout > Landing page --- */
+.brand-landing-page-logo {
+  display: block;
+  max-height: 80px;
+  margin: 100px auto 40px;
+  max-width: calc(100% - 30px);
+}
+
+/* --- Layout > Backgrounds --- */
+body {
+  background-image: url('../images/Muster.svg');
+  background-repeat: no-repeat;
+  background-position: top -200px right -600px;
+  background-attachment: fixed;
+}
+
+.testingbg {
+  background-image: url("/themes/thulb-bs5/images/TestTile.png"), url('../images/Muster.svg');
+  background-repeat: repeat, no-repeat;
+  background-position: initial, top -200px right -600px;
+  background-attachment: scroll, fixed;
+}
+
+.developmentbg {
+  background-image: url("/themes/thulb-bs5/images/DevTile.png"), url('../images/Muster.svg');
+  background-repeat: repeat, no-repeat;
+  background-position: initial, top -200px right -600px;
+  background-attachment: scroll, fixed;
+}
+
+body:has(.main form#advSearchForm) {
+  background-color: transparent;
+}
+
+/* --- Layout > Buttons --- */
+.btn-primary {
+  color: #fff;
+
+  &:hover,
+  &:focus {
+    color: #fff;
+  }
+}
+
+/* --- Layout > Checkboxes & Radio-Buttons --- */
+
+/* --- Layout > Icons --- */
+
+/* --- Layout > Form --- */
+
+/* - Layout > Form > Form Errors - */
+
+/* --- Layout > Tables --- */
+
+/* --- Layout > Striped --- */
+
+/* --- Layout > Print --- */
+
+/* --- Layout > Offcanvas --- */
+
+/* --- Layout > Misc --- */
+.highlight,
+mark {
+  background: unset;
+  padding: 0;
+}
+
+.breadcrumb {
+  background-color: #ffffffcf;
+}
+
+/* ------ Bulk options ------ */
+
+/* ------ Cart ------ */
+
+/* ------ Search ------ */
+
+/* --- Search > Module tab --- */
+
+/* --- Search > Advanced Search --- */
+#advSearchForm .adv-group {
+  background-color: $brand-light-blue;
+}
+
+#results-adv-search-edit {
+  .results-adv-search-edit-text {
+    display: none;
+  }
+
+  &.collapsed .results-adv-search-edit-text {
+    display: inline-block;
+  }
+}
+
+/* --- Search > Misc --- */
+#search-sidebar .search-sort {
+  display: block;
+  width: 100%;
+
+  .list-group {
+    padding: 0;
+  }
+}
+
+.search-header .search-result-count {
+  display: block;
+}
+
+/* ------ Search > Searchform ------ */
+.searchForm-inputs button {
+  color: #fff;
+}
+
+#searchForm #searchForm_type {
+  background-color: $brand-green;
+}
+
+@media (min-width: $screen-sm) {
+  #searchForm {
+    #searchForm_type {
+      border-radius: .5rem 0 0 .5rem;
+    }
+
+    #searchForm_lookfor {
+      border-radius: 0;
+      width: 100%;
+    }
+
+    button[type="submit"] {
+      border-radius: 0 .5rem .5rem 0;
+    }
+  }
+}
+
+/* --- Search > Facets --- */
+
+/* --- Search > Link Recommender --- */
+
+/* --- Search > Tools --- */
+
+/* ------ Results / Record list ------ */
+
+/* ------ Detail view ------ */
+
+/* --- Detail view > Tabs --- */
+
+/* --- Detail view > Access tab --- */
+
+/* --- Detail view > Provenance tab --- */
+
+/* --- Detail view > Details tab --- */
+
+/* --- Detail view > Journal request --- */
+
+/* ------ MyResearch ------ */
+
+/* --- MyResearch > Favorites --- */
+
+/* --- MyResearch > ILL --- */
+
+/* --- MyResearch > Search history --- */
+
+/* ------ Admin ------ */

@@ -3,7 +3,7 @@
     <span class="text-danger"><?= $this->transEsc('Online deactivated because of reminders')?></span>
     <br />
   <?php elseif (isset($ilsDetails['queue']) && $ilsDetails['queue'] > 0): ?>
-    <span class="text-danger"><?= $this->transEsc('No renewal bacause of reservations')?></span>
+    <span class="text-danger"><?= $this->transEsc('No renewal because of reservations')?></span>
     <br />
   <?php elseif (isset($ilsDetails['renew']) && $ilsDetails['renew'] > 2): ?>
     <span class="text-danger"><?= $this->transEsc('Maximum number of renewals reached')?></span>

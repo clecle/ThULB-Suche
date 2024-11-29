@@ -1,6 +1,7 @@
 <?php
 return array(
     'extends' => 'bootstrap5',
+    'favicon' => 'thulb_favicon.svg',
     'helpers' => array(
         'factories' => array(
             \ThULB\View\Helper\Record\OnlineContent::class => \ThULB\View\Helper\Record\OnlineContentFactory::class,
@@ -38,7 +39,6 @@ return array(
             'thulb_userType' => \ThULB\View\Helper\Root\UserType::class,
         ),
     ),
-    'favicon' => 'thulb_favicon.svg',
     'icons' => array(
         'sets' => [
             /**
@@ -57,6 +57,7 @@ return array(
             ],
         ],
         'aliases' => array(
+            'broken-link' => 'FontAwesome:unlink',
             'cart' => 'FontAwesome:star-o',
             'cart-add' => 'FontAwesome:star-o',
             'cart-remove' => 'FontAwesome:star',

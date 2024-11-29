@@ -1,0 +1,81 @@
+<?php
+  // AJAX Check record?
+  $check = isset($item['check']) && $item['check'];
+  $checkStorageRetrievalRequest = isset($item['checkStorageRetrievalRequest']) && $item['checkStorageRetrievalRequest'];
+  $checkILLRequest = isset($item['checkILLRequest']) && $item['checkILLRequest'];
+?>
+<?php if (isset($item['barcode']) && $item['barcode'] != ""): ?>
+  <div class="holding-item d-flex flex-column gap-2 p-3" vocab="http://schema.org/" typeof="Offer">
+    <?php $callno = $this->thulb_holdingHelper()->getCallnumber($item); ?>
+    <?php if ($callno && $callno != 'bestellt'): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc("Call Number")?>:</div>
+        <div class="col-text"><strong><?= $callno ?></strong></div>
+      </div>
+    <?php endif; ?>
+  
+    <?php if(!empty($item['remotehref']) && $holding['location'] == "Remote"): ?>
+    <div class="d-flex flex-column flex-sm-row gap-sm-2">
+      <div class="col-description fw-bold"><?= $this->transEsc('Link')?>:</div>
+      <div class="col-text">
+        <a href="<?php echo $item['remotehref']; ?>" target="_blank" class="btn btn-primary">
+          <?= $this->transEsc($item['remotedesc'] ?? 'Full text online'); ?>
+        </a>
+        <?php if(!empty($item['remotetitle'])):?>
+          [<?php echo $item['remotetitle']; ?>]
+        <?php endif; ?>
+        <?php if(isset($item['remotedesc']) && $item['remotedesc'] === $this->transEsc('get_citation')): ?>
+          <div class="item-notes">
+            <?= $this->transEsc('explain_reference') ?>
+          </div>
+        <?php endif; ?>
+      </div>
+      <?= $this->render('RecordTab/access/citations.phtml'); ?>
+    </div>
+    <?php endif; ?>
+  
+    <?php /* ANMERKGUNGEN & BESTAND */ ?>
+    <?php $chronologyHtml = $this->render('RecordTab/access/holding-chronology.phtml', ['holding' => $item]); ?>
+    <?php if(trim($chronologyHtml)): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc("Item Chronology")?>:</div>
+        <div class="col-text"><?= $chronologyHtml; ?></div>
+      </div>
+    <?php endif;?>
+  
+    <?php $commentsHtml = $this->render('RecordTab/access/holding-comments.phtml', ['holding' => $item]);; ?>
+    <?php if(trim($commentsHtml)): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc("Item Notes")?>:</div>
+        <div class="col-text"><?= $commentsHtml; ?></div>
+      </div>
+    <?php endif; ?>
+  
+    <?php if(!empty($item['remotehref']) && $holding['location'] != "Remote"): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc('See also')?>:</div>
+        <div class="col-text">
+          <a href="<?php echo $item['remotehref']; ?>"><?php echo $item['remotedomain']; ?></a>
+          <?php if(!empty($item['remotetitle'])):?>
+          [<?php echo $item['remotetitle']; ?>]
+          <?php endif; ?>
+        </div>
+      </div>
+    <?php endif; ?>
+  
+    <?php if ($holding['location'] != "Remote" && $callno != "bestellt"
+              && ($item['departmentId'] ?? '') != 'DMag'
+              && !$this->driver->tryMethod('isFormat', ['Article|Monograph Series', true])
+    ): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc("Availability Status")?>:</div>
+        <div class="col-text">
+          <?= $this->render('record/holding/availability.phtml', [
+            'driver' => $this->driver,
+            'item' => $item
+          ]); ?>
+        </div>
+      </div>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>

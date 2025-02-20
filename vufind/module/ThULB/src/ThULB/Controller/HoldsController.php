@@ -5,6 +5,7 @@ namespace ThULB\Controller;
 use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Http\Response;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Session\Container as SessionContainer;
 use Laminas\View\Model\ViewModel;
 use VuFind\Controller\HoldsController as OriginalHoldsController;
 use VuFind\Validator\SessionCsrf;
@@ -54,7 +55,9 @@ class HoldsController extends OriginalHoldsController
 
         // We always want to display a cancel form:
         $view->cancelForm = true;
-        $view->disableCheckboxes = $patron['status'] == 2;
+        // disable checkboxes if user has status '2' or does not have the permission to renew items
+        $paiaSession = new SessionContainer('PAIA', $this->serviceLocator->get(\Laminas\Session\SessionManager::class));
+        $view->disableCheckboxes = $patron['status'] == 2 || !in_array('write_items', $paiaSession->scope);
 
         // Get held item details:
         $result = $catalog->getMyHoldsAndSRR($patron);

@@ -9,7 +9,7 @@
   $toggleTag = 'button';
   $defaultAttrs = [
     'type' => 'button', // Accessible default
-    'class' => 'dropdown-toggle', // Bootstrap class
+    'class' => 'dropdown-toggle' . ($this->toggleClass ?? false ? ' ' . $this->toggleClass : ''), // Bootstrap class
     'data-bs-toggle' => 'dropdown', // Bootstrap data-attr
     'aria-expanded' => 'false',
     'aria-haspopup' => 'true',

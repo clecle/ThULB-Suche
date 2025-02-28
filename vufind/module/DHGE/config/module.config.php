@@ -4,8 +4,8 @@ namespace DHGE\Module\Configuration;
 $config = array(
     'controllers' => array(
         'factories' => array(
-            \DHGE\Controller\MyResearchController::class => \VuFind\Controller\AbstractBaseFactory::class,
-            \DHGE\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class
+            \DHGE\Controller\MyResearchController::class => \VuFind\Controller\MyResearchControllerFactory::class,
+            \DHGE\Controller\RecordController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
         ),
         'aliases' => array(
             'MyResearch' => \DHGE\Controller\MyResearchController::class,
@@ -16,16 +16,18 @@ $config = array(
     'service_manager' => array(
         'factories' => array(
             \DHGE\Auth\Manager::class => \VuFind\Auth\ManagerFactory::class,
+            \DHGE\ILS\Connection::class => \VuFind\ILS\ConnectionFactory::class,
         ),
         'aliases' => array(
             \ThULB\Auth\Manager::class => \DHGE\Auth\Manager::class,
+            \ThULB\ILS\Connection::class => \DHGE\ILS\Connection::class,
         )
     ),
     'vufind' => array(
         'plugin_managers' => array(
             'ajaxhandler' => array(
                 'factories' => array(
-                    \DHGE\AjaxHandler\GetItemStatuses::class => \VuFind\AjaxHandler\GetItemStatusesFactory::class,
+                    \DHGE\AjaxHandler\GetItemStatuses::class => \ThULB\AjaxHandler\GetItemStatusesFactory::class,
                 ),
                 'aliases' => array(
                     \ThULB\AjaxHandler\GetItemStatuses::class => \DHGE\AjaxHandler\GetItemStatuses::class,

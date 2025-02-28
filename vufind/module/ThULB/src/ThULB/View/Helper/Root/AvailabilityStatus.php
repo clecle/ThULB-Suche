@@ -75,4 +75,30 @@ class AvailabilityStatus extends OriginalAvailabilityStatus
         }
         return $this->classUncertain;
     }
+
+    /**
+     * Render ajax status.
+     *
+     * @param AvailabilityStatusInterface $availabilityStatus Availability Status
+     *
+     * @return string
+     */
+    public function renderStatusForAjaxResponse(AvailabilityStatusInterface $availabilityStatus): string
+    {
+        if ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNKNOWN)) {
+            $key = 'ajax/status-unknown.phtml';
+        } elseif ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
+            $key = 'ajax/status-available.phtml';
+        } elseif ($availabilityStatus->is(\ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED)) {
+            $key = 'ajax/status-ordered.phtml';
+        } elseif ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNAVAILABLE)) {
+            $key = 'ajax/status-unavailable.phtml';
+        } else {
+            $key = 'ajax/status-uncertain.phtml';
+        }
+        if (!isset($this->messageCache[$key])) {
+            $this->messageCache[$key] = $this->getView()->render($key);
+        }
+        return $this->messageCache[$key];
+    }
 }

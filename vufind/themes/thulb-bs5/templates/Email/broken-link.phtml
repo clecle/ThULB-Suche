@@ -1,0 +1,15 @@
+Hallo,
+
+bei folgendem Titel wurde ein defekter Link gemeldet.
+
+PPN: <?= $this->driver->getUniqueID()?>
+
+Titel: <?= $this->driver->getTitle()?>
+
+
+Im Discovery-System anzeigen: <?= $this->siteURL . '/Record/' . $this->driver->getUniqueID()?>
+
+<?php if ($this->feedback): ?>
+
+Gemeldet von: <?= $this->firstname?> <?= $this->lastname?> (<?=$this->email?>)
+<?php endif; ?>

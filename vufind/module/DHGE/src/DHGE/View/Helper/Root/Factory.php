@@ -38,15 +38,6 @@ use Psr\Container\NotFoundExceptionInterface;
  */
 class Factory
 {
-    public static function getSession(ServiceManager $sm) : AbstractHelper {
-        return new Session(
-            new \Laminas\Session\Container(
-                'Account',
-                $sm->get('VuFind\SessionManager')
-            )
-        );
-    }
-
     /**
      * Construct the Unpaywall helper.
      *

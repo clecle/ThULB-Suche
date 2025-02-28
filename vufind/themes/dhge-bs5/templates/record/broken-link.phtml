@@ -1,0 +1,4 @@
+<a href="<?= $this->url('vpn-check') . '?sdurl=' . urlencode($this->url('record-report-broken-link', ['id' => $this->driver->getUniqueId()]))?>" class="broken-link" title="<?= $this->transEsc('Access problem'); ?>" target="_blank" data-lightbox>
+  <span class="broken-link-description"><?= $this->transEsc('Access problem'); ?></span>
+  <?= $this->icon('broken-link', 'ml-1 broken-link-icon')?>
+</a>

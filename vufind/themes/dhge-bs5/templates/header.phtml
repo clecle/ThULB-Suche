@@ -1,0 +1,134 @@
+<?php $account = $this->auth()->getManager(); ?>
+<div class="thulb-topline"></div>
+
+<div class="banner">
+  <div class="container navbar">
+    <?php if (!isset($this->layout()->renderingError)): ?>
+      <div class="navbar-header flex-row">
+        <?= $this->render('navbar/navbar-logo.phtml'); ?>
+
+        <nav class="order-md-2">
+          <ul class="navbar-account nav navbar-nav navbar-right flex-row flip">
+            <?php if ($this->feedback()->tabEnabled()): ?>
+              <li>
+                <a class="icon-link" id="feedbackLink" data-lightbox href="<?=$this->url('feedback-home') ?>">
+                  <?=$this->icon('feedback', 'icon-link__icon') ?>
+                  <span class="icon-link__label hidden"><?=$this->transEsc('Feedback')?></span>
+                </a>
+              </li>
+            <?php endif; ?>
+
+            <?php $cart = $this->cart(); ?>
+            <?php if ($cart->isActive()): ?>
+              <li id="cartSummary" aria-live="polite" aria-atomic="true">
+                <a id="cartItems" class="icon-link" data-lightbox title="<?=$this->transEscAttr('View Book Bag')?>" href="<?=$this->url('cart-home')?>">
+                  <?=$this->icon('cart', 'icon-link__icon') ?>
+                  <span class="icon-link__label">
+                <span class="sr-only"><?=$this->transEsc('Book Bag')?>:</span>
+                <span role="status"><strong><?=count($cart->getItems())?></strong> <span class="hidden"><?=$this->transEsc('items')?></span></span>
+                <span class="full<?=!$cart->isFull() ? ' hidden' : '' ?>">(<?=$this->transEsc('bookbag_full') ?>)</span>
+              </span>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (is_object($account) && $account->loginEnabled()): // hide login/logout if unavailable ?>
+              <?php if ($account->getIdentity()): ?>
+                <li class="logoutOptions<?php if ($account->dropdownEnabled()): ?> with-dropdown<?php endif ?>">
+                  <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>">
+                    <span class="icon-link__label hidden"><?=$this->transEsc('Your Account')?></span>
+                    <span id="account-icon" class="icon-link__icon" role="link"><?=$this->icon('my-account', 'icon-link__icon') ?></span>
+                  </a>
+                </li>
+                <?php if ($account->dropdownEnabled()): ?>
+                  <li id="login-dropdown" class="dropdown hidden">
+                    <a href="#" data-bs-toggle="dropdown"><?=$this->icon('dropdown-caret') ?></a>
+                    <div class="dropdown-menu">
+                      <?=$this->accountMenu()->render('')?>
+                    </div>
+                  </li>
+                <?php endif; ?>
+                <li class="logoutOptions">
+                  <a href="<?=$this->url('myresearch-logout')?>" class="user-icon logout icon-link">
+                    <span class="icon-link__icon" role="link"><?=$this->icon('sign-out', 'icon-link__icon') ?></span>
+                    <span class="icon-link__label hidden"><?=$this->transEsc('Log Out')?></span>
+                  </a>
+                </li>
+              <?php else: ?>
+                <li id="loginOptions">
+                  <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
+                    <a href="<?=$this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>" class="user-icon icon-link">
+                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', 'icon-link__icon') ?></span>
+                      <span class="icon-link__label hidden"><?=$this->transEsc('Institutional Login')?></span>
+                    </a>
+                  <?php else: ?>
+                    <a href="<?=$this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>" class="user-icon icon-link">
+                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', 'icon-link__icon') ?></span>
+                      <span class="icon-link__label hidden"><?=$this->transEsc('Login')?></span>
+                    </a>
+                  <?php endif; ?>
+                </li>
+              <?php endif; ?>
+            <?php endif; ?>
+
+            <?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
+              <?=$this->component('menu-button', [
+                'toggleLabel' => 'Theme',
+                'wrapperClass' => 'theme-selector',
+                'wrapperTag' => 'li',
+                'menuItems' => array_map(
+                  function ($item) {
+                    $item['label'] = $item['desc'];
+                    $item['url'] = $this->url()->addQueryParameters(['ui' => $item['name']]);
+
+                    return $item;
+                  },
+                  $this->layout()->themeOptions
+                ),
+              ]) ?>
+            <?php endif; ?>
+
+            <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+              <?=$this->component('menu-button', [
+                'toggleLabel' => $this->transEsc('Language') . ' ',
+                'wrapperClass' => 'language hidden-xs hidden-sm',
+                'wrapperTag' => 'li',
+                'dropdownClass' => 'dropdown-menu-end',
+                'menuItems' => array_map(
+                  function ($langCode, $langName) {
+                    return [
+                      'label' => $this->displayLanguageOption($langName),
+                      'url' => $this->url()->addQueryParameters(['lng' => $langCode]),
+                      'selected' => $this->layout()->userLang == $langCode,
+                    ];
+                  },
+                  array_keys($this->layout()->allLangs),
+                  array_values($this->layout()->allLangs),
+                ),
+              ]) ?>
+            <?php endif; ?>
+
+            <li>
+              <button type="button" class="navbar-toggle border-0" data-bs-toggle="collapse" data-bs-target="#header-collapse" aria-label="<?=$this->transEscAttr('mobile_toggle_navigation_text')?>">
+                <?=$this->icon('ui-menu') ?>
+              </button>
+            </li>
+          </ul>
+        </nav>
+
+        <nav class="collapse navbar-collapse order-md-1" id="header-collapse">
+          <?= $this->render('navbar/navbar-left.phtml'); ?>
+        </nav>
+      </div>
+    <?php endif; ?>
+  </div>
+</div>
+
+<?php if ($this->layout()->searchbox !== false): ?>
+  <div class="search container navbar">
+    <div class="nav searchbox hidden-print mt-4 mb-4" role="search">
+      <nav>
+        <?=$this->layout()->searchbox ?>
+      </nav>
+    </div>
+  </div>
+<?php endif; ?>

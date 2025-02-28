@@ -7,10 +7,10 @@ use Laminas\View\Helper\AbstractHelper;
 
 class Session extends AbstractHelper
 {
-    protected SessionContainer $accountSession;
+    protected SessionContainer $paiaSession;
 
-    public function __construct(SessionContainer $accountSession) {
-        $this->accountSession = $accountSession;
+    public function __construct(SessionContainer $paiaSession) {
+        $this->paiaSession = $paiaSession;
     }
 
     /**
@@ -18,7 +18,7 @@ class Session extends AbstractHelper
      *
      * @return string|null
      */
-    public function getLibrary() : ?string {
-        return $this->accountSession->library ?? null;
+    public function getLibraryPaia() : ?string {
+        return $this->paiaSession->libraryPaia ?? null;
     }
 }

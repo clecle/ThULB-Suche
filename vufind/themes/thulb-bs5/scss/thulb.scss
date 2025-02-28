@@ -233,22 +233,12 @@ header {
   }
 
   .navbar-header .navbar-nav li.dropdown:has(.dropdown-toggle.show):not(.dropdown-submenu) {
-    background-color: $brand-primary-darker-10;
     margin: 5px;
     padding: 5px;
-
-    & > .dropdown-toggle {
-      outline: none;
-      background-color: $brand-primary-darker-10 !important;
-    }
 
     .dropdown-menu {
       isolation: isolate;
       margin: 0 10px 10px;
-
-      & > li > a {
-        color: #fff;
-      }
     }
 
     .dropdown-submenu .dropdown-menu {
@@ -368,27 +358,37 @@ footer {
 /* --- Layout > Dropdown --- */
 @mixin dropdown-colored {
   &:has(.dropdown-toggle.show):not(.dropdown-submenu) {
-    box-shadow: 0 0 10px 0 darken($brand-primary, 30%);
+    box-shadow: $dropdown-submenu-wrapper-open-box-shadow;
+    background-color: $dropdown-submenu-wrapper-open-bg-color;
+    border-radius: var(--bs-border-radius);
+  }
+
+  & > .dropdown-toggle.show {
+    &,
+    &:active,
+    &:focus,
+    &:hover {
+      outline: none;
+      background-color: $dropdown-submenu-level-1-toggle-active-bg-color;
+      color: $dropdown-submenu-level-1-toggle-active-color;
+    }
   }
 
   .dropdown-menu {
     background-clip: unset;
-    box-shadow: 0 0 10px 0 $brand-primary-darker;
-    background-color: $brand-primary;
-
-    & > .active > span {
-      background-color: $brand-primary;
-      color: white;
-    }
+    box-shadow: $dropdown-submenu-level-1-box-shadow;
+    background-color: $dropdown-submenu-level-1-item-bg-color;
 
     & > li {
-      background-color: $brand-primary;
+      background-color: $dropdown-submenu-level-1-item-bg-color;
+      color: $dropdown-submenu-level-1-item-color;
 
       &.active,
       &.open {
         & > a,
         & > span {
-          background-color: $brand-primary-lighter;
+          background-color: $dropdown-submenu-level-2-toggle-active-bg-color;
+          color: $dropdown-submenu-level-2-toggle-active-color;
           display: block;
         }
       }
@@ -399,12 +399,12 @@ footer {
 
       & > a,
       & > button {
-        color: #fff;
+        color: $dropdown-submenu-level-1-item-color;
 
         &:hover,
         &:focus {
-          background-color: $brand-primary-lighter;
-          color: #fff;
+          background-color: $dropdown-submenu-level-1-item-hover-bg-color;
+          color: $dropdown-submenu-level-1-item-hover-color;
         }
       }
     }
@@ -412,19 +412,20 @@ footer {
 
   .dropdown-submenu {
     & > .dropdown-menu {
-      background-color: $brand-primary-lighter;
+      background-color: $dropdown-submenu-level-2-item-bg-color;
+      box-shadow: $dropdown-submenu-level-2-box-shadow;
 
       li {
-        background-color: $brand-primary-lighter;
+        background-color: $dropdown-submenu-level-2-item-bg-color;
 
         & > a,
         & > button {
-          color: #fff;
+          color: $dropdown-submenu-level-2-item-color;
 
           &:hover,
           &:focus {
-            background-color: $brand-primary;
-            color: #fff;
+            background-color: $dropdown-submenu-level-2-item-hover-bg-color;
+            color: $dropdown-submenu-level-2-item-hover-color;
           }
         }
       }
@@ -468,9 +469,9 @@ footer {
   & > .dropdown-menu {
     top: 0;
     left: 100%;
-    -webkit-border-radius: 6px;
-    -moz-border-radius: 6px;
-    border-radius: 6px;
+    -webkit-border-radius: $dropdown-submenu-level-2-box-shadow;
+    -moz-border-radius: $dropdown-submenu-level-2-box-shadow;
+    border-radius: $dropdown-submenu-level-2-box-shadow;
   }
 }
 

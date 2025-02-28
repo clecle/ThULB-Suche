@@ -1,0 +1,21 @@
+<?php if($this->thulb_serverType() != 'production'): ?>
+    <?php
+    // remove the dev url's starting '/eah/' from the URI
+    $uri = $this->thulb_serverType() == 'development'
+        ? preg_replace('/^\/dhge\//', '/', $_SERVER['REQUEST_URI'])
+        : $_SERVER['REQUEST_URI'];
+    ?>
+  <footer class="hidden-print">
+    <nav class="mt-5">
+      <div class="container">
+        <ul class="nav navbar-nav">
+            <?php if($this->thulb_serverType() == 'development'): ?>
+              <li><a class="p-3" href="<?= $this->config()->get('config.staging')->Site->url . $uri; ?>" target="_blank">Im Testsystem öffnen</a></li>
+            <?php endif; ?>
+
+          <li><a class="p-3" href="<?= $this->config()->get('config.production')->Site->url . $uri; ?>" target="_blank">Im Livesystem öffnen</a></li>
+        </ul>
+      </div>
+    </nav>
+  </footer>
+<?php endif; ?>

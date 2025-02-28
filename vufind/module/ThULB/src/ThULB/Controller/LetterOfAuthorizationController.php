@@ -121,7 +121,7 @@ class LetterOfAuthorizationController extends AbstractBase implements LoggerAwar
             }
         }
 
-        return $this->createViewModel(['request' => $this->request, 'errors' => $errors]);
+        return $this->createViewModel(['request' => $request, 'errors' => $errors]);
     }
 
     /**

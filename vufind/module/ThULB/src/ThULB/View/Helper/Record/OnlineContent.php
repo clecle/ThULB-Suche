@@ -190,20 +190,22 @@ class OnlineContent extends AbstractHelper
         $holdings = $driver->getHoldings();
         $holdingFt = array ();
         foreach($holdings['holdings']['Remote']['items'] ?? [] as $onlineHolding) {
-            $isReference = $driver->getSourceIdentifier() == 'Summon' && !$driver->hasFullText();
-            $holdingFt[] = array (
-                'type' => $isReference ? 'reference' : 'fulltext',
-                'label' => $isReference ? 'get_citation' : 'Full text / PDF',
-                'link' => $onlineHolding['remotehref'] ?? null,
-                'source' => $driver->getSourceIdentifier() == 'Solr' ?
+            if (!isset($holdingFt[$onlineHolding['remotehref']])) {
+                $isReference = $driver->getSourceIdentifier() == 'Summon' && !$driver->hasFullText();
+                $holdingFt[$onlineHolding['remotehref']] = array(
+                    'type' => $isReference ? 'reference' : 'fulltext',
+                    'label' => $isReference ? 'get_citation' : 'Full text / PDF',
+                    'link' => $onlineHolding['remotehref'] ?? null,
+                    'source' => $driver->getSourceIdentifier() == 'Solr' ?
                         'DAIA' : $driver->getSourceIdentifier(),
-                'access' => $isReference ? 'reference' : ($driver->tryMethod('isOpenAccess') ?
-                    'onlineContent-open' : 'onlineContent-restricted'),
-                'data' => $onlineHolding
-            );
+                    'access' => $isReference ? 'reference' : ($driver->tryMethod('isOpenAccess') ?
+                        'onlineContent-open' : 'onlineContent-restricted'),
+                    'data' => $onlineHolding
+                );
+            }
         }
 
-        return $holdingFt;
+        return array_values($holdingFt);
     }
 
     /**

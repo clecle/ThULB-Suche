@@ -30,6 +30,7 @@
 namespace DHGE\AjaxHandler;
 
 use ThULB\AjaxHandler\GetItemStatuses as OriginalGetItemStatuses;
+use VuFind\ILS\Logic\AvailabilityStatusInterface;
 
 class GetItemStatuses extends OriginalGetItemStatuses
 {
@@ -37,27 +38,23 @@ class GetItemStatuses extends OriginalGetItemStatuses
      * Support method for getItemStatuses() -- process a single bibliographic record
      * for "group" location setting.
      *
-     * @param array  $records            Information on items linked to a single
+     * @param array  $record            Information on items linked to a single
      *                                  bib record
-     * @param array  $messages          Custom status HTML
-     *                                  (keys = available/unavailable)
      * @param string $callnumberSetting The callnumber mode setting used for
      *                                  pickValue()
      *
      * @return array                    Summarized availability information
      */
-    protected function getItemStatusGroup($records, $messages, $callnumberSetting) : array
+    protected function getItemStatusGroup($record, $callnumberSetting) : array
     {
-        $statusGroup = parent::getItemStatusGroup($records, $messages, $callnumberSetting);
+        $statusGroup = parent::getItemStatusGroup($record, $callnumberSetting);
 
         $statusGroup['availability_message'] = '';
 
         // Check availabilities for each library
         $libAvailability = [];
-        foreach ($records as $info) {
-            if(!$info['use_unknown_message']) {
-                $libAvailability[$info['library']] = $libAvailability[$info['library']] || $info['availability']->isAvailable();
-            }
+        foreach ($record as $info) {
+            $libAvailability[$info['library']][] = $info;
         }
 
         // Sort libraries by name
@@ -65,9 +62,10 @@ class GetItemStatuses extends OriginalGetItemStatuses
 
         // Create availability message for each library.
         $availabilityMessage = '';
-        foreach($libAvailability as $lib => $available) {
-            $msg = $available ? 'available' : 'unavailable';
-            $availabilityMessage .= str_replace('%%library%%', $lib, $messages[$msg]);
+        foreach($libAvailability as $items) {
+            $combinedInfo = $this->availabilityStatusManager->combine($items);
+            $combinedAvailability = $combinedInfo['availability'];
+            $availabilityMessage .= $this->getAvailabilityMessage($combinedAvailability);
         }
 
         if($availabilityMessage) {

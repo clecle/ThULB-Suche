@@ -1,10 +1,5 @@
 <?php
   $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding);
-  $locationApiId = $holding['items'][0]['locationapiid'] ?? false;
-  $locationData = null;
-  if(in_array($locationApiId, [2, 3, 4, 8])) {
-    $locationData = $this->thulb_locationData($locationApiId);
-  }
 ?>
 
 <h3 class="holding-title d-flex flex-column align-items-sm-center flex-sm-row gap-2 mx-3">

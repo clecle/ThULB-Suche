@@ -1,0 +1,74 @@
+// Brand colors
+$brand-primary:             #007C28;
+$brand-primary-darker:      #007C28;
+$brand-primary-lighter:     #007C28;
+$brand-secondary:           #a5c400;
+$brand-inverted:            #738a77;
+
+$input-border-focus:        #007C28;
+$tooltip-max-width:         400px !important;
+$tooltip-bg:                #007C28 !important;
+
+$input-border-focus:        #568ebe;
+$tooltip-max-width:         400px !important;
+$tooltip-bg:                #002F5D !important;
+
+$header-bg: #f8f8f8;
+$banner-bg: $header-bg;
+
+$vpn-hint-bg: #a5c400;
+
+$dropdown-submenu-level-1-item-hover-bg-color: lighten($brand-primary, 10%);
+
+/* ------ COLORS ------ */
+//$table-bg-accent:           #f9f9f9 !default;
+//
+//$primary: $brand-primary;
+//$secondary: $brand-secondary;
+//
+//$input-border: #ccc;
+//$input-placeholder-color: #999;
+//
+//$btn-padding-x-sm: .25rem;
+//
+//$recommender-title-bg: $table-bg-accent;
+//$recommender-item-bg:  #fff;
+
+// Cookie consent dialog should have a z-index low enough to stay below dropdowns and modals
+//$zindex-dropdown:       1000 !default;
+//$zindex-cookie-consent: ($zindex-dropdown - 10) !default;
+//
+//$form-select-bg: none;
+//$form-select-indicator: none;
+//
+//$badge-bg: #777;
+//$badge-padding-y: 0.25em;
+//$badge-border-radius: 0.25rem;
+//$badge-font-size: 12px;
+//$badge-line-height: normal;
+
+// color success text and badge
+//$error: #d2322d;
+//$error-text-emphasis: #d2322d;
+//$error-bg-subtle: #f2dede;
+//$error-border-subtle: darken($error-bg-subtle, 20%);
+//
+//$info: #214c62;
+//$info-text-emphasis: #214c62;
+//$info-bg-subtle: #d9edf7;
+//$info-border-subtle: darken($info-bg-subtle, 20%);
+//
+//$success: #3c763d;
+//$success-text-emphasis: #3c763d;
+//$success-bg-subtle: #dff0d8;
+//$success-border-subtle: darken($success-bg-subtle, 20%);
+//
+//$warning: #8a6d3b;
+//$warning-text-emphasis: #6c4a00;
+//$warning-bg-subtle: #f9f1c6;
+//$warning-border-subtle: darken($warning-bg-subtle, 20%);
+//
+//$pagination-border-radius: .25rem;
+
+//$enable-validation-icons: false;
+//$enable-smooth-scroll: true;

@@ -31,7 +31,7 @@
 
 namespace EAH\RecordDriver;
 
-use \ThULB\RecordDriver\SolrVZGRecord as OriginalSolrVZGRecord;
+use ThULB\RecordDriver\SolrVZGRecord as OriginalSolrVZGRecord;
 
 class SolrVZGRecord extends OriginalSolrVZGRecord
 {

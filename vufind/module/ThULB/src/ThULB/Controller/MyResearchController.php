@@ -51,8 +51,6 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
     }
 
     protected Config $mainConfig;
-    protected Config $letterOfAuthorization;
-    protected string $letterOfAuthorizationSavePath;
 
     public function __construct(
         ServiceLocatorInterface $sm,
@@ -63,10 +61,6 @@ class MyResearchController extends OriginalController implements LoggerAwareInte
         parent::__construct($sm, $container, $configLoader, $export);
 
         $this->mainConfig = $configLoader->get('config');
-        $this->letterOfAuthorization =
-            $configLoader->get('thulb')->LetterOfAuthorization ?? false;
-        $this->letterOfAuthorizationSavePath =
-            $this->letterOfAuthorization->pdf_save_path ?? false;
     }
 
     /**

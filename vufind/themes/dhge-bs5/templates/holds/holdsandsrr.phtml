@@ -1,0 +1,91 @@
+<?php
+  // Set up page title:
+  $this->headTitle($this->translate('Holds and Recalls'));
+
+  $this->headScript()->appendFile('requests.js');
+
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
+?>
+
+<?=$this->component('show-account-menu-button')?>
+
+<div class="<?= $this->layoutClass('mainbody')?>">
+  <?= $this->flashmessages()?>
+
+  <?= $this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
+
+  <h2><?= $this->transEsc('Reserved items'); ?></h2>
+  <?php if (!empty($this->reservedList)): ?>
+    <?php if ($this->cancelForm): ?>
+    <form name="updateForm" class="inline" method="post" id="cancelHold">
+      <input type="hidden" id="submitType" name="cancelSelected" value="1">
+      <input type="hidden" id="cancelConfirm" name="confirm" value="0">
+        <div class="toolbar mb-2">
+          <?=
+            $this->component(
+              'confirm-button',
+              [
+                'buttonId' => 'cancelSelected',
+                'buttonName' => 'cancelSelected',
+                'buttonLabel' => 'hold_cancel_selected',
+                'header' => 'confirm_hold_cancel_selected_text',
+                'confirmId' => 'confirm_cancel_selected_yes',
+                'cancelClass' => 'confirm_dialog_no',
+                'ignoreLightbox' => true,
+              ]
+            )
+          ?>
+          <?=
+            $this->component(
+              'confirm-button',
+              [
+                'buttonId' => 'cancelAll',
+                'buttonName' => 'cancelAll',
+                'buttonLabel' => 'hold_cancel_all',
+                'header' => 'confirm_hold_cancel_all_text',
+                'confirmId' => 'confirm_cancel_all_yes',
+                'cancelClass' => 'confirm_dialog_no',
+                'ignoreLightbox' => true,
+              ]
+            )
+          ?>
+        </div>
+      <?php endif; ?>
+
+      <ul class="record-list striped">
+        <?php foreach ($this->reservedList as $resource): ?>
+          <?php $ilsDetails = $resource->getExtraDetail('ils_details'); ?>
+          <li id="record<?=$this->escapeHtmlAttr($resource->getUniqueId())?>" class="result">
+            <div class="checkbox">
+              <?php if (!$this->disableCheckboxes): ?>
+                <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $resource->getUniqueId()); ?>
+                <label>
+                  <input type="checkbox" name="cancelSelectedIDS[]" value="<?= $this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" id="checkbox_<?= $safeId?>"  aria-label="<?=$this->transEscAttr('select_item_hold_cancel')?>">
+                </label>
+                <input type="hidden" name="cancelAllIDS[]" value="<?= $this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>" />
+              <?php else: ?>
+                <label>
+                  <input type="checkbox" disabled aria-label="<?=$this->transEscAttr('select_item_checked_out_renew')?>" >
+                </label>
+              <?php endif; ?>
+            </div>
+            <?= $this->render('holds/holdsandsrr/item.phtml', [
+              'cancelForm' => $this->cancelForm,
+              'cancelResults' => $this->cancelResults,
+              'disableCheckboxes' => $this->disableCheckboxes,
+              'resource' => $resource,
+            ]); ?>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+    <?php if ($this->cancelForm): ?></form><?php endif; ?>
+  <?php else: ?>
+    <?= $this->transEsc('You do not have any recalls placed') ?>
+    <hr/>
+  <?php endif; ?>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('holdsandssr')?>
+</div>

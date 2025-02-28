@@ -58,6 +58,110 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
     const SEPARATOR = '|\/|';
 
     /**
+     * Return an array of all OnlineHoldings from MARCRecord
+     * Field 981: for Links
+     * Field 980: for description
+     * Field 982:
+     *
+     * $txt = Text for displaying the link
+     * $url = url to OnlineContent
+     * $more = further description (PICA 4801)
+     * $tmp = ELS-gif for Higliting ELS Links
+     *
+     * @return array
+     */
+    public function getOnlineHoldings() : array
+    {
+        $retVal = [];
+
+        /* extract all LINKS form MARC 981 */
+        $links = $this->getConditionalFieldArray(
+            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]
+        );
+
+        if (!empty($links)){
+            /* what kind of LINKS do we have?
+             * is there more Information in MARC 980 / 982?
+             */
+            foreach ($links as $link) {
+                $more = '';
+                $linkElements = explode(static::SEPARATOR, $link);
+                $id = $linkElements[0] ?? '';
+                $txt = $linkElements[1] ?? '';
+                $url = $linkElements[2] ?? '';
+
+                /* do we have a picture? f.e. ELS-gif */
+                if (substr($txt, -3) == 'gif') {
+                    $retVal[$id] = $txt;
+                    continue;
+                }
+
+                /* seems that the real LINK is in 981y if 981r or w is empty... */
+                if (empty($txt)) {
+                    $txt = $url;
+                }
+                /* ... and vice versa */
+                if (empty($url)) {
+                    $url = $txt;
+                    $txt = 'fulltext';
+                }
+
+                /* Now, we are ready to extract extra-information
+                * @details for each link is common catalogisation till RDA-introduction
+                */
+                $details = $this->getConditionalFieldArray(
+                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                );
+
+                if (empty($details)) {
+                    /* new catalogisation rules with RDA: One Link and single Details for each part */
+                    $details = $this->getConditionalFieldArray(
+                        '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
+                }
+                if (!empty($details)) {
+                    foreach ($details as $detail) {
+                        $more .= $detail . "<br>";
+                    }
+                }
+
+                $corporates = $this->getConditionalFieldArray(
+                    '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                );
+
+                if (!empty($corporates)) {
+                    foreach ($corporates as $corporate) {
+                        $more .= $corporate . "<br>";
+                    }
+                }
+
+                /* extract Info/Links with same ID
+                * thats the case, if we have an ELS-gif,
+                * so we assume, that the gif is set-up before.
+                * f.e.
+                * 981 |2 31  |1 00  |w http://kataloge.thulb.uni-jena.de/img_psi/2.0/logos/eLS.gif
+                * 981 |2 31  |1 00  |y Volltext  |w http://mybib.thulb.uni-jena.de/els/browser/open/557127483
+                */
+
+                // we just need to show host as link-text
+                $url_data = parse_url($url);
+                $txt_sanitized = $url_data['host'];
+
+                $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
+                $retVal[$id] = $txt_sanitized . static::SEPARATOR .
+                    $txt . static::SEPARATOR .
+                    $url . static::SEPARATOR .
+                    $more . static::SEPARATOR .
+                    $tmp;
+            }
+        }
+        else {
+            $retVal = "";
+        }
+
+        return $retVal;
+    }
+
+    /**
      * Get the local classification of the record.
      *
      * @return array
@@ -78,53 +182,22 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
     }
 
     /**
-     * Return a source for the record.
+     * Get the local subject terms of the record.
      *
      * @return array
      */
-    public function getSource() : array
-    {
-        $source = [];
-        if (in_array('KXP', $this->fields['collection'])) {
-            foreach(static::LIBRARY_ILN as $iln) {
-                if(in_array('GBV_ILN_' . $iln, $this->fields['collection_details'])) {
-                    $source['name'] = 'K10plus-Verbundkatalog';
-                    $source['url'] = 'https://www.bszgbv.de/services/k10plus/';
-                }
-            }
-            if (!$source && in_array('ISIL_DE-LFER', $this->fields['collection_details'])) {
-                $source['name'] = 'Südwestdeutscher Bibliotheksverbund (Lizenzfreie E-Ressourcen)';
-            }
-        }
-        elseif (in_array('DBT@UrMEL', $this->fields['collection'])) {
-            $source['name'] = 'Digitale Bibliothek Thüringen (DBT)';
-            $source['url'] = 'https://www.db-thueringen.de/content/index.xml';
-        }
-        elseif (in_array('NL', $this->fields['collection'])) {
-            $source['name'] = 'Nationallizenz';
-            $source['url'] = 'https://www.nationallizenzen.de/';
+    public function getLocalSubjects() : array {
+        $fields = $this->getFieldsConditional('982', [
+            $this->createFieldCondition('subfield', '2', 'in', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '1', '==', '00'),
+            $this->createFieldCondition('subfield', 'a', '!=', false)
+        ]);
+
+        $data = [];
+        foreach($fields as $field) {
+            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
         }
 
-        return $source;
-    }
-
-    /**
-     * Get classification numbers of the record in the "Thüringen-Bibliographie".
-     *
-     * @return array
-     */
-    public function getThuBiblioClassification() : array {
-        // Thuringian bibliography not available for DHGE
-        return [];
-    }
-
-    /**
-     * Checks if the record is part of the "Thüringen-Bibliographie"
-     *
-     * @return bool
-     */
-    public function isThuBibliography() : bool {
-        // Thuringian bibliography not available for DHGE
-        return false;
+        return $data;
     }
 }

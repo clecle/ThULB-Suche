@@ -1,0 +1,15 @@
+<?php
+  $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding);
+?>
+
+<h3 class="holding-title d-flex flex-column align-items-sm-center flex-sm-row gap-2 mx-3">
+  <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
+  <span class="col-text">
+    <?= $this->thulb_holdingHelper()->getLocation($holding, false);?>
+    <?php if($locationInfoInfoMessage): ?>
+      <button class="btn-location-info" onclick="VuFind.lightbox.alert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');">
+        <i class="fa fa-info-circle"></i>
+      </button>
+    <?php endif; ?>
+  </span>
+</h3>

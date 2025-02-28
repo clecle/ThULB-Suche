@@ -7,7 +7,7 @@
       $title = empty($title) ? $this->transEsc('Title not available') : $this->escapeHtml($title);
       echo '<a href="' . $this->escapeHtmlAttr($this->recordLinker()->getUrl($driver))
         . '" class="title">' . $title . '</a>';
-    } elseif(!empty($ilsDetails['title']) && in_array($ilsDetails['departmentId'], ['ZAUSL', 'SLS2'])) {
+    } elseif(!empty($ilsDetails['title']) && in_array($ilsDetails['departmentId'] ?? null, ['ZAUSL', 'SLS2'])) {
       $title = $ilsDetails['title'];
       $title = str_starts_with($title, 'FL:') ? substr($title, 3) : $title;
       echo '<strong>' . $this->transEsc('Interlibrary loan') . ': </strong>' . $this->escapeHtml($title);

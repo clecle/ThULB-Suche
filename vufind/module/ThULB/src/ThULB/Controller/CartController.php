@@ -52,36 +52,4 @@ class CartController extends OriginalCartController
         $this->layout()->setVariable('showBreadcrumbs', false);        
         return parent::processorAction();
     }
-
-    /**
-     * Get selected ids
-     *
-     * @return array
-     */
-    protected function getSelectedIds()
-    {
-        // Values may be stored as a default state (checked_default), a list of IDs that do not
-        // match the default state (non_default_ids), and a list of all IDs (all_ids_global). If these
-        // values are found, we need to calculate the selected list from them.
-        $checkedDefault = $this->params()->fromPost('checked_default') !== null;
-        $nonDefaultIds = $this->params()->fromPost('non_default_ids');
-        $allIdsGlobal = $this->params()->fromPost('all_ids_global', '[]');
-        if ($nonDefaultIds !== null) {
-            $nonDefaultIds = json_decode($nonDefaultIds);
-            return array_values(array_filter(
-                json_decode($allIdsGlobal),
-                function ($id) use ($checkedDefault, $nonDefaultIds) {
-                    $nonDefaultId = in_array($id, $nonDefaultIds);
-                    return $checkedDefault xor $nonDefaultId;
-                }
-            ));
-        }
-        // If we got this far, values were passed in a simpler format: a list of checked IDs (ids),
-        // a list of all IDs on the current page (idsAll), and whether the whole page is
-        // selected (selectAll):
-        // FIX: keep ids to add to favorite list after creating a new favorite list
-        return null === $this->params()->fromPost('selectAll', $this->params()->fromQuery('selectAll'))
-            ? $this->params()->fromPost('ids', $this->params()->fromQuery('ids', []))
-            : $this->params()->fromPost('idsAll', $this->params()->fromQuery('idsAll', []));
-    }
 }

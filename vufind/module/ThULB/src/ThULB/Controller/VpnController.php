@@ -7,12 +7,6 @@ use Laminas\View\Model\ViewModel;
 use VuFind\Role\PermissionManager;
 
 class VpnController extends \VuFind\Controller\AbstractBase {
-
-    public function __construct(ServiceLocatorInterface $sm)
-    {
-        parent::__construct($sm);
-    }
-
     public function checkAction() {
         $serviceDeskUrl = $this->getRequest()->getQuery('sdurl');
 

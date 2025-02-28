@@ -1,0 +1,2 @@
+<?php $lib = $this->availabilityStatus->getExtraStatusInformation()['library'] ?? ''?>
+<span class="label label-success"><?=$this->transEsc('status_available_message', ['%%library%%' => $lib])?></span>

@@ -265,9 +265,11 @@ $routeGenerator->addStaticRoute($config, 'ILL/deleteaccountconfirmation');
 $routeGenerator->addStaticRoute($config, 'LetterOfAuthorization/create');
 $routeGenerator->addStaticRoute($config, 'MyResearch/ChangePasswordLink');
 $routeGenerator->addStaticRoute($config, 'MyResearch/Provided');
-$routeGenerator->addNonTabRecordActions($config, ['OrderReserve']);
+$routeGenerator->addStaticRoute($config, 'VPN/check');
+$routeGenerator->addNonTabRecordActions($config, ['OrderReserve', 'brokenLink']);
 
-$routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');
 $routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
+$routeGenerator->addDynamicRoute($config, 'record-report-broken-link', 'Record', 'reportBrokenLink/[:id]');
+$routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');
 
 return $config;

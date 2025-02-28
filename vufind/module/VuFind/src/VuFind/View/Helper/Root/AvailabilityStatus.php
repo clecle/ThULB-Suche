@@ -111,8 +111,6 @@ class AvailabilityStatus extends \Laminas\View\Helper\AbstractHelper
             $key = 'ajax/status-unknown.phtml';
         } elseif ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_AVAILABLE)) {
             $key = 'ajax/status-available.phtml';
-        } elseif ($availabilityStatus->is(\ThULB\ILS\Logic\AvailabilityStatus::STATUS_ORDERED)) {
-            $key = 'ajax/status-ordered.phtml';
         } elseif ($availabilityStatus->is(\VuFind\ILS\Logic\AvailabilityStatusInterface::STATUS_UNAVAILABLE)) {
             $key = 'ajax/status-unavailable.phtml';
         } else {

@@ -1,0 +1,171 @@
+/**
+ * Notes
+ * = As of 4.0, code styles aren't enforced, but
+ *   preferred styles are outlined here: http://codeguide.co/#css
+ * = The preferred method for writing code is to put generic and mobile styles first
+ *   and surround desktop styling with media min-width queries.
+ * = Bootstrap 5 breakpoints: <576px, ≥576px, ≥768px, ≥992px, ≥1200px, ≥1400px
+ *                                xs,     sm,     md,     lg,      xl,     xxl
+ */
+
+/* ------ Layout ------ */
+
+/* --- Layout > Header --- */
+header {
+  .navbar-header {
+    flex-wrap: wrap;
+  }
+
+  .navbar-account > li > a, .navbar-account > li > button {
+    padding: 0.65rem 1rem !important;
+  }
+
+  .banner {
+    & > .container {
+      flex-direction: row;
+
+      .arrow-down:after {
+        border-top-color: #777;
+      }
+
+      .arrow-down:hover:after,
+      .show.arrow-down:after {
+        border-top-color: #fff;
+      }
+    }
+
+    .navbar nav {
+      width: unset;
+    }
+
+    .icon-link__icon {
+      font-size: 14px;
+    }
+
+    .icon-link:not(.dropdown-toggle) {
+      display: flex;
+    }
+  }
+}
+
+header,
+footer nav {
+  background-color: $header-bg;
+
+  .nav > li > a,
+  .nav > li > button,
+  .nav > li > button.dropdown-toggle,
+  .nav.navbar-nav button.dropdown-toggle {
+    color: #777;
+  }
+}
+
+@media (min-width: $screen-md) {
+  .navbar-expand-md .navbar-nav button,
+  .navbar-expand-md .navbar-nav .nav-link {
+    padding: 15px 14px !important;
+  }
+}
+
+/* --- Layout > Footer --- */
+
+/* --- Layout > Modal --- */
+
+/* --- Layout > Popover --- */
+
+/* --- Layout > Dropdown --- */
+@media (max-width: $screen-sm-max) {
+  .dropdown.dropdown-colored-sm {
+    @include dropdown-colored();
+  }
+}
+
+/* --- Layout > Content --- */
+
+/* --- Layout > Landing page --- */
+.startpage_logo {
+  margin-top: 10%;
+  min-height: 80px;
+}
+
+.startpage_searchbox {
+  margin-top: 2%;
+  margin-bottom: 5%;
+}
+
+/* --- Layout > Backgrounds --- */
+
+/* --- Layout > Buttons --- */
+
+/* --- Layout > Checkboxes & Radio-Buttons --- */
+
+/* --- Layout > Icons --- */
+
+/* --- Layout > Form --- */
+
+/* - Layout > Form > Form Errors - */
+
+/* --- Layout > Tables --- */
+
+/* --- Layout > Striped --- */
+
+/* --- Layout > Print --- */
+
+/* --- Layout > Offcanvas --- */
+
+/* --- Layout > Misc --- */
+
+/* ------ Bulk options ------ */
+
+/* ------ Cart ------ */
+
+/* ------ Search ------ */
+
+/* --- Search > Module tab --- */
+
+/* --- Search > Advanced Search --- */
+
+/* --- Search > Misc --- */
+.search-header .search-result-count {
+  display: block;
+}
+
+/* ------ Search > Searchform ------ */
+#searchForm #searchForm_type {
+  color: #333;
+  background-color: #eee;
+  border-color: #ccc;
+}
+
+/* --- Search > Facets --- */
+
+/* --- Search > Link Recommender --- */
+
+/* --- Search > Tools --- */
+
+/* ------ Results / Record list ------ */
+
+/* ------ Detail view ------ */
+
+/* --- Detail view > Tabs --- */
+.toc-tab {
+  margin: 1.5rem 1rem;
+}
+
+/* --- Detail view > Access tab --- */
+
+/* --- Detail view > Provenance tab --- */
+
+/* --- Detail view > Details tab --- */
+
+/* --- Detail view > Journal request --- */
+
+/* ------ MyResearch ------ */
+
+/* --- MyResearch > Favorites --- */
+
+/* --- MyResearch > ILL --- */
+
+/* --- MyResearch > Search history --- */
+
+/* ------ Admin ------ */

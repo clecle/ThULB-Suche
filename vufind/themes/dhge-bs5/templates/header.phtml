@@ -132,3 +132,9 @@
     </div>
   </div>
 <?php endif; ?>
+
+<?php if($this->thulb_session()->isMessageDisplayed('message_under_search_box')): ?>
+  <div class="container">
+    <?= $this->partial('Helpers/dynamic_message.phtml', array('tag' => 'message_under_search_box')); ?>
+  </div>
+<?php endif; ?>

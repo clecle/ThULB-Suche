@@ -114,6 +114,18 @@ footer nav {
 /* --- Layout > Offcanvas --- */
 
 /* --- Layout > Misc --- */
+.alert a {
+  &,
+  &:not(:hover):not(:focus) {
+    text-decoration: underline;
+  }
+
+  &:hover,
+  &:focus,
+  &:active {
+    text-decoration: none;
+  }
+}
 
 /* ------ Bulk options ------ */
 

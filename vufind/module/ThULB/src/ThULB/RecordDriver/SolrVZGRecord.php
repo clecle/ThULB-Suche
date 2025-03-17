@@ -2438,26 +2438,6 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
-     * Get the local classification of the record.
-     *
-     * @return array
-     */
-    public function getLocalClassification() : array {
-        $fields = $this->getFieldsConditional('983', [
-            $this->createFieldCondition('subfield', '2', '==', static::LIBRARY_ILN),
-            $this->createFieldCondition('subfield', '8', '==', '00'),
-            $this->createFieldCondition('subfield', 'a', '!=', false)
-        ]);
-
-        $data = [];
-        foreach($fields as $field) {
-            $data[] = $this->getMarcReader()->getSubfield($field, 'a');
-        }
-
-        return $data;
-    }
-
-    /**
      * Get the local subject terms of the record.
      *
      * @return array

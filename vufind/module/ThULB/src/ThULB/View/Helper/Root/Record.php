@@ -226,4 +226,23 @@ class Record extends OriginalRecord
         }
         return $this->nonArticleCollection->getResults()->getResultTotal() > 0;
     }
+
+    /**
+     * Get all the links associated with this record. Returns an array of
+     * associative arrays each containing 'desc' and 'url' keys.
+     *
+     * @param bool $openUrlActive Is there an active OpenURL on the page?
+     *
+     * @return array
+     *
+     * @throws Exception
+     */
+    public function getLinkDetails($openUrlActive = false): array {
+        $linkDetails = parent::getLinkDetails($openUrlActive);
+        foreach ($linkDetails as &$link) {
+            $link['url'] = preg_replace('/^(http:)\/\/(d-nb\.info|swbplus\.bsz-bw\.de|www\.gbv\.de)/', 'https://$2', $link['url']);
+        }
+
+        return $linkDetails;
+    }
 }

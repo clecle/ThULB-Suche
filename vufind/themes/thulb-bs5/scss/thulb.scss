@@ -1466,7 +1466,7 @@ body:has(.main form#advSearchForm) {
 
 .authorbox {
   @extend .alert;
-  @extend .alert-info;
+  @extend .alert-success;
 
   i {
     font-size: 20px;

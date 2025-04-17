@@ -10,7 +10,7 @@
   <?php foreach ($summonResult['best_bets'] as $current): ?>
     <div>
       <?php if (!empty($current['link'])): ?>
-        <a href="<?= $this->escapeHtmlAttr($current['link']) ?>"><?= $this->escapeHtml($current['title']) ?></a>
+        <a class="fw-bold" href="<?= $this->escapeHtmlAttr($current['link']) ?>"><?= $this->escapeHtml($current['title']) ?></a>
       <?php else: ?>
         <b><?= $this->escapeHtml($current['title']) ?></b>
       <?php endif; ?>

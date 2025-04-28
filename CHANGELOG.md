@@ -5,6 +5,14 @@ Daher strebt das Entwicklungsteam der ThULB-Suche einen engeren Austausch mit Nu
 Sollten Sie Fragen, Hinweise oder Verbesserungswünsche haben, treten Sie jederzeit gern in Kontakt mit uns,
 z.B. über unser [Service-Desk](https://servicedesk.uni-jena.de/plugins/servlet/desk/portal/140/create/1001?customfield_12342=20009) oder per Mail discovery_thulb[at]uni-jena.de.
 
+## v4.0.4 *01/25*
+- Handapparate inkl. Bestellformular via ServiceDesk
+- Anzeige bestellter Medien
+
+## v4.0.3 *10/24*
+- Optimierung der Anzeige (Sortierung "zugehörige Publikationen", Buttons, ThüringenBibliografie)
+- Ausgeliehene Medien werden nach Login als erstes angezeigt
+- kleine optische Verbesserungen (Bennenung, Menü, Breadcrumbs...)
 
 ## v4.0.2 *08/24*
 - Tutorial auf der Startseite mit ThULB-Logo ersetzt 

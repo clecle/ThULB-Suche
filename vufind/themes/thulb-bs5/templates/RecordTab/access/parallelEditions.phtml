@@ -1,0 +1,18 @@
+<?php $parallelEdition = $this->driver->getParallelEditions(); ?>
+<?php if ($parallelEdition ?? false): ?>
+<div class="parallel-editions">
+  <h3 class="parallel-editions-title d-flex flex-column align-items-sm-center flex-sm-row gap-2 mx-3">
+    <span class="col-description w-100"><?= $this->transEsc('Also published as') ?>:</span>
+  </h3>
+
+  <div class="striped">
+    <div class="d-flex fledx-wrap gap-2 p-3">
+      <?php foreach ($parallelEdition as $item): ?>
+        <?php $href = $this->recordLinker()->related($item['link'], $this->driver->getSourceIdentifier()); ?>
+        <a class="btn btn-primary parallel-edition-item" href="<?=$this->escapeHtmlAttr($href)?>" target="_blank"><?=$this->escapeHtml($item['title'])?></a>
+      <?php endforeach;?>
+    </div>
+  </div>
+</div>
+<?php endif; ?>
+

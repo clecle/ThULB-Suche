@@ -40,6 +40,11 @@
 <?php // ILS offline ?>
 <?= ($offlineMode == "ils-offline" && empty($holdings)) ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 
+<?php // related resources, current is print ressource ?>
+<?php if ($this->driver->getIndexField('remote_bool') == 'false'): ?>
+  <?= $this->render('RecordTab/access/parallelEditions.phtml')?>
+<?php endif; ?>
+
 <?php // online holdings ?>
 <?php if(!empty($onlineContentLinks)): ?>
   <div class="online-access striped-reverse">
@@ -66,7 +71,7 @@
           <?php foreach ($holding['items'] as $item): ?>
             <?= $this->render('RecordTab/access/holdingItemPhysical.phtml', [
               'holding' => $holding,
-              'driver' => $driver,
+              'driver' => $this->driver,
               'item' => $item,
               'displayRequestHandsetLink' => $displayRequestHandsetLink,
             ]); ?>
@@ -75,6 +80,11 @@
       </div>
     </div>
   <?php endforeach; ?>
+<?php endif; ?>
+
+<?php // related resources, current is online ressource ?>
+<?php if ($this->driver->getIndexField('remote_bool') == 'true'): ?>
+  <?= $this->render('RecordTab/access/parallelEditions.phtml')?>
 <?php endif; ?>
 
 <?php if(empty($onlineContentLinks) && !$holdings['total']): ?>

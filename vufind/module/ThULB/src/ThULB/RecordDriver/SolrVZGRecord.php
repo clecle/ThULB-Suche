@@ -69,11 +69,11 @@ class SolrVZGRecord extends SolrMarc
      * @var array
      */
     protected static array $defaultSeparators = [' = ',' =', '= ', ' : ', ' :', ': '];
-    
+
     /**
      * Contains all placeholders that are often used to fill missing MARC
      * subfields and should be removed in the displayed string
-     * 
+     *
      * @var array
      */
     protected static array $defaultPlaceholders = ['[...]'];
@@ -81,20 +81,20 @@ class SolrVZGRecord extends SolrMarc
     /**
      * Short title of the record.
      *
-     * @var string 
+     * @var string
      */
     protected ?string $shortTitle = null;
-    
+
     /**
      * Title of the record.
      *
      * @var string
      */
     protected ?string $title = null;
-    
+
     /**
      * The title of the record with highlighting markers
-     * 
+     *
      * @var string
      */
     protected ?string $highlightedTitle = null;
@@ -141,7 +141,7 @@ class SolrVZGRecord extends SolrMarc
     {
         $noStatus = true;
         $noStatusMedia = ['Article', 'eBook', 'eJournal', 'electronic Article', 'electronic Resource'];
-        
+
         foreach ($this->getFormats() as $format) {
             if (!in_array($format, $noStatusMedia)) {
                 $noStatus = false;
@@ -187,12 +187,12 @@ class SolrVZGRecord extends SolrMarc
             if ($shortTitle === '') {
                 $shortTitle = isset($this->fields['title_short']) ?
                     is_array($this->fields['title_short']) ?
-                    $this->fields['title_short'][0] : $this->fields['title_short'] : '';
+                        $this->fields['title_short'][0] : $this->fields['title_short'] : '';
             }
 
             $this->shortTitle = $shortTitle;
         }
-        
+
         return $this->shortTitle;
     }
 
@@ -207,7 +207,7 @@ class SolrVZGRecord extends SolrMarc
             if (!$this->highlight && !is_array($this->highlight)) {
                 return '';
             }
-            
+
             $this->highlightedTitle = '';
             foreach ($this->highlightDetails as $highlightElement => $highlightDetail) {
                 if (str_contains($highlightElement, 'title')) {
@@ -218,12 +218,12 @@ class SolrVZGRecord extends SolrMarc
             // Apply highlighting to our customized title
             if ($this->highlightedTitle) {
                 $this->highlightedTitle = $this->transferHighlighting(
-                        $this->getTitle(),
-                        $this->highlightedTitle
-                    );
+                    $this->getTitle(),
+                    $this->highlightedTitle
+                );
             }
         }
-        
+
         return $this->highlightedTitle;
     }
 
@@ -240,15 +240,15 @@ class SolrVZGRecord extends SolrMarc
             if ($title === '') {
                 $title = isset($this->fields['title']) ?
                     (is_array($this->fields['title']) ?
-                            $this->fields['title'][0] : $this->fields['title']) : '';
+                        $this->fields['title'][0] : $this->fields['title']) : '';
             }
 
             $this->title = $title;
         }
-        
+
         return $this->title;
     }
-    
+
     /**
      * Get the subtitle of the record.
      *
@@ -258,7 +258,7 @@ class SolrVZGRecord extends SolrMarc
     {
         return isset($this->fields['title_sub']) ?
             is_array($this->fields['title_sub']) ?
-            $this->fields['title_sub'][0] : $this->fields['title_sub'] : '';
+                $this->fields['title_sub'][0] : $this->fields['title_sub'] : '';
     }
 
     /**
@@ -565,7 +565,7 @@ class SolrVZGRecord extends SolrMarc
             $p = (isset($pSubfields[$i]) && !in_array($pSubfields[$i], static::$defaultPlaceholders)) ? $pSubfields[$i] : '';
             $separator = ($n && $p) ? ': ' : '';
             $partInfo .= (($i > 0 && ($n || $p)) ? ' ; ' : '') .
-                             $n . $separator . $p;
+                $n . $separator . $p;
         }
 
         return $partInfo;
@@ -880,11 +880,7 @@ class SolrVZGRecord extends SolrMarc
      *
      * @return array The list with unavailable links set to NULL.
      */
-    protected function checkListForAvailability($recordLinkList) : array {
-        if(!is_array($recordLinkList)) {
-            return $recordLinkList;
-        }
-
+    protected function checkListForAvailability(array $recordLinkList, bool $removeUnavailable = false): array {
         // Get all linked PPNs
         $linkedPPNs = array();
         for($i = 0; $i < count($recordLinkList); $i++) {
@@ -900,9 +896,17 @@ class SolrVZGRecord extends SolrMarc
             // Set links to NULL if not available
             foreach($recordLinkList as $index => $recordLink) {
                 if (!is_array($recordLink['link']) || !in_array($recordLink['link']['value'], $availablePPNs)) {
-                    $recordLinkList[$index]['link'] = null;
+                    if ($removeUnavailable) {
+                        unset($recordLinkList[$index]);
+                    }
+                    else {
+                        $recordLinkList[$index]['link'] = null;
+                    }
                 }
             }
+        }
+        elseif ($removeUnavailable) {
+            return [];
         }
 
         return $recordLinkList;
@@ -1286,7 +1290,7 @@ class SolrVZGRecord extends SolrMarc
         // Make sure we have something to display:
         return ($link === false) ? false : [
             'title' => $this->getRecordLinkNote($field),
-            'value' => $title ? $title : 'Link',
+            'value' => $title ?: 'Link',
             'link'  => $link,
             'pages' => $this->getMarcReader()->getSubfield($field, 'g')
         ];
@@ -1316,51 +1320,51 @@ class SolrVZGRecord extends SolrMarc
         // If no reference found, check the next link type instead
         foreach ($linkTypes as $linkType) {
             switch (trim($linkType)){
-            case 'id':
-                foreach ($linkFields as $current) {
-                    $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX, true), '*');
-                    if ($bibLink) {
-                        $link = ['type' => 'bib', 'value' => $bibLink];
+                case 'id':
+                    foreach ($linkFields as $current) {
+                        $bibLink = trim($this->getIdFromLinkingField($current, static::PPN_LINK_ID_PREFIX, true), '*');
+                        if ($bibLink) {
+                            $link = ['type' => 'bib', 'value' => $bibLink];
+                        }
                     }
-                }
-                break;
-            case 'isbn':
-                if ($isbn = $this->getSubfield($field, 'z')) {
-                    $link = [
-                        'type' => 'isbn', 'value' => trim($isbn),
-                        'exclude' => $this->getUniqueId()
-                    ];
-                }
-                break;
-            case 'issn':
-                if ($issn = $this->getSubfield($field, 'x')) {
-                    $link = [
-                        'type' => 'issn', 'value' => trim($issn),
-                        'exclude' => $this->getUniqueId()
-                    ];
-                }
-                break;
-            case 'dnb':
-                foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX, true);
-                    if ($bibLink) {
-                        $link = ['type' => 'dnb', 'value' => $bibLink];
+                    break;
+                case 'isbn':
+                    if ($isbn = $this->getSubfield($field, 'z')) {
+                        $link = [
+                            'type' => 'isbn', 'value' => trim($isbn),
+                            'exclude' => $this->getUniqueId()
+                        ];
                     }
-                }
-                break;
-            case 'zdb':
-                foreach ($linkFields as $current) {
-                    $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX, true);
-                    if ($bibLink) {
-                        $link = ['type' => 'zdb', 'value' => $bibLink];
+                    break;
+                case 'issn':
+                    if ($issn = $this->getSubfield($field, 'x')) {
+                        $link = [
+                            'type' => 'issn', 'value' => trim($issn),
+                            'exclude' => $this->getUniqueId()
+                        ];
                     }
-                }
-                break;
-            case 'title':
-                if ($title) {
-                    $link = ['type' => 'title', 'value' => $title];
-                }
-                break;
+                    break;
+                case 'dnb':
+                    foreach ($linkFields as $current) {
+                        $bibLink = $this->getIdFromLinkingField($current, static::DNB_LINK_ID_PREFIX, true);
+                        if ($bibLink) {
+                            $link = ['type' => 'dnb', 'value' => $bibLink];
+                        }
+                    }
+                    break;
+                case 'zdb':
+                    foreach ($linkFields as $current) {
+                        $bibLink = $this->getIdFromLinkingField($current, static::ZDB_LINK_ID_PREFIX, true);
+                        if ($bibLink) {
+                            $link = ['type' => 'zdb', 'value' => $bibLink];
+                        }
+                    }
+                    break;
+                case 'title':
+                    if ($title) {
+                        $link = ['type' => 'title', 'value' => $title];
+                    }
+                    break;
             }
             // Exit loop if we have a link
             if (isset($link)) {
@@ -1402,16 +1406,16 @@ class SolrVZGRecord extends SolrMarc
         // Assign notes based on the relationship type
         $value = $field['tag'];
         switch ($value) {
-        case '780':
-            if (in_array($relationshipIndicator, range('0', '7'))) {
-                $value .= '_' . $relationshipIndicator;
-            }
-            break;
-        case '785':
-            if (in_array($relationshipIndicator, range('0', '8'))) {
-                $value .= '_' . $relationshipIndicator;
-            }
-            break;
+            case '780':
+                if (in_array($relationshipIndicator, range('0', '7'))) {
+                    $value .= '_' . $relationshipIndicator;
+                }
+                break;
+            case '785':
+                if (in_array($relationshipIndicator, range('0', '8'))) {
+                    $value .= '_' . $relationshipIndicator;
+                }
+                break;
         }
 
         return 'note_' . $value;
@@ -1437,9 +1441,9 @@ class SolrVZGRecord extends SolrMarc
         $titleVariations = $this->getFormattedData($relevantFields, $formattingRules, $conditions);
 
         return array_merge(
-                $titleVariations,
-                $this->getFieldArray('500')
-            );
+            $titleVariations,
+            $this->getFieldArray('500')
+        );
     }
 
     /**
@@ -1872,7 +1876,7 @@ class SolrVZGRecord extends SolrMarc
                 if (empty($details)) {
                     /* new catalogisation rules with RDA: One Link and single Details for each part */
                     $details = $this->getConditionalFieldArray(
-                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
+                        '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
                 }
                 if (!empty($details)) {
                     foreach ($details as $detail) {
@@ -1904,10 +1908,10 @@ class SolrVZGRecord extends SolrMarc
 
                 $tmp = (isset($retVal[$id])) ? $retVal[$id] : '';
                 $retVal[$id] = $txt_sanitized . static::SEPARATOR .
-                $txt . static::SEPARATOR .
-                $url . static::SEPARATOR .
-                $more . static::SEPARATOR .
-                $tmp;
+                    $txt . static::SEPARATOR .
+                    $url . static::SEPARATOR .
+                    $more . static::SEPARATOR .
+                    $tmp;
             }
         }
         else {
@@ -1964,10 +1968,10 @@ class SolrVZGRecord extends SolrMarc
     protected function transferHighlighting(string $plainString, string $highlightedString) : string
     {
         $num = preg_match_all(
-                '/\{\{\{\{START_HILITE\}\}\}\}[^\{]+\{\{\{\{END_HILITE\}\}\}\}/',
-                $highlightedString,
-                $matches
-            );
+            '/\{\{\{\{START_HILITE\}\}\}\}[^\{]+\{\{\{\{END_HILITE\}\}\}\}/',
+            $highlightedString,
+            $matches
+        );
         $modifiedString = $plainString;
         if ($num) {
             $replacements = [];
@@ -2251,8 +2255,8 @@ class SolrVZGRecord extends SolrMarc
         // Display ISBN or ISSN (if existing) as text
         foreach($recordLinks as $index => $recordLink) {
             if(in_array($recordLink['link']['type'], ['isbn', 'issn'])) {
-                $recordLinks[$index]['value'] = strtoupper($recordLink['link']['type'])
-                    . " " . $recordLink['link']['value'];
+                $recordLinks[$index]['value'] =
+                    strtoupper($recordLink['link']['type']) . ' ' . $recordLink['link']['value'];
                 $recordLinks[$index]['link'] = null;
             }
             elseif ($recordLink['link']['type'] != 'bib') {
@@ -2262,6 +2266,25 @@ class SolrVZGRecord extends SolrMarc
         }
 
         return $this->checkListForAvailability($recordLinks);
+    }
+
+    public function getParallelEditions(): array {
+        $editions = [];
+        foreach ($this->getMarcReader()->getFields('776') as $field) {
+            // Check to see if we should display at all
+            if ($field['i1'] == '1') {
+                continue;
+            }
+
+            // Get data for field
+            $tmp = $this->getFieldData($field);
+            $tmp['title'] = $this->getSubfield($field, 'n') ?: $this->getSubfield($field, 'i');
+            if (is_array($tmp) && $tmp['link']['type'] == 'bib') {
+                $editions[] = $tmp;
+            }
+        }
+
+        return $this->checkListForAvailability($editions, true);
     }
 
     public function getHoldings() : array {

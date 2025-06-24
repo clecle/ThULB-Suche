@@ -55,11 +55,12 @@ use VuFindSearch\Command\RetrieveCommand;
 
 class SolrVZGRecord extends SolrMarc
 {
+    use \ThULB\ILS\LibraryTrait;
+
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const GND_LINK_ID_PREFIX = 'DE-588';
     const DNB_LINK_ID_PREFIX = 'DE-101';
-    const LIBRARY_ILN = '31';
 
     const SEPARATOR = '|\/|';
 
@@ -131,6 +132,10 @@ class SolrVZGRecord extends SolrMarc
         $this->thulbConfig = $thulbConfig;
 
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
+    }
+
+    protected function getThulbConfig() : Config {
+        return $this->thulbConfig;
     }
 
     /**
@@ -373,7 +378,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getThuBiblioClassification() : array
     {
-        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => static::LIBRARY_ILN]);
+        $classNumbers = $this->getConditionalFieldArray('983', ['a'], true, ' ', ['2' => $this->getLibraryILN()]);
         $thuBib = array();
 
         foreach ($classNumbers as $classNumber) {
@@ -1849,7 +1854,7 @@ class SolrVZGRecord extends SolrMarc
 
         /* extract all LINKS form MARC 981 */
         $links = $this->getConditionalFieldArray(
-            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]
+            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => $this->getLibraryILN()]
         );
 
         if (!empty($links)){
@@ -1883,13 +1888,13 @@ class SolrVZGRecord extends SolrMarc
                 * @details for each link is common catalogisation till RDA-introduction
                 */
                 $details = $this->getConditionalFieldArray(
-                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                    '980', ['g', 'k'], false, '', ['2' => $this->getLibraryILN(), '1' => $id]
                 );
 
                 if (empty($details)) {
                     /* new catalogisation rules with RDA: One Link and single Details for each part */
                     $details = $this->getConditionalFieldArray(
-                        '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
+                    '980', ['g', 'k'], false, '', ['2' => $this->getLibraryILN()]);
                 }
                 if (!empty($details)) {
                     foreach ($details as $detail) {
@@ -1898,7 +1903,7 @@ class SolrVZGRecord extends SolrMarc
                 }
 
                 $corporates = $this->getConditionalFieldArray(
-                    '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                    '982', ['a'], false, '', ['2' => $this->getLibraryILN(), '1' => $id]
                 );
 
                 if (!empty($corporates)) {
@@ -1946,10 +1951,10 @@ class SolrVZGRecord extends SolrMarc
         list($txt, $epn) = explode(":epn:", $epn_str);
         /* extract all Comments form MARC 980 */
         $comments_g = $this->getConditionalFieldArray(
-            '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn]
+            '980', ['g', 'k'], false, '', ['2' => $this->getLibraryILN(), 'b' => $epn]
         );
         $comments_k = $this->getConditionalFieldArray(
-            '980', ['k'], false, '', ['2' => static::LIBRARY_ILN, 'b' => $epn]
+            '980', ['k'], false, '', ['2' => $this->getLibraryILN(), 'b' => $epn]
         );
 
         return array($comments_g[0], $comments_k[0]);
@@ -2480,7 +2485,7 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getLocalSubjects() : array {
         $fields = $this->getFieldsConditional('982', [
-            $this->createFieldCondition('subfield', '2', '==', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '2', '==', $this->getLibraryILN()),
             $this->createFieldCondition('subfield', '1', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);

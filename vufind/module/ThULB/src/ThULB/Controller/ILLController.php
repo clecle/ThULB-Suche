@@ -123,6 +123,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             $view->exception = $e;
 
             $this->addLogContent('Get ILL Information... Failed.');
+            $this->writeIllLog();
 
             return $view;
         }
@@ -150,6 +151,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
             }
             else {
                 $this->addLogContent('Error: department or facility not provided');
+                $this->writeIllLog();
 
                 $this->flashMessage('error', 'ill_charge_no_department_or_facility');
                 return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
@@ -220,6 +222,8 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                     'cost' => $view->cost
                 ]);
                 $this->addLogContent('Abort charging. Request user to try again later.');
+                $this->writeIllLog();
+
                 $this->flashMessage('error', 'An error occurred during execution; please try again later.');
                 return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
             }

@@ -5,6 +5,7 @@ namespace ThULB\ILS\Driver;
 use Laminas\Config\Config;
 use Laminas\Log\LoggerAwareInterface as LoggerAwareInterface;
 use ThULB\ILS\Driver\Exception\UnauthorizedException;
+use ThULB\ILS\LibraryTrait;
 use ThULB\Log\LoggerAwareTrait;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -18,6 +19,7 @@ class Sera extends AbstractBase implements
     use HttpServiceAwareTrait;
     use LoggerAwareTrait;
     use TranslatorAwareTrait;
+    use LibraryTrait;
 
     protected Config $thulbConfig;
 
@@ -26,6 +28,10 @@ class Sera extends AbstractBase implements
     }
 
     public function init() {}
+
+    protected function getThulbConfig() : Config {
+        return $this->thulbConfig;
+    }
 
     /**
      * Get Status
@@ -38,8 +44,9 @@ class Sera extends AbstractBase implements
      * @return array
      */
     public function getStatus($id) : array {
+        $iln = $this->getLibraryILN();
         $postData = "SELECT orderstatus_code FROM orders o" .
-                        " WHERE o.iln = 31 AND o.orderstatus_code IN ('t', 'b')" .
+                        " WHERE o.iln = $iln AND o.orderstatus_code IN ('t', 'b')" .
                         " AND o.epn = " . $id;
 
         try {
@@ -146,7 +153,7 @@ class Sera extends AbstractBase implements
         $insertKeys = implode(', ', array_keys($data));
         $insertData = implode(', ', $data);
 
-        $iln = $data['iln'];
+        $iln = (int) $this->getLibraryILN();
         $sql = <<<SQL
             DECLARE @local_addr_id_nr INT
             SELECT @local_addr_id_nr = address_id_nr FROM borrower WHERE borrower_bar = '{$username}' AND iln = {$iln}
@@ -191,9 +198,9 @@ class Sera extends AbstractBase implements
             );
 
             return $this->insertRequisition($username, array(
-                'iln' => 31,
+                'iln' => (string) $this->getLibraryILN(),
                 'department_group_nr' => 1,
-                'costs_code' => 15,
+                'costs_code' => $this->thulbConfig->ILL->cost_code,
                 'costs' => $cost,
                 'extra_information' => "'$extraInformation'",
             ));

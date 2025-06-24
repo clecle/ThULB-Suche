@@ -53,7 +53,6 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
     const PPN_LINK_ID_PREFIX = 'DE-627';
     const ZDB_LINK_ID_PREFIX = 'DE-600';
     const DNB_LINK_ID_PREFIX = 'DE-101';
-    const LIBRARY_ILN = ['250', '281'];
 
     const SEPARATOR = '|\/|';
 
@@ -66,7 +65,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      * $txt = Text for displaying the link
      * $url = url to OnlineContent
      * $more = further description (PICA 4801)
-     * $tmp = ELS-gif for Higliting ELS Links
+     * $tmp = ELS-gif for Highlighting ELS Links
      *
      * @return array
      */
@@ -76,7 +75,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
 
         /* extract all LINKS form MARC 981 */
         $links = $this->getConditionalFieldArray(
-            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => static::LIBRARY_ILN]
+            '981', ['1', 'y', 'r', 'w'], true, static::SEPARATOR, ['2' => $this->getLibraryILN()]
         );
 
         if (!empty($links)){
@@ -110,13 +109,13 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
                 * @details for each link is common catalogisation till RDA-introduction
                 */
                 $details = $this->getConditionalFieldArray(
-                    '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                    '980', ['g', 'k'], false, '', ['2' => $this->getLibraryILN(), '1' => $id]
                 );
 
                 if (empty($details)) {
                     /* new catalogisation rules with RDA: One Link and single Details for each part */
                     $details = $this->getConditionalFieldArray(
-                        '980', ['g', 'k'], false, '', ['2' => static::LIBRARY_ILN]);
+                        '980', ['g', 'k'], false, '', ['2' => $this->getLibraryILN()]);
                 }
                 if (!empty($details)) {
                     foreach ($details as $detail) {
@@ -125,7 +124,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
                 }
 
                 $corporates = $this->getConditionalFieldArray(
-                    '982', ['a'], false, '', ['2' => static::LIBRARY_ILN, '1' => $id]
+                    '982', ['a'], false, '', ['2' => $this->getLibraryILN(), '1' => $id]
                 );
 
                 if (!empty($corporates)) {
@@ -168,7 +167,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      */
     public function getLocalClassification() : array {
         $fields = $this->getFieldsConditional('983', [
-            $this->createFieldCondition('subfield', '2', 'in', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '2', 'in', $this->getLibraryILN()),
             $this->createFieldCondition('subfield', '8', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);
@@ -188,7 +187,7 @@ class SolrVZGRecord extends OriginalSolrVZGRecord
      */
     public function getLocalSubjects() : array {
         $fields = $this->getFieldsConditional('982', [
-            $this->createFieldCondition('subfield', '2', 'in', static::LIBRARY_ILN),
+            $this->createFieldCondition('subfield', '2', 'in', $this->getLibraryILN()),
             $this->createFieldCondition('subfield', '1', '==', '00'),
             $this->createFieldCondition('subfield', 'a', '!=', false)
         ]);

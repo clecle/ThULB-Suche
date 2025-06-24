@@ -1,0 +1,148 @@
+<?=$this->component('show-account-menu-button')?>
+
+<script>
+    function showForm(type) {
+      $('#form_common, #form_book, #form_article').hide().removeClass('hidden').find('input').attr('disabled', true);
+      $('#form_common, #form_' + type).show().find('input').attr('disabled', false);
+    }
+</script>
+
+<div class="<?= $this->layoutClass('mainbody'); ?>">
+  <h2><?= $this->transEsc('ill_order_place_an_order')?></h2>
+
+  <div class="alert alert-info"><?= $this->translate('ill_order_information')?></div>
+
+  <h2><?= $this->transEsc('ill_order_place_an_order_here')?></h2>
+
+  <form action="<?=$this->url('ill-orderitemconfirmation')?>" method="post" class="form-horizontal" data-lightbox data-lightbox-onclose="VuFind.refreshPage"> <!--  -->
+    <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+
+    <div class="col-12 mb-5">
+      <h3><?= $this->transEsc('ill_order_what')?></h3>
+      <div class="form-check">
+        <input class="form-check-input" onchange="showForm('book')" type="radio" name="order_type" id="type_book" value="Book">
+        <label class="form-check-label" for="type_book"><?=$this->transEsc('Book')?></label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" onchange="showForm('article')" type="radio" name="order_type" id="type_article" value="Article">
+        <label class="form-check-label" for="type_article"><?=$this->transEsc('Article')?></label>
+      </div>
+    </div>
+
+    <div class="hidden" id="form_book">
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="book_title"><?=$this->transEsc('Title')?></label>
+        <input class="form-control" type="text" name="book_title" id="book_title" placeholder="<?=$this->transEscAttr('ill_order_title_placeholder')?>" />
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="book_author"><?=$this->transEsc('Author')?></label>
+        <input class="form-control" type="text" name="book_author" id="book_author" placeholder="<?=$this->transEscAttr('ill_order_author_placeholder')?>" />
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="book_publisher"><?=$this->transEsc('Publisher')?></label>
+        <input class="form-control" type="text" name="book_publisher" id="book_publisher" placeholder="<?=$this->transEscAttr('ill_order_publisher_placeholder')?>" />
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-3">
+          <label class="form-label fw-bold" for="book_year"><?=$this->transEsc('Year')?></label>
+          <input class="form-control" type="number" name="book_year" id="book_year" placeholder="<?=$this->transEscAttr('ill_order_year_placeholder')?>" />
+        </div>
+
+        <div class="col-4">
+          <label class="form-label fw-bold" for="book_isbn">ISBN</label>
+          <input class="form-control" type="text" name="book_isbn" id="book_isbn" placeholder="<?=$this->transEscAttr('ill_order_isbn_placeholder')?>" />
+        </div>
+
+        <div class="col-5">
+          <label class="form-label fw-bold" for="book_edition"><?=$this->transEsc('Edition')?></label>
+          <input class="form-control" type="text" name="book_edition" id="book_edition" placeholder="<?=$this->transEscAttr('ill_order_edition_placeholder')?>" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <span><?=$this->transEsc('ill_order_other_edition')?></span>
+
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="book_other_edition" id="book_other_edition_yes" value="true">
+          <label class="form-check-label" for="book_other_edition_yes"><?=$this->transEsc('Yes')?></label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="book_other_edition" id="book_other_edition_no" value="false">
+          <label class="form-check-label" for="book_other_edition_no"><?=$this->transEsc('No')?></label>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden" id="form_article">
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="journal_title"><?=$this->transEsc('ill_order_journal_title')?></label>
+        <input class="form-control" type="text" name="journal_title" id="journal_title" placeholder="<?=$this->transEscAttr('ill_order_journal_title_placeholder')?>" />
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-3">
+          <label class="form-label fw-bold" for="journal_isbn">ISSN / ISBN</label>
+          <input class="form-control" type="text" name="journal_isbn" id="journal_isbn" placeholder="<?=$this->transEscAttr('ill_order_isbn_placeholder')?>" />
+        </div>
+
+        <div class="col-2">
+          <label class="form-label fw-bold" for="journal_year"><?=$this->transEsc('Year')?></label>
+          <input class="form-control" type="number" name="journal_year" id="journal_year" placeholder="<?=$this->transEscAttr('ill_order_year_placeholder')?>" />
+        </div>
+
+        <div class="col-2">
+          <label class="form-label fw-bold" for="journal_volume"><?=$this->transEsc('Volume')?></label>
+          <input class="form-control" type="text" name="journal_volume" id="journal_volume" placeholder="<?=$this->transEscAttr('ill_order_volume_placeholder')?>" />
+        </div>
+
+        <div class="col-2">
+          <label class="form-label fw-bold" for="journal_issue"><?=$this->transEsc('Issue')?></label>
+          <input class="form-control" type="text" name="journal_issue" id="journal_issue" placeholder="<?=$this->transEscAttr('ill_order_issue_placeholder')?>" />
+        </div>
+
+        <div class="col-3">
+          <label class="form-label fw-bold" for="journal_pages"><?=$this->transEsc('Pages')?></label>
+          <input class="form-control" type="text" name="journal_pages" id="journal_pages" placeholder="<?=$this->transEscAttr('ill_order_pages_placeholder')?>" />
+        </div>
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="article_author"><?=$this->transEsc('ill_order_article_author')?></label>
+        <input class="form-control" type="text" name="article_author" id="article_author" placeholder="<?=$this->transEscAttr('ill_order_author_placeholder')?>" />
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="article_title"><?=$this->transEsc('ill_order_article_title')?></label>
+        <input class="form-control" type="text" name="article_title" id="article_title" placeholder="<?=$this->transEscAttr('ill_order_article_title_placeholder')?>" />
+      </div>
+    </div>
+
+    <div class="hidden" id="form_common">
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="delivery_until"><?=$this->transEsc('ill_order_delivery_until')?>:</label>
+        <input class="form-control" type="date" name="delivery_until" id="delivery_until" />
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label fw-bold" for="comment"><?=$this->transEsc('Comments')?></label>
+        <textarea class="form-control" name="comment" id="comment" rows="3" placeholder="<?=$this->transEscAttr('Comments')?>"></textarea>
+      </div>
+
+      <div class="form-check col-12 mb-3">
+        <input class="form-check-input" type="checkbox" name="regulation_read" id="regulation_read" required />
+        <label class="form-check-label required" for="regulation_read"><?=$this->transEscAttr('ill_order_regulation')?></label>
+      </div>
+
+      <div class="col-12">
+        <input class="btn btn-primary" type="submit" value="<?= $this->transEscAttr('ill_order_order_chargeable')?>" />
+      </div>
+    </div>
+  </form>
+</div>
+
+<div class="<?=$this->layoutClass('sidebar')?>" id="myresearch-sidebar" role="navigation" aria-label="<?=$this->transEsc('account_menu_label')?>">
+  <?=$this->accountMenu()->render('ill-order')?>
+</div>

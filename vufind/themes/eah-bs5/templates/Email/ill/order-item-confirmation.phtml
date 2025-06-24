@@ -1,0 +1,17 @@
+<?=$this->transEsc('Email::ill_order_item_salutation', ['%%firstname%%' => $this->firstname, '%%lastname%%' => $this->lastname])?>
+
+
+<?=$this->transEsc('Email::ill_order_item_you_ordered')?>
+
+
+<?=$this->transEsc('Title')?>: <?=$this->escapeHtml($this->book_title ?? $this->article_title ?? '')?>
+
+<?=$this->transEsc('Author')?>: <?=$this->escapeHtml($this->book_author ?? $this->article_author ?? '')?>
+
+
+<?=$this->transEsc('Email::ill_order_item_paragraph_1')?>
+
+<?=$this->transEsc('Email::ill_order_item_paragraph_2')?>
+
+
+<?=$this->render('Email/footer.phtml')?>

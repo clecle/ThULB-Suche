@@ -33,51 +33,66 @@
     }
   }
 ?>
+
 <?php if ($results->getResultTotal() > 0 || $hasVisibleCheckboxes): ?>
   <h4><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h4>
-  <?php if ($this->multiFacetsSelection && $this->layout()->sideFacetsInstanceCounter === 1): ?>
-    <?= $this->render('Recommend/SideFacets/multiFacetsSelection.phtml'); ?>
+<?php endif; ?>
+
+<div class="facet-wrapper<?= $results->getResultTotal() == 0 && !$hasVisibleCheckboxes ? ' hidden' : '' ?>">
+  <?php if ($results->getResultTotal() > 0 || $hasVisibleCheckboxes): ?>
+    <?php if ($this->multiFacetsSelection && $this->layout()->sideFacetsInstanceCounter === 1): ?>
+      <?= $this->render('Recommend/SideFacets/multiFacetsSelection.phtml'); ?>
+    <?php endif; ?>
+    <span class="sr-only"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
   <?php endif; ?>
-  <span class="sr-only"><?=$this->transEscAttr('page_reload_on_select_hint') ?></span>
-<?php endif; ?>
 
-<?php if ($hasVisibleCheckboxes): ?>
-  <div class="checkboxFilter">
-    <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results]); ?>
-  </div>
-<?php endif; ?>
-<?= $this->sideFacetExtraControls ?? '' ?>
-<?php $sideFacetSet = $this->recommend->getFacetSet(); ?>
-<?php if (!empty($sideFacetSet) && $results->getResultTotal() > 0): ?>
-  <?php foreach ($sideFacetSet as $title => $cluster): ?>
-    <?php $collapsed = in_array($title, $collapsedFacets); ?>
-    <?php // Data-title attribute is for analytics use.  Do not remove. ?>
-    <div class="facet-group" id="side-panel-<?=$this->escapeHtmlAttr($title) ?>" data-title="<?=$this->escapeHtmlAttr($cluster['label']) ?>">
-      <h3 class="facet-title">
-        <button class="title<?php if ($collapsed): ?> collapsed<?php endif ?>" data-bs-toggle="collapse" data-bs-target="#side-collapse-<?=$this->escapeHtmlAttr($title) ?>" >
-          <span class="facet-title d-flex align-items-center gap-2">
-            <span><?=$this->transEsc($cluster['label'])?></span>
-            <?php if($cluster['label'] == 'Th_Biblio'): ?>
-              <img alt="<?= $this->transEscAttr($cluster['label'])?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" />
-            <?php endif; ?>
-          </span>
-          <?=$this->icon('collapse', 'facet-title-icon') ?>
-        </button>
-      </h3>
-
-      <div id="side-collapse-<?=$this->escapeHtmlAttr($title) ?>" role="listbox" aria-expanded="<?=$collapsed ? 'false' : 'true'?>" class="collapse<?php if (!$collapsed): ?> in<?php endif ?>"<?php if (in_array($title, $forceUncollapsedFacets)): ?> data-force-in="1"<?php endif ?>>
-        <?=
-          $this->context($this)->renderInContext(
-              'Recommend/SideFacets/facet.phtml',
-              [
-                  'facet' => $title,
-                  'cluster' => $cluster,
-                  'collapsedFacets' => $collapsedFacets,
-              ]
-          );
-        ?>
-      </div>
+  <?php if ($hasVisibleCheckboxes): ?>
+    <?php // checkboxFilter class remains only for back-compatibility: ?>
+    <div class="checkbox-filters checkboxFilter">
+      <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results]); ?>
     </div>
-  <?php endforeach; ?>
-<?php endif; ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'registerSideFacetTruncation();', 'SET');?>
+  <?php endif; ?>
+
+  <?= $this->sideFacetExtraControls ?? '' ?>
+  <?php $sideFacetSet = $this->recommend->getFacetSet(); ?>
+  <?php if (!empty($sideFacetSet) && $results->getResultTotal() > 0): ?>
+    <?php foreach ($sideFacetSet as $title => $cluster): ?>
+      <?php $collapsed = in_array($title, $collapsedFacets); ?>
+      <?php // Data-title attribute is for analytics use.  Do not remove. ?>
+      <div class="facet-group" id="side-panel-<?=$this->escapeHtmlAttr($title) ?>" data-title="<?=$this->escapeHtmlAttr($cluster['label']) ?>">
+        <h3 class="facet-title">
+          <button class="title<?php if ($collapsed): ?> collapsed<?php endif ?>" data-bs-toggle="collapse" data-bs-target="#side-collapse-<?=$this->escapeHtmlAttr($title) ?>" >
+            <span class="facet-title d-flex align-items-center gap-2">
+              <span><?=$this->transEsc($cluster['label'])?></span>
+              <?php if($cluster['label'] == 'Th_Biblio'): ?>
+                <img alt="<?= $this->transEscAttr($cluster['label'])?>" src="<?= $this->imageLink('ThuringenBib_Icon.png')?>" class="thbib-img" />
+              <?php endif; ?>
+            </span>
+            <?=$this->icon('collapse', 'facet-title-icon') ?>
+          </button>
+        </h3>
+
+        <div id="side-collapse-<?=$this->escapeHtmlAttr($title) ?>" role="listbox" aria-expanded="<?=$collapsed ? 'false' : 'true'?>" class="collapse<?php if (!$collapsed): ?> in<?php endif ?>"<?php if (in_array($title, $forceUncollapsedFacets)): ?> data-force-in="1"<?php endif ?>>
+          <?=
+            $this->context($this)->renderInContext(
+                'Recommend/SideFacets/facet.phtml',
+                [
+                    'facet' => $title,
+                    'cluster' => $cluster,
+                    'collapsedFacets' => $collapsedFacets,
+                ]
+            );
+          ?>
+        </div>
+      </div>
+    <?php endforeach; ?>
+  <?php endif; ?>
+
+  <?php if ($results->getResultTotal() > 0 || $hasVisibleCheckboxes): ?>
+    <?php if ($this->multiFacetsSelection && $this->layout()->sideFacetsInstanceCounter === 1): ?>
+      <?= $this->render('Recommend/SideFacets/multiFacetsSelection.phtml'); ?>
+    <?php endif; ?>
+  <?php endif; ?>
+
+  <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'registerSideFacetTruncation();', 'SET');?>
+</div>

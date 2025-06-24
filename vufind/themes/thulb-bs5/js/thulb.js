@@ -165,6 +165,18 @@ function setupFormValidation() {
     }
 }
 
+function checkForSelectedMultiFacets() {
+    let hasModifiedFilters = $('.sidebar [data-multi-filters-modified=true], .full-facet-list [data-multi-filters-modified=true]').length > 0;
+    let resultListOverlay = $('.mainbody .result-list-overlay');
+    if (hasModifiedFilters && resultListOverlay.length < 1) {
+        $('.mainbody').css('position', 'relative').append('<div class="result-list-overlay"></div>');
+    }
+    else if (!hasModifiedFilters) {
+        resultListOverlay.remove();
+    }
+    $('.apply-filters button').attr('disabled', !hasModifiedFilters);
+}
+
 $(document).ready(function thulbDocReady() {
     setupHintTooltips();
     setupTruncations();
@@ -224,7 +236,14 @@ $(document).ready(function thulbDocReady() {
         }
         menu.css({ left:newPos });
     });
+
+    VuFind.listen('lightbox.closed', checkForSelectedMultiFacets);
 });
+
+localStorage.setItem('multi-facets-selection', 'true');
+if (typeof VuFind.multiFacetsSelection !== "undefined") {
+    VuFind.multiFacetsSelection.toggleMultiFacetsSelection(true);
+}
 
 document.addEventListener('VuFind.lightbox.rendered', function(event) {
     $("button[type='submit'][name='print']").on('click', function(event) {

@@ -786,6 +786,12 @@ form {
   font-size: 20px;
 }
 
+@media screen and (max-width: 767px) {
+  .vufind-offcanvas .sidebar {
+    z-index: 45;
+  }
+}
+
 /* --- Layout > Misc --- */
 .external-link:after,
 .authorbox a:after {
@@ -804,6 +810,10 @@ form {
   .dropdown-menu > li > a {
     white-space: normal;
   }
+}
+
+.vpn-warning-wrapper {
+  z-index: 50;
 }
 
 .label-success {
@@ -983,6 +993,14 @@ a.search-filter-toggle {
       border: 0 none;
     }
   }
+}
+
+/* --- Search > Advanced Search --- */
+.result-list-overlay {
+  @extend .form-loading-overlay;
+
+  background-color: #ffffffcc;
+  z-index: 10;
 }
 
 /* --- Search > Advanced Search --- */
@@ -1234,6 +1252,60 @@ body:has(.main form#advSearchForm) {
 }
 
 /* --- Search > Facets --- */
+.sidebar .multi-filters-selection {
+  box-shadow: none;
+  border: none;
+  margin: 0 -2px;
+  z-index: 5;
+}
+
+.multi-filters-selection {
+  .apply-filters {
+    margin: 0;
+    justify-self: center;
+  }
+
+  form {
+    display: none;
+  }
+}
+
+.facet-wrapper {
+  border: 1px solid var(--bs-border-color);
+  padding: 5px;
+  margin-top: 1em;
+  position: relative;
+}
+
+.checkbox-filters {
+  .facet {
+    border: 1px solid var(--bs-border-color);
+    margin-top: 8px;
+  }
+
+  .active {
+    background-color: $brand-primary;
+
+    a {
+      color: #fff;
+    }
+    
+    i {
+      color: #fff;
+    }
+  }
+}
+
+.modal .js-full-facet-list .multi-filters-selection {
+  padding: 0;
+
+  .apply-filters {
+    margin: 0;
+    justify-self: left;
+  }
+}
+
+.facet-group .facet,
 .facet-group a,
 .myresearch-menu a {
   color: $text-color;
@@ -1245,6 +1317,22 @@ body:has(.main form#advSearchForm) {
   }
 }
 
+.facet-group {
+  a,
+  .facet.more-facets,
+  .more-less-btn-wrapper .facet {
+    padding: .5rem;
+  }
+
+  .facet {
+    padding: 0;
+
+    &:hover a {
+      color: $text-color;
+    }
+  }
+}
+
 .facet .text {
   align-items: baseline;
 }
@@ -1253,16 +1341,26 @@ body:has(.main form#advSearchForm) {
   display: flex;
 }
 
-.facet-tree li .facet-tree__item-container a {
-  gap: .5rem;
+.facet-tree li {
+  .facet-tree__toggle-expanded:hover {
+    background-color: #eee;
+  }
+
+  .facet-tree__item-container a {
+    gap: .5rem;
+  }
 }
 
 #facet-info-result {
   margin-bottom: 1.5rem;
 }
 
-.facet-loading-overlay-label {
-  border-radius: .25rem;
+.facet-loading-overlay {
+  z-index: 10;
+
+  .facet-loading-overlay-label {
+    border-radius: .25rem;
+  }
 }
 
 #full-facet-sort-label {

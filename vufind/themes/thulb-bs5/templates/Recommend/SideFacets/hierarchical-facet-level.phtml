@@ -42,14 +42,13 @@
             ]
         );
       ?>
+      <button<?=$buttonAttrs?>>
+        <?=$this->icon('facet-expand', 'facet-tree__expand')?>
+        <?=$this->icon('facet-collapse', 'facet-tree__collapse')?>
+      </button>
       <span class="facet-tree__item-container<?=$this->allowExclude ? ' facet-tree__item-container--exclude' : ''?>">
         <?=$renderedEntryHtml?>
       </span>
-      <button<?=$buttonAttrs?>>
-        <?=$this->icon('facet-expand', 'facet-tree__expand align-baseline')?>
-        <?=$this->icon('facet-collapse', 'facet-tree__collapse align-baseline')?>
-      </button>
-
       <ul id="<?=$this->escapeHtmlAttr($childUlId)?>">
         <?=$this->render('Recommend/SideFacets/hierarchical-facet-level.phtml', [
           'allowExclude' => $this->allowExclude,

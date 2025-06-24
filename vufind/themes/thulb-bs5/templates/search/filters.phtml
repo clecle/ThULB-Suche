@@ -11,6 +11,7 @@
   $options = $this->searchOptions($this->searchClassId);
   $hasDefaultsApplied = $params->hasDefaultsApplied();
   $filterCount = $this->searchbox()->getFilterCount($this->checkboxFilters, $this->filterList);
+  $fromSearchMemory ??= false;
 
   // Determine whether the only filters applied are the default ones; this controls
   // when we display or hide the reset button:
@@ -29,7 +30,7 @@
   <?php foreach ($this->checkboxFilters as $filter): ?>
     <?php if ($filter['selected']): ?>
       <?php
-        $removeLink = isset($urlQuery)
+        $removeLink = isset($urlQuery) && !$fromSearchMemory
           ? $urlQuery->removeFilter($filter['filter'])
           : $this->searchMemory()->getEditLink(
             $this->searchClassId,

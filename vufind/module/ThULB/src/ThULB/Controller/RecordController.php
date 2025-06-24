@@ -101,7 +101,7 @@ class RecordController extends OriginalRecordController implements LoggerAwareIn
         if($feedback && (empty($firstname) || empty($lastname) || empty($email))) {
             $this->flashMessenger()->addMessage('Please enter your contact information if you want feedback.', 'error');
         }
-        elseif (($thulbConfig->Record->brokenLinkEmail ?? false) && $request->isPost() && !$request->getPost('mylang')) {
+        elseif (($thulbConfig->BrokenLink->email ?? false) && $request->isPost() && !$request->getPost('mylang')) {
             try {
                 $text = new Part();
                 $text->type = Mime::TYPE_TEXT;
@@ -123,7 +123,7 @@ class RecordController extends OriginalRecordController implements LoggerAwareIn
                 $mailer = $this->serviceLocator->get(Mailer::class);
                 $mailer->setMaxRecipients(0);
                 $mailer->send(
-                    $thulbConfig->Record->brokenLinkEmail,
+                    $thulbConfig->BrokenLink->email,
                     $mainConfig->Mail->default_from,
                     $this->translate('Email::broken_link_email_subject'),
                     $mimeMessage

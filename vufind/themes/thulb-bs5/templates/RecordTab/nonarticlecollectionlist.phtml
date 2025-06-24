@@ -44,7 +44,7 @@
                $this->driver->isFormat('Journal') && $this->driver->isInArchive()): ?>
         <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
         <strong>
-          <a href="<?= $this->url('request-journal') . $this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+          <a href="<?= $this->url('request-journal', ['id' => $this->driver->getUniqueId()]); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
         </strong>
       <?php endif; ?>
     </div>
@@ -63,7 +63,7 @@
     <div class="journal-not-found">
       <span><?= $this->transEsc('storage_retrieval_request_volume_not_listed'); ?></span>
       <strong>
-        <a href="<?= $this->url('request-journal') . $this->driver->getUniqueId(); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
+        <a href="<?= $this->url('request-journal', ['id' => $this->driver->getUniqueId()]); ?>" data-lightbox><?= $this->transEsc('storage_retrieval_request_order_here');?></a>
       </strong>
     </div>
   </div>

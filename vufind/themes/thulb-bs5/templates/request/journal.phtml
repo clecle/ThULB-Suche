@@ -7,7 +7,7 @@
 
 <?php if($allowed): ?>
 <div class="journal-request">
-  <form action="<?= $this->url('request-journal') . $recordId; ?>" method="post">
+  <form action="<?= $this->url('request-journal', ['id' => $recordId]); ?>" method="post">
     <h4 class="fw-bold mt-5"><?= $this->transEsc('User data'); ?></h4>
     <div class="user-data">
       <div class="d-flex flex-wrap mb-2">

@@ -272,5 +272,5 @@ $routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[
 $routeGenerator->addDynamicRoute($config, 'record-report-broken-link', 'Record', 'reportBrokenLink/[:id]');
 $routeGenerator->addDynamicRoute($config, 'request-article', 'Request', 'Article/[:id]');
 $routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');
-
+$routeGenerator->addDynamicRoute($config, 'request-ordered', 'Request', 'Ordered/[:id]');
 return $config;

@@ -14,8 +14,10 @@ use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\NotFoundExceptionInterface;
 use ThULB\Log\LoggerAwareTrait;
 use VuFind\Controller\RecordController as OriginalRecordController;
+use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Mailer\Mailer;
+use VuFind\RecordDriver\DefaultRecord;
 use Whoops\Exception\ErrorException;
 
 class RequestController extends OriginalRecordController implements LoggerAwareInterface
@@ -220,6 +222,31 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         ]);
     }
 
+    public function orderedAction() {
+        // Force login if necessary:
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+
+        $this->loadRecord();
+
+        if ($this->getRequest()->isPost() && $this->getRequest()->getPost('submitOrderedRequest', false)) {
+            if ($this->sendOrderedRequestEmail($this->driver, $user, $this->thulbConfig->OrderedMediaRequest->email)) {
+                $this->addFlashMessage(true, 'storage_retrieval_request_ordered_succeeded');
+            }
+            else {
+                $this->addFlashMessage(false, 'storage_retrieval_request_ordered_failed');
+            }
+        }
+
+        return new ViewModel([
+            'allowed' => true,
+            'recordId' => $this->driver->getUniqueID(),
+            'title' => $this->driver->getTitle(),
+            'authors' => $this->driver->getDeduplicatedAuthors(),
+        ]);
+    }
+
     /**
      * Get the items available in journal request form.
      * Performs a DAIA-Request for the current record and returns a filtered list.
@@ -301,6 +328,53 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
                 $recipient,
                 $this->mainConfig->Mail->default_from,
                 $this->translate('storage_retrieval_request_article_email_subject'),
+                $mimeMessage
+            );
+        }
+        catch (MailException $e) {
+            $this->logException($e);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Create the pdf for the request and save it.
+     *
+     * @param DefaultRecord $driver Data to create pdf with.
+     * @param string        $recipient
+     *
+     * @return bool Success of the pdf creation.
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function sendOrderedRequestEmail(DefaultRecord $driver, UserEntityInterface $user, string $recipient) : bool {
+        try {
+            $text = new Part();
+            $text->type = Mime::TYPE_TEXT;
+            $text->charset = 'utf-8';
+            $text->setContent(htmlspecialchars_decode(
+                $this->getViewRenderer()->render('Email/request-ordered', [
+                    'username' => $user->getUsername(),
+                    'firstname' => $user->getFirstname(),
+                    'lastname' => $user->getLastname(),
+                    'email' => $user->getEmail(),
+                    'title' => $driver->getTitle(),
+                    'ppn' => $driver->getUniqueID(),
+                ])
+            ));
+
+            $mimeMessage = new Message();
+            $mimeMessage->setParts(array($text));
+
+            $mailer = $this->serviceLocator->get(Mailer::class);
+            $mailer->send(
+                $recipient,
+                $this->mainConfig->Mail->default_from,
+                $this->translate('request_ordered_item_staff_mail_subject'),
                 $mimeMessage
             );
         }

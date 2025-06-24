@@ -1,0 +1,36 @@
+<h2><?= $this->transEsc('Reserve medium'); ?></h2>
+
+<?= $this->flashmessages() ?>
+
+<div class="journal-request">
+  <form action="<?= $this->url('request-ordered', ['id' => $recordId]); ?>" method="post">
+    <input type="hidden" name="csrf" value="<?= $this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash()) ?>">
+    <input type="hidden" name="submitOrderedRequest" value="true">
+
+    <p><?=$this->transEsc('request_ordered_note')?></p>
+
+    <div class="row">
+      <div class="col-md-2 fw-bold"><?=$this->transEsc('Title')?></div>
+      <div class="col-md-10"><?=$this->escapeHtml($this->title)?></div>
+    </div>
+    <div class="row">
+      <div class="col-md-2 fw-bold"><?=$this->transEsc('Persons')?></div>
+      <div class="col-md-10">
+        <?php foreach ($this->authors as $type): ?>
+          <?php foreach ($type as $name => $data): ?>
+            <div>
+              <span><?= $this->escapeHtml($name)?></span>
+              <?php if($role = ($data['role'][0] ?? false)): ?>
+                <span>[<?= $this->transEsc('CreatorRoles::' . $role)?>]</span>
+              <?php endif; ?>
+            </div>
+          <?php endforeach; ?>
+        <?php endforeach; ?>
+      </div>
+    </div>
+
+    <div class="form-submit mt-4">
+      <input type="submit" class="btn btn-primary d-block col-sm-9 mx-auto" value="<?= $this->transEscAttr('Submit'); ?>">
+    </div>
+  </form>
+</div>

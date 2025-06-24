@@ -1,6 +1,14 @@
 <?php
     // Initialize from current search (if available and not explicitly overridden) or defaults:
-    if ($results = ($this->results ?? $this->searchMemory()->getCurrentSearch())) {
+    if ($this->results === null) {
+        $fromSearchMemory = true;
+        $results = $this->searchMemory()->getCurrentSearch();
+    } else {
+        $fromSearchMemory = false;
+        $results = $this->results;
+    }
+
+    if ($results) {
       $params = $results->getParams();
       $this->searchClassId ??= $params->getSearchClassId();
     }
@@ -10,7 +18,7 @@
         ?? 'Solr';
     }
     // Initialize from current search if eligible, defaults otherwise:
-    if (isset($params) && $this->searchClassId === $params->getSearchClassId()) {
+    if (isset($params) && $this->searchClassId === $params->getSearchClassId() && !$params->isSpecializedSearch()) {
       $hiddenFilters = $params->getHiddenFilters();
       $lastSort = $params->getSort();
       $lastLimit = $params->getLimit();
@@ -78,6 +86,7 @@
             'checkboxFilters' => $showFilters ? $checkboxFilters : [],
             'searchClassId' => $this->searchClassId,
             'searchType' => $this->searchType,
+            'fromSearchMemory' => $fromSearchMemory,
           ]
         );
       ?>
@@ -239,7 +248,8 @@
         'checkboxFilters' => $showFilters ? $checkboxFilters : [],
         'searchClassId' => $this->searchClassId,
         'searchType' => $this->searchType,
-        'showOnMobile' => false
+        'fromSearchMemory' => $fromSearchMemory,
+        'showOnMobile' => false,
       ]
     );?>
   </form>

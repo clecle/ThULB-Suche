@@ -321,6 +321,12 @@ Series:
     - series2
   DismaxHandler: edismax
 
+SeriesTitle:
+  DismaxFields:
+    - title_short
+  DismaxHandler: edismax
+  FilterQuery: "format:(Journal OR eJournal OR \"Monograph Series\")"
+
 AllFields:
   DismaxFields:
     - title_short^750

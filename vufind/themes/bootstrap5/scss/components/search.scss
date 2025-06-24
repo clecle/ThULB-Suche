@@ -54,10 +54,8 @@ $thumbnail-width-large:  160px !default;
   #datevispublishDatexWrapper,
   // Bulk action checkboxes:
   #search-cart-form .result .checkbox,
-  // Search result bulk action buttons:
-  #search-cart-form .bulkActionButtons,
-  // Favorites bulk action buttons:
-  form[name="bulkActionForm"] .bulkActionButtons { display: none; }
+  // Search result and favorites bulk action buttons:
+  .bulkActionButtons { display: none; }
 }
 
 .searchHomeContent { @include clearfix(); }
@@ -434,6 +432,8 @@ body.rtl {
 }
 
 .searchtools {
+  margin-bottom: 0.5rem;
+
   h2 {
     display: inline-block;
     margin: 0;

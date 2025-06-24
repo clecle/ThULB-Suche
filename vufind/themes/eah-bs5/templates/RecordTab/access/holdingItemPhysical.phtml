@@ -12,6 +12,14 @@
         <div class="col-description fw-bold"><?= $this->transEsc("Call Number")?>:</div>
         <div class="col-text"><strong><?= $callno ?></strong></div>
       </div>
+    <?php elseif($callno == 'bestellt'): ?>
+      <div class="d-flex flex-column flex-sm-row gap-sm-2">
+        <div class="col-description fw-bold"><?= $this->transEsc("Status")?>:</div>
+        <div class="col-text">
+          <span class="fw-bold"><?= $this->escapeHtml($callno); ?></span>
+          <a href="<?=$this->url('request-ordered', ['id' => $this->driver->getUniqueID()])?>" data-lightbox><?= $this->transEsc('Reserve medium'); ?></a>
+        </div>
+      </div>
     <?php endif; ?>
   
     <?php if(!empty($item['remotehref']) && $holding['location'] == "Remote"): ?>

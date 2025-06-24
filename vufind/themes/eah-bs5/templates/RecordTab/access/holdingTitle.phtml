@@ -1,4 +1,8 @@
 <?php
+  if ($holding['location'] == 'bestellt') {
+      $holding['location'] = 'Ernst-Abbe-Hochschule Jena';
+  }
+
   $locationInfoInfoMessage = $this->thulb_holdingHelper()->getLocationInfoMessage($holding);
 ?>
 

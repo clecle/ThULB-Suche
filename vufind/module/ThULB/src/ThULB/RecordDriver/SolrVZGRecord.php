@@ -37,6 +37,7 @@ use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\RecordDriver\SolrMarc;
 use Laminas\Config\Config;
 use VuFindSearch\Command\RetrieveBatchCommand;
+use VuFindSearch\Command\RetrieveCommand;
 
 /**
  * Customized record driver for Records of the Solr index of Verbundzentrale
@@ -1789,6 +1790,18 @@ class SolrVZGRecord extends SolrMarc
     }
 
     /**
+     * Checks, if there are copies of the parent in archives of the ThULB.
+     *
+     * @return bool
+     */
+    public function isParentInArchive() : bool {
+        if ($this->fields['hierarchy_parent_id'][0] ?? false) {
+            return $this->getParentDriver($this->fields['hierarchy_parent_id'][0])->isInArchive();
+        }
+        return false;
+    }
+
+    /**
      * Get locations of holdings. Locations are gathered from DAIA.
      * Return format:
      *   array (
@@ -2637,6 +2650,18 @@ class SolrVZGRecord extends SolrMarc
      */
     public function getIndexField(string $field) : array|string|null {
         return $this->fields[$field] ?? null;
+    }
+
+    public function getParentDriver(): SolrVZGRecord|null {
+        if ($id = $this->fields['hierarchy_parent_id'][0] ?? false) {
+            $result = $this->searchService->invoke(
+                new RetrieveCommand('Solr', $id)
+            );
+
+            return $result->getResult()->first();
+        }
+
+        return null;
     }
 
 //    Commented out for possible future use.

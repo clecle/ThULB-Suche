@@ -1,0 +1,51 @@
+<?=$this->transEsc('Email::username_%%', ['%%username%%' => $this->username])?>
+
+
+<?=$this->transEsc('Email::salutation', ['%%firstname%%' => $this->firstname, '%%lastname%%' => $this->lastname])?>
+
+
+<?=$this->transEsc('Email::Thank you for the request_journal')?>
+
+
+<?php if($this->departmentId == 'Mag'): ?>
+    <?=$this->transEsc('Email::provisioning_via_account')?>
+
+
+    <?=$this->transEsc('Email::please note')?>: <?=$this->transEsc('Email::not loanable')?>
+
+<?php endif; ?>
+
+<?=$this->transEsc('Email::Request details')?>:
+
+<?=$this->transEsc('Email::title', ['%%title%%' => $this->title])?>
+
+<?=$this->transEsc('Email::callnumber', ['%%callnumber%%' => $this->callnumber])?>
+
+<?=$this->transEsc('Email::year', ['%%year%%' => $this->year])?>
+
+<?=$this->transEsc('Email::volume', ['%%volume%%' => $this->volume])?>
+
+<?=$this->transEsc('Email::issue', ['%%issue%%' => $this->issue])?>
+
+<?=$this->transEsc('Email::pages', ['%%pages%%' => $this->pages])?>
+
+<?=$this->transEsc('Email::comment', ['%%comment%%' => $this->comment])?>
+
+
+<?php if($this->departmentId == 'Mag'): ?>
+    <?=$this->transEsc('Email::not listed')?>:
+
+  • <?=$this->transEsc('Email::not listed, phone')?>
+
+  • <?=$this->transEsc('Email::not listed, mail', ['%%email%%' => $this->informationEmail])?>
+<?php else: ?>
+    <?=$this->transEsc('Email::provisioning_via_' . ($this->departmentId == 'Mag5' ? 'account' : 'email'))?>
+
+
+    <?=$this->transEsc('Email::questions at', ['%%email%%' => $this->informationEmail])?>
+<?php endif; ?>
+
+
+<?=$this->transEsc('Email::complimentary close')?>
+
+<?=$this->transEsc('Email::thulb_signature')?>

@@ -10,8 +10,9 @@ use Laminas\Mime\Mime;
 use Laminas\Mime\Part;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\View\Model\ViewModel;
+use Psr\Container\ContainerExceptionInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use ThULB\Log\LoggerAwareTrait;
-use ThULB\PDF\JournalRequest;
 use VuFind\Controller\RecordController as OriginalRecordController;
 use VuFind\Exception\Mail as MailException;
 use VuFind\Mailer\Mailer;
@@ -30,8 +31,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm     Service manager
-     * @param Config                  $config VuFind configuration
+     * @param ServiceLocatorInterface $sm Service manager
+     * @param Config $config VuFind configuration
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
     public function __construct(ServiceLocatorInterface $sm, Config $config)
     {
@@ -46,16 +50,109 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     }
 
     /**
+     * Action for placing an article request.
+     *
+     * @return ViewModel|null
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    public function articleAction() : ?ViewModel {
+        // Force login if necessary:
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+
+        // Block invalid requests:
+        $validRequest = $this->getILS()->checkStorageRetrievalRequestIsValid(
+            $this->loadRecord()->getUniqueID(), [], $this->catalogLogin()
+        );
+        if ((is_array($validRequest) && !$validRequest['valid']) || !$validRequest) {
+            $this->flashMessenger()->addErrorMessage(
+                is_array($validRequest)
+                    ? $validRequest['status']
+                    : 'storage_retrieval_request_error_blocked'
+            );
+            return null;
+        }
+
+        $series = $this->driver->getSeries(false);
+
+        // get first configured departmentId in parent's holdings to determine email receiver and displayed details
+        $seriesDriver = $this->driver->getParentDriver();
+        if (!$seriesDriver) {
+            $this->addFlashMessage(false, 'storage_retrieval_request_article_not_available');
+            return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
+        }
+
+        $holdings = $seriesDriver->getHoldings();
+        $depId = $seriesCallnumber = null;
+        foreach ($holdings['holdings'] as $holding) {
+            foreach ($holding['items'] as $item) {
+                if ($this->isConfiguredDepartmentId($item['departmentId'])) {
+                    $depId = $item['departmentId'];
+                    $seriesCallnumber = $item['callnumber'];
+                    break 2;
+                }
+            }
+        }
+
+        if (!$depId) {
+            $this->addFlashMessage(false, 'storage_retrieval_request_article_not_available');
+            return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
+        }
+
+        // collect form data
+        $formData = array (
+            'firstname' => $user['firstname'],
+            'lastname' => $user['lastname'],
+            'username' => $user['cat_id'],
+            'email' => $user['email'],
+            'title' => $this->driver->getTitle(),
+            'series' => $series[0]['name'] . ' ' . $series[0]['number'],
+            'seriesCallnumber' => $seriesCallnumber,
+            'comment' => $this->params()->fromPost('comment', ''),
+            'departmentId' => $depId,
+        );
+
+        if ($this->getRequest()->isPost() && $this->getRequest()->getPost('submitArticleRequest', false)) {
+            $archiveEmail = $this->getArchiveEmailForCallnumber('', $depId);
+            $borrowCounter = $this->getBorrowCounterForCallnumber('', $depId);
+            $locationUrl = $this->getLocationUrlForCallnumber('', $depId);
+
+            if ($this->sendArticleRequestEmail($formData, $holdings, $archiveEmail)) {
+                if ($user['email'] ?? false) {
+                    $this->sendArticleConfirmationEmail($formData, $holdings, $user['email']);
+                }
+
+                $this->addFlashMessage(true, 'storage_retrieval_request_article_succeeded',
+                    ['%%location%%' => $borrowCounter, '%%url%%' => $locationUrl]);
+            }
+            else {
+                $this->addFlashMessage(false, 'storage_retrieval_request_article_failed');
+            }
+        }
+
+        return new ViewModel([
+            'allowed' => true,
+            'formData' => $formData,
+            'recordId' => $this->loadRecord()->getUniqueID(),
+            'inventory' => $this->getInventoryForRequest()
+        ]);
+    }
+
+    /**
      * Action for placing a journal request.
      *
      * @return ViewModel|null
      *
+     * @throws ContainerExceptionInterface
      * @throws IOException
+     * @throws NotFoundExceptionInterface
      */
     public function journalAction() : ?ViewModel {
-
         // Force login if necessary:
-        if (!$this->getUser()) {
+        if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
 
@@ -77,7 +174,21 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             throw new IOException('File not writable: "' . $savePath . '"');
         }
 
-        $formData = $this->getFormData();
+        $params = $this->params();
+        $inventory = $this->getInventoryForRequest();
+        $defaultItem = count($inventory) == 1 ? array_key_first($inventory) : '';
+        $formData = array (
+            'firstname'  => $params->fromPost('firstname', $user['firstname']),
+            'lastname'   => $params->fromPost('lastname', $user['lastname']),
+            'username'   => $params->fromPost('username', $user['cat_id']),
+            'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
+            'year'       => $params->fromPost('year', ''),
+            'volume'     => $params->fromPost('volume', ''),
+            'issue'      => $params->fromPost('issue', ''),
+            'pages'      => $params->fromPost('pages', ''),
+            'comment'    => $params->fromPost('comment', ''),
+            'item'       => $params->fromPost('item', $defaultItem),
+        );
 
         if ($this->getRequest()->isPost() && $this->validateFormData($formData)) {
             $fileName = $formData['username'] . '__' . date('Y_m_d__H_i_s') . '.pdf';
@@ -86,11 +197,11 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $borrowCounter = $this->getBorrowCounterForCallnumber($callNumber);
             $locationUrl = $this->getLocationUrlForCallnumber($callNumber);
 
-            if ($this->createPDF($formData, $fileName) &&
-                    $this->sendRequestEmail($fileName, $archiveEmail)) {
+            if ($this->createJournalPDF($formData, $fileName) &&
+                $this->sendJournalRequestEmail($fileName, $archiveEmail)) {
 
-                if($this->getUser()['email'] ?? false) {
-                    $this->sendConfirmationEmail($formData, $this->getUser()['email']);
+                if ($user['email'] ?? false) {
+                    $this->sendJournalConfirmationEmail($formData, $user['email']);
                 }
 
                 $this->addFlashMessage(true, 'storage_retrieval_request_journal_succeeded',
@@ -107,31 +218,6 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             'recordId' => $this->loadRecord()->getUniqueID(),
             'inventory' => $this->getInventoryForRequest()
         ]);
-    }
-
-    /**
-     * Get data array of values from the request or default values.
-     *
-     * @return array
-     */
-    protected function getFormData() : array {
-        $params = $this->params();
-        $user = $this->getUser();
-        $inventory = $this->getInventoryForRequest();
-        $defaultItem = count($inventory) == 1 ? array_key_first($inventory) : '';
-
-        return array (
-            'firstname'  => $params->fromPost('firstname', $user['firstname']),
-            'lastname'   => $params->fromPost('lastname', $user['lastname']),
-            'username'   => $params->fromPost('username', $user['cat_id']),
-            'title'      => $params->fromPost('title', $this->loadRecord()->getTitle()),
-            'year'       => $params->fromPost('year', ''),
-            'volume'     => $params->fromPost('volume', ''),
-            'issue'      => $params->fromPost('issue', ''),
-            'pages'      => $params->fromPost('pages', ''),
-            'comment'    => $params->fromPost('comment', ''),
-            'item'       => $params->fromPost('item', $defaultItem),
-        );
     }
 
     /**
@@ -177,14 +263,68 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     }
 
     /**
-     * Create the pdf for the request and save it.
+     * Send an article request email to the library's staff.
      *
-     * @param array $formData Data to create pdf with.
+     * @param array  $formData
+     * @param array  $holdings  Holdings of the parent
+     * @param string $recipient Email's recipient.
+     *
+     * @return bool Success sending the email.
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function sendArticleRequestEmail(array $formData, array $holdings, string $recipient) : bool {
+        try {
+            $text = new Part();
+            $text->type = Mime::TYPE_TEXT;
+            $text->charset = 'utf-8';
+            $text->setContent(htmlspecialchars_decode(
+                $this->getViewRenderer()->render('Email/request-article', [
+                    'username' => $formData['username'],
+                    'firstname' => $formData['firstname'],
+                    'lastname' => $formData['lastname'],
+                    'email' => $formData['email'],
+                    'title' => $formData['title'],
+                    'series' => $formData['series'],
+                    'seriesCallnumber' => $formData['seriesCallnumber'],
+                    'comment' => $formData['comment'],
+                    'holdings' => $holdings,
+                ])
+            ));
+
+            $mimeMessage = new Message();
+            $mimeMessage->setParts(array($text));
+
+            $mailer = $this->serviceLocator->get(Mailer::class);
+            $mailer->send(
+                $recipient,
+                $this->mainConfig->Mail->default_from,
+                $this->translate('storage_retrieval_request_article_email_subject'),
+                $mimeMessage
+            );
+        }
+        catch (MailException $e) {
+            $this->logException($e);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Create the pdf for the journal request and save it.
+     *
+     * @param array  $formData Data to create pdf with.
      * @param string $fileName Name for the pdf to vbe saved as.
      *
      * @return bool Success of the pdf creation.
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    protected function createPDF(array $formData, string $fileName) : bool {
+    protected function createJournalPDF(array $formData, string $fileName) : bool {
         try {
             $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 
@@ -216,14 +356,17 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     }
 
     /**
-     * Send the request email.
+     * Send a journal request email to the library's staff.
      *
-     * @param string $fileName Name of the file to be attached to the email
+     * @param string $fileName  Name of the file to be attached to the email
      * @param string $recipient Recipient of the email.
      *
      * @return bool Success of sending the email.
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    protected function sendRequestEmail(string $fileName, string $recipient) : bool{
+    protected function sendJournalRequestEmail(string $fileName, string $recipient) : bool{
         try {
             $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 
@@ -247,7 +390,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $mailer->send(
                 $recipient,
                 $this->mainConfig->Mail->default_from,
-                $this->translate('storage_retrieval_request_email_subject'),
+                $this->translate('storage_retrieval_request_journal_email_subject'),
                 $mimeMessage
             );
         }
@@ -261,19 +404,74 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
     }
 
     /**
-     * Send an confirmation email for the request to the recipient.
+     * Send a confirmation email for the article request to the user.
      *
-     * @param array $formData
+     * @param array  $formData
+     * @param array  $holdings  Holdings of the parent
+     * @param string $recipient Email's recipient.
+     *
+     * @return bool
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
+    protected function sendArticleConfirmationEmail(array $formData, array $holdings, string $recipient) : bool {
+        try {
+            $text = new Part();
+            $text->type = Mime::TYPE_TEXT;
+            $text->charset = 'utf-8';
+            $text->setContent(htmlspecialchars_decode(
+                $this->getViewRenderer()->render('Email/request-article-confirmation', [
+                    'username' => $formData['username'],
+                    'firstname' => $formData['firstname'],
+                    'lastname' => $formData['lastname'],
+                    'title' => $formData['title'],
+                    'series' => $formData['series'],
+                    'seriesCallnumber' => $formData['seriesCallnumber'],
+                    'comment' => $formData['comment'],
+                    'holdings' => $holdings,
+                    'departmentId' => $formData['departmentId'],
+                    'informationEmail' => $this->getInformationEmailForCallnumber('', $formData['departmentId']),
+                ])
+            ));
+
+            $mimeMessage = new Message();
+            $mimeMessage->setParts(array($text));
+
+            $mailer = $this->serviceLocator->get(Mailer::class);
+            $mailer->send(
+                $recipient,
+                $this->mainConfig->Mail->default_from,
+                $this->translate('storage_retrieval_request_article_confirmation_email_subject'),
+                $mimeMessage
+            );
+        }
+        catch (MailException $e) {
+            $this->logException($e);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Send a confirmation email for the journal request to the recipient.
+     *
+     * @param array  $formData
      * @param string $recipient
      *
      * @return bool
+     *
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
      */
-    protected function sendConfirmationEmail(array $formData, string $recipient) : bool {
+    protected function sendJournalConfirmationEmail(array $formData, string $recipient) : bool {
         try {
             $callNumber = $this->getInventoryForRequest()[$formData['item']]['callnumber'];
 
             if(strtolower($this->getDepartmentIdForCallnumber($callNumber)) == "mag6") {
-                // don't send a mail to mag6
+                // don't send a confirmation email when ordering from mag6
                 return true;
             }
 
@@ -281,7 +479,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $text->type = Mime::TYPE_TEXT;
             $text->charset = 'utf-8';
             $text->setContent(htmlspecialchars_decode(
-                $this->getViewRenderer()->render('Email/request-confirmation', [
+                $this->getViewRenderer()->render('Email/request-journal-confirmation', [
                     'username' => $formData['username'],
                     'firstname' => $formData['firstname'],
                     'lastname' => $formData['lastname'],
@@ -304,7 +502,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
             $mailer->send(
                 $recipient,
                 $this->mainConfig->Mail->default_from,
-                $this->translate('storage_retrieval_request_confirmation_email_subject'),
+                $this->translate('storage_retrieval_request_journal_confirmation_email_subject'),
                 $mimeMessage
             );
         }
@@ -317,25 +515,49 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
         return true;
     }
 
-    protected function getDepartmentIdForCallnumber ($callnumber) : ?string {
+    /**
+     * Check if there is a configuration for the given department id.
+     *
+     * @param string|null $departmentId
+     *
+     * @return bool
+     */
+    protected function isConfiguredDepartmentId (?string $departmentId): bool {
+        return isset($this->thulbConfig->JournalRequest->ArchiveEmail[$departmentId])
+            && isset($this->thulbConfig->JournalRequest->InformationEmail[$departmentId])
+            && isset($this->thulbConfig->JournalRequest->BorrowCounter[$departmentId])
+            && isset($this->thulbConfig->JournalRequest->LocationUrl[$departmentId]);
+    }
+
+    /**
+     * Gets the department id for the given callnumber.
+     *
+     * @param $callnumber
+     *
+     * @return string|null
+     */
+    protected function getDepartmentIdForCallnumber ($callnumber) : string|null {
         foreach($this->getInventoryForRequest() as $archive) {
             if ($archive['callnumber'] == $callnumber) {
                 return $archive['departmentId'];
             }
         }
 
-        return false;
+        return null;
     }
 
     /**
      * Gets the configured archive email address for the given callnumber.
      *
      * @param string $callnumber
+     * @param string|false $departmentId
      *
      * @return string|null
      */
-    protected function getArchiveEmailForCallnumber(string $callnumber) : ?string {
-        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+    protected function getArchiveEmailForCallnumber(string $callnumber, string|false $departmentId = false) : string|null {
+        if (!$departmentId) {
+            $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        }
         return $this->thulbConfig->JournalRequest->ArchiveEmail[$departmentId] ?: null;
     }
 
@@ -343,11 +565,14 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * Gets the configured information email address for the given callnumber.
      *
      * @param string $callnumber
+     * @param string|false $departmentId
      *
      * @return string|null
      */
-    protected function getInformationEmailForCallnumber(string $callnumber) : ?string {
-        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+    protected function getInformationEmailForCallnumber(string $callnumber, string|false $departmentId = false) : string|null {
+        if (!$departmentId) {
+            $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        }
         return $this->thulbConfig->JournalRequest->InformationEmail[$departmentId] ?: null;
     }
 
@@ -355,11 +580,14 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * Gets the configured email for the given email.
      *
      * @param string $callnumber
+     * @param string|false $departmentId
      *
      * @return string|null
      */
-    protected function getBorrowCounterForCallnumber(string $callnumber) : ?string {
-        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+    protected function getBorrowCounterForCallnumber(string $callnumber, string|false $departmentId = false) : string|null {
+        if (!$departmentId) {
+            $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        }
         return $this->thulbConfig->JournalRequest->BorrowCounter[$departmentId] ?: null;
     }
 
@@ -367,11 +595,14 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * Gets the configured email for the given email.
      *
      * @param string $callnumber
+     * @param string|false $departmentId
      *
      * @return string|null
      */
-    protected function getLocationUrlForCallnumber(string $callnumber) : ?string {
-        $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+    protected function getLocationUrlForCallnumber(string $callnumber, string|false $departmentId = false) : string|null {
+        if (!$departmentId) {
+            $departmentId = $this->getDepartmentIdForCallnumber($callnumber);
+        }
         return $this->thulbConfig->JournalRequest->LocationUrl[$departmentId] ?: null;
     }
 
@@ -408,7 +639,7 @@ class RequestController extends OriginalRecordController implements LoggerAwareI
      * @param string $messageKey    Key of the message to translate.
      * @param array  $messageFields Additional fields to translate and insert into the message.
      */
-    private function addFlashMessage(bool $success, string $messageKey, array $messageFields = []) {
+    private function addFlashMessage(bool $success, string $messageKey, array $messageFields = []): void {
         foreach ($messageFields as $field => $message) {
             $messageFields[$field] = $this->translate($message);
         }

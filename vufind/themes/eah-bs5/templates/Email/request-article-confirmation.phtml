@@ -1,0 +1,42 @@
+<?= $this->transEsc('Email::username_%%', ['%%username%%' => $this->username]); ?>
+
+
+<?= $this->transEsc('Email::salutation', ['%%firstname%%' => $this->firstname, '%%lastname%%' => $this->lastname]); ?>
+
+
+<?= $this->transEsc('Email::Thank you for the request_article'); ?>
+
+
+<?= $this->transEsc('Email::request_article_provisioning'); ?>
+
+
+<?= $this->transEsc('Email::request_article_note_header')?>
+
+<?= $this->transEsc('Email::request_article_note_1')?>
+
+<?= $this->transEsc('Email::request_article_note_2')?>
+
+<?= $this->transEsc('Email::request_article_note_3')?>
+
+
+<?=$this->transEsc('Email::Request details')?>:
+
+<?=$this->transEsc('Email::Article title')?>: <?=$this->title?>
+<?php if ($this->seriesCallnumber ?? false): ?>
+
+<?=$this->transEsc('Email::callnumber', ['%%callnumber%%' => $this->seriesCallnumber])?>
+<?php endif; ?>
+
+<?=$this->transEsc('Email::Series')?>: <?=$this->series?>
+
+<?=$this->transEsc('Email::comment', ['%%comment%%' => $this->comment])?>
+
+
+<?= $this->transEsc('Email::request_article_questions'); ?>
+
+<?= $this->transEsc('Email::not listed, phone'); ?>
+
+<?= $this->transEsc('Email::not listed, mail', ['%%email%%' => $this->informationEmail]); ?>
+
+
+<?=$this->render('Email/footer.phtml')?>

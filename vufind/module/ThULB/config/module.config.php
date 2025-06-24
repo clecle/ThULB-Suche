@@ -270,6 +270,7 @@ $routeGenerator->addNonTabRecordActions($config, ['OrderReserve', 'brokenLink'])
 
 $routeGenerator->addDynamicRoute($config, 'Location', 'Location', 'Information/[:id]');
 $routeGenerator->addDynamicRoute($config, 'record-report-broken-link', 'Record', 'reportBrokenLink/[:id]');
+$routeGenerator->addDynamicRoute($config, 'request-article', 'Request', 'Article/[:id]');
 $routeGenerator->addDynamicRoute($config, 'request-journal', 'Request', 'Journal/[:id]');
 
 return $config;

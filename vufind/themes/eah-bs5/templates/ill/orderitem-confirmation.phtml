@@ -1,0 +1,79 @@
+<?php
+  $fieldMapBook = array(
+      // field name => description
+      'book_title'         => 'Title',
+      'book_author'        => 'Author',
+      'book_publisher'     => 'Publisher',
+      'book_year'          => 'Year',
+      'book_isbn'          => 'ISBN',
+      'book_edition'       => 'Edition',
+      'book_other_edition' => 'ill_order_other_edition',
+      'delivery_until'     => 'ill_order_delivery_until',
+      'comment'            => 'Comments',
+  );
+
+  $fieldMapArticle = array(
+      // field name => description
+      'journal_title'      => 'ill_order_journal_title',
+      'journal_isbn'       => 'ISBN',
+      'journal_year'       => 'Year',
+      'journal_volume'     => 'Volume',
+      'journal_issue'      => 'Issue',
+      'journal_pages'      => 'Pages',
+      'article_author'     => 'ill_order_article_author',
+      'article_title'      => 'ill_order_article_title',
+      'delivery_until'     => 'ill_order_delivery_until',
+      'comment'            => 'Comments',
+  );
+?>
+
+<h2><?=$this->transEsc('ill_order_confirmation')?>></h2>
+
+<form method="post" action="<?=$this->url('ill-orderitemconfirmation')?>">
+  <input type="hidden" name="csrf" value="<?= $this->auth()->getManager()->getCsrfHash(); ?>" />
+  <input type="hidden" name="confirmation" value="true">
+
+  <?php if ($this->order_type == 'Book'): ?>
+    <input type="hidden" name="book_title" value="<?= $this->escapeHtmlAttr($this->book_title); ?>" />
+    <input type="hidden" name="book_author" value="<?= $this->escapeHtmlAttr($this->book_author); ?>" />
+    <input type="hidden" name="book_publisher" value="<?= $this->escapeHtmlAttr($this->book_publisher); ?>" />
+    <input type="hidden" name="book_year" value="<?= $this->escapeHtmlAttr($this->book_year); ?>" />
+    <input type="hidden" name="book_isbn" value="<?= $this->escapeHtmlAttr($this->book_isbn); ?>" />
+    <input type="hidden" name="book_edition" value="<?= $this->escapeHtmlAttr($this->book_edition); ?>" />
+    <input type="hidden" name="book_other_edition" value="<?= $this->escapeHtmlAttr($this->book_other_edition); ?>" />
+  <?php elseif($this->order_type == 'Article'): ?>
+    <input type="hidden" name="journal_title" value="<?= $this->escapeHtmlAttr($this->journal_title); ?>" />
+    <input type="hidden" name="journal_isbn" value="<?= $this->escapeHtmlAttr($this->journal_isbn); ?>" />
+    <input type="hidden" name="journal_year" value="<?= $this->escapeHtmlAttr($this->journal_year); ?>" />
+    <input type="hidden" name="journal_volume" value="<?= $this->escapeHtmlAttr($this->journal_volume); ?>" />
+    <input type="hidden" name="journal_issue" value="<?= $this->escapeHtmlAttr($this->journal_issue); ?>" />
+    <input type="hidden" name="journal_pages" value="<?= $this->escapeHtmlAttr($this->journal_pages); ?>" />
+    <input type="hidden" name="article_author" value="<?= $this->escapeHtmlAttr($this->article_author); ?>" />
+    <input type="hidden" name="article_title" value="<?= $this->escapeHtmlAttr($this->article_title); ?>" />
+  <?php endif; ?>
+
+  <input type="hidden" name="order_type" value="<?= $this->escapeHtmlAttr($this->order_type); ?>" />
+  <input type="hidden" name="delivery_until" value="<?= $this->escapeHtmlAttr($this->delivery_until); ?>" />
+  <input type="hidden" name="comment" value="<?= $this->escapeHtmlAttr($this->comment); ?>" />
+
+  <table>
+    <?php foreach ($this->order_type == 'Book' ? $fieldMapBook : $fieldMapArticle as $fieldName => $desc): ?>
+      <?php if (!empty($this->$fieldName)): ?>
+        <tr>
+          <th><?=$this->transEsc($desc)?>:</th>
+          <td class="ps-2">
+              <?php
+                echo match($fieldName) {
+                  'delivery_until' => $this->dateTime()->convertToDisplayDate('Y-m-d', $this->$fieldName),
+                  'book_other_edition' => $this->transEsc($this->$fieldName ? 'Yes' : 'No'),
+                  default => $this->$fieldName
+                };
+              ?>
+          </td>
+        </tr>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </table>
+
+  <input class="btn btn-primary mt-3" type="submit" name="orderItemConfirmation" value="<?= $this->transEsc('ill_order_order_chargeable')?>" />
+</form>

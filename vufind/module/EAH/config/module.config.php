@@ -4,12 +4,14 @@ namespace EAH\Module\Configuration;
 $config = array(
     'controllers' => array(
         'factories' => array(
+            \EAH\Controller\ILLController::class => \VuFind\Controller\AbstractBaseFactory::class,
             \EAH\Controller\RequestController::class => \VuFind\Controller\AbstractBaseWithConfigFactory::class,
             \EAH\Controller\LetterOfAuthorizationController::class => \VuFind\Controller\AbstractBaseFactory::class,
         ),
         'aliases' => array(
             'request' => \EAH\Controller\RequestController::class,
             'Request' => \EAH\Controller\RequestController::class,
+            \ThULB\Controller\ILLController::class => \EAH\Controller\ILLController::class,
             \ThULB\Controller\LetterOfAuthorizationController::class => \EAH\Controller\LetterOfAuthorizationController::class,
         )
     ),
@@ -48,5 +50,10 @@ $config = array(
         ),
     ),
 );
+
+$routeGenerator = new \VuFind\Route\RouteGenerator();
+$routeGenerator->addStaticRoute($config, 'ILL/orderItem');
+$routeGenerator->addStaticRoute($config, 'ILL/orderItemConfirmation');
+
 
 return $config;

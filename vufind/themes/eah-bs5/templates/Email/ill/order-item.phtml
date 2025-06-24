@@ -1,0 +1,41 @@
+<?=$this->firstname?> <?=$this->lastname?> (<?=$this->username?>; <?=$this->email?>) möchte folgende Bestellung aufgeben.
+
+Bestellart: <?=$this->transEsc($this->order_type)?>
+
+
+<?php if($this->order_type == 'Book'): ?>
+Titel: <?=$this->book_title?>
+
+Autor: <?=$this->book_author?>
+
+Verlag: <?=$this->book_publisher?>
+
+Jahr: <?=$this->book_year?>
+
+ISBN: <?=$this->book_isbn?>
+
+Auflage: <?=$this->book_edition?>
+
+Andere Auflage: <?=$this->book_other_edition == 'true' ? 'Ja' : 'Nein'?>
+<?php else: ?>
+Titel der Zeitschrift / des Buches: <?=$this->journal_title?>
+
+ISSN / ISBN: <?=$this->journal_isbn?>
+
+Jahr: <?=$this->journal_year?>
+
+Jahrgang / Band: <?=$this->journal_volume?>
+
+Heft: <?=$this->journal_issue?>
+
+Seiten: <?=$this->journal_pages?>
+
+Autor*in des Aufsatzes: <?=$this->article_author?>
+
+Titel des Aufsatzes: <?=$this->article_title?>
+<?php endif; ?>
+
+
+Lieferung gewünscht bis: <?=$this->delivery_until?>
+
+Bemerkungen: <?=$this->comment?>

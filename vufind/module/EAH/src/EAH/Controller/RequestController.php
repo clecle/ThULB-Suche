@@ -15,7 +15,7 @@ class RequestController extends OriginalRecordController
      *
      * @return bool Success of the pdf creation.
      */
-    protected function createPDF(array $formData, string $fileName) : bool {
+    protected function createJournalPDF(array $formData, string $fileName) : bool {
         try {
             $savePath = $this->thulbConfig->JournalRequest->request_save_path ?? false;
 

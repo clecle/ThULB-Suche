@@ -4,7 +4,7 @@
 <?= $this->transEsc('Email::salutation', ['%%firstname%%' => $this->firstname, '%%lastname%%' => $this->lastname]); ?>
 
 
-<?= $this->transEsc('Email::Thank you for the request'); ?>
+<?= $this->transEsc('Email::Thank you for the request_journal'); ?>
 
 
 <?= $this->transEsc('Email::provisioning_via_account'); ?>
@@ -37,6 +37,4 @@
 <?= $this->transEsc('Email::not listed, mail', ['%%email%%' => $this->informationEmail]); ?>
 
 
-<?= $this->transEsc('Email::complimentary close'); ?>
-
-<?= $this->transEsc('Email::eah_signature'); ?>
+<?=$this->render('Email/footer.phtml')?>

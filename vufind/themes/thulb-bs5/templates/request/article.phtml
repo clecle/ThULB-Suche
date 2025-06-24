@@ -1,0 +1,53 @@
+<?php $allowed = $allowed ?? false; ?>
+<?php if($allowed): ?>
+  <h2><?= $this->transEsc('storage_retrieval_request_article'); ?></h2>
+<?php endif; ?>
+
+<?= $this->flashmessages() ?>
+
+<?php if ($allowed): ?>
+<div class="article-request">
+  <form action="<?=$this->url('request-article', ['id' => $recordId])?>" method="post">
+    <h4 class="fw-bold mt-5"><?=$this->transEsc('User data')?></h4>
+    <div class="user-data">
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?=$this->transEsc('First Name')?>:</span>
+        <span class="form-information col-sm-9"><?=$this->escapeHtml($formData['firstname'])?></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?=$this->transEsc('Last Name')?>:</span>
+        <span class="form-information col-sm-9"><?=$this->escapeHtml($formData['lastname'])?></span>
+      </div>
+
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?=$this->transEsc('Username')?>:</span>
+        <span class="form-information col-sm-9"><?=$this->escapeHtml($formData['username'])?></span>
+      </div>
+    </div>
+
+    <h4 class="fw-bold mt-5"><?=$this->transEsc('Angaben zum Artikel')?></h4>
+    <div class="request-data">
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3"><?=$this->transEsc('Title')?>:</span>
+        <span class="form-information col-sm-9"><?=$this->escapeHtml($formData['title'])?></span>
+      </div>
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3"><?=$this->transEsc('In')?>:</span>
+        <span class="form-information col-sm-9"><?=$this->escapeHtml($formData['series'])?></span>
+      </div>
+    </div>
+
+    <div class="request-data">
+      <div class="d-flex flex-wrap mb-2">
+        <span class="form-description col-sm-3 fw-bold"><?=$this->transEsc('Note')?>:</span>
+        <span class="form-data col-sm-9"><textarea id="comment" class="form-control h-auto" name="comment" rows="7" autocomplete="off" placeholder=""><?=$formData['comment']?></textarea></span>
+      </div>
+    </div>
+
+    <div class="form-submit mt-4">
+      <input type="submit" class="btn btn-primary d-block col-sm-9 mx-auto" name="submitArticleRequest" value="<?=$this->transEscAttr('Submit')?>">
+    </div>
+  </form>
+</div>
+<?php endif; ?>

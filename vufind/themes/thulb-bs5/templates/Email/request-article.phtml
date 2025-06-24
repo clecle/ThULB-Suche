@@ -1,0 +1,21 @@
+<?=$this->firstname?> <?=$this->lastname?> (<?=$this->username?>; <?=$this->email?>) hat eine Artikelbestellung aufgegeben.
+
+Titel des Artikels: <?=$this->title?>
+
+In: <?=$this->series?>
+
+Anmerkung: <?=$this->comment?>
+
+
+Bestand:
+<?php foreach ($this->holdings['holdings'] as $holding): foreach ($holding['items'] as $item): ?>
+    Standort: <?=$item['location']?>
+
+    Signatur: <?=$item['callnumber']?>
+
+    Hinweis: <?=$item['about'] ?? ''?>
+
+    Bestandsangaben: <?=$item['chronology_about'] ?? ''?>
+
+
+<?php endforeach; endforeach; ?>

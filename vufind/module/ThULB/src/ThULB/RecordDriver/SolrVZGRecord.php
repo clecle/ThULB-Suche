@@ -2297,7 +2297,7 @@ class SolrVZGRecord extends SolrMarc
             // Get data for field
             $tmp = $this->getFieldData($field);
             $tmp['title'] = $this->getSubfield($field, 'n') ?: $this->getSubfield($field, 'i');
-            if (is_array($tmp) && $tmp['link']['type'] == 'bib') {
+            if (is_array($tmp) && isset($tmp['link']['type']) && $tmp['link']['type'] == 'bib') {
                 $editions[] = $tmp;
             }
         }

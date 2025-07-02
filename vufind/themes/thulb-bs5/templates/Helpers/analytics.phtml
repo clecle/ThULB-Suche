@@ -1,0 +1,7 @@
+<?=$this->googleTagManager()->getBodyCode()?>
+<?=$this->googleanalytics()?>
+
+<?php if (!$this->cookieConsent()->isEnabled() || $this->cookieConsent()->isServiceAllowed('matomo')):?>
+  <?=$this->piwik()?>
+  <?=$this->matomo()?>
+<?php endif; ?>

@@ -547,6 +547,11 @@ header .search + div:has(> #message_under_search_box) #message_under_search_box 
   background-color: $vpn-hint-bg;
 }
 
+.vpn-warning-wrapper {
+  transition-property: bottom;
+  transition-duration: 500ms;
+}
+
 @media (min-width: $screen-sm) {
   #vpnhint {
     --bs-border-radius-xxl: .375rem
@@ -792,7 +797,73 @@ form {
   }
 }
 
+/* --- Layout > Cookie Consent --- */
+#cc-main {
+  --cc-btn-primary-color: #fff;
+  --cc-btn-primary-bg: #1E60BE;
+  --cc-btn-primary-border-color: #1E60BE;
+  --cc-btn-primary-hover-color: #fff;
+  --cc-btn-primary-hover-bg: #1a52a2;
+  --cc-btn-primary-hover-border-color: #184d98;
+  --cc-font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  .cm__title {
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .cm__desc {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  button {
+    transition: none !important;
+  }
+}
+
+@media screen and (max-width: $screen-sm-max) {
+  #cc-main {
+    .cm__body {
+      flex-direction: column !important;
+      padding: 0 !important;
+    }
+
+    .cm__btns {
+      flex-direction: column !important;
+      max-width: none !important;
+      min-width: auto !important;
+      border-left: none !important;
+      border-top: 1px solid var(--cc-separator-border-color !important);
+    }
+
+    .cm__btn {
+      flex: auto !important;
+    }
+  }
+}
+
+@media screen and (max-width: $screen-md-max){
+  #cc-main {
+    .cm__btn + .cm__btn,
+    .cm__btn-group + .cm__btn-group {
+      margin: 0 !important;
+      margin-top: 0.375rem !important;
+    }
+
+    .cm__btn-group {
+      display: flex !important;
+      flex-direction: column !important;
+      min-width: auto !important;
+    }
+  }
+}
+
 /* --- Layout > Misc --- */
+.no-transition {
+  transition-duration: 0ms !important;
+}
+
 .external-link:after,
 .authorbox a:after {
   @extend .fa;
@@ -830,6 +901,10 @@ a.truncate {
   -webkit-line-clamp: var(--line-clamp);
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.rocketchat-widget {
+  z-index: 800 !important;
 }
 
 /* ------ Bulk options ------ */
@@ -1289,7 +1364,7 @@ body:has(.main form#advSearchForm) {
     a {
       color: #fff;
     }
-    
+
     i {
       color: #fff;
     }

@@ -140,6 +140,8 @@
           $this->headScript()->appendFile('covers.js');
       }
     ?>
+
+    <?=$this->cookieConsent()->render()?>
     <?=$this->headScript() ?>
   </head>
 

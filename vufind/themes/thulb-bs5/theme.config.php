@@ -9,6 +9,7 @@ return array(
             \ThULB\View\Helper\Root\AccountMenu::class => \VuFind\View\Helper\Root\AccountMenuFactory::class,
             \ThULB\View\Helper\Root\AvailabilityStatus::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
             \ThULB\View\Helper\Root\Citation::class => \VuFind\View\Helper\Root\CitationFactory::class,
+            \ThULB\View\Helper\Root\CookieConsent::class => \VuFind\View\Helper\Root\CookieConsentFactory::class,
             \ThULB\View\Helper\Root\LocationData::class => \ThULB\View\Helper\Root\LocationDataFactory::class,
             \ThULB\View\Helper\Root\NormLink::class => \ThULB\View\Helper\Root\NormlinkFactory::class,
             \ThULB\View\Helper\Root\Record::class => \ThULB\View\Helper\Root\RecordFactory::class,
@@ -19,11 +20,13 @@ return array(
             \ThULB\View\Helper\Root\Session::class => \VuFind\View\Helper\Root\SessionFactory::class,
             \ThULB\View\Helper\Root\UserType::class => \ThULB\View\Helper\Root\InvokableFactoryWithSessionManager::class,
             \VuFind\View\Helper\Root\RecordDataFormatter::class => \ThULB\View\Helper\Root\RecordDataFormatterFactory::class,
+
         ),
         'aliases' => array(
             'accountMenu' => \ThULB\View\Helper\Root\AccountMenu::class,
             'availabilityStatus' => \ThULB\View\Helper\Root\AvailabilityStatus::class,
             'citation' => \ThULB\View\Helper\Root\Citation::class,
+            'cookieConsent' => \ThULB\View\Helper\Root\CookieConsent::class,
             'record' => \ThULB\View\Helper\Root\Record::class,
             'recordLinker' => \ThULB\View\Helper\Root\RecordLinker::class,
             'searchTabs' => \ThULB\View\Helper\Root\SearchTabs::class,

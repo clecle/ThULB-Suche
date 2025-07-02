@@ -38,11 +38,6 @@ $input-placeholder-color: #999 !default;
 
 $btn-padding-x-sm: .25rem !default;
 
-
-
-
-
-
 $dropdown-submenu-wrapper-open-bg-color: $brand-primary-darker-10 !default;
 $dropdown-submenu-wrapper-open-border-radius: var(--bs-border-radius) !default;
 $dropdown-submenu-wrapper-open-box-shadow: 0 0 10px 0 darken($brand-primary, 30%) !default;
@@ -72,41 +67,6 @@ $dropdown-submenu-level-2-item-color: white !default;
 
 $dropdown-submenu-level-2-item-hover-bg-color: lighten($brand-primary, 20%) !default;
 $dropdown-submenu-level-2-item-hover-color: white !default;
-
-
-//$dropdown-submenu-wrapper-open-bg-color: red;
-//    $dropdown-submenu-wrapper-open-border-radius: 0px;
-//$dropdown-submenu-wrapper-open-box-shadow: 0 0 10px 0 darken(white, 30%);
-//
-//
-//$dropdown-submenu-level-1-toggle-active-bg-color: red;
-//$dropdown-submenu-level-1-toggle-active-color: red;
-//
-////$dropdown-submenu-level-1-bg-color: red;
-//    $dropdown-submenu-level-1-border-radius: 0;
-//$dropdown-submenu-level-1-box-shadow: 0 0 10px 0 white;
-//
-//$dropdown-submenu-level-1-item-bg-color: red;
-//$dropdown-submenu-level-1-item-color: red;
-//
-//$dropdown-submenu-level-1-item-hover-bg-color: red;
-//$dropdown-submenu-level-1-item-hover-color: red;
-//
-//
-//$dropdown-submenu-level-2-toggle-active-bg-color: red;
-//$dropdown-submenu-level-2-toggle-active-color: red;
-//
-////$dropdown-submenu-level-2-bg-color: $brand-primary-lighter;
-//    $dropdown-submenu-level-2-border-radius: 0;
-//$dropdown-submenu-level-2-box-shadow: 0 0 10px 0 white;
-//
-//$dropdown-submenu-level-2-item-bg-color: red;
-//$dropdown-submenu-level-2-item-color: red;
-//
-//$dropdown-submenu-level-2-item-hover-bg-color: red;
-//$dropdown-submenu-level-2-item-hover-color: red;
-
-
 
 $recommender-title-bg: $table-bg-accent !default;
 $recommender-item-bg:  #fff !default;

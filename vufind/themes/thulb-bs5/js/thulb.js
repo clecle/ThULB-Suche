@@ -118,6 +118,32 @@ function toggleVpnWarning(show, html) {
     }, 700);
 }
 
+function setupVpnWarning() {
+    window.addEventListener('cc:onModalReady', ({detail}) => {
+        if(detail.modal.classList.contains('cm')) {
+            let vpnWrapper = document.getElementsByClassName('vpn-warning-wrapper')[0];
+            let resizeObserver = new ResizeObserver(() => {
+                vpnWrapper.style.bottom = detail.modal.offsetHeight + "px";
+            });
+            resizeObserver.observe(detail.modal);
+        }
+    });
+
+    window.addEventListener('cc:onModalShow', ({detail}) => {
+        setTimeout(function() {
+            document.getElementsByClassName('vpn-warning-wrapper')[0].classList.add('no-transition');
+        }, 500);
+    });
+
+    window.addEventListener('cc:onModalHide', ({detail}) => {
+        if(detail.modalName === 'consentModal') {
+            document.getElementsByClassName('vpn-warning-wrapper')[0].classList.remove('no-transition');
+            let vpnWrapper = document.getElementsByClassName('vpn-warning-wrapper')[0];
+            vpnWrapper.style.bottom = "0px";
+        }
+    });
+}
+
 function checkVpnWarning(accepted) {
     if(accepted) {
         toggleVpnWarning('hide');
@@ -185,6 +211,7 @@ $(document).ready(function thulbDocReady() {
 	  setAsyncResultNum();
     styleHtmlTooltips();
 
+    setupVpnWarning();
     checkVpnWarning(false);
     
     $('.checkbox-select-all').change(function unsetDisabledCheckboxes() {

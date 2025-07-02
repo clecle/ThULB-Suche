@@ -335,14 +335,27 @@ VuFind.register('multiFacetsSelection', function multiFacetsSelection() {
     e.preventDefault();
     const elem = e.currentTarget;
 
+    const isDateField = elem.tagName === "INPUT" && elem.type === "text";
+
     // Switch data-multi-filters-modified to keep track of changed facets
-    const currentAttrVal = elem.getAttribute('data-multi-filters-modified');
-    const isOriginalState = currentAttrVal === null || currentAttrVal === 'false';
-    if (isOriginalState && elem.closest('.facet').querySelectorAll('[data-multi-filters-modified="true"]').length > 0) {
-      elem.closest('.facet').querySelector('[data-multi-filters-modified="true"]').click();
+    let isOriginalState;
+
+    if (!isDateField) {
+      const currentAttrVal = elem.getAttribute('data-multi-filters-modified');
+      isOriginalState = currentAttrVal === null || currentAttrVal === 'false';
+      if (isOriginalState && elem.closest('.facet').querySelectorAll('[data-multi-filters-modified="true"]').length > 0) {
+        elem.closest('.facet').querySelector('[data-multi-filters-modified="true"]').click();
+      }
+    }
+    else {
+      let originalValue = elem.getAttribute('data-original-value');
+      isOriginalState = originalValue !== elem.value;
     }
     elem.setAttribute('data-multi-filters-modified', isOriginalState);
-    toggleSelectedFacetStyle(elem);
+
+    if (!isDateField) {
+      toggleSelectedFacetStyle(elem);
+    }
 
     checkForSelectedMultiFacets();
   }
@@ -415,6 +428,11 @@ VuFind.register('multiFacetsSelection', function multiFacetsSelection() {
     context.classList.add('multi-facet-selection');
     context.querySelectorAll('a.facet:not(.narrow-toggle):not(.js-facet-next-page), .facet a').forEach(function addListeners(link) {
       link.addEventListener('click', handleClickedFacet);
+    });
+
+    context.querySelectorAll('#publishDateSortFilter .date-fields input[type=text]').forEach(function addListeners(input) {
+      input.addEventListener('input', handleClickedFacet);
+      input.setAttribute('data-original-value', input.value);
     });
   }
 

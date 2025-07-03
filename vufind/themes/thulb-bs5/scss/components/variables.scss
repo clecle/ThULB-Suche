@@ -23,7 +23,7 @@ $border-radius-small:       3px !default;
 $brand-primary:             #1E60BE !default;
 $brand-primary-darker:      darken($brand-primary, 20%) !default;
 $brand-primary-darker-10:   darken($brand-primary, 10%) !default;
-$brand-primary-lighter:     lighten($brand-primary, 10%) !default;
+$brand-primary-lighter:     lighten($brand-primary, 11%) !default;
 $brand-secondary:           #AE9A63 !default;
 $brand-inverted:            #ffcc00 !default;
 
@@ -34,7 +34,7 @@ $primary: $brand-primary !default;
 $secondary: $brand-secondary !default;
 
 $input-border: #ccc !default;
-$input-placeholder-color: #999 !default;
+$input-placeholder-color: #767676 !default;
 
 $btn-padding-x-sm: .25rem !default;
 
@@ -71,7 +71,7 @@ $dropdown-submenu-level-2-item-hover-color: white !default;
 $recommender-title-bg: $table-bg-accent !default;
 $recommender-item-bg:  #fff !default;
 
-$header-bg: #dbdbdb !default;
+$header-bg: #dfdfdf !default;
 $banner-bg: $brand-primary-darker !default;
 
 $vpn-hint-bg: #f9b200 !default;
@@ -83,10 +83,10 @@ $zindex-cookie-consent: ($zindex-dropdown - 10) !default;
 $form-select-bg: none !default;
 $form-select-indicator: none !default;
 
-$badge-bg: #777 !default;
+$badge-bg: #767676 !default;
 $badge-padding-y: 0.25em !default;
 $badge-border-radius: 0.25rem !default;
-$badge-font-size: 12px !default;
+$badge-font-size: 13px !default;
 $badge-line-height: normal !default;
 
 // color success text and badge
@@ -94,6 +94,7 @@ $error: #d2322d !default;
 $error-text-emphasis: #d2322d !default;
 $error-bg-subtle: #f2dede !default;
 $error-border-subtle: darken($error-bg-subtle, 20%) !default;
+$danger: $error;
 
 $info: #214c62 !default;
 $info-text-emphasis: #214c62 !default;

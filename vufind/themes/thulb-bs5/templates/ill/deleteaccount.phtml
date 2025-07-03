@@ -9,7 +9,7 @@
 <?=$this->component('show-account-menu-button')?>
 
 <div class="<?= $this->layoutClass('mainbody')?>">
-  <h2><?= $this->transEsc('ill_delete_account')?></h2>
+  <h1 class="h2"><?= $this->transEsc('ill_delete_account')?></h1>
   <?= $this->flashmessages()?>
 
   <form action="<?=$this->url('ill-deleteaccountconfirmation')?>" method="post" data-lightbox data-lightbox-onclose="VuFind.refreshPage">

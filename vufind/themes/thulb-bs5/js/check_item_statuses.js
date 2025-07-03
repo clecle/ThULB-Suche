@@ -67,7 +67,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
                 : availability === 'false' ? 'unavailable'
                     : availability;
         locationListHTML
-          += '<div class="locationGroupWrapper">'
+          += '<li class="locationGroupWrapper">'
             + '<span class="' + availabilityClasses[availability] + '">' + VuFind.icon('status-' + statusIcon) + '</span>'
             + '<div class="locationGroup">'
               + '<span class="' + availabilityClasses[availability] + '">' + result.locationList[x].location + '</span> '
@@ -75,7 +75,7 @@ VuFind.register('itemStatuses', function ItemStatuses() {
                 ? formatCallnumbers(result.locationList[x].callnumbers, result.locationList[x].callnumber_handler) : '')
               + '</span>'
             + '</div>'
-          + '</div>';
+          + '</li>';
       }
       el.querySelectorAll('.locationDetails').forEach((locationDetails) => {
         locationDetails.classList.remove('hidden');

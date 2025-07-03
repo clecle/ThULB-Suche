@@ -47,17 +47,10 @@ function setupHintTooltips() {
 
 function setupPopovers() {
     $('[data-bs-toggle="popover').each(function (i) {
-        $(this).on('click', function (e) {
-            e.preventDefault();
-        });
         new bootstrap.Popover(this, {
             html: true,
-            delay: {
-                show: 0,
-                hide: 100
-            },
             content: function (el) {
-                return $(el).parent().find('.popover-link-list').html();
+                return document.getElementById(el.id + "-content").innerHTML;
             }
         });
     });
@@ -90,6 +83,7 @@ function setAsyncResultNum() {
             data: {'lookfor': lookfor, 'index': index, 'type': type}
         }).done(function writeCount (response) {
             $('span.resultNum' + index).text(response.data.count);
+            $('span.sr-only.resultNum' + index).text(response.data.count.replaceAll('.',''));
         }).fail(function() {
             $('span.resultNum' + index).addClass('hidden');
         });

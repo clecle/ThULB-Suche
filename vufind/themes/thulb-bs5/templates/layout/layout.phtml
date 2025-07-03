@@ -150,7 +150,7 @@
       <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
         <span class="sr-only" role="heading" aria-level="1"><?=$this->layout()->srmessage ?></span>
       <?php endif; ?>
-      <a class="sr-only sr-only-focusable" href="#content"><?=$this->transEsc('Skip to content') ?></a>
+      <a class="sr-only display-on-focus" href="#content"><?=$this->transEsc('Skip to content') ?></a>
       <?=$this->render('header.phtml')?>
     </header>
 
@@ -182,7 +182,7 @@
     <div id="modal" class="modal fade hidden-print" tabindex="-1" role="dialog" aria-hidden="true">
       <div class="modal-dialog">
         <div class="modal-content">
-          <button type="button" class="close" data-bs-dismiss="modal">
+          <button type="button" class="close" data-bs-dismiss="modal" aria-label="<?=$this->transEscAttr('Close')?>">
             <?=$this->icon('lightbox-close', ['aria-label' => $this->transEscAttr('Close')]) ?>
           </button>
           <div class="modal-body"></div>
@@ -200,6 +200,7 @@
       <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, $jsInclude, 'SET')?>
     <?php endforeach; ?>
 
+    <?php if ($this->thulb_serverType() === 'production'): ?>
     <!-- Start of Rocket.Chat Livechat Script -->
     <script type="text/javascript">
         (function(w, d, s, u) {
@@ -210,6 +211,7 @@
         })(window, document, 'script', 'https://chat.thulb.uni-jena.de/livechat');
     </script>
     <!-- End of Rocket.Chat Livechat Script -->
+    <?php endif; ?>
 
     <?=$this->footScript() ?>
   </body>

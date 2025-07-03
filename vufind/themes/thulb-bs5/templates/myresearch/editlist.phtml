@@ -7,14 +7,14 @@
   $this->layout()->breadcrumbs = false;
 ?>
 
-<?=$this->flashmessages()?>
-
 <?php if ($this->auth()->getIdentity() && $this->layout()->getTemplate() !== 'layout/lightbox') :?>
   <div class="<?=$this->layoutClass('mainbody')?>">
   <?=$this->component('show-account-menu-button')?>
 <?php endif; ?>
 
-<h2><?=$this->transEsc($pageTitle); ?></h2>
+<?=$this->flashmessages()?>
+
+<h1 class="h2"><?=$this->transEsc($pageTitle); ?></h1>
 
 <form class="form-edit-list" method="post" name="<?=$this->newList ? 'newList' : 'editListForm'?>" action="<?=$this->url('editList'); ?>">
   <input type="hidden" name="id" value="<?=$this->newList || empty($listId = $this->list->getId()) ? 'NEW' : $this->escapeHtmlAttr($listId) ?>">
@@ -42,8 +42,8 @@
   <?php elseif ($this->userlist()->getMode() === 'private_only'): ?>
     <input type="hidden" name="public" value="0">
   <?php else: ?>
-    <div class="form-group">
-      <label class="control-label"><?=$this->transEsc('Access') ?></label>
+    <fieldset class="form-group float-none fs-6 border-0">
+      <legend class="control-label"><?=$this->transEsc('Access') ?></legend>
       <div class="radio inline">
         <label>
           <input id="list_public_1" type="radio" name="public" value="1"<?php if ($this->list->isPublic()): ?> checked="checked"<?php endif; ?>> <?=$this->transEsc('Public') ?>
@@ -57,7 +57,7 @@
         </label>
         <a title="<?= $this->transEscAttr('explain_privateList') ?>">?</a>
       </div>
-    </div>
+    </fieldset>
   <?php endif; ?>
 
   <div class="form-group">

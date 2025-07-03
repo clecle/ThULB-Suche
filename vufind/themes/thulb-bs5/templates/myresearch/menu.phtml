@@ -2,7 +2,8 @@
   $user = $this->auth()->getUserObject();
 ?>
 <?=$this->component('hide-offcanvas-button')?>
-<h4 id="acc-menu-acc-header"><?= $this->transEsc('Your Account')?></h4>
+<h1 class="sr-only"><?=$this->transEsc('Account sidebar')?></h1>
+<h2 id="acc-menu-acc-header" class="h4"><?= $this->transEsc('Your Account')?></h2>
 <nav class="myresearch-menu" aria-labelledby="acc-menu-acc-header">
   <ul class="account-menu">
     <?php foreach ($this->items as $item): ?>
@@ -12,7 +13,7 @@
 </nav>
 
 <?php if($user && $this->config()->get('thulb')->ILL->enabled): ?>
-  <h4 id="acc-menu-ill-header"><?= $this->transEsc('My Interlibrary loan')?></h4>
+  <h2 id="acc-menu-ill-header" class="h4"><?= $this->transEsc('My Interlibrary loan')?></h2>
   <nav class="myresearch-menu" aria-labelledby="acc-menu-ill-header">
     <ul class="ill-menu">
       <li>
@@ -38,7 +39,7 @@
 <?php endif; ?>
 
 <?php if ($user && $this->userlist()->getMode() !== 'disabled'): ?>
-  <h4 id="acc-menu-lists-header"><?= $this->transEsc('Your Lists')?></h4>
+  <h2 id="acc-menu-lists-header" class="h4"><?= $this->transEsc('Your Lists')?></h2>
   <nav class="myresearch-menu" aria-labelledby="acc-menu-lists-header">
     <ul class="favorite-menu">
       <?php

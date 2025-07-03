@@ -14,7 +14,7 @@
     <th class="col-sm-4"><?= $this->transEsc('Location'); ?></th>
     <th class="col-sm-2"><?= $this->transEsc('Call Number'); ?></th>
     <th class="col-sm-2"><?= $this->transEsc('Due'); ?></th>
-    <th class="col-sm-2">&nbsp;</th>
+    <th class="col-sm-2"><?=$this->transEsc('Actions')?></th>
   </tr>
   <?php foreach($holdings as $location => $items): ?>
     <?php foreach($items as $item): ?>

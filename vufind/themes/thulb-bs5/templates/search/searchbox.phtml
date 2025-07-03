@@ -63,7 +63,7 @@
         </p>
 
         <div class="d-flex flex-column align-items-end col-12 col-sm-auto">
-          <a href="#_" id="results-adv-search-edit" class="btn btn-primary text-nowrap col-12 col-sm-auto collapsed" data-bs-toggle="collapse" data-bs-target="#results-adv-search"><span class="results-adv-search-edit-text"><?=$this->transEsc('Edit search')?></span> <?=$this->icon('collapse')?></a>
+          <a href="#" id="results-adv-search-edit" class="btn btn-primary text-nowrap col-12 col-sm-auto collapsed" data-bs-toggle="collapse" data-bs-target="#results-adv-search"><span class="results-adv-search-edit-text"><?=$this->transEsc('Edit search')?></span> <?=$this->icon('collapse')?></a>
           <a href="<?=$this->url($searchHome, [], ['query' => $hiddenFilters])?>" class="basic-search-link mt-2">&raquo; <?=$this->transEsc('Basic Search')?></a>
         </div>
       </div>
@@ -153,7 +153,7 @@
       </div>
 
       <?php if ($handlerCount > 1): ?>
-        <select id="searchForm_type" class="searchForm_type form-control-lg order-sm-first" name="type" data-native-menu="false" aria-label="<?=$this->transEscAttr('Search type')?>">
+        <select id="searchForm_type" class="searchForm_type form-control-lg order-sm-first" name="type" data-native-menu="false" aria-label="<?=$this->transEscAttr('Search Type')?>">
           <?php $currentGroup = $insideGroup = false; ?>
           <?php foreach ($handlers as $handler): ?>
             <?php

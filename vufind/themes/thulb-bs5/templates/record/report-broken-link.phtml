@@ -5,8 +5,8 @@
 
   <form class="form-horizontal authority-form" method="post" name="authority">
     <div class="d-flex flex-column mb-3 gap-4">
-      <div class="flex-grow-1">
-        <p class="mb-0"><?=$this->transEsc('Do you want feedback')?></p>
+      <fieldset class="flex-grow-1">
+        <legend class="mb-0"><?=$this->transEsc('Do you want feedback')?></legend>
         <div class="form-check">
           <input class="form-check-input" value="true" type="radio" name="feedback" id="feedback-yes" required>
           <label class="form-check-label" for="feedback-yes"><?=$this->transEsc('Yes')?></label>
@@ -15,7 +15,7 @@
           <input class="form-check-input" value="false" type="radio" name="feedback" id="feedback-no" required>
           <label class="form-check-label" for="feedback-no"><?=$this->transEsc('No')?></label>
         </div>
-      </div>
+      </fieldset>
 
       <div class="broken-link-feedback-info d-flex flex-column mb-3 gap-4">
         <div class="flex-grow-1">

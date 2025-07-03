@@ -12,7 +12,7 @@
     <?php if (!isset($this->layout()->renderingError)): ?>
       <div class="navbar-header">
         <?= $this->render('navbar/navbar-logo.phtml'); ?>
-        <nav>
+        <nav aria-label="<?=$this->transEscAttr('Account') // @TODO?>">
           <ul class="navbar-account nav navbar-nav navbar-right flex-row flip">
             <?php if ($this->feedback()->tabEnabled()): ?>
               <li>
@@ -29,7 +29,7 @@
                 <a id="cartItems" class="icon-link" data-lightbox title="<?=$this->transEscAttr('View Book Bag')?>" href="<?=$this->url('cart-home')?>">
                   <?=$this->icon('cart', 'icon-link__icon') ?>
                   <span class="icon-link__label">
-                    <span class="sr-only"><?=$this->transEsc('Book Bag')?>:</span>
+                    <span class="sr-only"><?=$this->transEsc('View Book Bag')?></span>
                     <span role="status"><strong><?=count($cart->getItems())?></strong> <span class="hidden"><?=$this->transEsc('items')?></span></span>
                     <span class="full<?=!$cart->isFull() ? ' hidden' : '' ?>">(<?=$this->transEsc('bookbag_full') ?>)</span>
                   </span>
@@ -40,8 +40,8 @@
               <?php if ($account->getIdentity()): ?>
                 <li class="logoutOptions<?php if ($account->dropdownEnabled()): ?> with-dropdown<?php endif ?>">
                   <a title="<?= $this->transEscAttr("Your Account")?>" href="<?= $this->url('myresearch-home', array(), array('query' => array('redirect' => 0)))?>">
-                    <span id="account-icon" class="icon-link__icon" role="link"><?=$this->icon('my-account', 'icon-link__icon') ?></span>
-                    <span class="icon-link__label hidden"><?=$this->transEsc('Your Account')?></span>
+                    <span class="sr-only"><?=$this->transEsc('Your Account')?></span>
+                    <span id="account-icon" class="icon-link__icon" role="link"><?=$this->icon('my-account', ['class' => 'icon-link__icon', 'alt' => $this->transEsc("Your Account")]) ?></span>
                   </a>
                 </li>
                 <?php if ($account->dropdownEnabled()): ?>
@@ -54,6 +54,7 @@
                 <?php endif; ?>
                 <li class="logoutOptions">
                   <a href="<?=$this->url('myresearch-logout')?>" class="user-icon logout icon-link">
+                    <span class="sr-only"><?=$this->transEsc('Log Out')?></span>
                     <span class="icon-link__icon" role="link"><?=$this->icon('sign-out', 'icon-link__icon') ?></span>
                     <span class="icon-link__label hidden"><?=$this->transEsc('Log Out')?></span>
                   </a>
@@ -62,13 +63,13 @@
                 <li id="loginOptions">
                   <?php if ($account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
                     <a href="<?=$this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Institutional Login")?>" class="user-icon icon-link">
-                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', 'icon-link__icon') ?></span>
-                      <span class="icon-link__label hidden"><?=$this->transEsc('Institutional Login')?></span>
+                      <span class="sr-only"><?=$this->transEsc('Institutional Login')?></span>
+                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', ['class' => 'icon-link__icon', 'alt' => $this->transEsc("Institutional Login")]) ?></span>
                     </a>
                   <?php else: ?>
                     <a href="<?=$this->url('myresearch-userlogin')?>" title="<?= $this->transEscAttr("Userlogin")?>" class="user-icon icon-link">
-                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', 'icon-link__icon') ?></span>
-                      <span class="icon-link__label hidden"><?=$this->transEsc('Login')?></span>
+                      <span class="sr-only"><?=$this->transEsc('Userlogin')?></span>
+                      <span class="icon-link__icon" role="link"><?=$this->icon('sign-in', ['class' => 'icon-link__icon', 'alt' => $this->transEsc("Userlogin")]) ?></span>
                     </a>
                   <?php endif; ?>
                 </li>
@@ -95,6 +96,9 @@
             <?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
               <?=$this->component('menu-button', [
                 'toggleLabel' => strtoupper($this->layout()->userLang),
+                'toggleAttrs' => [
+                  'aria-label' => $this->transEscAttr('Language')
+                ],
                 'wrapperClass' => 'language hidden-xs hidden-sm dropdown-colored',
                 'wrapperTag' => 'li',
                 'dropdownClass' => 'dropdown-menu-end',
@@ -121,7 +125,7 @@
         </nav>
       </div>
       <div class="navbar-header collapse navbar-collapse" id="header-collapse">
-        <nav>
+        <nav aria-label="<?=$this->transEscAttr('Tips and further Information') // @TODO?>">
           <?= $this->render('navbar/navbar-left.phtml'); ?>
         </nav>
       </div>
@@ -131,7 +135,7 @@
 
 <?php if($displayLogo): ?>
   <?php $logo = sprintf('ThULB_Logo_text_horizontal_%s.svg', strtolower($this->layout()->userLang) != 'en' ? 'de' : 'en'); ?>
-  <img class="brand-landing-page-logo hidden-xs hidden-sm" alt="Logo" src="<?= $this->imageLink($logo); ?>" />
+  <img class="brand-landing-page-logo hidden-xs hidden-sm" alt="<?=$this->transEscAttr('thulb_full')?>" src="<?= $this->imageLink($logo); ?>" />
 <?php endif; ?>
 
 <?php if ($this->layout()->searchbox !== false): ?>

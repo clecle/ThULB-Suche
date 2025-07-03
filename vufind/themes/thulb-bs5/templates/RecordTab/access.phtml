@@ -41,7 +41,7 @@
 <?= ($offlineMode == "ils-offline" && empty($holdings)) ? $this->render('Helpers/ils-offline.phtml', ['offlineModeMsg' => 'ils_offline_holdings_message']) : ''?>
 
 <?php // related resources, current is print ressource ?>
-<?php if ($this->driver->getIndexField('remote_bool') == 'false'): ?>
+<?php if ($this->driver->tryMethod('getIndexField', ['remote_bool']) == 'false'): ?>
   <?= $this->render('RecordTab/access/parallelEditions.phtml')?>
 <?php endif; ?>
 
@@ -83,7 +83,7 @@
 <?php endif; ?>
 
 <?php // related resources, current is online ressource ?>
-<?php if ($this->driver->getIndexField('remote_bool') == 'true'): ?>
+<?php if ($this->driver->tryMethod('getIndexField', ['remote_bool']) == 'true'): ?>
   <?= $this->render('RecordTab/access/parallelEditions.phtml')?>
 <?php endif; ?>
 

@@ -566,6 +566,21 @@ header .search + div:has(> #message_under_search_box) #message_under_search_box 
   max-width: calc(100% - 30px);
 }
 
+/* --- Layout > Accessability page --- */
+.accessibility-table {
+  width: 100%;
+
+  td,
+  th {
+    padding: 5px;
+    border: 1px solid #000;
+  }
+
+  th {
+    background-color: $header-bg;
+  }
+}
+
 /* --- Layout > Backgrounds --- */
 .testingbg {
   background-image: url("/themes/thulb-bs5/images/TestTile.png");

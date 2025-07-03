@@ -10,9 +10,9 @@
 <h3 class="holding-title d-flex flex-column align-items-sm-center flex-sm-row gap-2 mx-3">
   <span class="col-description"><?= $this->transEsc('Location') ?>:</span>
   <span class="col-text">
-    <?= $this->thulb_holdingHelper()->getLocation($holding, false);?>
+    <?= $locationName = $this->thulb_holdingHelper()->getLocation($holding, false);?>
     <?php if($locationInfoInfoMessage): ?>
-      <button class="btn-location-info" onclick="VuFind.lightbox.alert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');">
+      <button class="btn-location-info" onclick="VuFind.lightbox.alert('<?= $this->transEsc($locationInfoInfoMessage, ["'" => "\\'"]); ?>', 'info');" aria-label="<?=$this->transEscAttr('Explanation')?>: <?=$locationName?>">
         <i class="fa fa-info-circle"></i>
       </button>
     <?php endif; ?>

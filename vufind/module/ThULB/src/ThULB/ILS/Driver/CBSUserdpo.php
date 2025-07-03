@@ -105,7 +105,7 @@ class CBSUserdpo extends AbstractBase implements
                 '403' => 'CBS user has insufficient privileges',
                 '404' => 'The record could not be found',
                 '422' => 'Missing or malformed parameter',
-                default => 'An error occured.',
+                default => 'An error occurred.',
             };
 
             throw new ErrorException($errorMsg, $json['errors'][0]['status']);

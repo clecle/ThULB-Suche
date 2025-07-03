@@ -509,6 +509,7 @@ footer {
     padding-left: 1rem;
   }
 }
+
 .breadcrumb {
   margin-top: .5rem;
   margin-bottom: .5rem;
@@ -566,6 +567,37 @@ header .search + div:has(> #message_under_search_box) #message_under_search_box 
   max-width: calc(100% - 30px);
 }
 
+/* --- Layout > detail view --- */
+.truncate-subjects .btn-link {
+  box-shadow: none !important;
+  text-decoration: none;
+
+  &:focus-visible {
+    outline: 1px auto -webkit-focus-ring-color !important;
+  }
+
+  &:hover,
+  &:focus {
+    text-decoration: underline;
+    color: $link-hover-color;
+  }
+}
+
+/* --- Layout > Accessability page --- */
+.accessibility-table {
+  width: 100%;
+
+  td,
+  th {
+    padding: 5px;
+    border: 1px solid #000;
+  }
+
+  th {
+    background-color: $header-bg;
+  }
+}
+
 /* --- Layout > Accessability page --- */
 .accessibility-table {
   width: 100%;
@@ -590,6 +622,27 @@ header .search + div:has(> #message_under_search_box) #message_under_search_box 
 .developmentbg {
   background-image: url("/themes/thulb-bs5/images/DevTile.png");
   background-repeat: repeat;
+}
+
+/* --- Layout > Alerts --- */
+.alert {
+  a:not(.btn) {
+    color: $primary !important;
+  }
+
+  p:last-child {
+    margin: 0;
+  }
+}
+
+.authorbox {
+  @extend .alert;
+  @extend .alert-success;
+
+  i {
+    font-size: 20px;
+    font-weight: bold;
+  }
 }
 
 /* --- Layout > Buttons --- */
@@ -903,7 +956,7 @@ form {
 }
 
 .label-success {
-  background-color: #5cb85c;
+  background-color: #49834a;
 }
 
 .label-unknown {
@@ -916,6 +969,19 @@ a.truncate {
   -webkit-line-clamp: var(--line-clamp);
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.display-on-focus {
+  &:focus {
+    height: auto !important;
+    width: auto !important;
+    clip: auto !important;
+  }
+}
+
+header .display-on-focus:focus {
+  color: #fff;
+  padding: 15px 15px !important;
 }
 
 .rocketchat-widget {
@@ -994,7 +1060,7 @@ a.truncate {
   margin: 0;
 
   .icon-link__label {
-    display: none;
+    @extend .sr-only;
   }
 }
 
@@ -1188,6 +1254,7 @@ body:has(.main form#advSearchForm) {
     .adv-term-remove {
       width: unset;
       min-width: 2rem;
+      opacity: .7;
     }
   }
 
@@ -1246,8 +1313,16 @@ body:has(.main form#advSearchForm) {
   }
 }
 
-.search-sort label {
-  display: none;
+.sidebar .search-sort {
+  flex-wrap: nowrap;
+  flex-direction: column;
+  gap: unset;
+
+  label {
+    @extend .h4;
+
+    line-height: unset;
+  }
 }
 
 /* ------ Search > Searchform ------ */
@@ -1264,6 +1339,12 @@ body:has(.main form#advSearchForm) {
     text-align: center;
     min-width: 190px;
     padding: 0;
+
+    &:focus,
+    &:focus-within,
+    &:focus-visible {
+      outline: 5px auto $brand-primary-lighter;
+    }
   }
 
   #searchForm_lookfor {
@@ -1432,12 +1513,20 @@ body:has(.main form#advSearchForm) {
 }
 
 .facet-tree li {
+  .facet-tree__toggle-expanded {
+    max-width: 1.75em;
+  }
+
   .facet-tree__toggle-expanded:hover {
     background-color: #eee;
   }
 
-  .facet-tree__item-container a {
-    gap: .5rem;
+  .facet-tree__item-container {
+    width: calc(100% - 1.75em);
+
+    a {
+      gap: .5rem;
+    }
   }
 }
 
@@ -1543,7 +1632,7 @@ body:has(.main form#advSearchForm) {
 
   h2,
   .icon-link__label {
-    display: none;
+    @extend .sr-only;
   }
 
   .icon-link {
@@ -1560,7 +1649,7 @@ body:has(.main form#advSearchForm) {
   padding-top: 1.5rem;
 
   .format {
-    background-color: $gray-light;
+    background-color: $badge-bg;
   }
 
   .result-author {
@@ -1635,19 +1724,23 @@ body:has(.main form#advSearchForm) {
   }
 }
 
-.locationGroupWrapper {
-  display: flex;
-  gap: 0 0.5rem;
+.locationDetails {
+  padding: 0;
 
-  .locationGroup {
+  .locationGroupWrapper {
     display: flex;
-    flex-wrap: wrap;
     gap: 0 0.5rem;
 
-    span {
-      display: inline-flex;
-      gap: 0 .25rem;
-      align-items: baseline;
+    .locationGroup {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0 0.5rem;
+
+      span {
+        display: inline-flex;
+        gap: 0 .25rem;
+        align-items: baseline;
+      }
     }
   }
 }
@@ -1792,7 +1885,7 @@ body:has(.main form#advSearchForm) {
 /* --- Detail view > Access tab --- */
 .access-tab {
   .col-description {
-    width: 85px;
+    width: 105px;
     flex-shrink: 0;
   }
 
@@ -1980,7 +2073,7 @@ form#cancelHold {
 
 /* --- MyResearch > Favorites --- */
 .favorite-header .list-edit .icon-link__label {
-  display: none;
+  @extend .sr-only;
 }
 
 .favorite-menu .icon-link {
@@ -2046,7 +2139,7 @@ form#cancelHold {
 }
 
 .history_actions span.icon-link__label{
-  display: none;
+  @extend .sr-only;
 }
 
 /* ------ Admin ------ */

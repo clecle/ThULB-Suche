@@ -38,7 +38,7 @@
     </div>
     <div class="col-lg-6">
       <label for="grantUntil" class="form-label fw-bold required"><?= $this->transEsc('Valid Until'); ?></label>
-      <input id="grantUntil" type="date" name="grantUntil" class="form-control<?= in_array('grantUntil', $errors) ? ' error' : ''; ?>" required placeholder="<?= $this->transEsc('Granted Until'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
+      <input id="grantUntil" type="date" name="grantUntil" class="form-control<?= in_array('grantUntil', $errors) ? ' error' : ''; ?>" required value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
     </div>
 
     <div class="align-items-baseline d-flex gap-2">

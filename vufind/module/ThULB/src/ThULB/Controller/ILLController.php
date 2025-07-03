@@ -225,6 +225,7 @@ class ILLController extends AbstractBase implements LoggerAwareInterface
                 $this->writeIllLog();
 
                 $this->flashMessage('error', 'An error occurred during execution; please try again later.');
+
                 return (new ViewModel())->setTemplate('Helpers/flashMessages.phtml');
             }
         }

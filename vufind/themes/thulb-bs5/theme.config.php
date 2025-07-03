@@ -89,5 +89,6 @@ return array(
     'js' => array(
         'thulb.js',
         'jquery-ui.min.js',
+//        'skipto.min.js',      // https://skipto-landmarks-headings.github.io/page-script-5/config.html
     ),
 );

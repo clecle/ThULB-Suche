@@ -144,6 +144,7 @@
 <?php /* Refine Search Options */ ?>
 <?php if(!$hideSidebar): ?>
   <div class="<?= $this->layoutClass('sidebar')?>" id="search-sidebar" role="region" aria-label="<?=$this->transEscAttr('Search sidebar') ?>">
+    <h1 class="sr-only"><?=$this->transEsc('Search sidebar')?></h1>
     <div id="moduletab">
       <?php
         $ignoreHiddenFilterMemory = $this->ignoreHiddenFilterMemory ?? false;
@@ -170,7 +171,6 @@
     <?php if ($recordTotal > 0): ?>
       <?php $list = $this->params->getSortList(); ?>
       <?php if (!empty($list)): ?>
-        <h4><?=$this->transEsc('Sort')?></h4>
         <?= $this->render('search/controls/sort.phtml')?>
       <?php endif; ?>
 

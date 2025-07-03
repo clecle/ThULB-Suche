@@ -32,7 +32,7 @@
       </div>
       <div class="col-lg-4<?= in_array('grantUntil', $errors) ? ' has-error' : ''; ?>">
         <label for="grantUntil" class="font-weight-bold"><?= $this->transEsc('Valid Until'); ?></label>
-        <input id="grantUntil" type="date" name="grantUntil" class="form-control" required placeholder="<?= $this->transEsc('Granted Until'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
+        <input id="grantUntil" type="date" name="grantUntil" class="form-control" required value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
       </div>
     </div>
     <div class="flex mb-2">

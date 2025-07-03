@@ -1,21 +1,20 @@
 <?php
   $errors = $this->errors ?? [];
   // Set up page title:
-  $pageTitle = "Letter of Authorization";
-  $this->headTitle($this->translate($pageTitle));
+  $pageTitle = "Create Letter of Authorization";
+  $this->headTitle($this->transEsc($pageTitle));
 
-  // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-      . '<li>' . $this->transEsc($pageTitle) . '</li>';
+  // Disable breadcrumbs:
+  $this->layout()->breadcrumbs = false;
 ?>
 
 <?=$this->component('show-account-menu-button')?>
 
 <div class="<?= $this->layoutClass('mainbody')?>">
-  <h2><?= $this->transEsc($pageTitle); ?></h2>
+  <h1 class="h2"><?= $this->transEsc($pageTitle); ?></h1>
 
   <div class="alert alert-info">
-      <?= $this->transEsc('information_authorization'); ?>
+    <?= $this->transEsc('information_authorization'); ?>
   </div>
 
   <?= $this->flashmessages() ?>
@@ -33,7 +32,7 @@
     </div>
     <div class="col-lg-4">
       <label for="grantUntil" class="form-label fw-bold"><?= $this->transEsc('Valid Until'); ?></label>
-      <input id="grantUntil" type="date" name="grantUntil" class="form-control<?= in_array('grantUntil', $errors) ? ' error' : ''; ?>" required placeholder="<?= $this->transEsc('Granted Until'); ?>" value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
+      <input id="grantUntil" type="date" name="grantUntil" class="form-control<?= in_array('grantUntil', $errors) ? ' error' : ''; ?>" required value="<?=$this->escapeHtmlAttr($this->request->getPost('grantUntil'))?>" min="<?= date("Y-m-d"); ?>">
     </div>
 
     <div class="align-items-baseline d-flex gap-2">

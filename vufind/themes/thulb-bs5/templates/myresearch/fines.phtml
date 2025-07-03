@@ -9,7 +9,7 @@
 <?=$this->component('show-account-menu-button')?>
 
 <div class="<?=$this->layoutClass('mainbody')?>">
-  <h2><?=$this->transEsc('Your Fines')?></h2>
+  <h1 class="h2"><?=$this->transEsc('Your Fines')?></h1>
   <?=$this->flashmessages()?>
 
   <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $this->auth()->getUserObject()]); ?>
@@ -96,8 +96,8 @@
         <div>
           <?php foreach ($columns as $column): ?>
             <div class="d-flex">
-              <label class="col-4 fw-bold"><?=$this->transEscAttr($column)?>:</label>
-              <div class="col-8" data-label="<?=$this->transEscAttr($column)?>"><?=$tableData[$column][$row]?></div>
+              <label class="col-5 fw-bold"><?=$this->transEscAttr($column)?>:</label>
+              <div class="col-7" data-label="<?=$this->transEscAttr($column)?>"><?=$tableData[$column][$row]?></div>
             </div>
           <?php endforeach; ?>
         </div>
@@ -105,8 +105,8 @@
 
       <div>
         <div class="d-flex">
-          <label class="col-4 fw-bold"><?=$this->transEsc('Total Balance Due')?></label>
-          <div class="col-8 fw-bold"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></div>
+          <label class="col-5 fw-bold"><?=$this->transEsc('Total Balance Due')?></label>
+          <div class="col-7 fw-bold"><?=$this->safeMoneyFormat($totalDue / 100.00) ?></div>
         </div>
       </div>
     </div>

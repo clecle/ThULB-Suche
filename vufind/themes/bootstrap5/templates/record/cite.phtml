@@ -29,7 +29,7 @@
       $caption = (strpos($longCaption, 'Citation') > 0 && !str_contains($shortCaption, 'Citation'))
         ? $shortCaption : $longCaption;
     ?>
-    <strong><?=$this->escapeHtml($caption)?></strong>
+    <h2 class="h5 m-0"><?=$this->escapeHtml($caption)?></h2>
     <p class="text-left">
       <?=$citation?>
     </p>

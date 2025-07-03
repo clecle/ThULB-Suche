@@ -15,7 +15,7 @@
 
 <div class="<?= $this->layoutClass('mainbody'); ?>">
   <?php if(!isset($this->exception)): ?>
-    <h2><?= $this->transEsc('ill_credits_charge')?></h2>
+    <h1 class="h2"><?= $this->transEsc('ill_credits_charge')?></h1>
     <?= $this->flashmessages(); ?>
 
     <form action="<?=$this->url('ill-chargeconfirmation')?>" method="post" class="form-inline" data-lightbox data-lightbox-onclose="VuFind.refreshPage">

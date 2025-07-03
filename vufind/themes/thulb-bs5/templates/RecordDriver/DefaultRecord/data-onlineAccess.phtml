@@ -8,7 +8,7 @@
   <?php if($key > 0): ?>
     <br>
   <?php endif; ?>
-
+<?php $current['url'] = preg_replace('/^(http:)/', 'https:', $current['url']); ?>
   <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($current['url']))?>" target="_blank"><?=$this->escapeHtml($current['desc'])?></a>
 <?php endforeach; ?>
 

@@ -20,7 +20,7 @@
   if ($this->href ?? false) {
     $toggleTag = 'a';
     $defaultAttrs['href'] = $this->href;
-    $defaultAttrs['type'] = null;
+    unset($defaultAttrs['type']);
   }
 
   $toggleAttrs = array_merge($defaultAttrs, $this->toggleAttrs ?? []);

@@ -1,0 +1,7 @@
+<?php
+    $folder = $this->src ?? '';
+    $className = trim('icon icon--img ' . ($this->extra['class'] ?? ''));
+
+    $alt = empty($extra['alt']) ? ' alt=""' : $extra['alt'];
+?>
+<img class="<?=$this->escapeHtmlAttr($className) ?>" src="<?=$this->escapeHtmlAttr($this->imageLink($folder . '/' . $this->icon)) ?>" aria-hidden="true"<?=$this->attrs ?><?=empty($extra['alt']) ? ' alt=""' : ''?>>

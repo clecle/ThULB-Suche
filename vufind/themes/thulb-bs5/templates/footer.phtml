@@ -5,6 +5,7 @@
     <div class="container">
       <ul class="nav navbar-nav">
         <li><a class="p-3" href="<?= $this->translate('URL::imprint'); ?>" target="_blank"><?= $this->transEsc('Footer_imprint')?></a></li>
+        <li><a class="p-3" href="<?= $this->url('content-page', ['page' => 'accessibility']); ?>" target="_blank"><?= $this->transEsc('Footer_accessibility')?></a></li>
 
         <li><a class="p-3" href="https://github.com/clecle/ThULB-Suche/blob/master/CHANGELOG.md" target="_blank" title="Änderungen auf GitHub einsehen">ThULB-Suche Version <?=$versionstring[1] ?? "unknown (you are probably on TEST or DEV)" ?></a></li>
 

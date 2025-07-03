@@ -1467,6 +1467,10 @@ body:has(.main form#advSearchForm) {
   }
 }
 
+.facet-range-form {
+  padding: 0 .5rem;
+}
+
 .modal .js-full-facet-list .multi-filters-selection {
   padding: 0;
 

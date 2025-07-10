@@ -5,10 +5,18 @@ Daher strebt das Entwicklungsteam der ThULB-Suche einen engeren Austausch mit Nu
 Sollten Sie Fragen, Hinweise oder Verbesserungswünsche haben, treten Sie jederzeit gern in Kontakt mit uns,
 z.B. über unser [Service-Desk](https://servicedesk.uni-jena.de/plugins/servlet/desk/portal/140/create/1001?customfield_12342=20009) oder per Mail discovery_thulb[at]uni-jena.de.
 
+## v4.0.5 *07/25*
+- optimierte Darstellung von Parallelausgaben (z.B. )
+- verbesserte Suche nach (E-)Zeitschriften
+- Mehrfachauswahl Facetten
+- Cookie-Banner 
+- Barrierefreiheits-Erklärung
+Details via [ThULB-Confluence](https://confluence.uni-jena.de/spaces/THU005/pages/323097730/Updates+ThULB-Suche+2025-07-02_PROJEKT)
+
 ## Hotfix *04/25*
 - aufsetzen einer Firewall wegen AI-Bot-Schwemme & DDoS-Attacken
 
-## v4.0.4 *12/25*
+## v4.0.4 *12/24*
 - Handapparate inkl. Bestellformular via ServiceDesk
 - Anzeige bestellter Medien
 
